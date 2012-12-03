@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+	<metadata>
+		<id>Vertesaur.Core</id>
+		<version>$version$</version>
+		<title>Vertesaur</title>
+		<authors>$author$</authors>
+		<description>A computational geometry and math library for the CLR with potential medical, gaming, and GIS uses.</description>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<tags>Geometry</tags>
+		<projectUrl>http://mediocresoft.com/vertesaur/</projectUrl>
+	</metadata>
+	<files>
+		<file src="..\bin\$configuration$\net40-client\Vertesaur.Core.dll" target="lib\net40-client" />
+    <!--file src="..\bin\$configuration$\sl4\Vertesaur.Core.sl4.dll" target="lib\sl4" /-->
+		<!--file src="..\bin\$configuration$\sl4-wp71\Vertesaur.Core.sl4-wp71.dll" target="lib\sl4-wp71" /-->
+	</files>
+</package>

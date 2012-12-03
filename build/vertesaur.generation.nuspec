@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+	<metadata>
+		<id>Vertesaur.Generation</id>
+		<version>$version$</version>
+		<title>Vertesaur: Generation</title>
+		<authors>$author$</authors>
+		<description>A computational geometry and math library for the CLR with potential medical, gaming, and GIS uses.</description>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<tags>Geometry</tags>
+		<projectUrl>http://mediocresoft.com/vertesaur/</projectUrl>
+		<dependencies>
+			<dependency id="Vertesaur.Core" />
+		</dependencies>
+	</metadata>
+	<files>
+		<file src="..\bin\$configuration$\net40-client\Vertesaur.Generation.dll" target="lib\net40-client" />
+	</files>
+</package>
