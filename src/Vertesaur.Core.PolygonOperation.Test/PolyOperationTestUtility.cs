@@ -489,10 +489,187 @@ namespace Vertesaur.PolygonOperation.Test {
 		/// </summary>
 		private static PolyPairTestData ToUnionData(RingPairTestData data)
 		{
-
-
-
-			throw new InvalidDataException();
+			if (data.Name == "Cascade Boxes"){
+				return new PolyPairTestData(data, new Polygon2(new[]{
+					new Point2(0,0), 
+					new Point2(1,0), 
+					new Point2(1,.5), 
+					new Point2(1.5,.5), 
+					new Point2(1.5,1.5), 
+					new Point2(.5,1.5), 
+					new Point2(.5,1), 
+					new Point2(0,1), 
+				}, false));
+			}
+			if (data.Name == "Cascade Boxes: fill and a hole") {
+				return new PolyPairTestData(data, new Polygon2(new[]{
+					new Point2(1,1), 
+					new Point2(.5,1), 
+					new Point2(.5,1.5), 
+					new Point2(1.5,1.5), 
+					new Point2(1.5,.5), 
+					new Point2(1,.5), 
+				}, true));
+			}
+			if (data.Name == "Cascade Boxes: dual hole"){
+				return new PolyPairTestData(data, new Polygon2(new[]{
+					new Point2(1,1), 
+					new Point2(1,.5), 
+					new Point2(.5,.5), 
+					new Point2(.5,1), 
+				}, true)); 
+			}
+			if (data.Name == "Cascade Boxes: left down box"){
+				return new PolyPairTestData(data, new Polygon2(new[]{
+					new Point2(1,1), 
+					new Point2(0,1), 
+					new Point2(0,.5), 
+					new Point2(-.5,.5), 
+					new Point2(-.5,-.5), 
+					new Point2(.5,-.5), 
+					new Point2(.5,0), 
+					new Point2(1,0)
+				}, false));
+			}
+			if (data.Name == "Triangle Over Box: point segment through"){
+				return new PolyPairTestData(data, new Polygon2(new[]{
+					new Point2(0,0), 
+					new Point2(.5,-.25), 
+					new Point2(.5,0), 
+					new Point2(1,0), 
+					new Point2(1,1), 
+					new Point2(0,1), 
+				}, false));
+			}
+			if (data.Name == "Triangle Over Box: segment through"){
+				return new PolyPairTestData(data, new Polygon2(new[]{
+					new Point2(0,0), 
+					new Point2(1,0), 
+					new Point2(1,1), 
+					new Point2(0,1), 
+					new Point2(0,.75), 
+					new Point2(-.25,.25), 
+					new Point2(0,.25), 
+				}, false));
+			}
+			if (data.Name == "Trapezoid In Box: with crossing nub"){
+				return new PolyPairTestData(data, new Polygon2(new[]{
+					new Point2(0,0), 
+					new Point2(1,0), 
+					new Point2(1,1), 
+					new Point2(0,1), 
+					new Point2(0,.6), 
+					new Point2(-.5,.6), 
+					new Point2(-.5,.4), 
+					new Point2(0,.4), 
+				},false));
+			}
+			if (data.Name == "Two Stacked Boxes"){
+				return new PolyPairTestData(data, new Polygon2(new[]{
+					new Point2(0,0), 
+					new Point2(1,0), 
+					new Point2(1,2), 
+					new Point2(0,2), 
+				}, false));
+			}
+			if (data.Name == "Two Sunk In Boxes"){
+				return new PolyPairTestData(data, new Polygon2(new[]{
+					new Point2(0,0), 
+					new Point2(1,0), 
+					new Point2(1,1.5), 
+					new Point2(0,1.5), 
+				}, false));
+			}
+			if (data.Name == "Two Boxes Touching: with one side segment within another"){
+				return new PolyPairTestData(data, new Polygon2(new[]{
+					new Point2(0,0), 
+					new Point2(1,0), 
+					new Point2(1,.25), 
+					new Point2(2,.25), 
+					new Point2(2,.75), 
+					new Point2(1,.75), 
+					new Point2(1,1), 
+					new Point2(0,1), 
+				}, false));
+			}
+			if (data.Name == "Boxes Overlapping: within one segment"){
+				return new PolyPairTestData(data, new Polygon2(new[]{
+					new Point2(0,0), 
+					new Point2(1,0),  
+					new Point2(1,1), 
+					new Point2(0,1),
+					new Point2(0,.75), 
+					new Point2(-.25,.75), 
+					new Point2(-.25,.25), 
+					new Point2(0,.25), 
+				}, false));
+			}
+			if (data.Name == "Boxes Overlapping: through two segments"){
+				return new PolyPairTestData(data, new Polygon2(new[]{
+					new Point2(0,0), 
+					new Point2(1,0), 
+ 					new Point2(1,.25), 
+					new Point2(1.25,.25), 
+					new Point2(1.25,.75), 
+					new Point2(1, .75), 
+					new Point2(1,1), 
+					new Point2(0,1),
+					new Point2(0,.75), 
+					new Point2(-.25,.75), 
+					new Point2(-.25,.25), 
+					new Point2(0,.25), 
+				}, false));
+			}
+			if (data.Name == "Cascade Diamond"){
+				return new PolyPairTestData(data, new Polygon2(new[]{
+					new Point2(0,1), 
+					new Point2(1,0), 
+					new Point2(1.5,.5), 
+					new Point2(2,0), 
+					new Point2(3,1), 
+					new Point2(2,2), 
+					new Point2(1.5,1.5), 
+					new Point2(1,2)
+				},false));
+			}
+			if (
+				data.Name == "Triangle In Box: side touch"
+				|| data.Name == "Triangle In Box: point touch"
+				|| data.Name == "Diamond In Box: two ends touch sides"
+				|| data.Name == "Trapezoid In Box: touches side"
+				|| data.Name == "Z-Thing in a Box"
+				|| data.Name == "One Box in Another: with one side segment within another"
+				|| data.Name == "Same Boxes"
+				|| data.Name == "Equal Boxes"
+				|| data.Name == "Geometrically Equal Boxes"
+				|| data.Name == "Boxes Overlapping: top half"
+				|| data.Name == "Rectangle in Box: touching two sides"
+				|| data.Name == "Nested: fill within another, not touching"
+				|| data.Name == "Diamond in Double Diamond: touching sides"
+				|| data.Name == "Zig-zag Thing: holes"
+			){
+				return new PolyPairTestData(data, new Polygon2(data.A));
+			}
+			if (
+				data.Name == "Nested: hole within a hole, not touching"
+				|| data.Name == "Nested: hole within a fill, not touching"
+				|| data.Name == "Zig-zag Thing"
+			){
+				return new PolyPairTestData(data, new Polygon2(data.B));
+			}
+			if (
+				data.Name == "Nested: fill within a hole, not touching"
+				|| data.Name == "Under Ledge"
+			){
+				return new PolyPairTestData(data, new Polygon2(new[]{data.A,data.B}));
+			}
+			if (
+				data.Name.StartsWith("Cascade Boxes: reverse winding")
+				|| data.Name.StartsWith("Fuzzed")
+			){
+				return null; // not sure what to do about this one
+			}
+			return new PolyPairTestData(data,null);
 		}
 
 	}

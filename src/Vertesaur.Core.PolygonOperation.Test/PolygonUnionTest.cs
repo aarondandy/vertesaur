@@ -36,13 +36,17 @@ namespace Vertesaur.PolygonOperation.Test
 		private PolygonUnionOperation _unionOperation;
 		private PolyPairTestDataKeyedCollection _polyPairData;
 
+		public PolygonUnionTest(){
+			_polyPairData = PolyOperationTestUtility.GeneratePolyPairUnionTestDataCollection();
+		}
+
 		protected IEnumerable<object> GenerateTestPolyUnionParameters() {
 			return _polyPairData;
 		}
 
 		[TestFixtureSetUp]
 		public void FixtureSetUp() {
-			_polyPairData = PolyOperationTestUtility.GeneratePolyPairUnionTestDataCollection();
+			
 		}
 
 		[SetUp]
@@ -82,7 +86,7 @@ namespace Vertesaur.PolygonOperation.Test
 			var result = _unionOperation.Union(testData.A, testData.B) as Polygon2;
 			if (null != testData.R) {
 				Assert.IsNotNull(result);
-				Assert.IsTrue(testData.R.SpatiallyEqual(result), "Forward case failed: {0} u {1} ≠ {2}", testData.A, testData.B, result);
+				Assert.IsTrue(testData.R.SpatiallyEqual(result), "Forward case failed: {0} u {1} ≠ {2}", testData.A, testData.B, PolygonToString(result));
 			}
 			else {
 				Assert.IsNull(result);
@@ -91,7 +95,7 @@ namespace Vertesaur.PolygonOperation.Test
 			result = _unionOperation.Union(testData.B, testData.A) as Polygon2;
 			if (null != testData.R) {
 				Assert.IsNotNull(result);
-				Assert.IsTrue(testData.R.SpatiallyEqual(result), "Reverse case failed: {0} u {1} ≠ {2}", testData.B, testData.A, result);
+				Assert.IsTrue(testData.R.SpatiallyEqual(result), "Reverse case failed: {0} u {1} ≠ {2}", testData.B, testData.A, PolygonToString(result));
 			}
 			else {
 				Assert.IsNull(result);
