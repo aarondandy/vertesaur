@@ -36,13 +36,17 @@ namespace Vertesaur.PolygonOperation.Test {
 		private PolygonIntersectionOperation _intersectionOperation;
 		private PolyPairTestDataKeyedCollection _polyPairData;
 
+		public PolygonIntersectionTest(){
+			_polyPairData = PolyOperationTestUtility.GeneratePolyPairIntersectionTestDataCollection();
+		}
+
 		protected IEnumerable<object> GenerateTestPolyIntersectionParameters() {
 			return _polyPairData;
 		}
 
 		[TestFixtureSetUp]
 		public void FixtureSetUp() {
-			_polyPairData = PolyOperationTestUtility.GeneratePolyPairIntersectionTestDataCollection();
+			
 		}
 
 		[SetUp]
@@ -58,7 +62,7 @@ namespace Vertesaur.PolygonOperation.Test {
 		}
 
 		private static string PolygonToString(Polygon2 poly) {
-			StringBuilder sb = new StringBuilder();
+			var sb = new StringBuilder();
 			for (int index = 0; index < poly.Count; index++) {
 				var ring = poly[index];
 				sb.AppendFormat("Ring {0}:\n", index);
@@ -68,7 +72,7 @@ namespace Vertesaur.PolygonOperation.Test {
 		}
 
 		private static string RingToString(Ring2 ring) {
-			StringBuilder sb = new StringBuilder();
+			var sb = new StringBuilder();
 			foreach(var p in ring) {
 				sb.AppendFormat("({0},{1})\n", p.X, p.Y);
 			}

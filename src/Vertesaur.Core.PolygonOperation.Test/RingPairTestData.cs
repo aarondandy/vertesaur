@@ -47,6 +47,10 @@ namespace Vertesaur.PolygonOperation.Test {
 
 		public List<Point2> CrossingPoints { get; set; }
 
+		public override string ToString() {
+			return Name;
+		}
+
 	}
 
 }

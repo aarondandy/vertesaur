@@ -1,6 +1,6 @@
 ﻿// ===============================================================================
 //
-// Copyright (c) 2011 Aaron Dandy 
+// Copyright (c) 2011,2012 Aaron Dandy 
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -652,8 +652,15 @@ namespace Vertesaur.PolygonOperation {
 			Contract.Ensures(Contract.Result<PolygonCrossingsData>() != null);
 			Contract.EndContractBlock();
 
+			// TODO: maybe 0 should be an invalid value?
 			if (crossings.Count == 0)
-				return new PolygonCrossingsData();
+				return new PolygonCrossingsData(){
+					EntranceHops = new Dictionary<PolygonCrossing, PolygonCrossing>(),
+					ExitHops = new Dictionary<PolygonCrossing, PolygonCrossing>(),
+					Entrances = new HashSet<PolygonCrossing>(),
+					Exits = new HashSet<PolygonCrossing>(),
+					AllCrossings = crossings
+				};
 
 			// TODO: test this with one crossing... somehow (is that even possible?)
 			//var result = new PolygonCrossingsData();

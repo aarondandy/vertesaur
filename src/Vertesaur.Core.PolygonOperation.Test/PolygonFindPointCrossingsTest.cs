@@ -65,7 +65,7 @@ namespace Vertesaur.PolygonOperation.Test {
         public void TestPolyPointCrossings([ValueSource("GenerateTestPolyCrossingsParameters")] PolyPairTestData testData)
         {
             if (testData.Name == "Fuzzed: 3")
-                Assert.Inconclusive("We must test this one a different way.");
+                Assert.Ignore("We must test this one a different way.");
 
 			Console.WriteLine(testData.Name);
 

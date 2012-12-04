@@ -64,7 +64,7 @@ namespace Vertesaur.PolygonOperation.Test {
 		[Test]
 		public void TestRingPointCrossings([ValueSource("GenerateTestRingCrossingsParameters")] RingPairTestData testData) {
             if(testData.Name == "Fuzzed: 3")
-                Assert.Inconclusive("Must test this a different way.");
+                Assert.Ignore("Must test this a different way.");
 
 			Console.WriteLine(testData.Name);
 

@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 using NUnit.Framework;
 
 namespace Vertesaur.PolygonOperation.Test
@@ -32,27 +33,53 @@ namespace Vertesaur.PolygonOperation.Test
 	public class PolygonUnionTest
 	{
 
-		private PolygonUnionOperation _union;
+		private PolygonUnionOperation _unionOperation;
 		private PolyPairTestDataKeyedCollection _polyPairData;
-
-        public PolygonUnionTest(){
-            _polyPairData = PolyOperationTestUtility.GeneratePolyPairUnionTestDataCollection();
-        }
 
 		protected IEnumerable<object> GenerateTestPolyUnionParameters() {
 			return _polyPairData;
 		}
 
+		[TestFixtureSetUp]
+		public void FixtureSetUp() {
+			_polyPairData = PolyOperationTestUtility.GeneratePolyPairUnionTestDataCollection();
+		}
+
 		[SetUp]
 		public void SetUp() {
-			_union = new PolygonUnionOperation();
+			_unionOperation = new PolygonUnionOperation();
+		}
+
+		public static bool PointsAlmostEqual(Point2 a, Point2 b) {
+			if (a == b)
+				return true;
+			var d = a.Difference(b);
+			return d.GetMagnitudeSquared() < 0.000000000000000001;
+		}
+
+		private static string PolygonToString(Polygon2 poly) {
+			var sb = new StringBuilder();
+			for (int index = 0; index < poly.Count; index++) {
+				var ring = poly[index];
+				sb.AppendFormat("Ring {0}:\n", index);
+				sb.AppendLine(RingToString(ring));
+			}
+			return sb.ToString();
+		}
+
+		private static string RingToString(Ring2 ring) {
+			var sb = new StringBuilder();
+			foreach (var p in ring) {
+				sb.AppendFormat("({0},{1})\n", p.X, p.Y);
+			}
+			return sb.ToString();
 		}
 
 		[Test]
 		public void TestPolyUnion([ValueSource("GenerateTestPolyUnionParameters")]PolyPairTestData testData) {
 			Console.WriteLine(testData.Name);
 
-			var result = _union.Union(testData.A, testData.B) as Polygon2;
+			var result = _unionOperation.Union(testData.A, testData.B) as Polygon2;
 			if (null != testData.R) {
 				Assert.IsNotNull(result);
 				Assert.IsTrue(testData.R.SpatiallyEqual(result), "Forward case failed: {0} u {1} ≠ {2}", testData.A, testData.B, result);
@@ -61,7 +88,7 @@ namespace Vertesaur.PolygonOperation.Test
 				Assert.IsNull(result);
 			}
 
-			result = _union.Union(testData.B, testData.A) as Polygon2;
+			result = _unionOperation.Union(testData.B, testData.A) as Polygon2;
 			if (null != testData.R) {
 				Assert.IsNotNull(result);
 				Assert.IsTrue(testData.R.SpatiallyEqual(result), "Reverse case failed: {0} u {1} ≠ {2}", testData.B, testData.A, result);
