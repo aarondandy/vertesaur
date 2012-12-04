@@ -131,11 +131,16 @@ namespace Vertesaur.PolygonOperation
 			var result = new List<PolygonCrossing>();
 			for (int ringIndexA = 0; ringIndexA < _a.Count; ringIndexA++) {
 				var ringA = _a[ringIndexA];
+				if (ringA.Count == 0)
+					continue;
+
 				var ringAMbr = ringA.GetMbr();
 				for (int ringIndexB = 0; ringIndexB < _b.Count; ringIndexB++) {
 					var ringB = _b[ringIndexB];
-					if (ringAMbr.Intersects(ringB.GetMbr()))
+					if (ringAMbr.Intersects(ringB.GetMbr()) && ringB.Count > 0) {
+						Contract.Assume(ringA.Count > 0);
 						result.AddRange(GenerateRingCrossings(ringA, ringB, ringIndexA, ringIndexB));
+					}
 				}
 			}
 			return result;
@@ -223,8 +228,10 @@ namespace Vertesaur.PolygonOperation
 
 		[NotNull]
 		private List<PolygonCrossing> GenerateRingCrossings([NotNull] Ring2 ringA, [NotNull] Ring2 ringB, int ringIndexA, int ringIndexB) {
-			CodeContractHelper.RequiresListIndexValid(ringA, ringIndexA);
-			CodeContractHelper.RequiresListIndexValid(ringB, ringIndexB);
+			CodeContractHelper.RequiresNotNullOrEmpty(ringA);
+			CodeContractHelper.RequiresNotNullOrEmpty(ringB);
+			Contract.Requires(ringIndexA >= 0);
+			Contract.Requires(ringIndexB >= 0);
 			Contract.Ensures(Contract.Result<List<PolygonCrossing>>() != null);
 			Contract.EndContractBlock();
 
@@ -259,6 +266,8 @@ namespace Vertesaur.PolygonOperation
 			for (var segmentSearchIndexA = 0; segmentSearchIndexA < segmentSearchIndicesA.Length; segmentSearchIndexA++) {
 				double temp;
 				var segmentStartIndexA = segmentSearchIndicesA[segmentSearchIndexA];
+				Contract.Assume(segmentStartIndexA >= 0);
+				Contract.Assume(segmentStartIndexA < ringA.Count);
 				var a = ringA[segmentStartIndexA];
 				var smallestXValueOnA = a.X;
 				var b = ringA[IterationUtils.AdvanceLoopingIndex(segmentStartIndexA, countA)];
@@ -276,6 +285,8 @@ namespace Vertesaur.PolygonOperation
 				var segmentAMbr = segmentDataA.Segment.GetMbr();
 				for (int segmentSearchIndexB = minSegmentSearchIndicesB; segmentSearchIndexB < segmentSearchIndicesB.Length; segmentSearchIndexB++) {
 					int segmentStartIndexB = segmentSearchIndicesB[segmentSearchIndexB];
+					Contract.Assume(segmentStartIndexB >= 0);
+					Contract.Assume(segmentStartIndexB < ringB.Count);
 					var c = ringB[segmentStartIndexB];
 					var smallestXValueOnC = c.X;
 					var d = ringB[IterationUtils.AdvanceLoopingIndex(segmentStartIndexB, countB)];
@@ -315,8 +326,10 @@ namespace Vertesaur.PolygonOperation
 
 		[NotNull]
 		private static List<PolygonCrossing> GenerateRingCrossingsBruteForce([NotNull] Ring2 ringA, [NotNull] Ring2 ringB, int ringIndexA, int ringIndexB) {
-			CodeContractHelper.RequiresListIndexValid(ringA, ringIndexA);
-			CodeContractHelper.RequiresListIndexValid(ringB, ringIndexB);
+			CodeContractHelper.RequiresNotNullOrEmpty(ringA);
+			CodeContractHelper.RequiresNotNullOrEmpty(ringB);
+			Contract.Requires(ringIndexA >= 0);
+			Contract.Requires(ringIndexB >= 0);
 			Contract.Ensures(Contract.Result<List<PolygonCrossing>>() != null);
 			Contract.EndContractBlock();
 

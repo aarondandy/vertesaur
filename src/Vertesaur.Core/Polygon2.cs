@@ -122,9 +122,29 @@ namespace Vertesaur {
 		/// Adds multiple rings to this polygon.
 		/// </summary>
 		/// <param name="rings">The rings to add.</param>
-		public void AddRange([NotNull] IEnumerable<Ring2> rings) {
+		public void AddRange([NotNull, InstantHandle] IEnumerable<Ring2> rings) {
 			if(null == rings) throw new ArgumentNullException("rings");
+			Contract.Requires(Contract.ForAll(rings, x => x != null));
 			Contract.EndContractBlock();
+			foreach (var ring in rings) {
+				if(null == ring)
+					throw new ArgumentException("Null rings are not valid.", "rings");
+				base.Add(ring);
+			}
+		}
+
+		/// <inheritdoc/>
+		protected override void SetItem(int index, Ring2 item) {
+			if(null == item) throw new ArgumentNullException("item", "Null rings are not valid.");
+			Contract.EndContractBlock();
+			base.SetItem(index, item);
+		}
+
+		/// <inheritdoc/>
+		protected override void InsertItem(int index, Ring2 item) {
+			if (null == item) throw new ArgumentNullException("item", "Null rings are not valid.");
+			Contract.EndContractBlock();
+			base.InsertItem(index, item);
 		}
 
 		/// <summary>
@@ -202,7 +222,7 @@ namespace Vertesaur {
 			foreach (var r in this) {
 				if (r.Count == 0)
 					continue;
-				
+
 				var intersectionCount = r.IntersectionPositiveXRayCount(p);
 				crossCount += intersectionCount;
 				var isHole = r.Hole.HasValue && r.Hole.Value;
@@ -210,6 +230,7 @@ namespace Vertesaur {
 					continue;
 				
 				var contained = false;
+				Contract.Assume(0 < r.Count);
 				var hp = r[0];
 				for (var i = 0; i < fillRings.Count; i++) {
 					if (fillRings[i].Intersects(hp)) {
@@ -379,6 +400,12 @@ namespace Vertesaur {
 		/// <inheritdoc/>
 		public override string ToString() {
 			return String.Concat("Polygon, ", Count, " Rings");
+		}
+
+		[ContractInvariantMethod]
+		private void CodeContractInvariant() {
+			Contract.Invariant(Contract.ForAll(this, x => x != null));
+			Contract.Invariant(Contract.ForAll(0, Count, i => this[i] != null));
 		}
 
 	}

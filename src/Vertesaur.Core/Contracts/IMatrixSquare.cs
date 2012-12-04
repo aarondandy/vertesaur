@@ -81,8 +81,8 @@ namespace Vertesaur.Contracts {
 		[ContractInvariantMethod]
 		private void CodeContractInvariant() {
 			Contract.Invariant(RowCount == ColumnCount);
-			Contract.Invariant(this.Order == RowCount);
-			Contract.Invariant(this.Order == ColumnCount);
+			Contract.Invariant(Order == RowCount);
+			Contract.Invariant(Order == ColumnCount);
 		}
 
 		public int Order {
@@ -133,6 +133,7 @@ namespace Vertesaur.Contracts {
 		public TValue Get(int r, int c) {
 			throw new System.NotImplementedException();
 		}
+
 	}
 
 }

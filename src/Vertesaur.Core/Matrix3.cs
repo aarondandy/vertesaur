@@ -204,6 +204,8 @@ namespace Vertesaur {
 			if (m == null) throw new ArgumentNullException("m");
 			if (m.RowCount != OrderValue) throw new ArgumentException("Matrix must have 3 rows", "m");
 			if (m.ColumnCount != OrderValue) throw new ArgumentException("Matrix must have 3 columns.", "m");
+			Contract.Requires(OrderValue == m.RowCount);
+			Contract.Requires(OrderValue == m.ColumnCount);
 			Contract.EndContractBlock();
 			E00 = m.Get(0, 0);
 			E01 = m.Get(0, 1);
@@ -275,8 +277,8 @@ namespace Vertesaur {
 		/// <param name="c">The column.</param>
 		/// <returns>The element at the given location.</returns>
 		public double Get(int r, int c) {
-			if (c < 0 || c > 2) throw new ArgumentOutOfRangeException("c", "Invalid column.");
-			if (r < 0 || r > 2) throw new ArgumentOutOfRangeException("r", "Invalid row.");
+			if (c < 0 || c >= OrderValue) throw new ArgumentOutOfRangeException("c", "Invalid column.");
+			if (r < 0 || r >= OrderValue) throw new ArgumentOutOfRangeException("r", "Invalid row.");
 			Contract.EndContractBlock();
 			if (0 == r) {
 				return (
@@ -306,8 +308,8 @@ namespace Vertesaur {
 		/// <param name="c">The column.</param>
 		/// <param name="value">The value to store in the matrix element.</param>
 		public void Set(int r, int c, double value) {
-			if (c < 0 || c >= 3) throw new ArgumentOutOfRangeException("c", "Invalid column.");
-			if (r < 0 || r >= 3) throw new ArgumentOutOfRangeException("r", "Invalid row.");
+			if (c < 0 || c >= OrderValue) throw new ArgumentOutOfRangeException("c", "Invalid column.");
+			if (r < 0 || r >= OrderValue) throw new ArgumentOutOfRangeException("r", "Invalid row.");
 			Contract.EndContractBlock();
 			if (r == 0) {
 				if (c == 0)
@@ -449,18 +451,22 @@ namespace Vertesaur {
 			}
 		}
 
-		int IMatrixSquare<double>.Order {
+		/// <inheritdoc/>
+		public int Order {
 			get { return OrderValue; }
 		}
 
-		int IMatrix<double>.RowCount {
+		/// <inheritdoc/>
+		public int RowCount {
 			get { return OrderValue; }
 		}
 
-		int IMatrix<double>.ColumnCount {
+		/// <inheritdoc/>
+		public int ColumnCount {
 			get { return OrderValue; }
 		}
 
+		/// <inheritdoc/>
 		int IMatrix<double>.ElementCount {
 			get { return ElementCountValue; }
 		}
@@ -673,6 +679,10 @@ namespace Vertesaur {
 
 		object ICloneable.Clone() {
 			return Clone();
+		}
+
+		[ContractInvariantMethod]
+		private void CodeContractInvariant() {
 		}
 
 	}

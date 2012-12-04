@@ -156,10 +156,12 @@ namespace Vertesaur.Transformation
 		[NotNull] public Type ToType { get { return _toType; } }
 
 		private Type MakeGenericTransformationType() {
+			Contract.Assume(2 == TxGenericType.GetGenericArguments().Length);
 			return TxGenericType.MakeGenericType(_fromType, _toType);
 		}
 
 		private static Type MakeGenericEnumerableType(Type itemType) {
+			Contract.Assume(1 == EnumerableGenericType.GetGenericArguments().Length);
 			return EnumerableGenericType.MakeGenericType(itemType);
 		}
 
@@ -177,6 +179,8 @@ namespace Vertesaur.Transformation
 		}
 
 		private bool IsValidTransformEnumerableValuesMethod([NotNull] MethodInfo m) {
+			Contract.Requires(null != m);
+			Contract.EndContractBlock();
 			if (TransformValuesMethodName.Equals(m.Name) && m.ReturnType == MakeGenericEnumerableType(_toType)) {
 				var parameters = m.GetParameters();
 				if (parameters.Length == 1 && parameters[0].ParameterType == MakeGenericEnumerableType(_fromType)) {
@@ -189,6 +193,7 @@ namespace Vertesaur.Transformation
 		[NotNull]
 		private IEnumerable<MethodInfo> GetAllCandidateMethods() {
 			Contract.Ensures(Contract.Result<IEnumerable<MethodInfo>>() != null);
+			Contract.Ensures(Contract.ForAll(Contract.Result<IEnumerable<MethodInfo>>(), x => null != x));
 			Contract.EndContractBlock();
 
 			return _core
@@ -205,7 +210,10 @@ namespace Vertesaur.Transformation
 		public MethodInfo GetTransformValueMethod() {
 			Contract.Ensures(Contract.Result<MethodInfo>() != null);
 			Contract.EndContractBlock();
-			return GetAllCandidateMethods().First(IsValidTransformValueMethod);
+			var result = GetAllCandidateMethods().FirstOrDefault(IsValidTransformValueMethod);
+			if(null == result)
+				throw new InvalidOperationException("Could not find a TransformValue method.");
+			return result;
 		}
 
 		/// <summary>
@@ -216,7 +224,10 @@ namespace Vertesaur.Transformation
 		public MethodInfo GetTransformEnumerableValuesMethod() {
 			Contract.Ensures(Contract.Result<MethodInfo>() != null);
 			Contract.EndContractBlock();
-			return GetAllCandidateMethods().First(IsValidTransformEnumerableValuesMethod);
+			var result = GetAllCandidateMethods().FirstOrDefault(IsValidTransformEnumerableValuesMethod);
+			if(null == result)
+				throw new InvalidOperationException("Could not find a TransformValues method.");
+			return result;
 		}
 
 		/// <summary>
@@ -240,7 +251,9 @@ namespace Vertesaur.Transformation
 			Contract.EndContractBlock();
 
 			var method = GetTransformEnumerableValuesMethod();
-			return (IEnumerable)method.Invoke(_core, new object[] { values });
+			var result = (IEnumerable)method.Invoke(_core, new object[] {values});
+			if(null == result) throw new InvalidOperationException("A transformation returned a null enumerable given a non-null enumerable as input.");
+			return result;
 		}
 
 	}

@@ -170,6 +170,7 @@ namespace Vertesaur {
 			_hole = hole;
 			_pointList = points;
 			ResetAllPointsCacheData();
+			Contract.Assume(SegmentCount <= Count);
 		}
 
 		private void ResetAllCache() {
@@ -185,6 +186,7 @@ namespace Vertesaur {
 					CalculateAllPointsCacheData,
 					LazyThreadSafetyMode.ExecutionAndPublication);
 #endif
+			Contract.Assume(SegmentCount <= Count);
 		}
 
 		private AllPointsCacheData GetAllPointsCacheData() {
@@ -257,6 +259,7 @@ namespace Vertesaur {
 			}
 			set {
 				_hole = value;
+				Contract.Assume(SegmentCount <= Count);
 			}
 		}
 
@@ -340,6 +343,8 @@ namespace Vertesaur {
 			if (Count != other.Count || !_hole.Equals(other._hole))
 				return false;
 			for (var i = 0; i < _pointList.Count; i++) {
+				Contract.Assume(i < _pointList.Count);
+				Contract.Assume(i < other.Count);
 				if (!_pointList[i].Equals(other[i]))
 					return false;
 			}
@@ -647,6 +652,7 @@ namespace Vertesaur {
 			else {
 				_hole = (currentWinding != desiredWinding);
 			}
+			Contract.Assume(SegmentCount <= Count);
 		}
 
 		
@@ -719,7 +725,10 @@ namespace Vertesaur {
 		[NotNull] public Ring2 Clone() {
 			Contract.Ensures(Contract.Result<Ring2>() != null);
 			Contract.EndContractBlock();
-			return new Ring2(_hole, new List<Point2>(_pointList));
+			var points = new List<Point2>(_pointList.Count);
+			points.AddRange(_pointList);
+			Contract.Assume(SegmentCount <= Count);
+			return new Ring2(_hole, points);
 		}
 
 		object ICloneable.Clone() {
@@ -830,10 +839,10 @@ namespace Vertesaur {
 		/// <param name="p"></param>
 		/// <returns>0 for boundary, 1 for within, -1 for outside</returns>
 		internal int AdvancedIntersectionTest(Point2 p) {
-			if (GetMbr().Intersects(p)) {
-				var lastIndex = Count - 1;
-				var b = this[lastIndex];
-				for (var nextIndex = 0; nextIndex <= lastIndex; nextIndex++) {
+			if (Count >= 2 && GetMbr().Intersects(p)) {
+				Contract.Assume(Count >= 2);
+				var b = this[Count - 1];
+				for (var nextIndex = 0; nextIndex < Count; nextIndex++) {
 					var a = b;
 					b = this[nextIndex];
 					if (Segment2.Intersects(a, b, p)) {

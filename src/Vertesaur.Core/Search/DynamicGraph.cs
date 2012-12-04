@@ -307,6 +307,8 @@ namespace Vertesaur.Search
 			// generate the dynamic path information and find the shortest path
 			while(visitRequired.Count != 0) {
 				DynamicGraphNodeData<TNode, TCost, TEdge> currentNodeData;
+				Contract.Assume(visitRequired.Count > 0);
+				Contract.Assume(nodeDataCache.Count >= visitRequired.Count);
 				FindSmallestNodeData(visitRequired, nodeDataCache, out currentNode, out currentNodeData);
 				visitRequired.Remove(currentNode);
 

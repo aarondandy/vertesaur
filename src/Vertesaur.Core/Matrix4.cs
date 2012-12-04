@@ -220,6 +220,8 @@ namespace Vertesaur {
 			E31 = e31;
 			E32 = e32;
 			E33 = e33;
+			Contract.Assume(OrderValue == RowCount);
+			Contract.Assume(OrderValue == ColumnCount);
 		}
 
 		/// <summary>
@@ -245,6 +247,8 @@ namespace Vertesaur {
 			E31 = m.E31;
 			E32 = m.E32;
 			E33 = m.E33;
+			Contract.Assume(OrderValue == RowCount);
+			Contract.Assume(OrderValue == ColumnCount);
 		}
 
 		/// <summary>
@@ -255,6 +259,8 @@ namespace Vertesaur {
 			if (m == null) throw new ArgumentNullException("m");
 			if (m.RowCount != OrderValue) throw new ArgumentException("Matrix must have 4 rows", "m");
 			if (m.ColumnCount != OrderValue) throw new ArgumentException("Matrix must have 4 columns.", "m");
+			Contract.Requires(m.RowCount == OrderValue);
+			Contract.Requires(m.ColumnCount == OrderValue);
 			Contract.EndContractBlock();
 			E00 = m.Get(0, 0);
 			E01 = m.Get(0, 1);
@@ -272,6 +278,8 @@ namespace Vertesaur {
 			E31 = m.Get(3, 1);
 			E32 = m.Get(3, 2);
 			E33 = m.Get(3, 3);
+			Contract.Assume(OrderValue == RowCount);
+			Contract.Assume(OrderValue == ColumnCount);
 		}
 
 		/// <summary>
@@ -290,6 +298,8 @@ namespace Vertesaur {
 			E10 = E12 = E13 = 0;
 			E20 = E21 = E23 = 0;
 			E30 = E31 = E32 = 0;
+			Contract.Assume(OrderValue == RowCount);
+			Contract.Assume(OrderValue == ColumnCount);
 		}
 
 		/// <inheritdoc/>
@@ -407,6 +417,9 @@ namespace Vertesaur {
 			double e20, double e21, double e22, double e23,
 			double e30, double e31, double e32, double e33
 		) {
+			Contract.Ensures(RowCount == 4);
+			Contract.Ensures(ColumnCount == 4);
+			Contract.EndContractBlock();
 			E00 = e00;
 			E01 = e01;
 			E02 = e02;
@@ -423,6 +436,8 @@ namespace Vertesaur {
 			E31 = e31;
 			E32 = e32;
 			E33 = e33;
+			Contract.Assume(OrderValue == RowCount);
+			Contract.Assume(OrderValue == ColumnCount);
 		}
 
 		/// <summary>
@@ -434,6 +449,8 @@ namespace Vertesaur {
 			E10 = E12 = E13 = 0;
 			E20 = E21 = E23 = 0;
 			E30 = E31 = E32 = 0;
+			Contract.Assume(OrderValue == RowCount);
+			Contract.Assume(OrderValue == ColumnCount);
 		}
 
 		/// <summary>
@@ -443,8 +460,8 @@ namespace Vertesaur {
 		/// <param name="c">The column.</param>
 		/// <returns>The element at the given location.</returns>
 		public double Get(int r, int c) {
-			if (c < 0 || c >= 4) throw new ArgumentOutOfRangeException("c", "Invalid column.");
-			if (r < 0 || r >= 4) throw new ArgumentOutOfRangeException("r", "Invalid row.");
+			if (c < 0 || c >= OrderValue) throw new ArgumentOutOfRangeException("c", "Invalid column.");
+			if (r < 0 || r >= OrderValue) throw new ArgumentOutOfRangeException("r", "Invalid row.");
 			Contract.EndContractBlock();
 			if (0 == r) {
 				return c < 2
@@ -473,77 +490,52 @@ namespace Vertesaur {
 		/// <param name="c">The column.</param>
 		/// <param name="value">The value to store in the matrix element.</param>
 		public void Set(int r, int c, double value) {
-			if (c < 0 || c > 3) {
-				throw new ArgumentOutOfRangeException("c");
-			}
-			switch (r) {
-			case 0:
-				switch (c) {
-				case 0:
+			if (c < 0 || c >= OrderValue) throw new ArgumentOutOfRangeException("c", "Invalid column.");
+			if (r < 0 || r >= OrderValue) throw new ArgumentOutOfRangeException("r", "Invalid row.");
+			Contract.EndContractBlock();
+
+			if (0 == r) {
+				if (0 == c)
 					E00 = value;
-					break;
-				case 1:
+				else if (1 == c)
 					E01 = value;
-					break;
-				case 2:
+				else if (2 == c)
 					E02 = value;
-					break;
-				default:
+				else
 					E03 = value;
-					break;
-				}
-				break;
-			case 1:
-				switch (c) {
-				case 0:
-					E10 = value;
-					break;
-				case 1:
-					E11 = value;
-					break;
-				case 2:
-					E12 = value;
-					break;
-				default:
-					E13 = value;
-					break;
-				}
-				break;
-			case 2:
-				switch (c) {
-				case 0:
-					E20 = value;
-					break;
-				case 1:
-					E21 = value;
-					break;
-				case 2:
-					E22 = value;
-					break;
-				default:
-					E23 = value;
-					break;
-				}
-				break;
-			case 3:
-				switch (c) {
-				case 0:
-					E30 = value;
-					break;
-				case 1:
-					E31 = value;
-					break;
-				case 2:
-					E32 = value;
-					break;
-				default:
-					E33 = value;
-					break;
-				}
-				break;
-			default:
-				throw new ArgumentOutOfRangeException("r");
 			}
+			else if (1 == r) {
+				if (0 == c)
+					E10 = value;
+				else if (1 == c)
+					E11 = value;
+				else if (2 == c)
+					E12 = value;
+				else
+					E13 = value;
+			}
+			else if (2 == r) {
+				if (0 == c)
+					E20 = value;
+				else if (1 == c)
+					E21 = value;
+				else if (2 == c)
+					E22 = value;
+				else
+					E23 = value;
+			}
+			else {
+				if (0 == c)
+					E30 = value;
+				else if (1 == c)
+					E31 = value;
+				else if (2 == c)
+					E32 = value;
+				else
+					E33 = value;
+			}
+			Contract.Assume(OrderValue == RowCount);
+			Contract.Assume(OrderValue == ColumnCount);
 		}
 
 		/// <summary>
@@ -599,7 +591,6 @@ namespace Vertesaur {
 			CodeContractCheckRowColumnIndex(r1, c1);
 			CodeContractCheckRowColumnIndex(r2, c2);
 			Contract.EndContractBlock();
-
 			return (
 				(
 					(Get(r0, c0) * Get(r1, c1) * Get(r2, c2))
@@ -621,6 +612,9 @@ namespace Vertesaur {
 
 		private double SubDeterminantShort(int ir, int ic) {
 			CodeContractCheckRowColumnIndex(ir, ic);
+			Contract.Ensures(Contract.OldValue(RowCount) == RowCount);
+			Contract.Ensures(Contract.OldValue(ColumnCount) == ColumnCount);
+			Contract.EndContractBlock();
 			// TODO: inline
 			return SubDeterminant(
 				(ir == 0) ? 1 : 0,
@@ -642,6 +636,7 @@ namespace Vertesaur {
 				throw new InvalidOperationException();
 			}
 			var negativeDeterminant = -determinant;
+
 			SetElements(
 				(SubDeterminantShort(0, 0) / determinant),
 				(SubDeterminantShort(1, 0) / negativeDeterminant),
@@ -725,6 +720,8 @@ namespace Vertesaur {
 			temp = E23;
 			E23 = E32;
 			E32 = temp;
+			Contract.Assume(OrderValue == RowCount);
+			Contract.Assume(OrderValue == ColumnCount);
 		}
 
 		/// <summary>
@@ -850,6 +847,8 @@ namespace Vertesaur {
 			E31 += right.E31;
 			E32 += right.E32;
 			E33 += right.E33;
+			Contract.Assume(OrderValue == RowCount);
+			Contract.Assume(OrderValue == ColumnCount);
 		}
 
 		/// <summary>
@@ -898,7 +897,7 @@ namespace Vertesaur {
 		}
 
 		/// <inheritdoc/>
-		public int ElementCount {
+		int IMatrix<double>.ElementCount {
 			get { return ElementCountValue; }
 		}
 
@@ -952,9 +951,11 @@ namespace Vertesaur {
 
 		[ContractInvariantMethod]
 		private void CodeContractInvariant() {
-			Contract.Invariant(RowCount == 4);
-			Contract.Invariant(ColumnCount == 4);
-			Contract.Invariant(OrderValue == 4);
+			//Contract.Invariant(4 == RowCount);
+			//Contract.Invariant(4 == ColumnCount);
+			Contract.Invariant(4 == OrderValue);
+			Contract.Invariant(OrderValue == RowCount);
+			Contract.Invariant(OrderValue == ColumnCount);
 		}
 
 		// ReSharper disable UnusedParameter.Local
@@ -962,11 +963,11 @@ namespace Vertesaur {
 		[Conditional("CONTRACTS_FULL")]
 		private void CodeContractCheckRowColumnIndex(int r, int c) {
 			Contract.Requires(r >= 0);
-			Contract.Requires(r < 4);
+			Contract.Requires(r < OrderValue);
 			Contract.Requires(r < RowCount);
 			Contract.Requires(c >= 0);
-			Contract.Requires(c < 4);
-			Contract.Requires(c < RowCount);
+			Contract.Requires(c < OrderValue);
+			Contract.Requires(c < ColumnCount);
 		}
 		// ReSharper restore UnusedParameter.Local
 

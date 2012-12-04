@@ -90,6 +90,8 @@ namespace Vertesaur.Contracts {
 			Contract.Requires(r < RowCount);
 			Contract.Requires(c >= 0);
 			Contract.Requires(c < ColumnCount);
+			Contract.Ensures(Contract.OldValue(RowCount) == RowCount);
+			Contract.Ensures(Contract.OldValue(ColumnCount) == ColumnCount);
 			Contract.EndContractBlock();
 			throw new NotImplementedException();
 		}

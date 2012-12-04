@@ -59,6 +59,11 @@ namespace Vertesaur.PolygonOperation {
 			public Dictionary<PolygonCrossing, PolygonCrossing> ExitHops;
 			public List<PolygonCrossing> VisitedCrossings;
 
+			public PolygonCrossingsData() {
+				RingCrossingsA = new Dictionary<int, List<PolygonCrossing>>();
+				RingCrossingsB = new Dictionary<int, List<PolygonCrossing>>();
+			}
+
 			public void VisitEntrance(PolygonCrossing entrance) {
 				if(Entrances.Remove(entrance))
 					VisitedCrossings.Add(entrance);
@@ -71,10 +76,9 @@ namespace Vertesaur.PolygonOperation {
 
 			[CanBeNull]
 			public PolygonCrossing FindNextStartableEntrance() {
-				Contract.Requires(Entrances != null);
-				Contract.Requires(EntranceHops != null);
-				Contract.Requires(ExitHops != null);
-
+				Contract.Assume(null != Entrances);
+				Contract.Assume(null != EntranceHops);
+				Contract.Assume(null != ExitHops);
 				return Entrances.FirstOrDefault(entrance =>
 					!EntranceHops.ContainsKey(entrance)
 					&& !ExitHops.ContainsValue(entrance)
@@ -94,6 +98,14 @@ namespace Vertesaur.PolygonOperation {
 				return poly.Count == includedRingIndices.Count
 					? Enumerable.Empty<Ring2>()
 					: poly.Where((ring, i) => !includedRingIndices.Contains(i));
+			}
+
+			[ContractInvariantMethod]
+			private void CodeContractInvariant() {
+				//Contract.Invariant(RingCrossingsA != null);
+				//Contract.Invariant(Contract.ForAll(RingCrossingsA, x => x.Value != null && x.Key >= 0));
+				//Contract.Invariant(RingCrossingsB != null);
+				//Contract.Invariant(Contract.ForAll(RingCrossingsB, x => x.Value != null && x.Key >= 0));
 			}
 		}
 
@@ -241,6 +253,7 @@ namespace Vertesaur.PolygonOperation {
 			Contract.Requires(untouchedRings != null);
 			Contract.Requires(polygon != null);
 			Contract.Ensures(Contract.Result<List<Ring2>>() != null);
+			Contract.Ensures(Contract.ForAll(Contract.Result<List<Ring2>>(), x => null != x));
 			Contract.EndContractBlock();
 
 			var result = new List<Ring2>();
@@ -256,6 +269,7 @@ namespace Vertesaur.PolygonOperation {
 				else if(ringTree.NonIntersectingContains(ring))
 					result.Add(ring.Clone());
 			}
+			Contract.Assume(Contract.ForAll(result, x => null != x));
 			return result;
 		}
 
@@ -329,6 +343,8 @@ namespace Vertesaur.PolygonOperation {
 			PolygonCrossing exit = startExit;
 			PolygonCrossing entrance;
 			do {
+				Contract.Assume(null != crossingsData.RingCrossingsA[exit.LocationA.RingIndex]);
+				Contract.Assume(null != crossingsData.Entrances);
 				entrance = TraverseASideRing(
 					buildingRing,
 					exit,
@@ -362,6 +378,8 @@ namespace Vertesaur.PolygonOperation {
 			PolygonCrossing entrance = startEntrance;
 			PolygonCrossing exit;
 			do {
+				Contract.Assume(null != crossingsData.RingCrossingsB[entrance.LocationB.RingIndex]);
+				Contract.Assume(null != crossingsData.Exits);
 				exit = TraverseBSideRing(
 					buildingRing,
 					entrance,
@@ -496,7 +514,9 @@ namespace Vertesaur.PolygonOperation {
 					continue; // no, lets go somewhere useful with this
 
 				var locationA = crossing.LocationA;
+				Contract.Assume(locationA.RingIndex < a.Count);
 				var ringA = a[locationA.RingIndex];
+				Contract.Assume(ringA != null);
 
 				AddPointsBetweenForward(buildingRing, ringA, fromSegmentLocationA, locationA);
 				fromSegmentLocationA = locationA; // for later...
@@ -537,7 +557,9 @@ namespace Vertesaur.PolygonOperation {
 					continue; // no, lets go somewhere useful with this
 
 				var locationB = crossing.LocationB;
+				Contract.Assume(locationB.RingIndex < b.Count);
 				var ringB = b[locationB.RingIndex];
+				Contract.Assume(null != ringB);
 
 				AddPointsBetweenForward(buildingRing, ringB, fromSegmentLocationB, locationB);
 				fromSegmentLocationB = locationB; // for later...
@@ -571,10 +593,13 @@ namespace Vertesaur.PolygonOperation {
 			var currentSegmentIndex = IterationUtils.AdvanceLoopingIndex(from.SegmentIndex, segmentCount);
 			do {
 				if (currentSegmentIndex == to.SegmentIndex) {
-					if (0 < to.SegmentRatio)
+					if (0 < to.SegmentRatio) {
+						Contract.Assume(currentSegmentIndex < ring.Count);
 						results.Add(ring[currentSegmentIndex]);
+					}
 					return;
 				}
+				Contract.Assume(currentSegmentIndex < ring.Count);
 				results.Add(ring[currentSegmentIndex]);
 				currentSegmentIndex = IterationUtils.AdvanceLoopingIndex(currentSegmentIndex, segmentCount);
 			} while (true);
@@ -631,10 +656,13 @@ namespace Vertesaur.PolygonOperation {
 				return new PolygonCrossingsData();
 
 			// TODO: test this with one crossing... somehow (is that even possible?)
-			var result = new PolygonCrossingsData();
-			result.AllCrossings = crossings;
-			result.RingCrossingsA = SortedRingLookUp(crossings, PolygonCrossing.LocationAComparer.Default.Compare, GetRingIndexA, a.Count);
-			result.RingCrossingsB = SortedRingLookUp(crossings, PolygonCrossing.LocationBComparer.Default.Compare, GetRingIndexB, b.Count);
+			//var result = new PolygonCrossingsData();
+			//result.AllCrossings = crossings;
+			//result.RingCrossingsA = SortedRingLookUp(crossings, PolygonCrossing.LocationAComparer.Default.Compare, GetRingIndexA, a.Count);
+			//result.RingCrossingsB = SortedRingLookUp(crossings, PolygonCrossing.LocationBComparer.Default.Compare, GetRingIndexB, b.Count);
+
+			var ringCrossingsA = SortedRingLookUp(crossings, PolygonCrossing.LocationAComparer.Default.Compare, GetRingIndexA, a.Count);
+			var ringCrossingsB = SortedRingLookUp(crossings, PolygonCrossing.LocationBComparer.Default.Compare, GetRingIndexB, b.Count);
 
 			// these variables are cached through iterations of the loop, and only updated when required as it requires multiple look-ups
 			int ringIndexA = -1; // force first cache miss
@@ -649,8 +677,9 @@ namespace Vertesaur.PolygonOperation {
 				{
 					// need to pull new values
 					ringIndexA = currentCrossing.LocationA.RingIndex;
+					Contract.Assume(ringIndexA < a.Count);
 					ringA = a[ringIndexA];
-					crossingsOnRingA = result.RingCrossingsA[ringIndexA];
+					crossingsOnRingA = ringCrossingsA[ringIndexA];
 				}
 
 				// ReSharper disable AssignNullToNotNullAttribute
@@ -664,8 +693,9 @@ namespace Vertesaur.PolygonOperation {
 				{
 					// need to pull new values
 					ringIndexB = currentCrossing.LocationB.RingIndex;
+					Contract.Assume(ringIndexB < b.Count);
 					ringB = b[ringIndexB];
-					crossingsOnRingB = result.RingCrossingsB[ringIndexB];
+					crossingsOnRingB = ringCrossingsB[ringIndexB];
 				}
 
 				// ReSharper disable AssignNullToNotNullAttribute
@@ -686,7 +716,8 @@ namespace Vertesaur.PolygonOperation {
 
 			var entrances = new HashSet<PolygonCrossing>();
 			var exits = new HashSet<PolygonCrossing>();
-			foreach (var ringCrossings in result.RingCrossingsA) {
+			foreach (var ringCrossings in ringCrossingsA) {
+				Contract.Assume(ringCrossings.Key >= 0 && ringCrossings.Key < a.Count);
 				if (a[ringCrossings.Key].FillSide == RelativeDirectionType.Right) {
 					foreach (var crossing in ringCrossings.Value) {
 						var crossLegType = crossing.CrossType & CrossingType.Parallel;
@@ -706,18 +737,24 @@ namespace Vertesaur.PolygonOperation {
 					}
 				}
 			}
-			result.Entrances = entrances;
-			result.Exits = exits;
 
-			result.EntranceHops = new Dictionary<PolygonCrossing, PolygonCrossing>();
-			result.ExitHops = new Dictionary<PolygonCrossing, PolygonCrossing>();
+			
+
+			//result.Entrances = entrances;
+			//result.Exits = exits;
+
+			//result.EntranceHops = new Dictionary<PolygonCrossing, PolygonCrossing>();
+			//result.ExitHops = new Dictionary<PolygonCrossing, PolygonCrossing>();
+
+			var entranceHops = new Dictionary<PolygonCrossing, PolygonCrossing>();
+			var exitHops = new Dictionary<PolygonCrossing, PolygonCrossing>();
 
 			// TODO: merge these two groups of loops together?
 			foreach(var entrance in entrances) {
 				var entranceLocationB = entrance.LocationB;
 				foreach(var exit in exits) {
 					if(exit.LocationB == entranceLocationB) {
-						result.EntranceHops.Add(entrance, exit);
+						entranceHops.Add(entrance, exit);
 						break;
 					}
 				}
@@ -726,11 +763,21 @@ namespace Vertesaur.PolygonOperation {
 				var exitLocationA = exit.LocationA;
 				foreach(var entrance in entrances) {
 					if(entrance.LocationA == exitLocationA) {
-						result.ExitHops.Add(exit, entrance);
+						exitHops.Add(exit, entrance);
 						break;
 					}
 				}
 			}
+
+			var result = new PolygonCrossingsData {
+				AllCrossings = crossings,
+				EntranceHops = entranceHops,
+				ExitHops = exitHops,
+				Entrances = entrances,
+				Exits = exits,
+				RingCrossingsA = ringCrossingsA,
+				RingCrossingsB = ringCrossingsB
+			};
 
 			return result;
 		}
@@ -748,6 +795,8 @@ namespace Vertesaur.PolygonOperation {
 
 			var currentPoint = currentCrossing.Point;
 			var currentCrossingIndex = crossingsOnRing.BinarySearch(currentCrossing, crossingComparer);
+			if (currentCrossingIndex < 0)
+				return null;
 			var crossingsCount = crossingsOnRing.Count;
 			// find the first crossing after this one that has a different point location
 			for (
@@ -779,6 +828,7 @@ namespace Vertesaur.PolygonOperation {
 			var currentLocation = getLocation(currentCrossing);
 			var segmentCount = ring.SegmentCount;
 			int nextSegmentIndex = IterationUtils.AdvanceLoopingIndex(currentLocation.SegmentIndex, segmentCount);
+			Contract.Assume(nextSegmentIndex < ring.Count);
 			var nextCrossing = FindNextCrossingNotEqual(currentCrossing, crossingsOnRing, crossingComparer);
 			// NOTE: this method assumes a segment ratio less than 1, verify we can trust this
 			if (null == nextCrossing) {
@@ -803,9 +853,12 @@ namespace Vertesaur.PolygonOperation {
 			Contract.EndContractBlock();
 
 			var currentPoint = currentCrossing.Point;
-			int currentCrossingIndex = crossingsOnRing.BinarySearch(currentCrossing,crossingComparer);
+			int currentCrossingIndex = crossingsOnRing.BinarySearch(currentCrossing, crossingComparer);
+			if (currentCrossingIndex < 0)
+				return null;
 			int crossingsCount = crossingsOnRing.Count;
 			// find the first crossing before this one that has a different point location
+			Contract.Assume(currentCrossingIndex < crossingsCount);
 			for (
 				int i = IterationUtils.RetreatLoopingIndex(currentCrossingIndex, crossingsCount);
 				i != currentCrossingIndex;
@@ -835,9 +888,12 @@ namespace Vertesaur.PolygonOperation {
 
 			var currentLocation = getLocation(currentCrossing);
 			var segmentCount = ring.SegmentCount;
+			Contract.Assume(currentLocation.SegmentIndex < segmentCount);
 			var previousSegmentIndex = IterationUtils.RetreatLoopingIndex(currentLocation.SegmentIndex, segmentCount);
 			var previousCrossing = FindPreviousCrossingNotEqual(currentCrossing, crossingsOnRing, crossingComparer);
 			if(null == previousCrossing) {
+				Contract.Assume(previousSegmentIndex < ring.Count);
+				Contract.Assume(currentLocation.SegmentIndex < ring.Count);
 				return ring[
 					currentLocation.SegmentRatio == 0
 					? previousSegmentIndex
@@ -846,10 +902,12 @@ namespace Vertesaur.PolygonOperation {
 			}
 			var previousCrossingLocation = getLocation(previousCrossing);
 			if(currentLocation.SegmentRatio == 0) {
+				Contract.Assume(previousSegmentIndex < ring.Count);
 				return previousSegmentIndex == previousCrossingLocation.SegmentIndex
 					? previousCrossing.Point
 					: ring[previousSegmentIndex];
 			}
+			Contract.Assume(currentLocation.SegmentIndex < ring.Count);
 			return currentLocation.SegmentIndex == previousCrossingLocation.SegmentIndex
 				&& currentLocation.SegmentRatio > previousCrossingLocation.SegmentRatio
 				? previousCrossing.Point

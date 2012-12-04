@@ -161,7 +161,7 @@ namespace Vertesaur {
 		/// Calculates the magnitude of this range.
 		/// </summary>
 		/// <returns>The magnitude.</returns>
-		[Pure] public double GetMagnitude() {
+		[Pure] public double GetMagnitude() {			
 			return High - Low;
 		}
 

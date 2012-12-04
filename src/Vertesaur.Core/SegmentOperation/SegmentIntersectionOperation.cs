@@ -172,7 +172,11 @@ namespace Vertesaur.SegmentOperation {
 			/// <summary>
 			/// The segment resulting from the intersection.
 			/// </summary>
-			public Segment2 S { [Pure] get { return new Segment2(A.P,B.P);}}
+			public Segment2 S {
+				[Pure] get {
+					return new Segment2(A.P,B.P);
+				}
+			}
 		}
 
 		/// <summary>
@@ -242,6 +246,7 @@ namespace Vertesaur.SegmentOperation {
 		/// <returns>The detailed result of the intersection.</returns>
 		[NotNull]
 		public static IResult IntersectionDetails(Point2 a, Point2 b, Point2 c, Point2 d) {
+			// ReSharper disable CompareOfFloatsByEqualityOperator
 			Contract.Ensures(Contract.Result<IResult>() != null);
 			Contract.EndContractBlock();
 
@@ -262,7 +267,6 @@ namespace Vertesaur.SegmentOperation {
 				if (t < 0 || t > 1.0)
 					return DefaultNoIntersection; // not intersecting on other segment
 
-				// ReSharper disable CompareOfFloatsByEqualityOperator
 				Point2 p;
 				if (0 == s)
 					p = a;
@@ -275,14 +279,18 @@ namespace Vertesaur.SegmentOperation {
 				else
 					p = a + d0.GetScaled(s); // it must intersect at a point, so find where
 				return new PointResult(p, s, t);
-				// ReSharper restore CompareOfFloatsByEqualityOperator
+				
 			}
 
+			Contract.Assume(magnitudeSquared0 != 0);
+			Contract.Assume(magnitudeSquared1 != 0);
+			
 			// parallel
 			cross = (e.X * d0.Y) - (e.Y * d0.X);
 			if (cross * cross > magnitudeSquared0 * e.GetMagnitudeSquared() * Double.Epsilon)
 				return DefaultNoIntersection; // no intersection
 			return IntersectionDetailsParallel(d0, d1, e, magnitudeSquared0, magnitudeSquared1, a, b, c, d);
+			// ReSharper restore CompareOfFloatsByEqualityOperator
 		}
 		
 		[NotNull]

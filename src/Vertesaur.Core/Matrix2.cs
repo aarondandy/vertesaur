@@ -266,13 +266,12 @@ namespace Vertesaur {
 		[ContractAnnotation("null=>false")]
 		public bool Equals([CanBeNull] IMatrix<double> other) {
 			return !ReferenceEquals(null, other)
-				&& OrderValue == other.RowCount
-				&& OrderValue == other.ColumnCount
-				&& E00 == other.Get(0, 0)
-				&& E01 == other.Get(0, 1)
-				&& E10 == other.Get(1, 0)
-				&& E11 == other.Get(1, 1)
-			;
+				&& other.RowCount == OrderValue
+				&& other.ColumnCount == OrderValue
+				&& other.Get(0, 0) == E00
+				&& other.Get(0, 1) == E01
+				&& other.Get(1, 0) == E10
+				&& other.Get(1, 1) == E11;
 		}
 
 		/// <summary>
@@ -348,18 +347,22 @@ namespace Vertesaur {
 			get { return 0 == E01; }
 		}
 
-		int IMatrixSquare<double>.Order {
+		/// <inheritdoc/>
+		public int Order {
 			get { return OrderValue; }
 		}
 
-		int IMatrix<double>.RowCount {
+		/// <inheritdoc/>
+		public int RowCount {
 			get { return OrderValue; }
 		}
 
-		int IMatrix<double>.ColumnCount {
+		/// <inheritdoc/>
+		public int ColumnCount {
 			get { return OrderValue; }
 		}
 
+		/// <inheritdoc/>
 		int IMatrix<double>.ElementCount {
 			get { return ElementCountValue; }
 		}
@@ -576,6 +579,10 @@ namespace Vertesaur {
 
 		object ICloneable.Clone() {
 			return Clone();
+		}
+
+		[ContractInvariantMethod]
+		private void CodeContractInvariant() {
 		}
 
 	}
