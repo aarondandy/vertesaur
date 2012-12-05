@@ -183,7 +183,7 @@ namespace Vertesaur.PolygonOperation.Test {
 			Assert.Inconclusive();
 		}
 
-		[Test, Explicit("for debug")]
+		[Test]
 		public void CascadeBoxesTest() {
 			var data = _polyPairData["Cascade Boxes"];
 			var intersectionOperation = new PolygonIntersectionOperation();
@@ -200,7 +200,7 @@ namespace Vertesaur.PolygonOperation.Test {
 
 		}
 
-		[Test, Explicit("for debug")]
+		[Test]
 		public void ReverseCascadeBoxesTest() {
 			var data = _polyPairData["Cascade Boxes"];
 			var intersectionOperation = new PolygonIntersectionOperation();
@@ -217,7 +217,25 @@ namespace Vertesaur.PolygonOperation.Test {
 
 		}
 
-		[Test, Explicit("for debug")]
+		[Test]
+		public void UnderLedgeTest() {
+			var data = _polyPairData["Under Ledge"];
+			var intersectionOperation = new PolygonIntersectionOperation();
+
+			var a = data.A;
+			var b = data.B;
+			var r = data.R;
+
+			Assert.IsNull(r);
+
+			var result = intersectionOperation.Intersect(a, b) as Polygon2;
+			Assert.IsNull(result);
+
+			result = intersectionOperation.Intersect(b, a) as Polygon2;
+			Assert.IsNull(result);
+		}
+
+		[Test]
 		public void ReverseSixTriangleHolesTest() {
 			var data = _polyPairData["Six Triangle Holes"];
 			var intersectionOperation = new PolygonIntersectionOperation();
@@ -251,7 +269,7 @@ namespace Vertesaur.PolygonOperation.Test {
 
 		}
 
-		[Test, Explicit("for debug")]
+		[Test]
 		public void ReverseTwoStackedBoxesTest() {
 			var data = _polyPairData["Two Stacked Boxes"];
 			var intersectionOperation = new PolygonIntersectionOperation();
@@ -268,7 +286,7 @@ namespace Vertesaur.PolygonOperation.Test {
 
 		}
 
-		[Test, Explicit("for debug")]
+		[Test]
 		public void ReverseZThingInBoxTest() {
 			var data = _polyPairData["Z-Thing in a Box"];
 			var intersectionOperation = new PolygonIntersectionOperation();
@@ -284,7 +302,7 @@ namespace Vertesaur.PolygonOperation.Test {
 			Assert.IsTrue(result.SpatiallyEqual(r));
 		}
 
-		[Test, Explicit("for debug")]
+		[Test]
 		public void TriangleInBoxSideTouchTest() {
 			var data = _polyPairData["Triangle In Box: side touch"];
 			var intersectionOperation = new PolygonIntersectionOperation();
@@ -297,7 +315,7 @@ namespace Vertesaur.PolygonOperation.Test {
 
 		}
 
-		[Test, Explicit("for debug")]
+		[Test]
 		public void TwoStackedBoxesTest() {
 			var data = _polyPairData["Two Stacked Boxes"];
 			var intersectionOperation = new PolygonIntersectionOperation();
@@ -310,7 +328,7 @@ namespace Vertesaur.PolygonOperation.Test {
 
 		}
 
-		[Test, Explicit("for debug")]
+		[Test]
 		public void SameBoxesTest() {
 			var data = _polyPairData["Same Boxes"];
 			var intersectionOperation = new PolygonIntersectionOperation();
@@ -323,7 +341,7 @@ namespace Vertesaur.PolygonOperation.Test {
 
 		}
 
-		[Test, Explicit("for debug")]
+		[Test]
 		public void NestedFillWithinAnotherTest() {
 			var data = _polyPairData["Nested: fill within another, not touching"];
 			var intersectionOperation = new PolygonIntersectionOperation();
@@ -336,7 +354,7 @@ namespace Vertesaur.PolygonOperation.Test {
 
 		}
 
-		[Test, Explicit("for debug")]
+		[Test]
 		public void HoleInHoleNoIntersectionTest() {
 			var data = _polyPairData["Nested: hole within a hole, not touching"];
 			var intersectionOperation = new PolygonIntersectionOperation();
@@ -349,7 +367,7 @@ namespace Vertesaur.PolygonOperation.Test {
 
 		}
 
-		[Test, Explicit("for debug")]
+		[Test]
 		public void DiamondInDoubleDiamondTouchingSidesTest() {
 			var data = _polyPairData["Diamond in Double Diamond: touching sides"];
 			var intersectionOperation = new PolygonIntersectionOperation();
@@ -362,7 +380,7 @@ namespace Vertesaur.PolygonOperation.Test {
 
 		}
 
-		[Test, Explicit("for debug")]
+		[Test]
 		public void ZigZagThingHolesTest() {
 			var data = _polyPairData["Zig-zag Thing: holes"];
 			var intersectionOperation = new PolygonIntersectionOperation();
@@ -375,7 +393,7 @@ namespace Vertesaur.PolygonOperation.Test {
 
 		}
 
-		[Test, Explicit("for debug")]
+		[Test]
 		public void CascadeFillHoleTest() {
 			var data = _polyPairData["Cascade Boxes: fill and a hole"];
 			var intersectionOperation = new PolygonIntersectionOperation();
@@ -406,7 +424,7 @@ namespace Vertesaur.PolygonOperation.Test {
 			);
 		}
 
-		[Test, Explicit("for debug")]
+		[Test]
 		public void ZThingInBoxTest() {
 			var data = _polyPairData["Z-Thing in a Box"];
 			var intersectionOperation = new PolygonIntersectionOperation();
@@ -414,6 +432,19 @@ namespace Vertesaur.PolygonOperation.Test {
 			Assert.IsTrue(result.SpatiallyEqual(data.R));
 			result = intersectionOperation.Intersect(data.B, data.A) as Polygon2;
 			Assert.IsTrue(result.SpatiallyEqual(data.R));
+		}
+
+		[Test]
+		public void BoxesOverlappingTopHalfHoles() {
+			var sourceData = _polyPairData["Boxes Overlapping: top half"];
+			var inverseA = new Polygon2(sourceData.A[0].Reverse(), true);
+			var inverseB = new Polygon2(sourceData.B[0].Reverse(), true);
+			var expectedResult = inverseA;
+			var result = _intersectionOperation.Intersect(inverseA, inverseB) as Polygon2;
+			Assert.IsTrue(result.SpatiallyEqual(expectedResult));
+			
+			//result = _intersectionOperation.Intersect(inverseB, inverseA) as Polygon2;
+			//Assert.IsTrue(result.SpatiallyEqual(expectedResult));
 		}
 
 		[Test, Explicit("for debug")]
@@ -525,6 +556,7 @@ namespace Vertesaur.PolygonOperation.Test {
 			Assert.IsTrue(result.SpatiallyEqual(data.R), "Reverse Result:\n {0}", PolygonToString(result));
 
 		}
+
 
 	}
 }

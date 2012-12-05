@@ -808,13 +808,42 @@ namespace Vertesaur {
 			if (ReferenceEquals(null, testContainer))
 				return false;
 
+			var thisMbr = GetMbr();
+			var containerMbr = testContainer.GetMbr();
+
+			var notEqual = !thisMbr.Equals(containerMbr);
+			var bestResultGuess = notEqual;
 			if (testContainer.Hole.HasValue && testContainer.Hole.Value) {
-				if (!GetMbr().Intersects(testContainer.GetMbr())) {
+				if (thisMbr.Intersects(containerMbr)) {
+					if (notEqual) {
+						if (thisMbr.Contains(containerMbr)) {
+							bestResultGuess = true;
+							//return true;
+						}
+						else if (containerMbr.Contains(thisMbr)) {
+							bestResultGuess = false;
+							//return false;
+						}
+					}
+				}
+				else {
 					return true;
 				}
 			}
 			else {
-				if (!GetMbr().Intersects(testContainer.GetMbr())) {
+				if (thisMbr.Intersects(containerMbr)) {
+					if (notEqual) {
+						if (thisMbr.Contains(containerMbr)) {
+							bestResultGuess = false;
+							//return false;
+						}
+						if (containerMbr.Contains(thisMbr)) {
+							bestResultGuess = true;
+							//return true;
+						}
+					}
+				}
+				else {
 					return false;
 				}
 			}
@@ -828,7 +857,7 @@ namespace Vertesaur {
 				if (res < 0) {
 					return false;
 				}
-				mayHaveIt = true;
+				mayHaveIt = bestResultGuess;
 			}
 			return mayHaveIt;
 		}

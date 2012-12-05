@@ -208,6 +208,7 @@
     <Compile Include="PolygonOperation\PolygonBinaryOperationOptions.cs" />
     <Compile Include="PolygonOperation\PolygonCrossing.cs" />
     <Compile Include="PolygonOperation\PolygonBoundaryLocation.cs" />
+    <Compile Include="PolygonOperation\PolygonDifferenceOperation.cs" />
     <Compile Include="PolygonOperation\PolygonInverseOperation.cs" />
     <Compile Include="PolygonOperation\PolygonPointCrossingGenerator.cs" />
     <Compile Include="PolygonOperation\RingBoundaryTree.cs" />

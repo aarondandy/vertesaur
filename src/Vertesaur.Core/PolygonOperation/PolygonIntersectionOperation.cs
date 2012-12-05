@@ -170,16 +170,16 @@ namespace Vertesaur.PolygonOperation {
 				return new Polygon2(a);
 
 			// find all the crossings
+			var fillWinding = DetermineFillWinding(a.Concat(b));
 			var crossingsData = FindPointCrossingsCore(a,b);
 			// traverse the rings
-			var results = BuildIntersectionResults(crossingsData, a, b);
+			var results = BuildIntersectionResults(crossingsData, fillWinding, a, b);
 			if (null == results.Polygon)
 				return null;
 
 			// TODO: this stuff is not so great
 			results.Polygon = (results.Polygon.Count == 0 ? null : results.Polygon);
 			if (null != results.Polygon) {
-				var fillWinding = DetermineFillWinding(a.Concat(b));
 				if(fillWinding != PointWinding.Unknown)
 					results.Polygon.ForceFillWinding(fillWinding);
 			}
@@ -223,22 +223,44 @@ namespace Vertesaur.PolygonOperation {
 			Contract.Ensures(intersectedPolygon.Count >= Contract.OldValue(intersectedPolygon).Count);
 			Contract.EndContractBlock();
 
-			var intersectedResultTree = new RingBoundaryTree(intersectedPolygon);
+			if (intersectedPolygon.Count == 0) {
+				var untouchedA = new Polygon2(crossingsData.FindUntouchedRings(a, GetRingIndexA));
+				var resultTreeA = new RingBoundaryTree(untouchedA);
+				var untouchedB = new Polygon2(crossingsData.FindUntouchedRings(b, GetRingIndexB));
+				var resultTreeB = new RingBoundaryTree(untouchedB);
+				;
 
-			intersectedPolygon.AddRange(
-				QualifyRings(
-					crossingsData.FindUntouchedRings(a, GetRingIndexA),
-					b, true)
-				.Where(ring => !intersectedResultTree.NonIntersectingContains(ring))
-			);
+				intersectedPolygon.AddRange(QualifyRings(untouchedA, untouchedB, true));
+				intersectedPolygon.AddRange(QualifyRings(untouchedB, untouchedA, false));
 
-			intersectedPolygon.AddRange(
-				QualifyRings(
-					crossingsData.FindUntouchedRings(b, GetRingIndexB),
-					a, false)
-				.Where(ring => !intersectedResultTree.NonIntersectingContains(ring))
-			);
+				/*intersectedPolygon.AddRange(
+					untouchedA
+					.Where(ring => resultTreeB.NonIntersectingContains(ring) || resultTreeB.NonIntersectingEquals(ring))
+				);
 
+				intersectedPolygon.AddRange(
+					untouchedB
+					.Where(ring => resultTreeA.NonIntersectingContains(ring))
+				);*/
+				;
+			}
+			else {
+				var intersectedResultTree = new RingBoundaryTree(intersectedPolygon);
+
+				intersectedPolygon.AddRange(
+					QualifyRings(
+						crossingsData.FindUntouchedRings(a, GetRingIndexA),
+						b, true
+					).Where(ring => !intersectedResultTree.NonIntersectingContains(ring))
+				);
+
+				intersectedPolygon.AddRange(
+					QualifyRings(
+						crossingsData.FindUntouchedRings(b, GetRingIndexB),
+						a, false
+					).Where(ring => !intersectedResultTree.NonIntersectingContains(ring))
+				);
+			}
 			return new IntersectionResults{
 				Polygon = intersectedPolygon
 			};
@@ -276,6 +298,7 @@ namespace Vertesaur.PolygonOperation {
 		[NotNull]
 		private static IntersectionResults BuildIntersectionResults(
 			[NotNull] PolygonCrossingsData crossingsData,
+			PointWinding fillWinding,
 			[NotNull] Polygon2 a,
 			[NotNull] Polygon2 b
 		) {
@@ -322,6 +345,9 @@ namespace Vertesaur.PolygonOperation {
 				if (buildingRing.Count > 2)
 					rings.Add(new Ring2(buildingRing)); // here is a new ring
 			}
+
+			if (fillWinding != PointWinding.Unknown)
+				rings.ForceFillWinding(fillWinding);
 
 			return BuildFinalResults(crossingsData, a, b, rings);
 		}

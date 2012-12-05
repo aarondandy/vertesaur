@@ -51,6 +51,10 @@ namespace Vertesaur.PolygonOperation.Test {
 			return Name;
 		}
 
+		internal RingPairTestData Reverse() {
+			return new RingPairTestData(Name + " (Reverse)", B, A);
+		}
+
 	}
 
 }

@@ -632,6 +632,28 @@ namespace Vertesaur.PolygonOperation.Test {
 					new Point2(1,2)
 				},false));
 			}
+			if (data.Name == "Zig-zag Thing") {
+				return new PolyPairTestData(data, new Polygon2(new[] {
+					new Point2(.5,0),
+					new Point2(.5,-.5),
+					new Point2(1.5,-.5),
+					new Point2(1.5,.5),
+					new Point2(1,.5),
+					new Point2(1,1),
+					new Point2(0,1),
+					new Point2(0,0)
+				},false));
+			}
+			if (data.Name == "Zig-zag Thing: holes") {
+				return new PolyPairTestData(data, new Polygon2(new[] {
+					new Point2(0,1), 
+					new Point2(1,1),
+					new Point2(.5,.5),
+					new Point2(1,.5),
+					new Point2(1,0),
+					new Point2(0,0),
+				}, true));
+			}
 			if (
 				data.Name == "Triangle In Box: side touch"
 				|| data.Name == "Triangle In Box: point touch"
@@ -672,6 +694,439 @@ namespace Vertesaur.PolygonOperation.Test {
 			return new PolyPairTestData(data,null);
 		}
 
+		private static IEnumerable<PolyPairTestData> ToDifferenceData(RingPairTestData data) {
+			if (data.Name == "Cascade Boxes") {
+				yield return new PolyPairTestData(data, new Polygon2(new[] {
+					new Point2(0,0),
+ 					new Point2(1,0),
+ 					new Point2(1,.5),
+ 					new Point2(.5,.5),
+ 					new Point2(.5,1),
+ 					new Point2(0,1), 
+				},false));
+				yield return new PolyPairTestData(data.Reverse(), new Polygon2(new[] {
+					new Point2(1.5,1.5), 
+					new Point2(.5, 1.5),
+ 					new Point2(.5, 1),
+ 					new Point2(1,1),
+ 					new Point2(1,.5),
+ 					new Point2(1.5,.5),
+				}, false));
+				yield break;
+			}
+			if (data.Name == "Cascade Boxes: fill and a hole") {
+				yield return new PolyPairTestData(data, new Polygon2(new[] {
+					new Point2(.5,.5),
+ 					new Point2(1,.5),
+ 					new Point2(1,1), 
+					new Point2(.5,1), 
+				}, false));
+				yield return new PolyPairTestData(data.Reverse(), new Polygon2(new[] {
+					new Point2(0,0), 
+					new Point2(0,1), 
+					new Point2(.5,1),
+ 					new Point2(.5,1.5), 
+					new Point2(1.5,1.5),
+ 					new Point2(1.5,.5),
+ 					new Point2(1,.5),
+ 					new Point2(1,0), 
+				}, true));
+				yield break;
+			}
+			if (data.Name == "Cascade Boxes: dual hole") {
+				yield return new PolyPairTestData(data, new Polygon2(new[] {
+					new Point2(1.5,1.5), 
+					new Point2(.5, 1.5),
+ 					new Point2(.5, 1),
+ 					new Point2(1,1),
+ 					new Point2(1,.5),
+ 					new Point2(1.5,.5),
+				}, false));
+				yield return new PolyPairTestData(data.Reverse(), new Polygon2(new[] {
+					new Point2(0,0),
+ 					new Point2(1,0),
+ 					new Point2(1,.5),
+ 					new Point2(.5,.5),
+ 					new Point2(.5,1),
+ 					new Point2(0,1), 
+				}, false));
+				yield break;
+			}
+			if (data.Name == "Cascade Boxes: reverse winding A") {
+				yield return new PolyPairTestData(data.Reverse(), new Polygon2(new[] {
+					new Point2(.5,.5),
+ 					new Point2(1,.5),
+ 					new Point2(1,1), 
+					new Point2(.5,1), 
+				}, false));
+				yield return new PolyPairTestData(data, new Polygon2(new[] {
+					new Point2(.5,.5),
+ 					new Point2(1,.5),
+ 					new Point2(1,1), 
+					new Point2(.5,1),
+				}.Reverse(), false));
+				yield break;
+			}
+			if (data.Name == "Cascade Boxes: reverse winding B") {
+				yield return new PolyPairTestData(data.Reverse(), new Polygon2(new[] {
+					new Point2(.5,.5),
+ 					new Point2(1,.5),
+ 					new Point2(1,1), 
+					new Point2(.5,1), 
+				}.Reverse(), false));
+				yield return new PolyPairTestData(data, new Polygon2(new[] {
+					new Point2(.5,.5),
+ 					new Point2(1,.5),
+ 					new Point2(1,1), 
+					new Point2(.5,1),
+				}, false));
+				yield break;
+			}
+			if (data.Name == "Cascade Boxes: reverse winding both") {
+				yield return new PolyPairTestData(data, new Polygon2(new[] {
+					new Point2(0,0),
+ 					new Point2(1,0),
+ 					new Point2(1,.5),
+ 					new Point2(.5,.5),
+ 					new Point2(.5,1),
+ 					new Point2(0,1), 
+				}.Reverse(), false));
+				yield return new PolyPairTestData(data.Reverse(), new Polygon2(new[] {
+					new Point2(1.5,1.5), 
+					new Point2(.5, 1.5),
+ 					new Point2(.5, 1),
+ 					new Point2(1,1),
+ 					new Point2(1,.5),
+ 					new Point2(1.5,.5),
+				}.Reverse(), false));
+				yield break;
+			}
+			if (data.Name == "Cascade Boxes: left down box") {
+				yield return new PolyPairTestData(data, new Polygon2(new[] {
+					new Point2(0,.5),
+ 					new Point2(.5,.5),
+ 					new Point2(.5,0),
+ 					new Point2(1,0),
+ 					new Point2(1,1),
+ 					new Point2(0,1), 
+				}, false));
+				yield return new PolyPairTestData(data.Reverse(), new Polygon2(new[] {
+					new Point2(0,0),
+					new Point2(.5,0),
+					new Point2(.5,-.5),
+					new Point2(-.5,-.5),
+					new Point2(-.5,.5),
+					new Point2(0, .5)
+				}.Reverse(), false));
+				yield break;
+			}
+			if (data.Name == "Triangle In Box: side touch") {
+				yield return new PolyPairTestData(data, new Polygon2(new[] {
+					new Point2(0,0),
+					new Point2(1,0), 
+					new Point2(1,1), 
+					new Point2(0,1), 
+					new Point2(0,.75), 
+					new Point2(.75,.5), 
+					new Point2(0,.25), 
+				}, false));
+				yield return new PolyPairTestData(data.Reverse(), null);
+				yield break;
+			}
+			if (data.Name == "Triangle In Box: point touch") {
+				yield return new PolyPairTestData(data, new Polygon2(new Ring2[]{
+					new Ring2(new[] {
+						new Point2(0,0),
+						new Point2(1,0),
+						new Point2(1,1),
+						new Point2(0,1),
+					}, false),
+					new Ring2(new[] {
+						new Point2(0,.5),
+						new Point2(.75,.75), 
+						new Point2(.75,.25), 
+					}, true) 
+				}));
+				yield return new PolyPairTestData(data.Reverse(), null);
+				yield break;
+			}
+			if (data.Name == "Triangle Over Box: point segment through") {
+				yield return new PolyPairTestData(data, new Polygon2(new[] {
+					new Point2(0,0),
+					new Point2(.5,.25), 
+					new Point2(.5,0), 
+					new Point2(1, 0), 
+					new Point2(1,1), 
+					new Point2(0,1), 
+				}));
+				yield return new PolyPairTestData(data.Reverse(), new Polygon2(new[] {
+					new Point2(0,0), 
+					new Point2(.5,-.25), 
+					new Point2(.5,0), 
+				}));
+				yield break;
+			}
+			if (data.Name == "Triangle Over Box: segment through") {
+				yield return new PolyPairTestData(data, new Polygon2(new[] {
+					new Point2(0,0),
+					new Point2(1,0), 
+					new Point2(1,1), 
+					new Point2(0,1),
+ 					new Point2(0,.75), 
+					new Point2(.25,.25), 
+					new Point2(0,.25), 
+				}));
+				yield return new PolyPairTestData(data.Reverse(), new Polygon2(new[] {
+					new Point2(0,.75), 
+					new Point2(-.25,.25), 
+					new Point2(0,.25), 
+				}));
+				yield break;
+			}
+			if (data.Name == "Diamond In Box: two ends touch sides") {
+				yield return new PolyPairTestData(data, new Polygon2(new[] {
+					data.A,
+					PolygonInverseOperation.Invert(data.B)
+				}));
+				yield return new PolyPairTestData(data.Reverse(), null);
+				yield break;
+			}
+			if (data.Name == "Trapezoid In Box: touches side") {
+				yield return new PolyPairTestData(data, new Polygon2(new[] {
+					new Point2(0,0), 
+					new Point2(1,0), 
+					new Point2(1,1), 
+					new Point2(0,1), 
+					new Point2(0,.6), 
+					new Point2(.5,.75), 
+					new Point2(.5,.25), 
+					new Point2(0,.4), 
+				}, false));
+				yield return new PolyPairTestData(data.Reverse(), null);
+				yield break;
+			}
+			if (data.Name == "Trapezoid In Box: with crossing nub") {
+				yield return new PolyPairTestData(data, new Polygon2(new[] {
+					new Point2(0,0), 
+					new Point2(1,0), 
+					new Point2(1,1), 
+					new Point2(0,1), 
+					new Point2(0,.6), 
+					new Point2(.5,.75), 
+					new Point2(.5,.25), 
+					new Point2(0,.4), 
+				}, false));
+				yield return new PolyPairTestData(data.Reverse(), new Polygon2(new[] {
+					new Point2(0,.6), 
+					new Point2(-.5,.6), 
+					new Point2(-.5,.4), 
+					new Point2(0,.4), 
+				},false));
+				yield break;
+			}
+			if (data.Name == "Z-Thing in a Box") {
+				yield return new PolyPairTestData(data, new Polygon2(new[] {
+					new Ring2(
+						new [] {
+							new Point2(0,0),
+							new Point2(1,0), 
+							new Point2(1,.25), 
+							new Point2(0,.25), 
+							new Point2(.25,.5), 
+							new Point2(0,.5),
+							new Point2(0,.25), 
+						},false),
+					new Ring2(
+						new [] {
+							new Point2(0,1),
+							new Point2(0,.75),
+							new Point2(1,.75),
+							new Point2(.75,.5), 
+							new Point2(1,.5), 
+							new Point2(1,.75), 
+							new Point2(1,1)
+						}, false), 
+				}));
+				yield return new PolyPairTestData(data.Reverse(), null);
+				yield break;
+			}
+			if (data.Name == "Two Stacked Boxes") {
+				yield return new PolyPairTestData(data, new Polygon2(data.A));
+				yield return new PolyPairTestData(data.Reverse(), new Polygon2(data.B));
+				yield break;
+			}
+			if (data.Name == "Two Sunk In Boxes") {
+				yield return new PolyPairTestData(data, new Polygon2(new [] {
+					new Point2(0,0), 
+					new Point2(1,0), 
+					new Point2(1,.5), 
+					new Point2(0,.5), 
+				},false));
+				yield return new PolyPairTestData(data.Reverse(), new Polygon2(new[] {
+					new Point2(0,1), 
+					new Point2(1,1), 
+					new Point2(1,1.5), 
+					new Point2(0,1.5), 
+				}));
+				yield break;
+			}
+			if (data.Name == "Two Boxes Touching: with one side segment within another") {
+				yield return new PolyPairTestData(data, new Polygon2(data.A));
+				yield return new PolyPairTestData(data.Reverse(), new Polygon2(data.B));
+				yield break;
+			}
+			if (data.Name == "One Box in Another: with one side segment within another") {
+				yield return new PolyPairTestData(data, new Polygon2(new[] {
+					new Point2(0,0), 
+					new Point2(1,0), 
+					new Point2(1,1), 
+					new Point2(0,1), 
+					new Point2(0,.75), 
+					new Point2(.5,.75), 
+					new Point2(.5,.25), 
+					new Point2(0,.25), 
+				},false));
+				yield return new PolyPairTestData(data.Reverse(), null);
+				yield break;
+			}
+			if (data.Name == "Same Boxes") {
+				yield return new PolyPairTestData(data, null);
+				yield break;
+			}
+			if (data.Name == "Equal Boxes") {
+				yield return new PolyPairTestData(data, null);
+				yield break;
+			}
+			if (data.Name == "Geometrically Equal Boxes") {
+				yield return new PolyPairTestData(data, null);
+				yield break;
+			}
+			if (data.Name == "Boxes Overlapping: within one segment") {
+				yield return new PolyPairTestData(data, new Polygon2(new[] {
+					new Point2(0,0), 
+					new Point2(1,0), 
+					new Point2(1,1), 
+					new Point2(0,1), 
+					new Point2(0,.75), 
+					new Point2(.25,.75), 
+					new Point2(.25,.25), 
+					new Point2(0,.25), 
+				},false));
+				yield return new PolyPairTestData(data.Reverse(), new Polygon2(new[] {
+					new Point2(0,.25), 
+					new Point2(0,.75), 
+					new Point2(-.25,.75), 
+					new Point2(-.25,.25), 
+				},false));
+				yield break;
+			}
+			if (data.Name == "Boxes Overlapping: through two segments") {
+				yield return new PolyPairTestData(data, new Polygon2(new[] {
+					new Ring2(new [] {
+						new Point2(0,0), 
+						new Point2(1,0), 
+						new Point2(1,.25), 
+						new Point2(0,.25), 
+					},false),
+					new Ring2(new[] {
+						new Point2(0,1), 
+						new Point2(0,.75), 
+						new Point2(1,.75), 
+						new Point2(1,1), 
+					},false)
+				}));
+				yield return new PolyPairTestData(data.Reverse(), new Polygon2(new[] {
+					new Ring2(new [] {
+						new Point2(0,.75), 
+						new Point2(-.25,.75), 
+						new Point2(-.25,.25), 
+						new Point2(0,.25), 
+					},false),
+					new Ring2(new[] {
+						new Point2(1,.75), 
+						new Point2(1,.25), 
+						new Point2(1.25,.25), 
+						new Point2(1.25,.75), 
+					},false)
+				}));
+				yield break;
+			}
+			if (data.Name == "Boxes Overlapping: top half") {
+				yield return new PolyPairTestData(data, new Polygon2(new[] {
+					new Point2(0,0), 
+					new Point2(1,0), 
+					new Point2(1,.5), 
+					new Point2(0,.5), 
+				},false));
+				yield return new PolyPairTestData(data.Reverse(), null);
+				yield break;
+			}
+			if (data.Name == "Rectangle in Box: touching two sides") {
+				yield return new PolyPairTestData(data, new Polygon2(new[] {
+					new Ring2(new [] {
+						new Point2(0,0), 
+						new Point2(1,0), 
+						new Point2(1,.25), 
+						new Point2(0,.25), 
+					},false),
+					new Ring2(new[] {
+						new Point2(0,1), 
+						new Point2(0,.75), 
+						new Point2(1,.75), 
+						new Point2(1,1), 
+					},false)
+				}));
+				yield return new PolyPairTestData(data.Reverse(), null);
+				yield break;
+			}
+			if (data.Name == "Nested: fill within another, not touching") {
+				yield return new PolyPairTestData(data,new Polygon2(new[] {
+					data.A,
+					PolygonInverseOperation.Invert(data.B)
+				}));
+				yield return new PolyPairTestData(data.Reverse(), null);
+				yield break;
+			}
+			if (data.Name == "Nested: hole within a hole, not touching") {
+				yield return new PolyPairTestData(data, null);
+				yield return new PolyPairTestData(data.Reverse(), new Polygon2(new[]{
+					PolygonInverseOperation.Invert(data.A),
+					data.B
+				}));
+				yield break;
+			}
+			if (data.Name == "Nested: hole within a fill, not touching") {
+				yield return new PolyPairTestData(data, new Polygon2(
+					PolygonInverseOperation.Invert(data.B)
+				));
+				yield return new PolyPairTestData(data.Reverse(), new Polygon2(
+					PolygonInverseOperation.Invert(data.A)
+				));
+				yield break;
+			}
+			if (data.Name == "Nested: fill within a hole, not touching") {
+				yield return new PolyPairTestData(data, new Polygon2(data.A));
+				yield return new PolyPairTestData(data.Reverse(), new Polygon2(data.B));
+				yield break;
+			}
+			if (data.Name == "Diamond in Double Diamond: touching sides") {
+				yield return new PolyPairTestData(data.Reverse(), null);
+				yield break;
+			}
+			if (data.Name.StartsWith("Fuzzed")) {
+				yield break;
+			}
+			Console.WriteLine(data.Name + " not supported");
+			yield break;
+		}
+
+		internal static PolyPairTestDataKeyedCollection GeneratePolyPairDifferenceTestDataCollection() {
+			return new PolyPairTestDataKeyedCollection(
+				RingOperationTestUtility.GenerateRingPairTestData()
+				.SelectMany(ToDifferenceData)
+				.Where(d => null != d)
+			);
+		}
 	}
 
 }

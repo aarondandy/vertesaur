@@ -98,6 +98,10 @@ namespace Vertesaur.PolygonOperation
 					: NonIntersectingFillsContains(other);
 			}
 
+			public bool NonIntersectingEquals(Ring2 other) {
+				throw new NotImplementedException();
+			}
+
 			private bool NonIntersectingFillsContains([NotNull] Ring2 other) {
 				Contract.Requires(other != null);
 				Contract.EndContractBlock();
@@ -337,10 +341,16 @@ namespace Vertesaur.PolygonOperation
 			return null != other && _roots.NonIntersectingContains(other);
 		}
 
+		public bool NonIntersectingEquals(Ring2 other) {
+			return null != other && _roots.NonIntersectingEquals(other);
+		}
+
 		/// <summary>
 		/// The root nodes for the tree.
 		/// </summary>
 		[NotNull] public IEnumerable<Node> Roots { get { return new ReadOnlyCollection<Node>(_roots); } }
 
+
+		
 	}
 }

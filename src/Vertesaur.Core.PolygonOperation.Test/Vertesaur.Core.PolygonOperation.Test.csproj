@@ -60,6 +60,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PolygonDifferenceTest.cs" />
     <Compile Include="PolygonFindPointCrossingsTest.cs" />
     <Compile Include="PolygonIntersectionTest.cs" />
     <Compile Include="PolygonUnionTest.cs" />

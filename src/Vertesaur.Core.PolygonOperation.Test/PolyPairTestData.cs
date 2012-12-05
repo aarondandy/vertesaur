@@ -40,6 +40,13 @@ namespace Vertesaur.PolygonOperation.Test {
 			B = b;
 		}
 
+		public PolyPairTestData(string name, Polygon2 a, Polygon2 b, Polygon2 r) {
+			Name = name;
+			A = a;
+			B = b;
+			R = r;
+		}
+
 		public PolyPairTestData(RingPairTestData ringData) : this(ringData, null) { }
 
 		public PolyPairTestData(PolyPairTestData data, Polygon2 result) {

@@ -51,7 +51,7 @@ namespace Vertesaur.PolygonOperation {
 		/// <summary>
 		/// Creates a new default polygon union operation.
 		/// </summary>
-		public PolygonUnionOperation() : this(new PolygonIntersectionOperation()) { }
+		public PolygonUnionOperation() : this(new PolygonIntersectionOperation()) { } // TODO: null
 
 		internal PolygonUnionOperation([CanBeNull] PolygonIntersectionOperation inverseIntersectionOperation) {
 			_inverseIntersectionOperation = inverseIntersectionOperation ?? DefaultInverseIntersectionOperation;
@@ -63,7 +63,7 @@ namespace Vertesaur.PolygonOperation {
 		/// <param name="a">A polygon.</param>
 		/// <param name="b">A polygon.</param>
 		/// <returns>The union of <paramref name="a"/> and <paramref name="b"/>.</returns>
-		[Pure, ContractAnnotation("a:null,b:null=>null;a:notnull=>notnull;b:notnull=>notnull"), CanBeNull]
+		[ContractAnnotation("a:null,b:null=>null;a:notnull=>notnull;b:notnull=>notnull"), CanBeNull]
 		public IPlanarGeometry Union([CanBeNull] Polygon2 a, [CanBeNull] Polygon2 b) {
 			var inverseA = PolygonInverseOperation.Invert(a);
 			var inverseB = PolygonInverseOperation.Invert(b);

@@ -1,6 +1,6 @@
 ﻿// ===============================================================================
 //
-// Copyright (c) 2011,2012 Aaron Dandy 
+// Copyright (c) 2012 Aaron Dandy 
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -22,6 +22,7 @@
 //
 // ===============================================================================
 
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -30,28 +31,23 @@ using NUnit.Framework;
 namespace Vertesaur.PolygonOperation.Test
 {
 	[TestFixture]
-	public class PolygonUnionTest
+	public class PolygonDifferenceTest
 	{
 
-		private PolygonUnionOperation _unionOperation;
+		private PolygonDifferenceOperation _differenceOperation;
 		private PolyPairTestDataKeyedCollection _polyPairData;
 
-		public PolygonUnionTest(){
-			_polyPairData = PolyOperationTestUtility.GeneratePolyPairUnionTestDataCollection();
+		public PolygonDifferenceTest() {
+			_polyPairData = PolyOperationTestUtility.GeneratePolyPairDifferenceTestDataCollection();
 		}
 
-		protected IEnumerable<object> GenerateTestPolyUnionParameters() {
+		protected IEnumerable<object> GenerateTestPolyDifferenceParameters() {
 			return _polyPairData;
-		}
-
-		[TestFixtureSetUp]
-		public void FixtureSetUp() {
-			
 		}
 
 		[SetUp]
 		public void SetUp() {
-			_unionOperation = new PolygonUnionOperation();
+			_differenceOperation = new PolygonDifferenceOperation();
 		}
 
 		public static bool PointsAlmostEqual(Point2 a, Point2 b) {
@@ -80,44 +76,17 @@ namespace Vertesaur.PolygonOperation.Test
 		}
 
 		[Test]
-		public void TestPolyUnion([ValueSource("GenerateTestPolyUnionParameters")]PolyPairTestData testData) {
+		public void TestPolyDifference([ValueSource("GenerateTestPolyDifferenceParameters")]PolyPairTestData testData) {
 			Console.WriteLine(testData.Name);
 
-			if (testData.Name == "Nested: hole within a fill, not touching") {
-				Assert.Ignore("infinite spaaaaaaaace");
-			}
-
-			var result = _unionOperation.Union(testData.A, testData.B) as Polygon2;
+			var result = _differenceOperation.Difference(testData.A, testData.B) as Polygon2;
 			if (null != testData.R) {
 				Assert.IsNotNull(result);
-				Assert.IsTrue(testData.R.SpatiallyEqual(result), "Forward case failed: {0} u {1} ≠ {2}", testData.A, testData.B, PolygonToString(result));
+				Assert.IsTrue(testData.R.SpatiallyEqual(result), "Failed: {0} - {1} ≠ {2}", testData.A, testData.B, PolygonToString(result));
 			}
 			else {
 				Assert.IsNull(result);
 			}
-
-			result = _unionOperation.Union(testData.B, testData.A) as Polygon2;
-			if (null != testData.R) {
-				Assert.IsNotNull(result);
-				Assert.IsTrue(testData.R.SpatiallyEqual(result), "Reverse case failed: {0} u {1} ≠ {2}", testData.B, testData.A, PolygonToString(result));
-			}
-			else {
-				Assert.IsNull(result);
-			}
-		}
-
-		[Test]
-		public void ZigZagThing() {
-			var data = _polyPairData["Zig-zag Thing"];
-			var unionOperation = new PolygonUnionOperation();
-			
-			var result = unionOperation.Union(data.A, data.B) as Polygon2;
-			Assert.IsNotNull(result);
-			Assert.IsTrue(result.SpatiallyEqual(data.R));
-
-			result = unionOperation.Union(data.B, data.A) as Polygon2;
-			Assert.IsNotNull(result);
-			Assert.IsTrue(result.SpatiallyEqual(data.R));
 		}
 
 	}
