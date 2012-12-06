@@ -1,6 +1,7 @@
 ﻿
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq.Expressions;
 using System.Threading;
 
@@ -55,7 +56,7 @@ namespace Vertesaur.Generation.ExpressionBuilder
 
 		public ParameterExpression GetVariable(Type type) {
 			var var = RemoveFirstPending(type)
-				?? Expression.Variable(type, GetNewVariableNumber().ToString());
+				?? Expression.Variable(type, GetNewVariableNumber().ToString(CultureInfo.InvariantCulture));
 			_inUse.AddFirst(var);
 			return var;
 		}

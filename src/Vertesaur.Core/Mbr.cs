@@ -81,10 +81,10 @@ namespace Vertesaur {
 			if(points.Length == 2)
 				return new Mbr(points[0],points[1]);
 
-			double xMin, xMax, yMin, yMax;
+			double xMax, yMax;
 			var p = points[0];
-			xMin = xMax = p.X;
-			yMin = yMax = p.Y;
+			var xMin = xMax = p.X;
+			var yMin = yMax = p.Y;
 
 			for (int i = 1; i < points.Length; i++) {
 				p = points[i];
@@ -119,10 +119,10 @@ namespace Vertesaur {
 			if (points.Count == 2)
 				return new Mbr(points[0], points[1]);
 
-			double xMin, xMax, yMin, yMax;
+			double xMax, yMax;
 			var p = points[0];
-			xMin = xMax = p.X;
-			yMin = yMax = p.Y;
+			var xMin = xMax = p.X;
+			var yMin = yMax = p.Y;
 
 			for(int i = 1; i < points.Count; i++) {
 				p = points[i];
@@ -153,10 +153,10 @@ namespace Vertesaur {
 			var enumerator = points.GetEnumerator();
 			if (!enumerator.MoveNext())
 				return Invalid;
-			double xMin, xMax, yMin, yMax;
+			double xMax, yMax;
 			var p = enumerator.Current;
-			xMin = xMax = p.X;
-			yMin = yMax = p.Y;
+			var xMin = xMax = p.X;
+			var yMin = yMax = p.Y;
 
 			while(enumerator.MoveNext()) {
 				p = enumerator.Current;

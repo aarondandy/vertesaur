@@ -26,7 +26,7 @@ namespace Vertesaur.PolygonOperation
 		/// <summary>
 		/// Creates a default polygon difference operation.
 		/// </summary>
-		public PolygonDifferenceOperation() : this(new PolygonIntersectionOperation()) { } // TODO: null
+		public PolygonDifferenceOperation() : this(null) { }
 
 		internal PolygonDifferenceOperation([CanBeNull] PolygonIntersectionOperation inverseRightOperation) {
 			_rightInverseIntersectionOperation = inverseRightOperation ?? DefaultInverseRightIntersectionOperation;
@@ -40,8 +40,7 @@ namespace Vertesaur.PolygonOperation
 		/// <returns>The difference resulting from subtracting <paramref name="b"/> from <paramref name="a"/>.</returns>
 		[ContractAnnotation("a:null=>null;a:notnull,b:null=>notnull"),CanBeNull]
 		public IPlanarGeometry Difference([CanBeNull] Polygon2 a, [CanBeNull] Polygon2 b) {
-			var inverseB = PolygonInverseOperation.Invert(b);
-			var result = _rightInverseIntersectionOperation.Intersect(a, inverseB);
+			var result = _rightInverseIntersectionOperation.Intersect(a, b);
 			return result;
 		}
 

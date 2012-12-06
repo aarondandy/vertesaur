@@ -76,7 +76,7 @@ namespace Vertesaur.PolygonOperation
 			/// <returns>true if all nodes are valid.</returns>
 			public bool NodesAreValid(bool holeExpected)
 			{
-				return _nodes.All(node => node.Ring != null && (!node.Ring.Hole.HasValue || node.Ring.Hole.Value == holeExpected));
+				return _nodes.All(node => !node.Ring.Hole.HasValue || node.Ring.Hole.Value == holeExpected);
 			}
 
 			/// <summary>
@@ -98,9 +98,6 @@ namespace Vertesaur.PolygonOperation
 					: NonIntersectingFillsContains(other);
 			}
 
-			public bool NonIntersectingEquals(Ring2 other) {
-				throw new NotImplementedException();
-			}
 
 			private bool NonIntersectingFillsContains([NotNull] Ring2 other) {
 				Contract.Requires(other != null);
@@ -137,9 +134,11 @@ namespace Vertesaur.PolygonOperation
 			}
 
 			[ContractAnnotation("null=>false")]
-			private bool IsNodeValid(Node item) {
-				if (null == item || item.Ring == null)
+			private bool IsNodeValid([CanBeNull] Node item) {
+				if (null == item)
 					return false;
+
+				Contract.Assume(null != item.Ring);
 				var holeFlag = NodesAreHole;
 				if (holeFlag.HasValue && item.Ring.Hole.HasValue && holeFlag.Value != item.Ring.Hole.Value)
 					return false;
@@ -275,9 +274,10 @@ namespace Vertesaur.PolygonOperation
 			Contract.Requires(roots != null);
 			Contract.EndContractBlock();
 			foreach (var node in roots) {
-				if (RingIsNonIntersectingBoundBy(ring, node.Ring))
+				if (RingIsNonIntersectingBoundBy(ring, node.Ring)) {
 					Contract.Assume(null != node);
 					return FindParent(ring, node) ?? node;
+				}
 			}
 			return null;
 		}
@@ -339,10 +339,6 @@ namespace Vertesaur.PolygonOperation
 		/// </remarks>
 		public bool NonIntersectingContains(Ring2 other) {
 			return null != other && _roots.NonIntersectingContains(other);
-		}
-
-		public bool NonIntersectingEquals(Ring2 other) {
-			return null != other && _roots.NonIntersectingEquals(other);
 		}
 
 		/// <summary>

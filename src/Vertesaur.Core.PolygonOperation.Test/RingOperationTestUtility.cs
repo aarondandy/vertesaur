@@ -445,13 +445,14 @@ namespace Vertesaur.PolygonOperation.Test {
 					new Point2(3.0,1.0),
 					new Point2(2.0,2.0)
 				}, false)
-			);
-			diamondInDoubleDiamond.CrossingPoints = new List<Point2> {
-				new Point2(2.0,0.0),
-				new Point2(3.0,1.0),
-				new Point2(2.0,2.0),
-				new Point2(1.5,1.5),
-				new Point2(1.5,0.5)
+			) {
+				CrossingPoints = new List<Point2> {
+					new Point2(2.0, 0.0),
+					new Point2(3.0, 1.0),
+					new Point2(2.0, 2.0),
+					new Point2(1.5, 1.5),
+					new Point2(1.5, 0.5)
+				}
 			};
 			yield return diamondInDoubleDiamond;
 

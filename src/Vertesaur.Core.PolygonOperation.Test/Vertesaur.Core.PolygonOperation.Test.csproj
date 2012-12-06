@@ -64,6 +64,7 @@
     <Compile Include="PolygonFindPointCrossingsTest.cs" />
     <Compile Include="PolygonIntersectionTest.cs" />
     <Compile Include="PolygonUnionTest.cs" />
+    <Compile Include="PolygonXorTest.cs" />
     <Compile Include="PolyOperationTestUtility.cs" />
     <Compile Include="PolyPairTestData.cs" />
     <Compile Include="PolyPairTestDataKeyedCollection.cs" />

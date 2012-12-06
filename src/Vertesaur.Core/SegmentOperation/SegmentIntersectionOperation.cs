@@ -75,11 +75,6 @@ namespace Vertesaur.SegmentOperation {
 // ReSharper restore CompareOfFloatsByEqualityOperator
 		}
 
-		[Obsolete("to be removed")]
-		[Pure] private static SegmentIntersectionType ClassifyIntersectionType(double v1, double v2) {
-			return ClassifyIntersectionType(v1) | ClassifyIntersectionType(v2);
-		}
-
 		/// <summary>
 		/// A segment intersection result.
 		/// </summary>

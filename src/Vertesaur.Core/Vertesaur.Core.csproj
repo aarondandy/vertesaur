@@ -211,6 +211,7 @@
     <Compile Include="PolygonOperation\PolygonDifferenceOperation.cs" />
     <Compile Include="PolygonOperation\PolygonInverseOperation.cs" />
     <Compile Include="PolygonOperation\PolygonPointCrossingGenerator.cs" />
+    <Compile Include="PolygonOperation\PolygonXorOperation.cs" />
     <Compile Include="PolygonOperation\RingBoundaryTree.cs" />
     <Compile Include="PolygonOperation\PolygonIntersectionOperation.cs">
       <SubType>Code</SubType>

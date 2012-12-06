@@ -129,7 +129,7 @@ namespace Vertesaur {
 			foreach (var ring in rings) {
 				if(null == ring)
 					throw new ArgumentException("Null rings are not valid.", "rings");
-				base.Add(ring);
+				Add(ring);
 			}
 		}
 
