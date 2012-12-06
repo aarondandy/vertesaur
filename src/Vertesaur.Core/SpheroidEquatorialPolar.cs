@@ -135,5 +135,6 @@ namespace Vertesaur
 			return A == other.A && B == other.B;
 // ReSharper restore CompareOfFloatsByEqualityOperator
 		}
+
 	}
 }

@@ -87,7 +87,7 @@ namespace Vertesaur
 
 		/// <inheritdoc/>
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		 double ISpheroid<double>.ESecond { get { return 0.0; } }
+		double ISpheroid<double>.ESecond { get { return 0.0; } }
 
 		/// <inheritdoc/>
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]

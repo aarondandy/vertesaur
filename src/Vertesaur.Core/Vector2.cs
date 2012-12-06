@@ -315,6 +315,13 @@ namespace Vertesaur {
 			return new Vector2(-Y, X);
 		}
 
+		/// <summary>
+		/// Determines if the vector is valid.
+		/// </summary>
+		[Pure] public bool IsValid{
+			get { return !Double.IsNaN(X) && !Double.IsNaN(Y); }
+		}
+
 // ReSharper restore CompareOfFloatsByEqualityOperator
 
 	}

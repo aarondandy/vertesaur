@@ -142,6 +142,14 @@ namespace Vertesaur {
 			);
 		}
 
+		/// <summary>
+		/// Determines if the point is valid.
+		/// </summary>
+		[Pure]
+		public bool IsValid {
+			get { return !Double.IsNaN(X) && !Double.IsNaN(Y) && !Double.IsNaN(Z); }
+		}
+
 		/// <inheritdoc/>
 		public override int GetHashCode() {
 			return X.GetHashCode();

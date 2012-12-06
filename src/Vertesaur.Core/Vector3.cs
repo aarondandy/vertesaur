@@ -313,6 +313,14 @@ namespace Vertesaur {
 			return new Vector3(X * factor, Y * factor, Z * factor);
 		}
 
+		/// <summary>
+		/// Determines if the vector is valid.
+		/// </summary>
+		[Pure]
+		public bool IsValid {
+			get { return !Double.IsNaN(X) && !Double.IsNaN(Y) && !Double.IsNaN(Z); }
+		}
+
 		// ReSharper restore CompareOfFloatsByEqualityOperator
 
 	}

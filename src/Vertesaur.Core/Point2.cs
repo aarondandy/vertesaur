@@ -263,6 +263,14 @@ namespace Vertesaur {
 			return new Mbr(this);
 		}
 
+		/// <summary>
+		/// Determines if the point is valid.
+		/// </summary>
+		[Pure]
+		public bool IsValid {
+			get { return !Double.IsNaN(X) && !Double.IsNaN(Y); }
+		}
+
 		/// <inheritdoc/>
 		bool IRelatableIntersects<Point2>.Intersects(Point2 other) {
 			return Equals(other);

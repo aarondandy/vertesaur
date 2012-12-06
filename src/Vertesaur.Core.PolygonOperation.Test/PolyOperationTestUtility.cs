@@ -262,7 +262,6 @@ namespace Vertesaur.PolygonOperation.Test {
 			}
 			if (data.Name == "Eight Triangle Fills and Holes" || data.Name == "Six Triangle Fills and Holes") {
 				return null; // need some fixes before this will work correctly.
-				return new PolyPairTestData(data, data.A.Clone());
 			}
 			if (data.Name == "Three Part Triangle") {
 				return new PolyPairTestData(data, null);
@@ -279,7 +278,6 @@ namespace Vertesaur.PolygonOperation.Test {
 			}
 			if (data.Name == "Three Part Triangle Fill Hole"){
 				return null; // need to pinch the result into two rings
-				return new PolyPairTestData(data, data.A.Clone());
 			}
 			if (data.Name == "Chess 4 Holes") {
 				return new PolyPairTestData(data, new Polygon2(new[]{

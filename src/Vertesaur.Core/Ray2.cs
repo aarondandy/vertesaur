@@ -117,6 +117,13 @@ namespace Vertesaur {
 		IVector2<double> IRay2<double>.Direction { get { return Direction; } }
 
 		/// <summary>
+		/// Determines if the ray is valid.
+		/// </summary>
+		public bool IsValid {
+			get { return P.IsValid && Direction.IsValid && Direction != Vector2.Zero; }
+		}
+
+		/// <summary>
 		/// Indicates whether the current object is equal to another object of the same type.
 		/// </summary>
 		/// <returns>
