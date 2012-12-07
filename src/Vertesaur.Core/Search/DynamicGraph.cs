@@ -286,6 +286,7 @@ namespace Vertesaur.Search
 		/// <param name="start">The node to begin the path search from.</param>
 		/// <param name="target">The target node of the search.</param>
 		/// <returns>The shortest path from the start node to the target node if one exists.</returns>
+		/// <exception cref="System.ArgumentException">Thrown if a node or edge encountered within the graph is <c>null</c>.</exception>
 		[CanBeNull]
 		public ReadOnlyCollection<DynamicGraphNodeData<TNode, TCost, TEdge>> FindPath([NotNull] TNode start, [NotNull] TNode target) {
 			// ReSharper disable CompareNonConstrainedGenericWithNull

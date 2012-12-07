@@ -1,7 +1,7 @@
 ﻿using System;
 using JetBrains.Annotations;
 
-namespace Vertesaur.Transformation
+namespace Vertesaur
 {
 
 	/// <summary>

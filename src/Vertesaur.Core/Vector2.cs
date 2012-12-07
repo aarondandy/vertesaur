@@ -135,8 +135,7 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="v">The coordinate tuple to copy values from.</param>
 		public Vector2([NotNull] ICoordinatePair<double> v) {
-			if(null == v)
-				throw new ArgumentNullException("v");
+			if(null == v) throw new ArgumentNullException("v");
 			Contract.EndContractBlock();
 			X = v.X;
 			Y = v.Y;
@@ -154,6 +153,7 @@ namespace Vertesaur {
 		double ICoordinatePair<double>.Y { get { return Y; } }
 
 		/// <inheritdoc/>
+		[Obsolete("This does not belong here.")]
 		[Pure] public int CompareTo(Vector2 other) {
 			var c = X.CompareTo(other.X);
 			return 0 == c ? Y.CompareTo(other.Y) : c;

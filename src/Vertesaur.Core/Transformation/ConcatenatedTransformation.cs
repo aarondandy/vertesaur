@@ -47,9 +47,9 @@ namespace Vertesaur.Transformation
 		/// Creates a new concatenated transformation composed of a sequence of transformations.
 		/// </summary>
 		/// <param name="transformations">A sequence of transformations.</param>
+		/// <exception cref="System.ArgumentException">Thrown if a transformation is <c>null</c>.</exception>
 		public ConcatenatedTransformation([NotNull, InstantHandle] IEnumerable<ITransformation> transformations) {
-			if (null == transformations)
-				throw new ArgumentNullException("transformations");
+			if (null == transformations) throw new ArgumentNullException("transformations");
 			Contract.EndContractBlock();
 
 			var txArray = transformations.ToArray();
@@ -163,6 +163,7 @@ namespace Vertesaur.Transformation
 		/// Creates a new concatenated transformation composed of a sequence of transformations.
 		/// </summary>
 		/// <param name="transformations">A sequence of transformations.</param>
+		/// <exception cref="System.InvalidOperationException">Thrown when a valid casting path can not be determined.</exception>
 		public ConcatenatedTransformation([NotNull, InstantHandle] IEnumerable<ITransformation> transformations) : base(transformations) {
 			Contract.Requires(transformations != null);
 			Contract.EndContractBlock();

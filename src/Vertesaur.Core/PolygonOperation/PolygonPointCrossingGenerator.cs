@@ -36,10 +36,8 @@ namespace Vertesaur.PolygonOperation
 		private readonly Dictionary<Ring2, int[]> _sortedRingSegmentIndices;
 
 		public PolygonPointCrossingGenerator([NotNull] Polygon2 a, [NotNull] Polygon2 b) {
-			if(null == a)
-				throw new ArgumentNullException("a");
-			if(null == b)
-				throw new ArgumentNullException("b");
+			if(null == a) throw new ArgumentNullException("a");
+			if(null == b) throw new ArgumentNullException("b");
 			Contract.EndContractBlock();
 
 			_a = a;
@@ -62,10 +60,8 @@ namespace Vertesaur.PolygonOperation
 		private readonly System.Collections.Concurrent.ConcurrentDictionary<Ring2, int[]> _sortedRingSegmentIndices;
 
 		public PolygonPointCrossingGenerator([NotNull] Polygon2 a, [NotNull] Polygon2 b) {
-			if(null == a)
-				throw new ArgumentNullException("a");
-			if(null == b)
-				throw new ArgumentNullException("b");
+			if(null == a) throw new ArgumentNullException("a");
+			if(null == b) throw new ArgumentNullException("b");
 			Contract.EndContractBlock();
 
 			_a = a;

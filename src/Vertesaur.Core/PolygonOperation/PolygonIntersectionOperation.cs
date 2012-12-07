@@ -983,10 +983,8 @@ namespace Vertesaur.PolygonOperation {
 			[NotNull] Polygon2 a,
 			[NotNull] Polygon2 b
 		) {
-			if(null == a)
-				throw new ArgumentNullException("a");
-			if(null == b)
-				throw new ArgumentNullException("b");
+			if(null == a) throw new ArgumentNullException("a");
+			if(null == b) throw new ArgumentNullException("b");
 			Contract.Ensures(Contract.Result<List<PolygonCrossing>>() != null);
 			Contract.EndContractBlock();
 

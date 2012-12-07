@@ -124,7 +124,7 @@
     <CodeContractsInferEnsures>False</CodeContractsInferEnsures>
     <CodeContractsInferObjectInvariants>False</CodeContractsInferObjectInvariants>
     <CodeContractsSuggestAssumptions>False</CodeContractsSuggestAssumptions>
-    <CodeContractsSuggestRequires>False</CodeContractsSuggestRequires>
+    <CodeContractsSuggestRequires>True</CodeContractsSuggestRequires>
     <CodeContractsSuggestEnsures>False</CodeContractsSuggestEnsures>
     <CodeContractsSuggestObjectInvariants>False</CodeContractsSuggestObjectInvariants>
     <CodeContractsRunInBackground>True</CodeContractsRunInBackground>
@@ -235,7 +235,7 @@
     <Compile Include="SpheroidEquatorialPolar.cs" />
     <Compile Include="Transformation\CompiledConcatenatedTransformation.cs" />
     <Compile Include="Transformation\ConcatenatedTransformation.cs" />
-    <Compile Include="Transformation\NoInverseException.cs" />
+    <Compile Include="NoInverseException.cs" />
     <Compile Include="Transformation\TransformationCastNode.cs" />
     <Compile Include="Utility\IterationUtils.cs" />
     <Compile Include="Vector2.cs" />

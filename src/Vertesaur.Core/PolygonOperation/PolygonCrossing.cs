@@ -268,10 +268,8 @@ namespace Vertesaur.PolygonOperation {
 		/// <param name="locationA">The location on the first polygon boundary.</param>
 		/// <param name="locationB">The location on the second polygon boundary.</param>
 		public PolygonCrossing(Point2 p, [NotNull] PolygonBoundaryLocation locationA, [NotNull] PolygonBoundaryLocation locationB) {
-			if(null == locationA)
-				throw new ArgumentNullException("locationA");
-			if(null == locationB)
-				throw new ArgumentNullException("locationB");
+			if(null == locationA) throw new ArgumentNullException("locationA");
+			if(null == locationB) throw new ArgumentNullException("locationB");
 			Contract.EndContractBlock();
 
 			Point = p;

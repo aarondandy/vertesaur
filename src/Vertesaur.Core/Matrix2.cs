@@ -26,6 +26,7 @@ using System;
 using System.Diagnostics.Contracts;
 using JetBrains.Annotations;
 using Vertesaur.Contracts;
+using Vertesaur.Transformation;
 
 namespace Vertesaur {
 
@@ -465,11 +466,11 @@ namespace Vertesaur {
 		/// <summary>
 		/// Inverts the matrix.
 		/// </summary>
-		/// <exception cref="System.InvalidOperationException">An inverse requires a valid non-zero determinant.</exception>
+		/// <exception cref="Vertesaur.NoInverseException">An inverse requires a valid non-zero finite determinant.</exception>
 		public void Invert() {
 			var determinant = CalculateDeterminant();
-			if (0 == determinant || Double.IsNaN(determinant))
-				throw new InvalidOperationException();
+			if (0 == determinant || Double.IsNaN(determinant) || Double.IsInfinity(determinant))
+				throw new NoInverseException();
 
 			var temp = E00;
 			E00 = E11 / determinant;
@@ -483,14 +484,14 @@ namespace Vertesaur {
 		/// Generates a matrix which is the inverse.
 		/// </summary>
 		/// <returns>The inverse of the matrix.</returns>
-		/// <exception cref="System.InvalidOperationException">An inverse requires a valid non-zero determinant.</exception>
+		/// <exception cref="Vertesaur.NoInverseException">An inverse requires a valid non-zero finite determinant.</exception>
 		[NotNull]
 		public Matrix2 GetInverse() {
 			Contract.Ensures(Contract.Result<Matrix2>() != null);
 			Contract.EndContractBlock();
 			var determinant = CalculateDeterminant();
-			if (0 == determinant || Double.IsNaN(determinant))
-				throw new InvalidOperationException();
+			if (0 == determinant || Double.IsNaN(determinant) || Double.IsInfinity(determinant))
+				throw new NoInverseException();
 
 			return new Matrix2(
 				E11 / determinant,
@@ -531,9 +532,9 @@ namespace Vertesaur {
 		[Obsolete("needs testing")]
 		public void InterchangeRows(int rowA, int rowB) {
 			if (rowA < 0 || rowA > 1)
-				throw new ArgumentOutOfRangeException("rowA");
+				throw new ArgumentOutOfRangeException("rowA", "Row must be 0 or 1.");
 			if (rowB < 0 || rowB > 1)
-				throw new ArgumentOutOfRangeException("rowB");
+				throw new ArgumentOutOfRangeException("rowB", "Row must be 0 or 1.");
 			Contract.EndContractBlock();
 			
 			if (rowA != rowB) {
@@ -554,7 +555,7 @@ namespace Vertesaur {
 		[Obsolete("needs testing")]
 		public void MultiplyRow(double scalar, int row) {
 			if (row < 0 || row > 1)
-				throw new ArgumentOutOfRangeException("row");
+				throw new ArgumentOutOfRangeException("row", "Row must be 0 or 1.");
 			Contract.EndContractBlock();
 
 			if(row == 0) {

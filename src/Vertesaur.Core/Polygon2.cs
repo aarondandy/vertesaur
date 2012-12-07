@@ -85,6 +85,7 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="ring">The ring the polygon will be composed of.</param>
 		/// <remarks>The <paramref name="ring"/> is referenced instead of copied.</remarks>
+		/// <exception cref="System.ArgumentNullException">Thrown if <paramref name="ring"/> is null.</exception>
 		public Polygon2([NotNull] Ring2 ring)
 			: this(BuildListForSingleRing(ring))
 		{
@@ -122,6 +123,7 @@ namespace Vertesaur {
 		/// Adds multiple rings to this polygon.
 		/// </summary>
 		/// <param name="rings">The rings to add.</param>
+		/// <exception cref="System.ArgumentException">Thrown if any of the <paramref name="rings"/> is null.</exception>
 		public void AddRange([NotNull, InstantHandle] IEnumerable<Ring2> rings) {
 			if(null == rings) throw new ArgumentNullException("rings");
 			Contract.Requires(Contract.ForAll(rings, x => x != null));

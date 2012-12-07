@@ -629,11 +629,11 @@ namespace Vertesaur {
 		/// <summary>
 		/// Inverts this matrix.
 		/// </summary>
-		/// <exception cref="System.InvalidOperationException">An inverse requires a valid non-zero determinant.</exception>
+		/// <exception cref="Vertesaur.NoInverseException">An inverse requires a valid non-zero finite determinant.</exception>
 		public void Invert() {
 			var determinant = CalculateDeterminant();
-			if (0 == determinant || Double.IsNaN(determinant)) {
-				throw new InvalidOperationException();
+			if (0 == determinant || Double.IsNaN(determinant) || Double.IsInfinity(determinant)) {
+				throw new NoInverseException();
 			}
 			var negativeDeterminant = -determinant;
 
@@ -664,15 +664,15 @@ namespace Vertesaur {
 		/// Generates a matrix which is the inverse.
 		/// </summary>
 		/// <returns>The inverse of the matrix.</returns>
-		/// <exception cref="System.InvalidOperationException">An inverse requires a valid non-zero determinant.</exception>
+		/// <exception cref="Vertesaur.NoInverseException">An inverse requires a valid non-zero finite determinant.</exception>
 		[NotNull]
 		public Matrix4 GetInverse() {
 			Contract.Ensures(Contract.Result<Matrix4>() != null);
 			Contract.EndContractBlock();
 
 			var determinant = CalculateDeterminant();
-			if (0 == determinant || Double.IsNaN(determinant)) {
-				throw new InvalidOperationException();
+			if (0 == determinant || Double.IsNaN(determinant) || Double.IsInfinity(determinant)) {
+				throw new NoInverseException();
 			}
 			var negativeDeterminant = -determinant;
 			return new Matrix4(

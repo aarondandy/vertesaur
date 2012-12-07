@@ -58,8 +58,7 @@ namespace Vertesaur.PolygonOperation {
 		/// </summary>
 		/// <param name="options">Object to copy.</param>
 		public PolygonOperationOptions([NotNull] PolygonOperationOptions options) {
-			if(null == options)
-				throw new ArgumentNullException("options");
+			if(null == options) throw new ArgumentNullException("options");
 			Contract.EndContractBlock();
 
 			InvertResult = options.InvertResult;

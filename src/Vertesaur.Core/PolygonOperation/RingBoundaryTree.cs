@@ -88,8 +88,7 @@ namespace Vertesaur.PolygonOperation
 			/// The logic assumes the given ring does not intersect the boundary of any node within this collection or any node deeper in the tree.
 			/// </remarks>
 			public bool NonIntersectingContains([NotNull] Ring2 other) {
-				if(null == other)
-					throw new ArgumentNullException("other");
+				if(null == other) throw new ArgumentNullException("other");
 				Contract.EndContractBlock();
 
 				var nodeHoleFlag = NodesAreHole;
@@ -126,8 +125,7 @@ namespace Vertesaur.PolygonOperation
 			/// </summary>
 			/// <param name="predicate">determines if a node should be removed.</param>
 			public void RemoveAll([NotNull, InstantHandle] Predicate<Node> predicate) {
-				if(null == predicate)
-					throw new ArgumentNullException("predicate");
+				if(null == predicate) throw new ArgumentNullException("predicate");
 				Contract.EndContractBlock();
 
 				_nodes.RemoveAll(predicate);
@@ -151,8 +149,7 @@ namespace Vertesaur.PolygonOperation
 			/// <param name="index">The index to set.</param>
 			/// <param name="item">The item to store at the index.</param>
 			protected sealed override void SetItem(int index, Node item) {
-				if (!IsNodeValid(item))
-					throw new ArgumentException("item is not valid for this collection.","item");
+				if (!IsNodeValid(item)) throw new ArgumentException("item is not valid for this collection.","item");
 				base.SetItem(index, item);
 			}
 
@@ -162,8 +159,7 @@ namespace Vertesaur.PolygonOperation
 			/// <param name="index">The index to insert at.</param>
 			/// <param name="item">The item to store at the index.</param>
 			protected sealed override void InsertItem(int index, Node item) {
-				if(!IsNodeValid(item))
-					throw new ArgumentException("item is not valid for this collection.","item");
+				if(!IsNodeValid(item)) throw new ArgumentException("item is not valid for this collection.","item");
 				base.InsertItem(index, item);
 			}
 
@@ -179,16 +175,14 @@ namespace Vertesaur.PolygonOperation
 			internal Node([NotNull] Ring2 ring, [CanBeNull] IEnumerable<Node> children)
 				: this(ring, null == children ? null : new List<Node>(children))
 			{
-				if (null == ring)
-					throw new ArgumentNullException("ring");
+				if (null == ring) throw new ArgumentNullException("ring");
 				Contract.EndContractBlock();
 			}
 
 			private Node([NotNull] Ring2 ring, [CanBeNull] List<Node> children)
 				: base(children)
 			{
-				if (null == ring)
-					throw new ArgumentNullException("ring");
+				if (null == ring) throw new ArgumentNullException("ring");
 				Contract.EndContractBlock();
 
 				_ring = ring;
@@ -302,6 +296,7 @@ namespace Vertesaur.PolygonOperation
 		/// Constructs a ring boundary tree from a collection of non-intersecting rings.
 		/// </summary>
 		/// <param name="rings">A collection of non-intersecting rings.</param>
+		/// <exception cref="System.ArgumentNullException">Thrown if <paramref name="rings"/> is null.</exception>
 		public RingBoundaryTree([NotNull, InstantHandle] IEnumerable<Ring2> rings)
 			: this(BuildTree(rings))
 		{
@@ -313,6 +308,7 @@ namespace Vertesaur.PolygonOperation
 		/// Constructs a ring boundary tree from a polygon.
 		/// </summary>
 		/// <param name="polygon">A collection of non-intersecting rings.</param>
+		/// <exception cref="System.ArgumentNullException">Thrown if <paramref name="polygon"/> is null.</exception>
 		public RingBoundaryTree([NotNull] Polygon2 polygon)
 			: this(BuildTree(polygon))
 		{

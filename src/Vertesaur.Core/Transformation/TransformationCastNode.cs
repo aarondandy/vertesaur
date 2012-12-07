@@ -206,6 +206,7 @@ namespace Vertesaur.Transformation
 		/// Gets the method info for this specific cast of the transfom value method.
 		/// </summary>
 		/// <returns>A method info object.</returns>
+		/// <exception cref="System.InvalidOperationException">Thrown if the <c>TransformValue</c> method cannot be found at run time.</exception>
 		[NotNull]
 		public MethodInfo GetTransformValueMethod() {
 			Contract.Ensures(Contract.Result<MethodInfo>() != null);
@@ -220,6 +221,7 @@ namespace Vertesaur.Transformation
 		/// Gets the method info for this specific cast of the transfom values method.
 		/// </summary>
 		/// <returns>A method info object.</returns>
+		/// <exception cref="System.InvalidOperationException">Thrown if the <c>TransformValues</c> method cannot be found at run time.</exception>
 		[NotNull]
 		public MethodInfo GetTransformEnumerableValuesMethod() {
 			Contract.Ensures(Contract.Result<MethodInfo>() != null);
@@ -245,6 +247,7 @@ namespace Vertesaur.Transformation
 		/// </summary>
 		/// <param name="values">The values to transform.</param>
 		/// <returns>The result of transforming the values.</returns>
+		/// <exception cref="System.InvalidOperationException">Thrown if one of the transformations returns a <c>null</c> enumerable.</exception>
 		public IEnumerable TransformValues([NotNull] IEnumerable values) {
 			Contract.Requires(values != null);
 			Contract.Ensures(Contract.Result<IEnumerable>() != null);
