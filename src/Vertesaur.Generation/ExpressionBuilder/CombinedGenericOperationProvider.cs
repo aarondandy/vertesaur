@@ -22,8 +22,11 @@
 //
 // ===============================================================================
 
+using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
+using JetBrains.Annotations;
 using Vertesaur.Generation.Contracts;
 
 namespace Vertesaur.Generation.ExpressionBuilder
@@ -41,10 +44,10 @@ namespace Vertesaur.Generation.ExpressionBuilder
 		/// Constructs a new combined operation provider from the given operation providers.
 		/// </summary>
 		/// <param name="operationProviders">The providers to combine.</param>
-		public CombinedGenericOperationProvider(IEnumerable<IGenericOperationProvider> operationProviders) {
-			_operationProviders = (null == operationProviders)
-				? new List<IGenericOperationProvider>()
-				: new List<IGenericOperationProvider>(operationProviders);
+		public CombinedGenericOperationProvider([NotNull] IEnumerable<IGenericOperationProvider> operationProviders) {
+			if(null == operationProviders) throw new ArgumentNullException("operationProviders");
+			Contract.EndContractBlock();
+			_operationProviders = new List<IGenericOperationProvider>(operationProviders);
 		}
 
 		/// <summary>
@@ -54,10 +57,9 @@ namespace Vertesaur.Generation.ExpressionBuilder
 		/// <returns>An operation expression, or <c>null</c> on failure.</returns>
 		public Expression GetConstantExpression(GenericConstantOperationType operationType) {
 			foreach(var prov in _operationProviders) {
-				Expression tempExp;
-				if (null != (tempExp = prov.GetConstantExpression(operationType))) {
+				var tempExp = prov.GetConstantExpression(operationType);
+				if (null != tempExp)
 					return tempExp;
-				}
 			}
 			return null;
 		}
@@ -69,11 +71,12 @@ namespace Vertesaur.Generation.ExpressionBuilder
 		/// <param name="operationType">The operation type.</param>
 		/// <returns>An operation expression, or <c>null</c> on failure.</returns>
 		public Expression GetUnaryExpression(Expression input, GenericUnaryOperationType operationType) {
+			if(null == input) throw new ArgumentNullException("input");
+			Contract.EndContractBlock();
 			foreach (var prov in _operationProviders) {
-				Expression tempExp;
-				if (null != (tempExp = prov.GetUnaryExpression(input, operationType))) {
+				var tempExp = prov.GetUnaryExpression(input, operationType);
+				if (null != tempExp)
 					return tempExp;
-				}
 			}
 			return null;
 		}
@@ -86,11 +89,13 @@ namespace Vertesaur.Generation.ExpressionBuilder
 		/// <param name="operationType">The operation type.</param>
 		/// <returns>An operation expression, or <c>null</c> on failure.</returns>
 		public Expression GetBinaryExpression(Expression leftHandSide, Expression rightHandSide, GenericBinaryOperationType operationType) {
+			if(null == leftHandSide) throw new ArgumentNullException("leftHandSide");
+			if(null == rightHandSide) throw new ArgumentNullException("rightHandSide");
+			Contract.EndContractBlock();
 			foreach (var prov in _operationProviders) {
-				Expression tempExp;
-				if (null != (tempExp = prov.GetBinaryExpression(leftHandSide,rightHandSide, operationType))) {
+				var tempExp = prov.GetBinaryExpression(leftHandSide, rightHandSide, operationType);
+				if (null != tempExp)
 					return tempExp;
-				}
 			}
 			return null;
 		}

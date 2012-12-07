@@ -22,7 +22,9 @@
 //
 // ===============================================================================
 
+using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
+using JetBrains.Annotations;
 using Vertesaur.Generation.ExpressionBuilder;
 
 namespace Vertesaur.Generation.Contracts{
@@ -33,13 +35,14 @@ namespace Vertesaur.Generation.Contracts{
 	/// <remarks>
 	/// A method should return <c>null</c> if the requested expression cannot be built.
 	/// </remarks>
+	[ContractClass(typeof(GenericOperationProviderCodeContract))]
 	public interface IGenericOperationProvider {
 
 		/// <summary>
 		/// Generates an expression for a constant value.
 		/// </summary>
 		/// <returns>An expression for a constant value.</returns>
-		Expression GetConstantExpression(GenericConstantOperationType operationType);
+		[CanBeNull] Expression GetConstantExpression(GenericConstantOperationType operationType);
 
 		/// <summary>
 		/// Generates an expression for a unary operation.
@@ -47,7 +50,7 @@ namespace Vertesaur.Generation.Contracts{
 		/// <param name="input">The parameter for the operation.</param>
 		/// <param name="operationType">The type of operation.</param>
 		/// <returns>An expression for an operation, or <c>null</c>.</returns>
-		Expression GetUnaryExpression(Expression input, GenericUnaryOperationType operationType);
+		[CanBeNull] Expression GetUnaryExpression([NotNull] Expression input, GenericUnaryOperationType operationType);
 
 		/// <summary>
 		/// Generates an expression for a binary operation.
@@ -56,8 +59,30 @@ namespace Vertesaur.Generation.Contracts{
 		/// <param name="rightHandSide">the parameter for the right side of the operation.</param>
 		/// <param name="operationType">The type of operation.</param>
 		/// <returns>An expression for an operation, or <c>null</c>.</returns>
-		Expression GetBinaryExpression(Expression leftHandSide, Expression rightHandSide, GenericBinaryOperationType operationType);
+		[CanBeNull] Expression GetBinaryExpression([NotNull] Expression leftHandSide, [NotNull] Expression rightHandSide, GenericBinaryOperationType operationType);
 
+	}
+
+	[ContractClassFor(typeof(IGenericOperationProvider))]
+	internal abstract class GenericOperationProviderCodeContract : IGenericOperationProvider
+	{
+
+		public Expression GetConstantExpression(GenericConstantOperationType operationType) {
+			throw new System.NotImplementedException();
+		}
+
+		public Expression GetUnaryExpression(Expression input, GenericUnaryOperationType operationType) {
+			Contract.Requires(input != null);
+			Contract.EndContractBlock();
+			throw new System.NotImplementedException();
+		}
+
+		public Expression GetBinaryExpression(Expression leftHandSide, Expression rightHandSide, GenericBinaryOperationType operationType) {
+			Contract.Requires(leftHandSide != null);
+			Contract.Requires(rightHandSide != null);
+			Contract.EndContractBlock();
+			throw new System.NotImplementedException();
+		}
 	}
 
 }

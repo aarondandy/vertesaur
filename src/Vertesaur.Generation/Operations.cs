@@ -24,7 +24,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
+using JetBrains.Annotations;
 using Vertesaur.Generation.Contracts;
 using Vertesaur.Generation.ExpressionBuilder;
 
@@ -42,6 +44,7 @@ namespace Vertesaur.Generation
 		/// Various delegate definitions.
 		/// </summary>
 		public static class Delegates {
+
 			/// <summary>
 			/// A function with the components of two 2D points.
 			/// </summary>
@@ -51,6 +54,7 @@ namespace Vertesaur.Generation
 			/// <param name="y2">Y-coordinate of the second point.</param>
 			/// <returns>A result.</returns>
 			public delegate TValue TwoPoint2(TValue x1, TValue y1, TValue x2, TValue y2);
+
 			/// <summary>
 			/// A function with the components of two 3D points.
 			/// </summary>
@@ -64,42 +68,64 @@ namespace Vertesaur.Generation
 			public delegate TValue TwoPoint3(TValue x1, TValue y1, TValue z1, TValue x2, TValue y2, TValue z2);
 		}
 
+		private static readonly ParameterExpression DoubleParam = Expression.Parameter(typeof(double), "dParam");
+		private static readonly ParameterExpression IntParam = Expression.Parameter(typeof(int), "iParam");
+		private static readonly ParameterExpression TParam = Expression.Parameter(typeof(TValue), "tParam");
 
 		/// <summary>
 		/// Converts the given value to a <see cref="System.Double"/> value.
 		/// </summary>
-		public readonly Func<TValue, double> ConvertToDouble;
+		[NotNull] public readonly Func<TValue, double> ConvertToDouble;
 		/// <summary>
 		/// Converts the given value from <see cref="System.Double"/> to the generic type.
 		/// </summary>
-		public readonly Func<double, TValue> ConvertFromDouble;
+		[NotNull] public readonly Func<double, TValue> ConvertFromDouble;
 		/// <summary>
 		/// Converts the given value to a <see cref="System.Int32"/> value.
 		/// </summary>
-		public readonly Func<TValue, int> ConvertToInt;
+		[NotNull] public readonly Func<TValue, int> ConvertToInt;
 		/// <summary>
 		/// Converts the given value from <see cref="System.Int32"/> to the generic type.
 		/// </summary>
-		public readonly Func<int, TValue> ConvertFromInt;
+		[NotNull] public readonly Func<int, TValue> ConvertFromInt;
 
-		private readonly IGenericOperationProvider _operationProvider;
+		[NotNull] private readonly IGenericOperationProvider _operationProvider;
 
 		/// <summary>
 		/// Provides operations based on the given operation providers.
 		/// </summary>
-		/// <param name="operationsCollection">The operation providers.</param>
-		public Operations(IEnumerable<IGenericOperationProvider> operationsCollection)
-			: this(new CombinedGenericOperationProvider(operationsCollection)) { }
+		/// <param name="operationProviders">The operation providers.</param>
+		public Operations([NotNull] IEnumerable<IGenericOperationProvider> operationProviders)
+			: this(new CombinedGenericOperationProvider(operationProviders))
+		{
+			Contract.Requires(null != operationProviders);
+			Contract.EndContractBlock();
+		}
 
 		/// <summary>
 		/// Provides operations based on the given operation provider.
 		/// </summary>
 		/// <param name="operationProvider">The operation provider.</param>
 		public Operations(IGenericOperationProvider operationProvider) {
-			if(null == operationProvider)
-				throw new ArgumentNullException("operationProvider");
-
+			if(null == operationProvider) throw new ArgumentNullException("operationProvider");
+			Contract.EndContractBlock();
 			_operationProvider = operationProvider;
+			ConvertFromDouble = Expression.Lambda<Func<double,TValue>>(
+				_operationProvider.GetUnaryExpression(DoubleParam, GenericUnaryOperationType.ConvertFromDouble)
+				?? Expression.Convert(DoubleParam, typeof(TValue))
+			).Compile();
+			ConvertToDouble = Expression.Lambda<Func<TValue, double>>(
+				_operationProvider.GetUnaryExpression(TParam, GenericUnaryOperationType.ConvertToDouble)
+				?? Expression.Convert(TParam, typeof(double))
+			).Compile();
+			ConvertFromInt = Expression.Lambda<Func<int, TValue>>(
+				_operationProvider.GetUnaryExpression(IntParam, GenericUnaryOperationType.ConvertFromInt)
+				?? Expression.Convert(IntParam, typeof(TValue))
+			).Compile();
+			ConvertToInt = Expression.Lambda<Func<TValue, int>>(
+				_operationProvider.GetUnaryExpression(TParam, GenericUnaryOperationType.ConvertToInt)
+				?? Expression.Convert(TParam, typeof(int))
+			).Compile();
 		}
 
 		public Expression GetConstantExpression(GenericConstantOperationType operationType) {
@@ -107,12 +133,18 @@ namespace Vertesaur.Generation
 		}
 
 		public Expression GetUnaryExpression(Expression input, GenericUnaryOperationType operationType) {
+			if(null == input) throw new ArgumentNullException("input");
+			Contract.EndContractBlock();
 			return _operationProvider.GetUnaryExpression(input, operationType);
 		}
 
 		public Expression GetBinaryExpression(Expression leftHandSide, Expression rightHandSide, GenericBinaryOperationType operationType) {
+			if(null == leftHandSide) throw new ArgumentNullException("leftHandSide");
+			if(null == rightHandSide) throw new ArgumentNullException("rightHandSide");
+			Contract.EndContractBlock();
 			return _operationProvider.GetBinaryExpression(leftHandSide, rightHandSide, operationType);
 		}
 
 	}
 }
+

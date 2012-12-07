@@ -23,9 +23,11 @@
 // ===============================================================================
 
 using System;
+using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using JetBrains.Annotations;
 using Vertesaur.Generation.Contracts;
 
 namespace Vertesaur.Generation.ExpressionBuilder
@@ -120,7 +122,7 @@ namespace Vertesaur.Generation.ExpressionBuilder
 
 		private readonly Type _type;
 		private readonly bool _checked;
-		private readonly Func<double, TValue> _convertFromDouble;
+		[NotNull] private readonly Func<double, TValue> _convertFromDouble;
 
 		/// <summary>
 		/// Default constructor.
@@ -162,6 +164,8 @@ namespace Vertesaur.Generation.ExpressionBuilder
 
 		/// <inheritdoc/>
 		public Expression GetUnaryExpression(Expression input, GenericUnaryOperationType operationType) {
+			if(null == input) throw new ArgumentNullException("input");
+			Contract.EndContractBlock();
 			switch (operationType) {
 			case GenericUnaryOperationType.ConvertToDouble:
 				return typeof(TValue) == typeof(double) ? input : Expression.Convert(input, typeof(double));
@@ -183,7 +187,9 @@ namespace Vertesaur.Generation.ExpressionBuilder
 
 		/// <inheritdoc/>
 		public Expression GetBinaryExpression(Expression leftHandSide, Expression rightHandSide, GenericBinaryOperationType operationType) {
-
+			if(null == leftHandSide) throw new ArgumentNullException("leftHandSide");
+			if(null == rightHandSide) throw new ArgumentNullException("rightHandSide");
+			Contract.EndContractBlock();
 			// special case for operations that need to be defined manually
 			if (_type == typeof(byte) || _type == typeof(char) || _type == typeof(sbyte)) {
 				string methodName;
