@@ -35,34 +35,34 @@ namespace Vertesaur.Generation.Test {
 	/// Tests for the <c>DefaultGenericOperationProvider</c>.
 	/// </summary>
 	[TestFixture]
-	public class DefaultGenericOperationProviderTests {
+	public class DefaultBasicExpressionGeneratorTests {
 
 // ReSharper disable InconsistentNaming
 #pragma warning disable 1591
 
 		[Test]
 		public void zero_constant_is_zero() {
-			constant_is(GenericConstantOperationType.ValueZero, 0);
+			constant_is(BasicConstantOperationType.ValueZero, 0);
 		}
 
 		[Test]
 		public void one_constant_is_one() {
-			constant_is(GenericConstantOperationType.ValueOne, 1);
+			constant_is(BasicConstantOperationType.ValueOne, 1);
 		}
 
 		[Test]
 		public void two_constant_is_two() {
-			constant_is(GenericConstantOperationType.ValueTwo, 2);
+			constant_is(BasicConstantOperationType.ValueTwo, 2);
 		}
 
 		[Test]
 		public void e_constant_is_e() {
-			real_number_constant_is(GenericConstantOperationType.ValueE, Math.E);
+			real_number_constant_is(BasicConstantOperationType.ValueE, Math.E);
 		}
 
 		[Test]
 		public void pi_constant_is_pi() {
-			constant_is(GenericConstantOperationType.ValuePi, Math.PI);
+			constant_is(BasicConstantOperationType.ValuePi, Math.PI);
 		}
 
 		[Test]
@@ -177,13 +177,14 @@ ushort
 		private void generic_add<TValue>(int[] values) {
 			foreach(var a in values) {
 				foreach(var b in values) {
-					var provider = new DefaultGenericOperationProvider<TValue>();
+					var provider = new DefaultBasicExpressionGenerator();
 
 					var expected = ConvertTo<TValue>(a + b);
 
 					var leftHandSide = Expression.Parameter(typeof (TValue), "leftHandSide");
 					var rightHandSide = Expression.Parameter(typeof (TValue), "rightHandSide");
-					var expression = provider.GetBinaryExpression(leftHandSide,rightHandSide,GenericBinaryOperationType.Add);
+					var expression = provider.GetBinaryExpression(BasicBinaryOperationType.Add, typeof(TValue), leftHandSide, rightHandSide);
+					Assert.IsNotNull(expression);
 					var func = Expression.Lambda<Func<TValue,TValue,TValue>>(expression, leftHandSide, rightHandSide).Compile();
 					var result = func(ConvertTo<TValue>(a),ConvertTo<TValue>(b));
 
@@ -195,13 +196,14 @@ ushort
 		private void generic_add<TValue>(double[] values) {
 			foreach (var a in values) {
 				foreach (var b in values) {
-					var provider = new DefaultGenericOperationProvider<TValue>();
+					var provider = new DefaultBasicExpressionGenerator();
 
 					var expected = ConvertTo<TValue>(a + b);
 
                     var leftHandSide = Expression.Parameter(typeof(TValue), "leftHandSide");
                     var rightHandSide = Expression.Parameter(typeof(TValue), "rightHandSide");
-					var expression = provider.GetBinaryExpression(leftHandSide, rightHandSide, GenericBinaryOperationType.Add);
+					var expression = provider.GetBinaryExpression(BasicBinaryOperationType.Add, typeof(TValue), leftHandSide, rightHandSide);
+					Assert.IsNotNull(expression);
 					var func = Expression.Lambda<Func<TValue, TValue, TValue>>(expression, leftHandSide, rightHandSide).Compile();
 					var result = func(ConvertTo<TValue>(a), ConvertTo<TValue>(b));
 
@@ -244,13 +246,14 @@ ushort
 		private void generic_subtract<TValue>(int[] values) {
 			foreach (var a in values) {
 				foreach (var b in values) {
-					var provider = new DefaultGenericOperationProvider<TValue>();
+					var provider = new DefaultBasicExpressionGenerator();
 
 					var expected = ConvertTo<TValue>(a - b);
 
                     var leftHandSide = Expression.Parameter(typeof(TValue), "leftHandSide");
                     var rightHandSide = Expression.Parameter(typeof(TValue), "rightHandSide");
-					var expression = provider.GetBinaryExpression(leftHandSide, rightHandSide, GenericBinaryOperationType.Subtract);
+					var expression = provider.GetBinaryExpression(BasicBinaryOperationType.Subtract, typeof(TValue), leftHandSide, rightHandSide);
+					Assert.IsNotNull(expression);
 					var func = Expression.Lambda<Func<TValue, TValue, TValue>>(expression, leftHandSide, rightHandSide).Compile();
 					var result = func(ConvertTo<TValue>(a), ConvertTo<TValue>(b));
 
@@ -262,13 +265,14 @@ ushort
 		private void generic_subtract<TValue>(double[] values) {
 			foreach (var a in values) {
 				foreach (var b in values) {
-					var provider = new DefaultGenericOperationProvider<TValue>();
+					var provider = new DefaultBasicExpressionGenerator();
 
 					var expected = ConvertTo<TValue>(a - b);
 
                     var leftHandSide = Expression.Parameter(typeof(TValue), "leftHandSide");
                     var rightHandSide = Expression.Parameter(typeof(TValue), "rightHandSide");
-					var expression = provider.GetBinaryExpression(leftHandSide, rightHandSide, GenericBinaryOperationType.Subtract);
+					var expression = provider.GetBinaryExpression(BasicBinaryOperationType.Subtract, typeof(TValue), leftHandSide, rightHandSide);
+					Assert.IsNotNull(expression);
 					var func = Expression.Lambda<Func<TValue, TValue, TValue>>(expression, leftHandSide, rightHandSide).Compile();
 					var result = func(ConvertTo<TValue>(a), ConvertTo<TValue>(b));
 
@@ -311,13 +315,14 @@ ushort
 		private void generic_multiply<TValue>(int[] values) {
 			foreach (var a in values) {
 				foreach (var b in values) {
-					var provider = new DefaultGenericOperationProvider<TValue>();
+					var provider = new DefaultBasicExpressionGenerator();
 
 					var expected = ConvertTo<TValue>(a * b);
 
                     var leftHandSide = Expression.Parameter(typeof(TValue), "leftHandSide");
                     var rightHandSide = Expression.Parameter(typeof(TValue), "rightHandSide");
-					var expression = provider.GetBinaryExpression(leftHandSide, rightHandSide, GenericBinaryOperationType.Multiply);
+					var expression = provider.GetBinaryExpression(BasicBinaryOperationType.Multiply, typeof(TValue), leftHandSide, rightHandSide);
+					Assert.IsNotNull(expression);
 					var func = Expression.Lambda<Func<TValue, TValue, TValue>>(expression, leftHandSide, rightHandSide).Compile();
 					var result = func(ConvertTo<TValue>(a), ConvertTo<TValue>(b));
 
@@ -329,13 +334,14 @@ ushort
 		private void generic_multiply<TValue>(double[] values) {
 			foreach (var a in values) {
 				foreach (var b in values) {
-					var provider = new DefaultGenericOperationProvider<TValue>();
+					var provider = new DefaultBasicExpressionGenerator();
 
 					var expected = ConvertTo<TValue>(a * b);
 
                     var leftHandSide = Expression.Parameter(typeof(TValue), "leftHandSide");
                     var rightHandSide = Expression.Parameter(typeof(TValue), "rightHandSide");
-					var expression = provider.GetBinaryExpression(leftHandSide, rightHandSide, GenericBinaryOperationType.Multiply);
+					var expression = provider.GetBinaryExpression(BasicBinaryOperationType.Multiply, typeof(TValue), leftHandSide, rightHandSide);
+					Assert.IsNotNull(expression);
 					var func = Expression.Lambda<Func<TValue, TValue, TValue>>(expression, leftHandSide, rightHandSide).Compile();
 					var result = func(ConvertTo<TValue>(a), ConvertTo<TValue>(b));
 
@@ -353,12 +359,13 @@ ushort
 		private void generic_divide<TValue>(double[] values) {
 			foreach (var a in values) {
 				foreach (var b in values) {
-					var provider = new DefaultGenericOperationProvider<TValue>();
+					var provider = new DefaultBasicExpressionGenerator();
 					var expected = a / b;
 
                     var leftHandSide = Expression.Parameter(typeof(TValue), "leftHandSide");
                     var rightHandSide = Expression.Parameter(typeof(TValue), "rightHandSide");
-					var expression = provider.GetBinaryExpression(leftHandSide, rightHandSide, GenericBinaryOperationType.Divide);
+					var expression = provider.GetBinaryExpression(BasicBinaryOperationType.Divide, typeof(TValue), leftHandSide, rightHandSide);
+					Assert.IsNotNull(expression);
 					var func = Expression.Lambda<Func<TValue, TValue, TValue>>(expression, leftHandSide, rightHandSide).Compile();
 					var result = func(ConvertTo<TValue>(a), ConvertTo<TValue>(b));
 
@@ -412,12 +419,13 @@ ushort
 			return result;
 		}
 
-		private void constant_is<TValue>(GenericConstantOperationType constantType, double value) {
-			var provider = new DefaultGenericOperationProvider<TValue>();
+		private void constant_is<TValue>(BasicConstantOperationType constantType, double value) {
+			var provider = new DefaultBasicExpressionGenerator();
 
 			var expected = ConvertTo<TValue>(value);
 
-			var expression = provider.GetConstantExpression(constantType);
+			var expression = provider.GetConstantExpression(constantType, typeof(TValue));
+			Assert.IsNotNull(expression);
 			var func = Expression.Lambda<Func<TValue>>(expression).Compile();
 			var result = func();
 			Assert.AreEqual(
@@ -426,7 +434,7 @@ ushort
 			);
 		}
 
-		private void constant_is(GenericConstantOperationType constantType, double value) {
+		private void constant_is(BasicConstantOperationType constantType, double value) {
 			constant_is<double>(constantType, value);
 			constant_is<float>(constantType, value);
 			constant_is<int>(constantType, value);
@@ -441,20 +449,22 @@ ushort
 			constant_is<ushort>(constantType, value);
 		}
 
-		private void real_number_constant_is(GenericConstantOperationType constantType, double value) {
+		private void real_number_constant_is(BasicConstantOperationType constantType, double value) {
 			constant_is<double>(constantType, value);
 			constant_is<float>(constantType, value);
 			constant_is<decimal>(constantType, value);
 		}
 
 		private void from_double_and_back_again<TValue>(double value) {
-			var provider = new DefaultGenericOperationProvider<TValue>();
+			var provider = new DefaultBasicExpressionGenerator();
 
 			var doubleParam = Expression.Parameter(typeof (double), "dVal");
-			var fromDoubleExp = provider.GetUnaryExpression(doubleParam, GenericUnaryOperationType.ConvertFromDouble);
+			var fromDoubleExp = provider.GetUnaryExpression(BasicUnaryOperationType.Convert, typeof(TValue), doubleParam);
+			Assert.IsNotNull(fromDoubleExp);
 			var fromDoubleFunc = Expression.Lambda<Func<double, TValue>>(fromDoubleExp, doubleParam).Compile();
 			var genericParam = Expression.Parameter(typeof (TValue), "tVal");
-			var toDoubleExp = provider.GetUnaryExpression(genericParam, GenericUnaryOperationType.ConvertToDouble);
+			var toDoubleExp = provider.GetUnaryExpression(BasicUnaryOperationType.Convert, typeof(double), genericParam);
+			Assert.IsNotNull(toDoubleExp);
 			var toDoubleFunc = Expression.Lambda<Func<TValue, double>>(toDoubleExp, genericParam).Compile();
 
 			var expectedGenericValue = ConvertTo<TValue>(value);
@@ -499,13 +509,15 @@ ushort
 		}
 
 		private void from_int_and_back_again<TValue>(int value) {
-			var provider = new DefaultGenericOperationProvider<TValue>();
+			var provider = new DefaultBasicExpressionGenerator();
 
 			var intParam = Expression.Parameter(typeof(int), "iVal");
-			var fromIntExp = provider.GetUnaryExpression(intParam, GenericUnaryOperationType.ConvertFromInt);
+			var fromIntExp = provider.GetUnaryExpression(BasicUnaryOperationType.Convert, typeof(TValue), intParam);
+			Assert.IsNotNull(fromIntExp);
 			var fromIntFunc = Expression.Lambda<Func<int, TValue>>(fromIntExp, intParam).Compile();
 			var genericParam = Expression.Parameter(typeof(TValue), "tVal");
-			var toIntExp = provider.GetUnaryExpression(genericParam, GenericUnaryOperationType.ConvertToInt);
+			var toIntExp = provider.GetUnaryExpression(BasicUnaryOperationType.Convert, typeof(int), genericParam);
+			Assert.IsNotNull(toIntExp);
 			var toIntFunc = Expression.Lambda<Func<TValue, int>>(toIntExp, genericParam).Compile();
 
 			var expectedGenericValue = ConvertTo<TValue>(value);
@@ -544,7 +556,6 @@ ushort
 			from_int_and_back_again<ushort>(values);
 		}
 
-// ReSharper restore InconsistentNaming
 
 	}
 

@@ -28,7 +28,7 @@ namespace Vertesaur.Generation.ExpressionBuilder
 	/// <summary>
 	/// Constant generic operation types.
 	/// </summary>
-	public enum GenericConstantOperationType {
+	public enum BasicConstantOperationType {
 
 		// constants
 
@@ -58,26 +58,14 @@ namespace Vertesaur.Generation.ExpressionBuilder
 	/// <summary>
 	/// Unary generic operation types.
 	/// </summary>
-	public enum GenericUnaryOperationType {
+	public enum BasicUnaryOperationType {
 
 		// conversions
 
 		/// <summary>
-		/// Convert a generic value to a Double value.
+		/// Convert the type of a value.
 		/// </summary>
-		ConvertToDouble,
-		/// <summary>
-		/// Convert a Double value to a generic value.
-		/// </summary>
-		ConvertFromDouble,
-		/// <summary>
-		/// Convert a generic value to an Int32 value.
-		/// </summary>
-		ConvertToInt,
-		/// <summary>
-		/// Convert an Int32 value to a generic value.
-		/// </summary>
-		ConvertFromInt,
+		Convert,
 
 		// arithmetic
 
@@ -85,13 +73,22 @@ namespace Vertesaur.Generation.ExpressionBuilder
 		/// Calculates the negative value.
 		/// </summary>
 		Negate,
+		Square,
+		SquareRoot,
+
+		// other
+
+		/// <summary>
+		/// Calculates the hash-code of a value.
+		/// </summary>
+		HashCode,
 
 	}
 
 	/// <summary>
 	/// Binary generic operation types.
 	/// </summary>
-	public enum GenericBinaryOperationType {
+	public enum BasicBinaryOperationType {
 
 		// arithmetic
 

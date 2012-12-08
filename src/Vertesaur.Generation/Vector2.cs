@@ -60,10 +60,12 @@ namespace Vertesaur.Generation
 			// ReSharper disable CompareNonConstrainedGenericWithNull
 			if(x == null) throw new ArgumentNullException("x");
 			if(y == null) throw new ArgumentNullException("y");
-			// ReSharper restore CompareNonConstrainedGenericWithNull
 			Contract.EndContractBlock();
 			X = x;
 			Y = y;
+			Contract.Assume(null != X);
+			Contract.Assume(null != Y);
+			// ReSharper restore CompareNonConstrainedGenericWithNull
 		}
 
 		/// <summary>
@@ -74,10 +76,12 @@ namespace Vertesaur.Generation
 			if(null == v) throw new ArgumentNullException("v");
 			// ReSharper disable CompareNonConstrainedGenericWithNull
 			if (v.X == null || v.Y  == null) throw new ArgumentException("Null coordinate values are not allowed.","v");
-			// ReSharper restore CompareNonConstrainedGenericWithNull
 			Contract.EndContractBlock();
 			X = v.X;
 			Y = v.Y;
+			Contract.Assume(null != X);
+			Contract.Assume(null != Y);
+			// ReSharper restore CompareNonConstrainedGenericWithNull
 		}
 
 		/// <summary>
@@ -101,10 +105,13 @@ namespace Vertesaur.Generation
 			return X.GetHashCode();
 		}
 
+		/// <inheritdoc/>
 		public bool Equals(Vector2<TValue> other) {
-			throw new NotImplementedException();
+			return X.Equals(other.X) && Y.Equals(other.Y);
+			//return Operations<TValue>.Default.Equals(X, other.X) && Operations<TValue>.Default.Equals(Y, other.Y);
 		}
 
+		/// <inheritdoc/>
 		public override bool Equals(object obj) {
 			return obj is Vector2<TValue> && Equals((Vector2<TValue>)obj);
 		}

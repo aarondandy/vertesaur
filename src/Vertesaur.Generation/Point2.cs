@@ -28,6 +28,13 @@ using Vertesaur.Contracts;
 
 namespace Vertesaur.Generation
 {
+	/// <summary>
+	/// A point in 2D space.
+	/// </summary>
+	/// <typeparam name="TValue">The coordinate value data type.</typeparam>
+	/// <remarks>
+	/// The type used as the generic argument for a coordinate value should be immutable.
+	/// </remarks>
 	public struct Point2<TValue> :
 		IPoint2<TValue>,
 		IEquatable<Point2<TValue>>
@@ -79,6 +86,7 @@ namespace Vertesaur.Generation
 			return String.Concat(X, ' ', Y);
 		}
 
+		/// <inheritdoc/>
 		public bool Equals(Point2<TValue> other) {
 			throw new NotImplementedException();
 		}

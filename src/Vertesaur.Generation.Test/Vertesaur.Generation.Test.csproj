@@ -61,7 +61,7 @@
     <Compile Include="..\VertesaurAssemblyInfo.cs">
       <Link>Properties\VertesaurAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="DefaultGenericOperationProviderTests.cs" />
+    <Compile Include="DefaultBasicExpressionGeneratorTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

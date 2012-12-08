@@ -157,13 +157,12 @@
     <Compile Include="..\VertesaurAssemblyInfo.cs">
       <Link>Properties\VertesaurAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="ExpressionBuilder\CombinedGenericOperationProvider.cs" />
-    <Compile Include="Contracts\IGenericOperationProvider.cs" />
-    <Compile Include="ExpressionBuilder\DefaultGenericOperationProvider.cs" />
-    <Compile Include="ExpressionBuilder\FunctionBuilder.cs" />
-    <Compile Include="ExpressionBuilder\GenericOperationType.cs" />
+    <Compile Include="ExpressionBuilder\CombinedBasicExpressionGenerator.cs" />
+    <Compile Include="Contracts\IBasicExpressionGenerator.cs" />
+    <Compile Include="ExpressionBuilder\DefaultBasicExpressionGenerator.cs" />
+    <Compile Include="ExpressionBuilder\BasicOperationType.cs" />
     <Compile Include="ExpressionBuilder\IntermediaryVariableManager.cs" />
-    <Compile Include="Operations.cs" />
+    <Compile Include="GenericOperations\PrimaryOperations.cs" />
     <Compile Include="Point2.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Vector2.cs" />

@@ -36,18 +36,18 @@ namespace Vertesaur.Generation.ExpressionBuilder
 	/// Combines various generic operation providers together.
 	/// Provides a requested expression from the first provider to successfully build one.
 	/// </summary>
-	public class CombinedGenericOperationProvider : IGenericOperationProvider {
+	public class CombinedBasicExpressionGenerator : IBasicExpressionGenerator {
 
-		private readonly List<IGenericOperationProvider> _operationProviders;
+		private readonly List<IBasicExpressionGenerator> _operationProviders;
 
 		/// <summary>
 		/// Constructs a new combined operation provider from the given operation providers.
 		/// </summary>
 		/// <param name="operationProviders">The providers to combine.</param>
-		public CombinedGenericOperationProvider([NotNull] IEnumerable<IGenericOperationProvider> operationProviders) {
+		public CombinedBasicExpressionGenerator([NotNull] IEnumerable<IBasicExpressionGenerator> operationProviders) {
 			if(null == operationProviders) throw new ArgumentNullException("operationProviders");
 			Contract.EndContractBlock();
-			_operationProviders = new List<IGenericOperationProvider>(operationProviders);
+			_operationProviders = new List<IBasicExpressionGenerator>(operationProviders);
 		}
 
 		/// <summary>
@@ -55,9 +55,12 @@ namespace Vertesaur.Generation.ExpressionBuilder
 		/// </summary>
 		/// <param name="operationType">The operation type.</param>
 		/// <returns>An operation expression, or <c>null</c> on failure.</returns>
-		public Expression GetConstantExpression(GenericConstantOperationType operationType) {
+		public Expression GetConstantExpression(BasicConstantOperationType operationType, Type constantType) {
+			if(null == constantType) throw new ArgumentNullException("constantType");
+			Contract.EndContractBlock();
+
 			foreach(var prov in _operationProviders) {
-				var tempExp = prov.GetConstantExpression(operationType);
+				var tempExp = prov.GetConstantExpression(operationType, constantType);
 				if (null != tempExp)
 					return tempExp;
 			}
@@ -70,11 +73,12 @@ namespace Vertesaur.Generation.ExpressionBuilder
 		/// <param name="input">The unary parameter expression.</param>
 		/// <param name="operationType">The operation type.</param>
 		/// <returns>An operation expression, or <c>null</c> on failure.</returns>
-		public Expression GetUnaryExpression(Expression input, GenericUnaryOperationType operationType) {
+		public Expression GetUnaryExpression(BasicUnaryOperationType operationType, Type returnType, Expression input) {
+			if(null == returnType) throw new ArgumentNullException("returnType");
 			if(null == input) throw new ArgumentNullException("input");
 			Contract.EndContractBlock();
 			foreach (var prov in _operationProviders) {
-				var tempExp = prov.GetUnaryExpression(input, operationType);
+				var tempExp = prov.GetUnaryExpression(operationType, returnType, input);
 				if (null != tempExp)
 					return tempExp;
 			}
@@ -86,14 +90,16 @@ namespace Vertesaur.Generation.ExpressionBuilder
 		/// </summary>
 		/// <param name="leftHandSide">The left hand side binary parameter expression.</param>
 		/// <param name="rightHandSide">The right hand side binary parameter expression.</param>
+		/// <param name="returnType">The return type of the expression.</param>
 		/// <param name="operationType">The operation type.</param>
 		/// <returns>An operation expression, or <c>null</c> on failure.</returns>
-		public Expression GetBinaryExpression(Expression leftHandSide, Expression rightHandSide, GenericBinaryOperationType operationType) {
+		public Expression GetBinaryExpression(BasicBinaryOperationType operationType, Type returnType, Expression leftHandSide, Expression rightHandSide) {
+			if(null == returnType) throw new ArgumentNullException("returnType");
 			if(null == leftHandSide) throw new ArgumentNullException("leftHandSide");
 			if(null == rightHandSide) throw new ArgumentNullException("rightHandSide");
 			Contract.EndContractBlock();
 			foreach (var prov in _operationProviders) {
-				var tempExp = prov.GetBinaryExpression(leftHandSide, rightHandSide, operationType);
+				var tempExp = prov.GetBinaryExpression(operationType, returnType, leftHandSide, rightHandSide);
 				if (null != tempExp)
 					return tempExp;
 			}

@@ -30,49 +30,29 @@ using JetBrains.Annotations;
 using Vertesaur.Generation.Contracts;
 using Vertesaur.Generation.ExpressionBuilder;
 
-namespace Vertesaur.Generation
+namespace Vertesaur.Generation.GenericOperations
 {
 
 	/// <summary>
 	/// Defines and creates multiple operations that can be executed for generic types.
 	/// </summary>
 	/// <typeparam name="TValue">The generic type that operations must be performed on.</typeparam>
-	public class Operations<TValue> : IGenericOperationProvider
+	public class PrimaryOperations<TValue> :
+		IEqualityComparer<TValue>
 	{
 
 		/// <summary>
-		/// Various delegate definitions.
+		/// The default generic operation provider.
 		/// </summary>
-		public static class Delegates {
+		[NotNull] public static PrimaryOperations<TValue> Default { get; private set; }
 
-			/// <summary>
-			/// A function with the components of two 2D points.
-			/// </summary>
-			/// <param name="x1">X-coordinate of the first point.</param>
-			/// <param name="y1">Y-coordinate of the first point.</param>
-			/// <param name="x2">X-coordinate of the second point.</param>
-			/// <param name="y2">Y-coordinate of the second point.</param>
-			/// <returns>A result.</returns>
-			public delegate TValue TwoPoint2(TValue x1, TValue y1, TValue x2, TValue y2);
-
-			/// <summary>
-			/// A function with the components of two 3D points.
-			/// </summary>
-			/// <param name="x1">X-coordinate of the first point.</param>
-			/// <param name="y1">Y-coordinate of the first point.</param>
-			/// <param name="z1">Z-coordinate of the first point.</param>
-			/// <param name="x2">X-coordinate of the second point.</param>
-			/// <param name="y2">Y-coordinate of the second point.</param>
-			/// <param name="z2">Z-coordinate of the second point.</param>
-			/// <returns>A result.</returns>
-			public delegate TValue TwoPoint3(TValue x1, TValue y1, TValue z1, TValue x2, TValue y2, TValue z2);
+		static PrimaryOperations() {
+			var defaultExpressionGenerator = DefaultBasicExpressionGenerator.Default;
+			Contract.Assume(null != defaultExpressionGenerator);
+			Default = new PrimaryOperations<TValue>(defaultExpressionGenerator);
 		}
 
-		private static readonly ParameterExpression DoubleParam = Expression.Parameter(typeof(double), "dParam");
-		private static readonly ParameterExpression IntParam = Expression.Parameter(typeof(int), "iParam");
-		private static readonly ParameterExpression TParam = Expression.Parameter(typeof(TValue), "tParam");
-
-		/// <summary>
+			/// <summary>
 		/// Converts the given value to a <see cref="System.Double"/> value.
 		/// </summary>
 		[NotNull] public readonly Func<TValue, double> ConvertToDouble;
@@ -88,15 +68,20 @@ namespace Vertesaur.Generation
 		/// Converts the given value from <see cref="System.Int32"/> to the generic type.
 		/// </summary>
 		[NotNull] public readonly Func<int, TValue> ConvertFromInt;
+		/// <summary>
+		/// Determines if two values are equal.
+		/// </summary>
+		[NotNull] public readonly Func<TValue, TValue, bool> EqualsTest;
 
-		[NotNull] private readonly IGenericOperationProvider _operationProvider;
+		[NotNull] private readonly IBasicExpressionGenerator _operationProvider;
+		[CanBeNull] private readonly Func<TValue,int> _hashCode;
 
 		/// <summary>
 		/// Provides operations based on the given operation providers.
 		/// </summary>
 		/// <param name="operationProviders">The operation providers.</param>
-		public Operations([NotNull] IEnumerable<IGenericOperationProvider> operationProviders)
-			: this(new CombinedGenericOperationProvider(operationProviders))
+		public PrimaryOperations([NotNull] IEnumerable<IBasicExpressionGenerator> operationProviders)
+			: this(new CombinedBasicExpressionGenerator(operationProviders))
 		{
 			Contract.Requires(null != operationProviders);
 			Contract.EndContractBlock();
@@ -106,45 +91,56 @@ namespace Vertesaur.Generation
 		/// Provides operations based on the given operation provider.
 		/// </summary>
 		/// <param name="operationProvider">The operation provider.</param>
-		public Operations(IGenericOperationProvider operationProvider) {
+		public PrimaryOperations(IBasicExpressionGenerator operationProvider) {
 			if(null == operationProvider) throw new ArgumentNullException("operationProvider");
 			Contract.EndContractBlock();
+
+			var doubleParam = Expression.Parameter(typeof(double), "dParam");
+			var intParam = Expression.Parameter(typeof(int), "iParam");
+			var tParam0 = Expression.Parameter(typeof(TValue), "tParam0");
+			var tParam1 = Expression.Parameter(typeof(TValue), "tParam1");
+
 			_operationProvider = operationProvider;
 			ConvertFromDouble = Expression.Lambda<Func<double,TValue>>(
-				_operationProvider.GetUnaryExpression(DoubleParam, GenericUnaryOperationType.ConvertFromDouble)
-				?? Expression.Convert(DoubleParam, typeof(TValue))
+				_operationProvider.GetUnaryExpression(BasicUnaryOperationType.Convert, typeof(TValue), doubleParam)
+				?? Expression.Convert(doubleParam, typeof(TValue)),
+				doubleParam
 			).Compile();
 			ConvertToDouble = Expression.Lambda<Func<TValue, double>>(
-				_operationProvider.GetUnaryExpression(TParam, GenericUnaryOperationType.ConvertToDouble)
-				?? Expression.Convert(TParam, typeof(double))
+				_operationProvider.GetUnaryExpression(BasicUnaryOperationType.Convert, typeof(double), tParam0)
+				?? Expression.Convert(tParam0, typeof(double)),
+				tParam0
 			).Compile();
 			ConvertFromInt = Expression.Lambda<Func<int, TValue>>(
-				_operationProvider.GetUnaryExpression(IntParam, GenericUnaryOperationType.ConvertFromInt)
-				?? Expression.Convert(IntParam, typeof(TValue))
+				_operationProvider.GetUnaryExpression(BasicUnaryOperationType.Convert, typeof(TValue), intParam)
+				?? Expression.Convert(intParam, typeof(TValue)),
+				intParam
 			).Compile();
 			ConvertToInt = Expression.Lambda<Func<TValue, int>>(
-				_operationProvider.GetUnaryExpression(TParam, GenericUnaryOperationType.ConvertToInt)
-				?? Expression.Convert(TParam, typeof(int))
+				_operationProvider.GetUnaryExpression(BasicUnaryOperationType.Convert, typeof(int), tParam0)
+				?? Expression.Convert(tParam0, typeof(int)),
+				tParam0
 			).Compile();
+			EqualsTest = Expression.Lambda<Func<TValue, TValue, bool>>(
+				_operationProvider.GetBinaryExpression(BasicBinaryOperationType.Equal, typeof(bool), tParam0, tParam1)
+				?? Expression.Equal(tParam0, tParam1),
+				tParam0, tParam1
+			).Compile();
+			var hashCodeExpression = _operationProvider.GetUnaryExpression(BasicUnaryOperationType.HashCode, typeof(int), tParam0);
+			_hashCode = null == hashCodeExpression ? null : Expression.Lambda<Func<TValue, int>>(hashCodeExpression, tParam0).Compile();
 		}
 
-		public Expression GetConstantExpression(GenericConstantOperationType operationType) {
-			return _operationProvider.GetConstantExpression(operationType);
+		public bool Equals(TValue x, TValue y) {
+			return EqualsTest(x, y);
 		}
 
-		public Expression GetUnaryExpression(Expression input, GenericUnaryOperationType operationType) {
-			if(null == input) throw new ArgumentNullException("input");
-			Contract.EndContractBlock();
-			return _operationProvider.GetUnaryExpression(input, operationType);
+		public int GetHashCode(TValue obj) {
+			// ReSharper disable CompareNonConstrainedGenericWithNull
+			return null == _hashCode
+				? (null == obj ? 0 : obj.GetHashCode())
+				: _hashCode(obj);
+			// ReSharper restore CompareNonConstrainedGenericWithNull
 		}
-
-		public Expression GetBinaryExpression(Expression leftHandSide, Expression rightHandSide, GenericBinaryOperationType operationType) {
-			if(null == leftHandSide) throw new ArgumentNullException("leftHandSide");
-			if(null == rightHandSide) throw new ArgumentNullException("rightHandSide");
-			Contract.EndContractBlock();
-			return _operationProvider.GetBinaryExpression(leftHandSide, rightHandSide, operationType);
-		}
-
 	}
 }
 

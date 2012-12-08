@@ -22,6 +22,7 @@
 //
 // ===============================================================================
 
+using System;
 using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
 using JetBrains.Annotations;
@@ -35,22 +36,27 @@ namespace Vertesaur.Generation.Contracts{
 	/// <remarks>
 	/// A method should return <c>null</c> if the requested expression cannot be built.
 	/// </remarks>
-	[ContractClass(typeof(GenericOperationProviderCodeContract))]
-	public interface IGenericOperationProvider {
+	[ContractClass(typeof(BasicExpressionProviderCodeContract))]
+	public interface IBasicExpressionGenerator {
 
 		/// <summary>
 		/// Generates an expression for a constant value.
 		/// </summary>
+		/// <param name="operationType">The constant to generate.</param>
+		/// <param name="constantType">The value type of the constant to return.</param>
 		/// <returns>An expression for a constant value.</returns>
-		[CanBeNull] Expression GetConstantExpression(GenericConstantOperationType operationType);
+		[CanBeNull]
+		Expression GetConstantExpression(BasicConstantOperationType operationType, Type constantType);
 
 		/// <summary>
 		/// Generates an expression for a unary operation.
 		/// </summary>
 		/// <param name="input">The parameter for the operation.</param>
 		/// <param name="operationType">The type of operation.</param>
+		/// <param name="resultType">The type of the value to return.</param>
 		/// <returns>An expression for an operation, or <c>null</c>.</returns>
-		[CanBeNull] Expression GetUnaryExpression([NotNull] Expression input, GenericUnaryOperationType operationType);
+		[CanBeNull]
+		Expression GetUnaryExpression(BasicUnaryOperationType operationType, Type resultType, [NotNull] Expression input);
 
 		/// <summary>
 		/// Generates an expression for a binary operation.
@@ -58,31 +64,38 @@ namespace Vertesaur.Generation.Contracts{
 		/// <param name="leftHandSide">The parameter for the left side of the operation.</param>
 		/// <param name="rightHandSide">the parameter for the right side of the operation.</param>
 		/// <param name="operationType">The type of operation.</param>
+		/// <param name="resultType">The type of the value to return.</param>
 		/// <returns>An expression for an operation, or <c>null</c>.</returns>
-		[CanBeNull] Expression GetBinaryExpression([NotNull] Expression leftHandSide, [NotNull] Expression rightHandSide, GenericBinaryOperationType operationType);
+		[CanBeNull]
+		Expression GetBinaryExpression(BasicBinaryOperationType operationType, Type resultType, [NotNull] Expression leftHandSide, [NotNull] Expression rightHandSide);
 
 	}
 
-	[ContractClassFor(typeof(IGenericOperationProvider))]
-	internal abstract class GenericOperationProviderCodeContract : IGenericOperationProvider
+	[ContractClassFor(typeof(IBasicExpressionGenerator))]
+	internal abstract class BasicExpressionProviderCodeContract : IBasicExpressionGenerator
 	{
 
-		public Expression GetConstantExpression(GenericConstantOperationType operationType) {
-			throw new System.NotImplementedException();
-		}
-
-		public Expression GetUnaryExpression(Expression input, GenericUnaryOperationType operationType) {
-			Contract.Requires(input != null);
+		public Expression GetConstantExpression(BasicConstantOperationType operationType, Type constantType) {
+			Contract.Requires(null != constantType);
 			Contract.EndContractBlock();
 			throw new System.NotImplementedException();
 		}
 
-		public Expression GetBinaryExpression(Expression leftHandSide, Expression rightHandSide, GenericBinaryOperationType operationType) {
-			Contract.Requires(leftHandSide != null);
-			Contract.Requires(rightHandSide != null);
+		public Expression GetUnaryExpression(BasicUnaryOperationType operationType, Type resultType, Expression input) {
+			Contract.Requires(null != input);
+			Contract.Requires(null != input);
 			Contract.EndContractBlock();
 			throw new System.NotImplementedException();
 		}
+
+		public Expression GetBinaryExpression(BasicBinaryOperationType operationType, Type resultType, Expression leftHandSide, Expression rightHandSide) {
+			Contract.Requires(null != resultType);
+			Contract.Requires(null != leftHandSide);
+			Contract.Requires(null != rightHandSide);
+			Contract.EndContractBlock();
+			throw new System.NotImplementedException();
+		}
+
 	}
 
 }
