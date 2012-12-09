@@ -73,7 +73,13 @@ namespace Vertesaur.Generation.ExpressionBuilder
 		/// Calculates the negative value.
 		/// </summary>
 		Negate,
+		/// <summary>
+		/// Multiplies the value by itself.
+		/// </summary>
 		Square,
+		/// <summary>
+		/// Finds the square root of the value.
+		/// </summary>
 		SquareRoot,
 
 		// other

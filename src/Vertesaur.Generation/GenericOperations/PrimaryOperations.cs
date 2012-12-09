@@ -130,10 +130,12 @@ namespace Vertesaur.Generation.GenericOperations
 			_hashCode = null == hashCodeExpression ? null : Expression.Lambda<Func<TValue, int>>(hashCodeExpression, tParam0).Compile();
 		}
 
+		/// <inheritdoc/>
 		public bool Equals(TValue x, TValue y) {
 			return EqualsTest(x, y);
 		}
 
+		/// <inheritdoc/>
 		public int GetHashCode(TValue obj) {
 			// ReSharper disable CompareNonConstrainedGenericWithNull
 			return null == _hashCode

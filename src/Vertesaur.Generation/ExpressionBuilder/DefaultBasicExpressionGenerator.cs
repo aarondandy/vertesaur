@@ -120,7 +120,13 @@ namespace Vertesaur.Generation.ExpressionBuilder
 
 		}
 
+		/// <summary>
+		/// The default unchecked expression generator.
+		/// </summary>
 		public static DefaultBasicExpressionGenerator Default { get; private set; }
+		/// <summary>
+		/// The default checked expression generator.
+		/// </summary>
 		public static DefaultBasicExpressionGenerator Checked { get; private set; }
 
 		static DefaultBasicExpressionGenerator() {

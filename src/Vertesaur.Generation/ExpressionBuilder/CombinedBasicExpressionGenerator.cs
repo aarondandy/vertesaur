@@ -54,6 +54,7 @@ namespace Vertesaur.Generation.ExpressionBuilder
 		/// Returns the first constant expression that was successfully created by a provider.
 		/// </summary>
 		/// <param name="operationType">The operation type.</param>
+		/// <param name="constantType">The value type of the constant to create.</param>
 		/// <returns>An operation expression, or <c>null</c> on failure.</returns>
 		public Expression GetConstantExpression(BasicConstantOperationType operationType, Type constantType) {
 			if(null == constantType) throw new ArgumentNullException("constantType");
@@ -72,6 +73,7 @@ namespace Vertesaur.Generation.ExpressionBuilder
 		/// </summary>
 		/// <param name="input">The unary parameter expression.</param>
 		/// <param name="operationType">The operation type.</param>
+		/// <param name="returnType">The desired return value type.</param>
 		/// <returns>An operation expression, or <c>null</c> on failure.</returns>
 		public Expression GetUnaryExpression(BasicUnaryOperationType operationType, Type returnType, Expression input) {
 			if(null == returnType) throw new ArgumentNullException("returnType");
