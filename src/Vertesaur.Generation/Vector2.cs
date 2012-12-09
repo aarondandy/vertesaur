@@ -27,6 +27,7 @@ using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using JetBrains.Annotations;
 using Vertesaur.Contracts;
+using Vertesaur.Generation.GenericOperations;
 
 namespace Vertesaur.Generation
 {
@@ -43,6 +44,56 @@ namespace Vertesaur.Generation
 	{
 
 		/// <summary>
+		/// Implements the operator ==.
+		/// </summary>
+		/// <param name="a">A vector.</param>
+		/// <param name="b">A vector.</param>
+		/// <returns>True if both vectors have the same component values.</returns>
+		public static bool operator ==(Vector2<TValue> a, Vector2<TValue> b) {
+			return a.Equals(b);
+		}
+
+		/// <summary>
+		/// Implements the operator !=.
+		/// </summary>
+		/// <param name="a">A vector.</param>
+		/// <param name="b">A vector.</param>
+		/// <returns>True if both vectors do not have the same component values.</returns>
+		public static bool operator !=(Vector2<TValue> a, Vector2<TValue> b) {
+			return !a.Equals(b);
+		}
+
+		/// <summary>
+		/// Implements the operator +.
+		/// </summary>
+		/// <param name="leftHandSide">A vector.</param>
+		/// <param name="rightHandSide">A vector.</param>
+		/// <returns>The result.</returns>
+		public static Vector2<TValue> operator +(Vector2<TValue> leftHandSide, Vector2<TValue> rightHandSide) {
+			return leftHandSide.Add(rightHandSide);
+		}
+
+		/// <summary>
+		/// Implements the operator -.
+		/// </summary>
+		/// <param name="leftHandSide">A vector.</param>
+		/// <param name="rightHandSide">A vector.</param>
+		/// <returns>The result.</returns>
+		public static Vector2<TValue> operator -(Vector2<TValue> leftHandSide, Vector2<TValue> rightHandSide) {
+			return leftHandSide.Difference(rightHandSide);
+		}
+
+		/// <summary>
+		/// Implements the operator * as the dot operator.
+		/// </summary>
+		/// <param name="leftHandSide">A vector.</param>
+		/// <param name="rightHandSide">A vector.</param>
+		/// <returns>The dot product.</returns>
+		public static TValue operator *(Vector2<TValue> leftHandSide, Vector2<TValue> rightHandSide) {
+			return leftHandSide.Dot(rightHandSide);
+		}
+
+			/// <summary>
 		/// The x-coordinate of this vector.
 		/// </summary>
 		[NotNull] public readonly TValue X;
@@ -123,12 +174,48 @@ namespace Vertesaur.Generation
 
 		/// <inheritdoc/>
 		public TValue GetMagnitude() {
-			throw new NotImplementedException();
+			return VectorOperations<TValue>.Default.GetMagnitude(X, Y);
 		}
 
 		/// <inheritdoc/>
 		public TValue GetMagnitudeSquared() {
-			throw new NotImplementedException();
+			return VectorOperations<TValue>.Default.GetSquaredMagnitude(X, Y);
+		}
+
+		/// <summary>
+		/// Calculates a vector resulting from adding the given vector to this vector.
+		/// </summary>
+		/// <param name="rightHandSide">The vector to add.</param>
+		/// <returns>A result of adding this vector with the given vector.</returns>
+		public Vector2<TValue> Add(Vector2<TValue> rightHandSide) {
+			return new Vector2<TValue>(
+				PrimaryOperations<TValue>.Default.Add(X,rightHandSide.X),
+				PrimaryOperations<TValue>.Default.Add(Y,rightHandSide.Y)
+			);
+		}
+
+		/// <summary>
+		/// Calculates a vector resulting from subtracting the given vector to this vector.
+		/// </summary>
+		/// <param name="rightHandSide">The vector to subtract.</param>
+		/// <returns>A result of subtracting the given vector from this vector.</returns>
+		public Vector2<TValue> Difference(Vector2<TValue> rightHandSide) {
+			return new Vector2<TValue>(
+				PrimaryOperations<TValue>.Default.Subtract(X, rightHandSide.X),
+				PrimaryOperations<TValue>.Default.Subtract(Y, rightHandSide.Y)
+			);
+		}
+
+		/// <summary>
+		/// Calculates the dot product between this vector and another vector.
+		/// </summary>
+		/// <param name="rightHandSide">Another vector to use for the calculation of the dot product.</param>
+		/// <returns>The dot product.</returns>
+		public TValue Dot(Vector2<TValue> rightHandSide) {
+			return PrimaryOperations<TValue>.Default.Add(
+				PrimaryOperations<TValue>.Default.Multiply(X,rightHandSide.X),
+				PrimaryOperations<TValue>.Default.Multiply(Y,rightHandSide.Y)
+			);
 		}
 
 	}

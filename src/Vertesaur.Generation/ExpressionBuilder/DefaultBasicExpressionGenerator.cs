@@ -207,7 +207,11 @@ namespace Vertesaur.Generation.ExpressionBuilder
 					Contract.Assume(null != zeroConstant);
 					return GetBinaryExpression(BasicBinaryOperationType.Subtract, resultType, zeroConstant, input);
 				}
-				return (_checked ? Expression.NegateChecked(input) : Expression.Negate(input));
+				return _checked ? Expression.NegateChecked(input) : Expression.Negate(input);
+			case BasicUnaryOperationType.SquareRoot:
+				return new SquareRootExpression(input);
+			case BasicUnaryOperationType.Square:
+				return new SquareExpression(input, this);
 			default:
 				return null;
 			}

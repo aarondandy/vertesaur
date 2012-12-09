@@ -24,6 +24,7 @@
 
 using System;
 using System.Diagnostics;
+using System.Diagnostics.Contracts;
 using Vertesaur.Contracts;
 
 namespace Vertesaur.Generation
@@ -54,16 +55,30 @@ namespace Vertesaur.Generation
 		/// <param name="x">A coordinate.</param>
 		/// <param name="y">A coordinate.</param>
 		public Point2(TValue x, TValue y) {
+			// ReSharper disable CompareNonConstrainedGenericWithNull
+			if (x == null) throw new ArgumentNullException("x");
+			if (y == null) throw new ArgumentNullException("y");
+			Contract.EndContractBlock();
 			X = x;
 			Y = y;
+			Contract.Assume(null != X);
+			Contract.Assume(null != Y);
+			// ReSharper restore CompareNonConstrainedGenericWithNull
 		}
 		/// <summary>
-		/// Creates a point with the same coordinates as the given <paramref name="point"/>.
+		/// Creates a point with the same coordinates as the given point.
 		/// </summary>
-		/// <param name="point">A coordinate pair.</param>
-		public Point2(ICoordinatePair<TValue> point) {
-			X = point.X;
-			Y = point.Y;
+		/// <param name="p">A coordinate pair.</param>
+		public Point2(ICoordinatePair<TValue> p) {
+			if (null == p) throw new ArgumentNullException("p");
+			// ReSharper disable CompareNonConstrainedGenericWithNull
+			if (p.X == null || p.Y == null) throw new ArgumentException("Null coordinate values are not allowed.", "v");
+			Contract.EndContractBlock();
+			X = p.X;
+			Y = p.Y;
+			Contract.Assume(null != X);
+			Contract.Assume(null != Y);
+			// ReSharper restore CompareNonConstrainedGenericWithNull
 		}
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
@@ -88,7 +103,11 @@ namespace Vertesaur.Generation
 
 		/// <inheritdoc/>
 		public bool Equals(Point2<TValue> other) {
-			throw new NotImplementedException();
+			return X.Equals(other.X) && Y.Equals(other.Y);
+		}
+
+		public override bool Equals(object obj) {
+			return obj is Point2<TValue> && Equals((Point2<TValue>)obj);
 		}
 	}
 }

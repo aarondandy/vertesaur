@@ -162,7 +162,12 @@
     <Compile Include="ExpressionBuilder\DefaultBasicExpressionGenerator.cs" />
     <Compile Include="ExpressionBuilder\BasicOperationType.cs" />
     <Compile Include="ExpressionBuilder\IntermediaryVariableManager.cs" />
+    <Compile Include="ExpressionBuilder\MagnitudeExpression.cs" />
+    <Compile Include="ExpressionBuilder\SquaredMagnitudeExpression.cs" />
+    <Compile Include="ExpressionBuilder\SquareExpression.cs" />
+    <Compile Include="ExpressionBuilder\SquareRootExpression.cs" />
     <Compile Include="GenericOperations\PrimaryOperations.cs" />
+    <Compile Include="GenericOperations\VectorOperations.cs" />
     <Compile Include="Point2.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Vector2.cs" />

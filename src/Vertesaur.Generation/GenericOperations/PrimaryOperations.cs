@@ -68,12 +68,17 @@ namespace Vertesaur.Generation.GenericOperations
 		/// Converts the given value from <see cref="System.Int32"/> to the generic type.
 		/// </summary>
 		[NotNull] public readonly Func<int, TValue> ConvertFromInt;
-		/// <summary>
+
+		public readonly Func<TValue, TValue, TValue> Add;
+		public readonly Func<TValue, TValue, TValue> Subtract;
+		public readonly Func<TValue, TValue, TValue> Multiply;
+
+			/// <summary>
 		/// Determines if two values are equal.
 		/// </summary>
 		[NotNull] public readonly Func<TValue, TValue, bool> EqualsTest;
 
-		[NotNull] private readonly IBasicExpressionGenerator _operationProvider;
+		[NotNull] public IBasicExpressionGenerator OperationProvider { get; private set; }
 		[CanBeNull] private readonly Func<TValue,int> _hashCode;
 
 		/// <summary>
@@ -100,34 +105,47 @@ namespace Vertesaur.Generation.GenericOperations
 			var tParam0 = Expression.Parameter(typeof(TValue), "tParam0");
 			var tParam1 = Expression.Parameter(typeof(TValue), "tParam1");
 
-			_operationProvider = operationProvider;
+			OperationProvider = operationProvider;
 			ConvertFromDouble = Expression.Lambda<Func<double,TValue>>(
-				_operationProvider.GetUnaryExpression(BasicUnaryOperationType.Convert, typeof(TValue), doubleParam)
+				OperationProvider.GetUnaryExpression(BasicUnaryOperationType.Convert, typeof(TValue), doubleParam)
 				?? Expression.Convert(doubleParam, typeof(TValue)),
 				doubleParam
 			).Compile();
 			ConvertToDouble = Expression.Lambda<Func<TValue, double>>(
-				_operationProvider.GetUnaryExpression(BasicUnaryOperationType.Convert, typeof(double), tParam0)
+				OperationProvider.GetUnaryExpression(BasicUnaryOperationType.Convert, typeof(double), tParam0)
 				?? Expression.Convert(tParam0, typeof(double)),
 				tParam0
 			).Compile();
 			ConvertFromInt = Expression.Lambda<Func<int, TValue>>(
-				_operationProvider.GetUnaryExpression(BasicUnaryOperationType.Convert, typeof(TValue), intParam)
+				OperationProvider.GetUnaryExpression(BasicUnaryOperationType.Convert, typeof(TValue), intParam)
 				?? Expression.Convert(intParam, typeof(TValue)),
 				intParam
 			).Compile();
 			ConvertToInt = Expression.Lambda<Func<TValue, int>>(
-				_operationProvider.GetUnaryExpression(BasicUnaryOperationType.Convert, typeof(int), tParam0)
+				OperationProvider.GetUnaryExpression(BasicUnaryOperationType.Convert, typeof(int), tParam0)
 				?? Expression.Convert(tParam0, typeof(int)),
 				tParam0
 			).Compile();
 			EqualsTest = Expression.Lambda<Func<TValue, TValue, bool>>(
-				_operationProvider.GetBinaryExpression(BasicBinaryOperationType.Equal, typeof(bool), tParam0, tParam1)
+				OperationProvider.GetBinaryExpression(BasicBinaryOperationType.Equal, typeof(bool), tParam0, tParam1)
 				?? Expression.Equal(tParam0, tParam1),
 				tParam0, tParam1
 			).Compile();
-			var hashCodeExpression = _operationProvider.GetUnaryExpression(BasicUnaryOperationType.HashCode, typeof(int), tParam0);
+			var hashCodeExpression = OperationProvider.GetUnaryExpression(BasicUnaryOperationType.HashCode, typeof(int), tParam0);
 			_hashCode = null == hashCodeExpression ? null : Expression.Lambda<Func<TValue, int>>(hashCodeExpression, tParam0).Compile();
+
+			Add = Expression.Lambda<Func<TValue, TValue, TValue>>(
+				OperationProvider.GetBinaryExpression(BasicBinaryOperationType.Add, typeof(TValue), tParam0, tParam1),
+				tParam0, tParam1
+			).Compile();
+			Subtract = Expression.Lambda<Func<TValue, TValue, TValue>>(
+				OperationProvider.GetBinaryExpression(BasicBinaryOperationType.Subtract, typeof(TValue), tParam0, tParam1),
+				tParam0, tParam1
+			).Compile();
+			Multiply = Expression.Lambda<Func<TValue, TValue, TValue>>(
+				OperationProvider.GetBinaryExpression(BasicBinaryOperationType.Multiply, typeof(TValue), tParam0, tParam1),
+				tParam0, tParam1
+			).Compile();
 		}
 
 		/// <inheritdoc/>
