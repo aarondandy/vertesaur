@@ -1,38 +1,39 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using Vertesaur.Generation.Contracts;
 
 namespace Vertesaur.Generation.ExpressionBuilder
 {
-	public class MagnitudeExpression : Expression
+	/// <summary>
+	/// An expression representing the magnitude of a set of expressions representing coordinates.
+	/// </summary>
+	public class MagnitudeExpression : ReducableExpressionBase
 	{
 
-		public MagnitudeExpression(IList<Expression> components, IBasicExpressionGenerator basicExpressionGenerator = null)
-			: this(new SquaredMagnitudeExpression(components, basicExpressionGenerator)) { }
-
-		public MagnitudeExpression(SquaredMagnitudeExpression innerExpression) {
-			if(null == innerExpression) throw new ArgumentNullException();
+		public MagnitudeExpression(IList<Expression> components, IExpressionGenerator reductionExpressionGenerator = null)
+			: base(reductionExpressionGenerator){
+			Contract.Requires(null != components);
+			Contract.Requires(components.Count != 0);
+			Contract.Requires(components.All(x => null != x));
+			Contract.Ensures(null != InnerExpression);
 			Contract.EndContractBlock();
-			InnerExpression = innerExpression;
+			InnerExpression = new SquaredMagnitudeExpression(components, reductionExpressionGenerator);
 		}
 
 		public SquaredMagnitudeExpression InnerExpression { get; private set; }
 
-		public override bool CanReduce { get { return true; } }
+		public override System.Type Type { get { return InnerExpression.Type; } }
 
-		public override ExpressionType NodeType { get { return ExpressionType.Extension; } }
-
-		public override Expression Reduce() {
-			Expression result = null;
-			if (null != InnerExpression.BasicExpressionGenerator)
-				result = InnerExpression.BasicExpressionGenerator.GetUnaryExpression(BasicUnaryOperationType.SquareRoot, InnerExpression.Type, InnerExpression);
-			if(null == result)
-				result = DefaultBasicExpressionGenerator.Default.GetUnaryExpression(BasicUnaryOperationType.SquareRoot, InnerExpression.Type, InnerExpression);
-			return result;
+		public override Expression Reduce(){
+			return ReductionExpressionGenerator.GenerateExpression(
+				new FunctionExpressionGenerationRequest(
+					ReductionExpressionGenerator,
+					"SquareRoot",
+					InnerExpression
+				)
+			) ?? new SquareRootExpression(InnerExpression, ReductionExpressionGenerator);
 		}
 
 	}

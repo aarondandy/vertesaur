@@ -147,6 +147,7 @@
       <HintPath>..\..\packages\JetBrains.Annotations.7.0\lib\net40\JetBrains.Annotations.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -157,16 +158,26 @@
     <Compile Include="..\VertesaurAssemblyInfo.cs">
       <Link>Properties\VertesaurAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="ExpressionBuilder\CombinedBasicExpressionGenerator.cs" />
-    <Compile Include="Contracts\IBasicExpressionGenerator.cs" />
-    <Compile Include="ExpressionBuilder\DefaultBasicExpressionGenerator.cs" />
+    <Compile Include="Contracts\IExpressionGenerationRequest.cs" />
+    <Compile Include="Contracts\IExpressionGenerator.cs" />
+    <Compile Include="ExpressionBuilder\CombinedExpressionGenerator.cs" />
+    <Compile Include="ExpressionBuilder\ConstantExpressionGenerationRequest.cs" />
+    <Compile Include="ExpressionBuilder\ConversionExpressionRequest.cs" />
+    <Compile Include="ExpressionBuilder\CoreExpressionGenerator.cs" />
     <Compile Include="ExpressionBuilder\BasicOperationType.cs" />
+    <Compile Include="ExpressionBuilder\DotProductExpression.cs" />
+    <Compile Include="ExpressionBuilder\FunctionExpressionGenerationRequest.cs" />
+    <Compile Include="ExpressionBuilder\MefCombinedExpressionGenerator.cs" />
+    <Compile Include="ExpressionBuilder\ReducableBinaryExpressionBase.cs" />
+    <Compile Include="ExpressionBuilder\ReducableExpressionBase.cs" />
     <Compile Include="ExpressionBuilder\IntermediaryVariableManager.cs" />
     <Compile Include="ExpressionBuilder\MagnitudeExpression.cs" />
+    <Compile Include="ExpressionBuilder\ReducableUnaryExpressionBase.cs" />
     <Compile Include="ExpressionBuilder\SquaredMagnitudeExpression.cs" />
     <Compile Include="ExpressionBuilder\SquareExpression.cs" />
     <Compile Include="ExpressionBuilder\SquareRootExpression.cs" />
-    <Compile Include="GenericOperations\PrimaryOperations.cs" />
+    <Compile Include="ExpressionBuilder\VectorExpressionGenerator.cs" />
+    <Compile Include="GenericOperations\BasicOperations.cs" />
     <Compile Include="GenericOperations\VectorOperations.cs" />
     <Compile Include="Point2.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -181,6 +192,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(ProjectDir)..\..\build\NuGet.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

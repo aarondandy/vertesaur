@@ -7,6 +7,9 @@ using System.Threading;
 
 namespace Vertesaur.Generation.ExpressionBuilder
 {
+	/// <summary>
+	/// Manages local variables during the dynamic generation of expression blocks.
+	/// </summary>
 	public class IntermediaryVariableManager
 	{
 

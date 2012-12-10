@@ -22,12 +22,15 @@
 //
 // ===============================================================================
 
+using System;
+
 namespace Vertesaur.Generation.ExpressionBuilder
 {
 
 	/// <summary>
 	/// Constant generic operation types.
 	/// </summary>
+	[Obsolete]
 	public enum BasicConstantOperationType {
 
 		// constants
@@ -58,6 +61,7 @@ namespace Vertesaur.Generation.ExpressionBuilder
 	/// <summary>
 	/// Unary generic operation types.
 	/// </summary>
+	[Obsolete]
 	public enum BasicUnaryOperationType {
 
 		// conversions
@@ -94,6 +98,7 @@ namespace Vertesaur.Generation.ExpressionBuilder
 	/// <summary>
 	/// Binary generic operation types.
 	/// </summary>
+	[Obsolete]
 	public enum BasicBinaryOperationType {
 
 		// arithmetic

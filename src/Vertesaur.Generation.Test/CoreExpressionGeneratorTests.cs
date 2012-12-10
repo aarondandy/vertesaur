@@ -35,31 +35,31 @@ namespace Vertesaur.Generation.Test {
 	/// Tests for the <c>DefaultBasicExpressionGenerator</c>.
 	/// </summary>
 	[TestFixture]
-	public class DefaultBasicExpressionGeneratorTests {
+	public class CoreExpressionGeneratorTests {
 
 		[Test]
 		public void zero_constant_is_zero() {
-			constant_is(BasicConstantOperationType.ValueZero, 0);
+			constant_is("0", 0);
 		}
 
 		[Test]
 		public void one_constant_is_one() {
-			constant_is(BasicConstantOperationType.ValueOne, 1);
+			constant_is("1", 1);
 		}
 
 		[Test]
 		public void two_constant_is_two() {
-			constant_is(BasicConstantOperationType.ValueTwo, 2);
+			constant_is("2", 2);
 		}
 
 		[Test]
 		public void e_constant_is_e() {
-			real_number_constant_is(BasicConstantOperationType.ValueE, Math.E);
+			real_number_constant_is("E", Math.E);
 		}
 
 		[Test]
 		public void pi_constant_is_pi() {
-			constant_is(BasicConstantOperationType.ValuePi, Math.PI);
+			constant_is("PI", Math.PI);
 		}
 
 		[Test]
@@ -75,11 +75,11 @@ namespace Vertesaur.Generation.Test {
 		}
 
 		private void generic_add<TValue>(double a, double b) {
-			var provider = new DefaultBasicExpressionGenerator();
+			var generator = new CoreExpressionGenerator();
 			var expected = ConvertTo<TValue>(a + b);
 			var leftHandSide = Expression.Parameter(typeof(TValue), "leftHandSide");
 			var rightHandSide = Expression.Parameter(typeof(TValue), "rightHandSide");
-			var expression = provider.GetBinaryExpression(BasicBinaryOperationType.Add, typeof(TValue), leftHandSide, rightHandSide);
+			var expression = generator.GenerateExpression(new FunctionExpressionGenerationRequest(generator,"Add", leftHandSide, rightHandSide));
 			Assert.IsNotNull(expression);
 			var func = Expression.Lambda<Func<TValue, TValue, TValue>>(expression, leftHandSide, rightHandSide).Compile();
 			var result = func(ConvertTo<TValue>(a), ConvertTo<TValue>(b));
@@ -127,11 +127,11 @@ namespace Vertesaur.Generation.Test {
 		}
 
 		private void generic_add<TValue>(int a, int b) {
-			var provider = new DefaultBasicExpressionGenerator();
+			var generator = new CoreExpressionGenerator();
 			var expected = ConvertTo<TValue>(a + b);
 			var leftHandSide = Expression.Parameter(typeof (TValue), "leftHandSide");
 			var rightHandSide = Expression.Parameter(typeof (TValue), "rightHandSide");
-			var expression = provider.GetBinaryExpression(BasicBinaryOperationType.Add, typeof(TValue), leftHandSide, rightHandSide);
+			var expression = generator.GenerateExpression(new FunctionExpressionGenerationRequest(generator, "Add", leftHandSide, rightHandSide));
 			Assert.IsNotNull(expression);
 			var func = Expression.Lambda<Func<TValue,TValue,TValue>>(expression, leftHandSide, rightHandSide).Compile();
 			var result = func(ConvertTo<TValue>(a),ConvertTo<TValue>(b));
@@ -151,11 +151,11 @@ namespace Vertesaur.Generation.Test {
 		}
 
 		private void generic_subtract<TValue>(double a, double b) {
-			var provider = new DefaultBasicExpressionGenerator();
+			var generator = new CoreExpressionGenerator();
 			var expected = ConvertTo<TValue>(a - b);
 			var leftHandSide = Expression.Parameter(typeof(TValue), "leftHandSide");
 			var rightHandSide = Expression.Parameter(typeof(TValue), "rightHandSide");
-			var expression = provider.GetBinaryExpression(BasicBinaryOperationType.Subtract, typeof(TValue), leftHandSide, rightHandSide);
+			var expression = generator.GenerateExpression(new FunctionExpressionGenerationRequest(generator, "Subtract", leftHandSide, rightHandSide));
 			Assert.IsNotNull(expression);
 			var func = Expression.Lambda<Func<TValue, TValue, TValue>>(expression, leftHandSide, rightHandSide).Compile();
 			var result = func(ConvertTo<TValue>(a), ConvertTo<TValue>(b));
@@ -202,11 +202,11 @@ namespace Vertesaur.Generation.Test {
 		}
 
 		private void generic_subtract<TValue>(int a, int b) {
-			var provider = new DefaultBasicExpressionGenerator();
+			var generator = new CoreExpressionGenerator();
 			var expected = ConvertTo<TValue>(a - b);
 			var leftHandSide = Expression.Parameter(typeof(TValue), "leftHandSide");
 			var rightHandSide = Expression.Parameter(typeof(TValue), "rightHandSide");
-			var expression = provider.GetBinaryExpression(BasicBinaryOperationType.Subtract, typeof(TValue), leftHandSide, rightHandSide);
+			var expression = generator.GenerateExpression(new FunctionExpressionGenerationRequest(generator, "Subtract", leftHandSide, rightHandSide));
 			Assert.IsNotNull(expression);
 			var func = Expression.Lambda<Func<TValue, TValue, TValue>>(expression, leftHandSide, rightHandSide).Compile();
 			var result = func(ConvertTo<TValue>(a), ConvertTo<TValue>(b));
@@ -265,11 +265,11 @@ namespace Vertesaur.Generation.Test {
 		}
 
 		private void generic_multiply<TValue>(int a, int b) {
-			var provider = new DefaultBasicExpressionGenerator();
+			var generator = new CoreExpressionGenerator();
 			var expected = ConvertTo<TValue>(a * b);
 			var leftHandSide = Expression.Parameter(typeof(TValue), "leftHandSide");
 			var rightHandSide = Expression.Parameter(typeof(TValue), "rightHandSide");
-			var expression = provider.GetBinaryExpression(BasicBinaryOperationType.Multiply, typeof(TValue), leftHandSide, rightHandSide);
+			var expression = generator.GenerateExpression(new FunctionExpressionGenerationRequest(generator, "Multiply", leftHandSide, rightHandSide));
 			Assert.IsNotNull(expression);
 			var func = Expression.Lambda<Func<TValue, TValue, TValue>>(expression, leftHandSide, rightHandSide).Compile();
 			var result = func(ConvertTo<TValue>(a), ConvertTo<TValue>(b));
@@ -277,11 +277,11 @@ namespace Vertesaur.Generation.Test {
 		}
 
 		private void generic_multiply<TValue>(double a, double b) {
-			var provider = new DefaultBasicExpressionGenerator();
+			var generator = new CoreExpressionGenerator();
 			var expected = ConvertTo<TValue>(a * b);
 			var leftHandSide = Expression.Parameter(typeof(TValue), "leftHandSide");
 			var rightHandSide = Expression.Parameter(typeof(TValue), "rightHandSide");
-			var expression = provider.GetBinaryExpression(BasicBinaryOperationType.Multiply, typeof(TValue), leftHandSide, rightHandSide);
+			var expression = generator.GenerateExpression(new FunctionExpressionGenerationRequest(generator, "Multiply", leftHandSide, rightHandSide));
 			Assert.IsNotNull(expression);
 			var func = Expression.Lambda<Func<TValue, TValue, TValue>>(expression, leftHandSide, rightHandSide).Compile();
 			var result = func(ConvertTo<TValue>(a), ConvertTo<TValue>(b));
@@ -301,11 +301,11 @@ namespace Vertesaur.Generation.Test {
 		}
 
 		private void generic_divide<TValue>(double a, double b) {
-			var provider = new DefaultBasicExpressionGenerator();
+			var generator = new CoreExpressionGenerator();
 			var expected = a / b;
 			var leftHandSide = Expression.Parameter(typeof(TValue), "leftHandSide");
 			var rightHandSide = Expression.Parameter(typeof(TValue), "rightHandSide");
-			var expression = provider.GetBinaryExpression(BasicBinaryOperationType.Divide, typeof(TValue), leftHandSide, rightHandSide);
+			var expression = generator.GenerateExpression(new FunctionExpressionGenerationRequest(generator, "Divide", leftHandSide, rightHandSide));
 			Assert.IsNotNull(expression);
 			var func = Expression.Lambda<Func<TValue, TValue, TValue>>(expression, leftHandSide, rightHandSide).Compile();
 			var result = func(ConvertTo<TValue>(a), ConvertTo<TValue>(b));
@@ -381,14 +381,14 @@ namespace Vertesaur.Generation.Test {
 		}
 
 		private void from_double_and_back_again<TValue>(double value) {
-			var provider = new DefaultBasicExpressionGenerator();
+			var generator = new CoreExpressionGenerator();
 
 			var doubleParam = Expression.Parameter(typeof(double), "dVal");
-			var fromDoubleExp = provider.GetUnaryExpression(BasicUnaryOperationType.Convert, typeof(TValue), doubleParam);
+			var fromDoubleExp = generator.GenerateExpression(new ConversionExpressionRequest(generator, doubleParam, typeof(TValue)));
 			Assert.IsNotNull(fromDoubleExp);
 			var fromDoubleFunc = Expression.Lambda<Func<double, TValue>>(fromDoubleExp, doubleParam).Compile();
 			var genericParam = Expression.Parameter(typeof(TValue), "tVal");
-			var toDoubleExp = provider.GetUnaryExpression(BasicUnaryOperationType.Convert, typeof(double), genericParam);
+			var toDoubleExp = generator.GenerateExpression(new ConversionExpressionRequest(generator, genericParam, typeof(double)));
 			Assert.IsNotNull(toDoubleExp);
 			var toDoubleFunc = Expression.Lambda<Func<TValue, double>>(toDoubleExp, genericParam).Compile();
 
@@ -407,14 +407,14 @@ namespace Vertesaur.Generation.Test {
 		}
 
 		private void from_int_and_back_again<TValue>(int value) {
-			var provider = new DefaultBasicExpressionGenerator();
+			var generator = new CoreExpressionGenerator();
 
 			var intParam = Expression.Parameter(typeof(int), "iVal");
-			var fromIntExp = provider.GetUnaryExpression(BasicUnaryOperationType.Convert, typeof(TValue), intParam);
+			var fromIntExp = generator.GenerateExpression(new ConversionExpressionRequest(generator, intParam, typeof(TValue)));
 			Assert.IsNotNull(fromIntExp);
 			var fromIntFunc = Expression.Lambda<Func<int, TValue>>(fromIntExp, intParam).Compile();
 			var genericParam = Expression.Parameter(typeof(TValue), "tVal");
-			var toIntExp = provider.GetUnaryExpression(BasicUnaryOperationType.Convert, typeof(int), genericParam);
+			var toIntExp = generator.GenerateExpression(new ConversionExpressionRequest(generator, genericParam, typeof(int)));
 			Assert.IsNotNull(toIntExp);
 			var toIntFunc = Expression.Lambda<Func<TValue, int>>(toIntExp, genericParam).Compile();
 
@@ -477,12 +477,13 @@ namespace Vertesaur.Generation.Test {
 			return result;
 		}
 
-		private void constant_is<TValue>(BasicConstantOperationType constantType, double value) {
-			var provider = new DefaultBasicExpressionGenerator();
+		private void constant_is<TValue>(string constantName, double value) {
+			var generator = new CoreExpressionGenerator();
 
 			var expected = ConvertTo<TValue>(value);
 
-			var expression = provider.GetConstantExpression(constantType, typeof(TValue));
+			var expression = generator.GenerateExpression(
+				new ConstantExpressionGenerationRequest(generator, constantName, typeof (TValue)));
 			Assert.IsNotNull(expression);
 			var func = Expression.Lambda<Func<TValue>>(expression).Compile();
 			var result = func();
@@ -492,25 +493,25 @@ namespace Vertesaur.Generation.Test {
 			);
 		}
 
-		private void constant_is(BasicConstantOperationType constantType, double value) {
-			constant_is<double>(constantType, value);
-			constant_is<float>(constantType, value);
-			constant_is<int>(constantType, value);
-			constant_is<byte>(constantType, value);
-			constant_is<char>(constantType, value);
-			constant_is<decimal>(constantType, value);
-			constant_is<long>(constantType, value);
-			constant_is<sbyte>(constantType, value);
-			constant_is<short>(constantType, value);
-			constant_is<uint>(constantType, value);
-			constant_is<ulong>(constantType, value);
-			constant_is<ushort>(constantType, value);
+		private void constant_is(string constantName, double value) {
+			constant_is<double>(constantName, value);
+			constant_is<float>(constantName, value);
+			constant_is<int>(constantName, value);
+			constant_is<byte>(constantName, value);
+			constant_is<char>(constantName, value);
+			constant_is<decimal>(constantName, value);
+			constant_is<long>(constantName, value);
+			constant_is<sbyte>(constantName, value);
+			constant_is<short>(constantName, value);
+			constant_is<uint>(constantName, value);
+			constant_is<ulong>(constantName, value);
+			constant_is<ushort>(constantName, value);
 		}
 
-		private void real_number_constant_is(BasicConstantOperationType constantType, double value) {
-			constant_is<double>(constantType, value);
-			constant_is<float>(constantType, value);
-			constant_is<decimal>(constantType, value);
+		private void real_number_constant_is(string constantName, double value) {
+			constant_is<double>(constantName, value);
+			constant_is<float>(constantName, value);
+			constant_is<decimal>(constantName, value);
 		}
 
 	}

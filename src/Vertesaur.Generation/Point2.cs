@@ -106,6 +106,7 @@ namespace Vertesaur.Generation
 			return X.Equals(other.X) && Y.Equals(other.Y);
 		}
 
+		/// <inheritdoc/>
 		public override bool Equals(object obj) {
 			return obj is Point2<TValue> && Equals((Point2<TValue>)obj);
 		}

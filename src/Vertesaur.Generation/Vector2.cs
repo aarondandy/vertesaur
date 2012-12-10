@@ -173,13 +173,13 @@ namespace Vertesaur.Generation
 		}
 
 		/// <inheritdoc/>
-		public TValue GetMagnitude() {
-			return VectorOperations<TValue>.Default.GetMagnitude(X, Y);
+		public TValue GetMagnitude(){
+			return VectorOperations<TValue>.Default.Magnitude2D(X, Y);
 		}
 
 		/// <inheritdoc/>
 		public TValue GetMagnitudeSquared() {
-			return VectorOperations<TValue>.Default.GetSquaredMagnitude(X, Y);
+			return VectorOperations<TValue>.Default.SquaredMagnitude2D(X, Y);
 		}
 
 		/// <summary>
@@ -187,11 +187,12 @@ namespace Vertesaur.Generation
 		/// </summary>
 		/// <param name="rightHandSide">The vector to add.</param>
 		/// <returns>A result of adding this vector with the given vector.</returns>
-		public Vector2<TValue> Add(Vector2<TValue> rightHandSide) {
-			return new Vector2<TValue>(
-				PrimaryOperations<TValue>.Default.Add(X,rightHandSide.X),
-				PrimaryOperations<TValue>.Default.Add(Y,rightHandSide.Y)
-			);
+		public Vector2<TValue> Add(Vector2<TValue> rightHandSide){
+			var x = BasicOperations<TValue>.Default.Add(X, rightHandSide.X);
+			var y = BasicOperations<TValue>.Default.Add(Y, rightHandSide.Y);
+			Contract.Assume(null != x);
+			Contract.Assume(null != y);
+			return new Vector2<TValue>(x,y);
 		}
 
 		/// <summary>
@@ -199,11 +200,12 @@ namespace Vertesaur.Generation
 		/// </summary>
 		/// <param name="rightHandSide">The vector to subtract.</param>
 		/// <returns>A result of subtracting the given vector from this vector.</returns>
-		public Vector2<TValue> Difference(Vector2<TValue> rightHandSide) {
-			return new Vector2<TValue>(
-				PrimaryOperations<TValue>.Default.Subtract(X, rightHandSide.X),
-				PrimaryOperations<TValue>.Default.Subtract(Y, rightHandSide.Y)
-			);
+		public Vector2<TValue> Difference(Vector2<TValue> rightHandSide){
+			var x = BasicOperations<TValue>.Default.Subtract(X, rightHandSide.X);
+			var y = BasicOperations<TValue>.Default.Subtract(Y, rightHandSide.Y);
+			Contract.Assume(null != x);
+			Contract.Assume(null != y);
+			return new Vector2<TValue>(x,y);
 		}
 
 		/// <summary>
@@ -211,11 +213,8 @@ namespace Vertesaur.Generation
 		/// </summary>
 		/// <param name="rightHandSide">Another vector to use for the calculation of the dot product.</param>
 		/// <returns>The dot product.</returns>
-		public TValue Dot(Vector2<TValue> rightHandSide) {
-			return PrimaryOperations<TValue>.Default.Add(
-				PrimaryOperations<TValue>.Default.Multiply(X,rightHandSide.X),
-				PrimaryOperations<TValue>.Default.Multiply(Y,rightHandSide.Y)
-			);
+		public TValue Dot(Vector2<TValue> rightHandSide){
+			return VectorOperations<TValue>.Default.DotProduct2D(X, Y, rightHandSide.X, rightHandSide.Y);
 		}
 
 	}

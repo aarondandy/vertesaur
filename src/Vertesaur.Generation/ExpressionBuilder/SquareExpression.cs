@@ -1,57 +1,51 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.Linq;
+﻿using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
-using System.Text;
 using Vertesaur.Generation.Contracts;
 
 namespace Vertesaur.Generation.ExpressionBuilder
 {
-	public class SquareExpression : Expression
+	/// <summary>
+	/// An expression representing the square of another expression. SquareExpression(expression) = expression * expression.
+	/// </summary>
+	public class SquareExpression : ReducableUnaryExpressionBase
 	{
 
-		public SquareExpression(Expression parameter, IBasicExpressionGenerator basicExpressionGenerator = null) {
-			if(null == parameter) throw new ArgumentNullException("parameter");
-			Contract.Ensures(ValueParameter != null);
+		/// <summary>
+		/// Creates a new square expression for the given expression.
+		/// </summary>
+		/// <param name="parameter">The expression to square.</param>
+		/// <param name="reductionExpressionGenerator">The optional expression generator used for reductions.</param>
+		public SquareExpression(Expression parameter, IExpressionGenerator reductionExpressionGenerator = null)
+			: base(parameter, reductionExpressionGenerator)
+		{
+			Contract.Requires(null != parameter);
 			Contract.EndContractBlock();
-			ValueParameter = parameter;
-			BasicExpressionGenerator = basicExpressionGenerator;
 		}
-
-		/// <summary>
-		/// An expression generator that can be used to create the required expressions.
-		/// </summary>
-		public IBasicExpressionGenerator BasicExpressionGenerator { get; private set; }
-
-		/// <summary>
-		/// The value or expression to find the square of.
-		/// </summary>
-		public Expression ValueParameter { get; private set; }
-
-		public override bool CanReduce { get { return true; } }
-
-		public override ExpressionType NodeType { get { return ExpressionType.Extension; } }
 
 		public override Expression Reduce() {
-			if (ValueParameter is SquareRootExpression)
-				return ((SquareRootExpression)ValueParameter).ValueParameter;
-			if (ValueParameter is ParameterExpression || ValueParameter is ConstantExpression) {
-				return (BasicExpressionGenerator ?? DefaultBasicExpressionGenerator.Default)
-					.GetBinaryExpression(BasicBinaryOperationType.Multiply, ValueParameter.Type, ValueParameter, ValueParameter);
+			if (UnaryParameter is SquareRootExpression)
+				return ((SquareRootExpression)UnaryParameter).UnaryParameter;
+			if (UnaryParameter is ParameterExpression || UnaryParameter is ConstantExpression){
+				return ReductionExpressionGenerator.GenerateExpression(
+					new FunctionExpressionGenerationRequest(
+						ReductionExpressionGenerator,
+						"MULTIPLY",
+						UnaryParameter,UnaryParameter
+					)
+				);
 			}
-			var tempLocal = Expression.Parameter(ValueParameter.Type);
+			var tempLocal = Parameter(Type);
 			return Block(
 				new[] {tempLocal},
-				Assign(tempLocal, ValueParameter),
-				(BasicExpressionGenerator ?? DefaultBasicExpressionGenerator.Default)
-					.GetBinaryExpression(BasicBinaryOperationType.Multiply, tempLocal.Type, tempLocal, tempLocal)
+				Assign(tempLocal, UnaryParameter),
+				ReductionExpressionGenerator.GenerateExpression(
+					new FunctionExpressionGenerationRequest(
+						ReductionExpressionGenerator,
+						"MULTIPLY",
+						tempLocal, tempLocal
+					)
+				)
 			);
-		}
-
-		[ContractInvariantMethod]
-		private void CodeContractInvariant() {
-			Contract.Invariant(ValueParameter != null);
 		}
 
 	}
