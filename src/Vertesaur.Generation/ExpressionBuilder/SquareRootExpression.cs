@@ -23,6 +23,11 @@ namespace Vertesaur.Generation.ExpressionBuilder
 				null);
 		}
 
+		/// <summary>
+		/// Creates a new square root expression.
+		/// </summary>
+		/// <param name="parameter">The expression to find the square root of.</param>
+		/// <param name="reductionExpressionGenerator">The optional expression generator used for reduction.</param>
 		public SquareRootExpression(Expression parameter, IExpressionGenerator reductionExpressionGenerator = null)
 			: base(parameter, reductionExpressionGenerator)
 		{
@@ -30,6 +35,7 @@ namespace Vertesaur.Generation.ExpressionBuilder
 			Contract.EndContractBlock();
 		}
 
+		/// <inheritdoc/>
 		public override Expression Reduce() {
 			if (UnaryParameter is SquareExpression)
 				return ((SquareExpression)UnaryParameter).UnaryParameter;

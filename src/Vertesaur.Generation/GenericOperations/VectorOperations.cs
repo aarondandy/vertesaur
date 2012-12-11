@@ -33,6 +33,24 @@ namespace Vertesaur.Generation.GenericOperations
 			Magnitude2D = CreateCoordinateToValue2D("Magnitude");
 			SquaredMagnitude2D = CreateCoordinateToValue2D("SquaredMagnitude");
 			DotProduct2D = CreateTwoCoordinateToValue2D("DotProduct");
+			PerpendicularDotProduct2D = CreatePerpendicularDotProduct2D();
+			Distance2D = CreateTwoCoordinateToValue2D("Distance");
+			DistanceSquared2D = CreateTwoCoordinateToValue2D("SquaredDistance");
+		}
+
+		private TwoCoordinateToValue2D CreatePerpendicularDotProduct2D() {
+			var x0 = Expression.Parameter(typeof(TValue));
+			var y0 = Expression.Parameter(typeof(TValue));
+			var x1 = Expression.Parameter(typeof(TValue));
+			var y1 = Expression.Parameter(typeof(TValue));
+			return Expression.Lambda<TwoCoordinateToValue2D>(
+				ExpressionGenerator.GenerateExpression(
+					"Subtract",
+					ExpressionGenerator.GenerateExpression("Multiply",x0, y1),
+					ExpressionGenerator.GenerateExpression("Multiply",y0, x1)
+				),
+				x0, y0, x1, y1
+			).Compile();
 		}
 
 		private CoordinateToValue2D CreateCoordinateToValue2D(string expressionName){
@@ -42,7 +60,7 @@ namespace Vertesaur.Generation.GenericOperations
 			var tParam0 = Expression.Parameter(typeof(TValue));
 			var tParam1 = Expression.Parameter(typeof(TValue));
 			return Expression.Lambda<CoordinateToValue2D>(
-				ExpressionGenerator.GenerateExpression(new FunctionExpressionGenerationRequest(ExpressionGenerator,expressionName,tParam0,tParam1)),
+				ExpressionGenerator.GenerateExpression(expressionName,tParam0,tParam1),
 				tParam0, tParam1
 			).Compile();
 		}
@@ -56,8 +74,9 @@ namespace Vertesaur.Generation.GenericOperations
 			var tParam2 = Expression.Parameter(typeof(TValue));
 			var tParam3 = Expression.Parameter(typeof(TValue));
 			return Expression.Lambda<TwoCoordinateToValue2D>(
-				ExpressionGenerator.GenerateExpression(new FunctionExpressionGenerationRequest(
-					ExpressionGenerator, expressionName, tParam0, tParam1, tParam2, tParam3)),
+				ExpressionGenerator.GenerateExpression(
+					expressionName, tParam0, tParam1, tParam2, tParam3
+				),
 				tParam0, tParam1, tParam2, tParam3
 			).Compile();
 		}
@@ -67,9 +86,31 @@ namespace Vertesaur.Generation.GenericOperations
 		/// </summary>
 		public IExpressionGenerator ExpressionGenerator { get; private set; }
 
+		/// <summary>
+		/// Calculates the magnitude of a 2D vector.
+		/// </summary>
 		public readonly CoordinateToValue2D Magnitude2D;
+		/// <summary>
+		/// Calculates the squared magnitude of a 2D vector.
+		/// </summary>
 		public readonly CoordinateToValue2D SquaredMagnitude2D;
+		/// <summary>
+		/// Calculates the distance between two points.
+		/// </summary>
+		public readonly TwoCoordinateToValue2D Distance2D;
+		/// <summary>
+		/// Calculated the squared distance between two points.
+		/// </summary>
+		public readonly TwoCoordinateToValue2D DistanceSquared2D;
+
+		/// <summary>
+		/// Calculates the dot product of two 2D vectors.
+		/// </summary>
 		public readonly TwoCoordinateToValue2D DotProduct2D;
+		/// <summary>
+		/// Calculates the perpendicular dot product of two 2D vectors.
+		/// </summary>
+		public readonly TwoCoordinateToValue2D PerpendicularDotProduct2D;
 
 		[ContractInvariantMethod]
 		private void CodeContractInvariants(){

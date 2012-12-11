@@ -9,9 +9,9 @@ using Vertesaur.Generation.Contracts;
 namespace Vertesaur.Generation.ExpressionBuilder
 {
 	/// <summary>
-	/// An expression representing the dot product of two vectors.
+	/// An expression representing the squared distance between two points.
 	/// </summary>
-	public class DotProductExpression : ReducableExpressionBase
+	public class SquaredDistanceExpression : ReducableExpressionBase
 	{
 
 		/// <summary>
@@ -19,7 +19,7 @@ namespace Vertesaur.Generation.ExpressionBuilder
 		/// </summary>
 		/// <param name="components">The ordered components of the two vectors in the order of first vectors coordinates then second vectors coordinates (ex: x0,y0,x1,y1).</param>
 		/// <param name="reductionExpressionGenerator">The optional expression generator that can be used to produce reduced expressions.</param>
-		public DotProductExpression(IList<Expression> components, IExpressionGenerator reductionExpressionGenerator = null)
+		public SquaredDistanceExpression(IList<Expression> components, IExpressionGenerator reductionExpressionGenerator = null)
 			: base(reductionExpressionGenerator)
 		{
 			if(null == components) throw new ArgumentNullException("components");
@@ -45,17 +45,15 @@ namespace Vertesaur.Generation.ExpressionBuilder
 		}
 
 		/// <inheritdoc/>
-		public override Expression Reduce(){
+		public override Expression Reduce() {
 			var halfCount = Components.Count / 2;
-			var result = ReductionExpressionGenerator.GenerateExpression(
-				"Multiply", Components[0], Components[halfCount]);
-			for (int i = 1; i < halfCount; i++){
-				var mulComponentExpression = ReductionExpressionGenerator.GenerateExpression(
-					"Multiply", Components[i], Components[i + halfCount]);
-				result = ReductionExpressionGenerator.GenerateExpression(
-					"Add", result, mulComponentExpression);
+			var deltas = new Expression[halfCount];
+			for (int i = 0; i < halfCount; i++) {
+				deltas[i] = ReductionExpressionGenerator.GenerateExpression("Subtract", Components[i], Components[halfCount + i]);
 			}
-			return result;
+			Contract.Assume(deltas.Length != 0);
+			return ReductionExpressionGenerator.GenerateExpression("SquaredMagnitude", deltas);
+
 		}
 
 	}

@@ -14,6 +14,11 @@ namespace Vertesaur.Generation.ExpressionBuilder
 	public class SquaredMagnitudeExpression : ReducableExpressionBase
 	{
 
+		/// <summary>
+		/// Creates a new squared magnitude expression.
+		/// </summary>
+		/// <param name="components">The coordinate expressions.</param>
+		/// <param name="reductionExpressionGenerator">The optional expression generator used for reduction.</param>
 		public SquaredMagnitudeExpression(IList<Expression> components, IExpressionGenerator reductionExpressionGenerator = null)
 			: base(reductionExpressionGenerator)
 		{
@@ -28,28 +33,24 @@ namespace Vertesaur.Generation.ExpressionBuilder
 			Components = Array.AsReadOnly(components.ToArray());
 		}
 
+		/// <summary>
+		/// The coordinate expressions.
+		/// </summary>
 		public ReadOnlyCollection<Expression> Components { get; private set; }
 
+		/// <inheritdoc/>
 		public override Type Type {
 			get { return Components[0].Type; }
 		}
 
+		/// <inheritdoc/>
 		public override Expression Reduce() {
-			var result = ReductionExpressionGenerator.GenerateExpression(new FunctionExpressionGenerationRequest(
-				ReductionExpressionGenerator, "Square", Components[0]));
+			var result = ReductionExpressionGenerator.GenerateExpression("Square", Components[0]);
 			for (int i = 1; i < Components.Count; i++){
 				var squaredComponentExpression = ReductionExpressionGenerator.GenerateExpression(
-					new FunctionExpressionGenerationRequest(
-						ReductionExpressionGenerator, "Square",
-						Components[i]
-					)
-				);
+					"Square", Components[i]);
 				result = ReductionExpressionGenerator.GenerateExpression(
-					new FunctionExpressionGenerationRequest(
-						ReductionExpressionGenerator, "Add",
-						result, squaredComponentExpression
-					)
-				);
+					"Add", result, squaredComponentExpression);
 			}
 			return result;
 		}

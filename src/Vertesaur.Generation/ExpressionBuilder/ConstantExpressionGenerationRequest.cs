@@ -6,6 +6,9 @@ using Vertesaur.Generation.Contracts;
 
 namespace Vertesaur.Generation.ExpressionBuilder
 {
+	/// <summary>
+	/// A constant expression generation request to get an expression representing a constant value.
+	/// </summary>
 	public class ConstantExpressionGenerationRequest : IExpressionGenerationRequest
 	{
 

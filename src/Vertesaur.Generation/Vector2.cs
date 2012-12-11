@@ -1,6 +1,6 @@
 ﻿// ===============================================================================
 //
-// Copyright (c) 2011 Aaron Dandy 
+// Copyright (c) 2011,2012 Aaron Dandy 
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -93,7 +93,17 @@ namespace Vertesaur.Generation
 			return leftHandSide.Dot(rightHandSide);
 		}
 
-			/// <summary>
+		/// <summary>
+		/// Creates a zero vector.
+		/// </summary>
+		/// <returns>A zero constant value.</returns>
+		public static Vector2<TValue> CreateZero() {
+			var v = BasicOperations<TValue>.Default.ZeroValue;
+			Contract.Assume(null != v);
+			return new Vector2<TValue>(v,v);
+		}
+
+		/// <summary>
 		/// The x-coordinate of this vector.
 		/// </summary>
 		[NotNull] public readonly TValue X;
@@ -196,6 +206,19 @@ namespace Vertesaur.Generation
 		}
 
 		/// <summary>
+		/// Calculates a vector resulting from adding the given vector to this vector.
+		/// </summary>
+		/// <param name="rightHandSide">The vector to add.</param>
+		/// <returns>A result of adding this vector with the given vector.</returns>
+		public Point2<TValue> Add(Point2<TValue> rightHandSide) {
+			var x = BasicOperations<TValue>.Default.Add(X, rightHandSide.X);
+			var y = BasicOperations<TValue>.Default.Add(Y, rightHandSide.Y);
+			Contract.Assume(null != x);
+			Contract.Assume(null != y);
+			return new Point2<TValue>(x, y);
+		}
+
+		/// <summary>
 		/// Calculates a vector resulting from subtracting the given vector to this vector.
 		/// </summary>
 		/// <param name="rightHandSide">The vector to subtract.</param>
@@ -209,12 +232,102 @@ namespace Vertesaur.Generation
 		}
 
 		/// <summary>
+		/// Calculates a vector resulting from subtracting the given vector to this vector.
+		/// </summary>
+		/// <param name="rightHandSide">The vector to subtract.</param>
+		/// <returns>A result of subtracting the given vector from this vector.</returns>
+		public Point2<TValue> Difference(Point2<TValue> rightHandSide) {
+			var x = BasicOperations<TValue>.Default.Subtract(X, rightHandSide.X);
+			var y = BasicOperations<TValue>.Default.Subtract(Y, rightHandSide.Y);
+			Contract.Assume(null != x);
+			Contract.Assume(null != y);
+			return new Point2<TValue>(x, y);
+		}
+
+		/// <summary>
 		/// Calculates the dot product between this vector and another vector.
 		/// </summary>
 		/// <param name="rightHandSide">Another vector to use for the calculation of the dot product.</param>
 		/// <returns>The dot product.</returns>
 		public TValue Dot(Vector2<TValue> rightHandSide){
 			return VectorOperations<TValue>.Default.DotProduct2D(X, Y, rightHandSide.X, rightHandSide.Y);
+		}
+
+		/// <summary>
+		/// Calculates a vector oriented in the opposite direction.
+		/// </summary>
+		/// <returns>A vector with the same component values but different signs.</returns>
+		public Vector2<TValue> GetNegative() {
+			var x = BasicOperations<TValue>.Default.Negate(X);
+			var y = BasicOperations<TValue>.Default.Negate(Y);
+			Contract.Assume(null != x);
+			Contract.Assume(null != y);
+			return new Vector2<TValue>(x, y);
+		}
+
+		/// <summary>
+		/// Creates a new vector which is scaled from this vector.
+		/// </summary>
+		/// <param name="factor">The scaling factor.</param>
+		/// <returns>A scaled vector.</returns>
+		public Vector2<TValue> GetScaled(TValue factor) {
+			if(null == factor) throw new ArgumentNullException("factor");
+			Contract.EndContractBlock();
+
+			var x = BasicOperations<TValue>.Default.Multiply(X, factor);
+			var y = BasicOperations<TValue>.Default.Multiply(Y, factor);
+			Contract.Assume(null != x);
+			Contract.Assume(null != y);
+			return new Vector2<TValue>(x,y);
+		}
+
+		/// <summary>
+		/// Calculates the dot product of this vector and a vector perpendicular to the other vector.
+		/// </summary>
+		/// <param name="rightHandSide">A vector.</param>
+		/// <returns>The z-coordinate of the cross product.</returns>
+		/// <remarks>Also calculates the z-coordinate of the cross product of this vector and another vector.</remarks>
+		public TValue PerpendicularDot(Vector2<TValue> rightHandSide) {
+			return VectorOperations<TValue>.Default.PerpendicularDotProduct2D(
+				X, Y, rightHandSide.X, rightHandSide.Y);
+		}
+
+		/// <summary>
+		/// Gets a clock-wise perpendicular vector with the same magnitude as this vector.
+		/// </summary>
+		/// <returns>A vector.</returns>
+		public Vector2<TValue> GetPerpendicularClockwise() {
+			var x = BasicOperations<TValue>.Default.Negate(X);
+			Contract.Assume(null != Y);
+			Contract.Assume(null != x);
+			return new Vector2<TValue>(Y, x);
+		}
+
+		/// <summary>
+		/// Gets a counter clock-wise perpendicular vector with the same magnitude as this vector.
+		/// </summary>
+		/// <returns>A vector.</returns>
+		public Vector2<TValue> GetPerpendicularCounterClockwise() {
+			var y = BasicOperations<TValue>.Default.Negate(Y);
+			Contract.Assume(null != y);
+			Contract.Assume(null != X);
+			return new Vector2<TValue>(y, X);
+		}
+
+		/// <summary>
+		/// Calculates a vector with the same direction but a magnitude of one.
+		/// </summary>
+		/// <returns>A unit length vector.</returns>
+		public Vector2<TValue> GetNormalized() {
+			var m = GetMagnitude();
+			if (BasicOperations<TValue>.Default.ZeroValue.Equals(m))
+				return CreateZero();
+
+			var x = BasicOperations<TValue>.Default.Divide(X, m);
+			var y = BasicOperations<TValue>.Default.Divide(Y, m);
+			Contract.Assume(null != x);
+			Contract.Assume(null != y);
+			return new Vector2<TValue>(x,y);
 		}
 
 	}

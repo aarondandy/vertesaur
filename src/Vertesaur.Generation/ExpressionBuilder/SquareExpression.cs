@@ -27,24 +27,14 @@ namespace Vertesaur.Generation.ExpressionBuilder
 				return ((SquareRootExpression)UnaryParameter).UnaryParameter;
 			if (UnaryParameter is ParameterExpression || UnaryParameter is ConstantExpression){
 				return ReductionExpressionGenerator.GenerateExpression(
-					new FunctionExpressionGenerationRequest(
-						ReductionExpressionGenerator,
-						"MULTIPLY",
-						UnaryParameter,UnaryParameter
-					)
-				);
+					"MULTIPLY", UnaryParameter, UnaryParameter);
 			}
 			var tempLocal = Parameter(Type);
 			return Block(
 				new[] {tempLocal},
 				Assign(tempLocal, UnaryParameter),
 				ReductionExpressionGenerator.GenerateExpression(
-					new FunctionExpressionGenerationRequest(
-						ReductionExpressionGenerator,
-						"MULTIPLY",
-						tempLocal, tempLocal
-					)
-				)
+					"MULTIPLY", tempLocal, tempLocal)
 			);
 		}
 

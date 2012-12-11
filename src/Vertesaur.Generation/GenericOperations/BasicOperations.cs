@@ -16,12 +16,36 @@ namespace Vertesaur.Generation.GenericOperations
 			Default = new BasicOperations<TValue>(new MefCombinedExpressionGenerator());
 		}
 
+		/// <summary>
+		/// The default instance of the basic operations.
+		/// </summary>
 		public static BasicOperations<TValue> Default { get; private set; }
 
+		/// <summary>
+		/// Defines a method that acts as a unary operation on the generic type.
+		/// </summary>
+		/// <param name="value">The single input.</param>
+		/// <returns>The result of the operation.</returns>
 		public delegate TValue UnaryFunc(TValue value);
 
+		/// <summary>
+		/// Defines a method that acts as a binary operation on the generic type.
+		/// </summary>
+		/// <param name="left">The left input.</param>
+		/// <param name="right">The right input.</param>
+		/// <returns>The result of the operation.</returns>
 		public delegate TValue BinaryFunc(TValue left, TValue right);
 
+		/// <summary>
+		/// Defines a method that should return a constant value.
+		/// </summary>
+		/// <returns>A constant value.</returns>
+		public delegate TValue CreateConstantFunc();
+
+		/// <summary>
+		/// Creates a new basic generic operations implementation using the given expression generator.
+		/// </summary>
+		/// <param name="expressionGenerator">The expression generator that will be used to build the generic methods at run-time.</param>
 		public BasicOperations(IExpressionGenerator expressionGenerator){
 			Contract.Requires(null != expressionGenerator);
 			Contract.Ensures(null != ExpressionGenerator);
@@ -33,6 +57,16 @@ namespace Vertesaur.Generation.GenericOperations
 			Multiply = BuildBinaryFunc("Multiply");
 			Divide = BuildBinaryFunc("Divide");
 			Negate = BuildUnaryFunc("Negate");
+
+			_zeroValueGenerator = BuildConstant("0");
+		}
+
+		private CreateConstantFunc BuildConstant(string expressionName) {
+			Contract.Requires(!string.IsNullOrEmpty(expressionName));
+			Contract.EndContractBlock();
+			return Expression.Lambda<CreateConstantFunc>(
+				ExpressionGenerator.GenerateExpression(expressionName, typeof(TValue))
+			).Compile();
 		}
 
 		private UnaryFunc BuildUnaryFunc(string expressionName){
@@ -40,7 +74,7 @@ namespace Vertesaur.Generation.GenericOperations
 			Contract.EndContractBlock();
 
 			var tParam = Expression.Parameter(typeof (TValue));
-			var expression = ExpressionGenerator.GenerateExpression(new FunctionExpressionGenerationRequest(ExpressionGenerator, expressionName, tParam));
+			var expression = ExpressionGenerator.GenerateExpression(expressionName, tParam);
 			if (null == expression)
 				return null;
 			return Expression.Lambda<UnaryFunc>(expression,tParam).Compile();
@@ -52,7 +86,7 @@ namespace Vertesaur.Generation.GenericOperations
 
 			var tParam0 = Expression.Parameter(typeof(TValue));
 			var tParam1 = Expression.Parameter(typeof(TValue));
-			var expression = ExpressionGenerator.GenerateExpression(new FunctionExpressionGenerationRequest(ExpressionGenerator, expressionName,tParam0, tParam1));
+			var expression = ExpressionGenerator.GenerateExpression(expressionName,tParam0, tParam1);
 			if (null == expression)
 				return null;
 			return Expression.Lambda<BinaryFunc>(expression,tParam0, tParam1).Compile();
@@ -83,6 +117,13 @@ namespace Vertesaur.Generation.GenericOperations
 		/// A run-time executable generic negation function.
 		/// </summary>
 		public readonly UnaryFunc Negate;
+
+		private readonly CreateConstantFunc _zeroValueGenerator;
+
+		/// <summary>
+		/// A new constant with a value of zero.
+		/// </summary>
+		public TValue ZeroValue { get { return _zeroValueGenerator(); } }
 
 		[ContractInvariantMethod]
 		private void CodeContractInvariants(){

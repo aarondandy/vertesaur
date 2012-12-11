@@ -164,8 +164,9 @@
     <Compile Include="ExpressionBuilder\ConstantExpressionGenerationRequest.cs" />
     <Compile Include="ExpressionBuilder\ConversionExpressionRequest.cs" />
     <Compile Include="ExpressionBuilder\CoreExpressionGenerator.cs" />
-    <Compile Include="ExpressionBuilder\BasicOperationType.cs" />
+    <Compile Include="ExpressionBuilder\DistanceExpression.cs" />
     <Compile Include="ExpressionBuilder\DotProductExpression.cs" />
+    <Compile Include="ExpressionBuilder\ExpressionBuilderExtensionMethods.cs" />
     <Compile Include="ExpressionBuilder\FunctionExpressionGenerationRequest.cs" />
     <Compile Include="ExpressionBuilder\MefCombinedExpressionGenerator.cs" />
     <Compile Include="ExpressionBuilder\ReducableBinaryExpressionBase.cs" />
@@ -173,6 +174,7 @@
     <Compile Include="ExpressionBuilder\IntermediaryVariableManager.cs" />
     <Compile Include="ExpressionBuilder\MagnitudeExpression.cs" />
     <Compile Include="ExpressionBuilder\ReducableUnaryExpressionBase.cs" />
+    <Compile Include="ExpressionBuilder\SquaredDistanceExpression.cs" />
     <Compile Include="ExpressionBuilder\SquaredMagnitudeExpression.cs" />
     <Compile Include="ExpressionBuilder\SquareExpression.cs" />
     <Compile Include="ExpressionBuilder\SquareRootExpression.cs" />

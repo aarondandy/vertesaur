@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Linq.Expressions;
@@ -12,6 +13,11 @@ namespace Vertesaur.Generation.ExpressionBuilder
 	public class MagnitudeExpression : ReducableExpressionBase
 	{
 
+		/// <summary>
+		/// Creates a new magnitude expression.
+		/// </summary>
+		/// <param name="components">The coordinate expressions.</param>
+		/// <param name="reductionExpressionGenerator">The optional expression generator used for reduction.</param>
 		public MagnitudeExpression(IList<Expression> components, IExpressionGenerator reductionExpressionGenerator = null)
 			: base(reductionExpressionGenerator){
 			Contract.Requires(null != components);
@@ -22,18 +28,19 @@ namespace Vertesaur.Generation.ExpressionBuilder
 			InnerExpression = new SquaredMagnitudeExpression(components, reductionExpressionGenerator);
 		}
 
+		/// <summary>
+		/// The inner squared magnitude expression.
+		/// </summary>
 		public SquaredMagnitudeExpression InnerExpression { get; private set; }
 
-		public override System.Type Type { get { return InnerExpression.Type; } }
+		/// <inheritdoc/>
+		public override Type Type { get { return InnerExpression.Type; } }
 
+		/// <inheritdoc/>
 		public override Expression Reduce(){
-			return ReductionExpressionGenerator.GenerateExpression(
-				new FunctionExpressionGenerationRequest(
-					ReductionExpressionGenerator,
-					"SquareRoot",
-					InnerExpression
-				)
-			) ?? new SquareRootExpression(InnerExpression, ReductionExpressionGenerator);
+			// TODO: use some square root utility method that does not take the square root of a square
+			return ReductionExpressionGenerator.GenerateExpression("SquareRoot",InnerExpression)
+				?? new SquareRootExpression(InnerExpression, ReductionExpressionGenerator);
 		}
 
 	}

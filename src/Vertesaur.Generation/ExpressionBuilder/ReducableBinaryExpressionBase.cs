@@ -10,7 +10,12 @@ namespace Vertesaur.Generation.ExpressionBuilder
 	/// </summary>
 	public abstract class ReducableBinaryExpressionBase : ReducableExpressionBase
 	{
-
+		/// <summary>
+		/// Creates a new reducable expression with the given left and right parameters.
+		/// </summary>
+		/// <param name="leftParameter">The first or left parameter.</param>
+		/// <param name="rightParameter">The second or right parameter.</param>
+		/// <param name="reductionExpressionGenerator">The optional expression generator used for reduction.</param>
 		protected ReducableBinaryExpressionBase(
 			Expression leftParameter,
 			Expression rightParameter,
@@ -25,8 +30,13 @@ namespace Vertesaur.Generation.ExpressionBuilder
 			Contract.Assume(null != RightParameter);
 		}
 
+		/// <summary>
+		/// The first or left parameter.
+		/// </summary>
 		public Expression LeftParameter { get; private set; }
-
+		/// <summary>
+		/// The second or right parameter.
+		/// </summary>
 		public Expression RightParameter { get; private set; }
 
 		[ContractInvariantMethod]

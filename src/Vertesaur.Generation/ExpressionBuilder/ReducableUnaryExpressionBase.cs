@@ -11,6 +11,11 @@ namespace Vertesaur.Generation.ExpressionBuilder
 	public abstract class ReducableUnaryExpressionBase : ReducableExpressionBase
 	{
 
+		/// <summary>
+		/// Creates a new redicable expression with the given single parameter.
+		/// </summary>
+		/// <param name="singleParameter">The single input parameter for the expression.</param>
+		/// <param name="reductionExpressionGenerator">The optional expression generator used for reduction.</param>
 		protected ReducableUnaryExpressionBase(
 			Expression singleParameter,
 			IExpressionGenerator reductionExpressionGenerator = null
@@ -21,11 +26,13 @@ namespace Vertesaur.Generation.ExpressionBuilder
 			Contract.Assume(null != UnaryParameter);
 		}
 
+		/// <summary>
+		/// The single input parameter for the expression.
+		/// </summary>
 		public Expression UnaryParameter { get; private set; }
 
-		public override Type Type {
-			get { return UnaryParameter.Type; }
-		}
+		/// <inheritdoc/>
+		public override Type Type { get { return UnaryParameter.Type; } }
 
 		[ContractInvariantMethod]
 		private void CodeContractInvariant() {

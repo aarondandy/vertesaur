@@ -21,16 +21,18 @@ namespace Vertesaur.Generation.ExpressionBuilder
 			var topLevelGenerator = request.TopLevelGenerator;
 
 			if (inputExpressions.Count > 0){
-				if (StringComparer.OrdinalIgnoreCase.Equals(expressionName, "MAGNITUDE")){
+				if (StringComparer.OrdinalIgnoreCase.Equals(expressionName, "MAGNITUDE"))
 					return new MagnitudeExpression(inputExpressions, topLevelGenerator);
-				}
+				if (StringComparer.OrdinalIgnoreCase.Equals(expressionName, "SQUAREDMAGNITUDE"))
+					return new SquaredMagnitudeExpression(inputExpressions, topLevelGenerator);
 
-				if (StringComparer.OrdinalIgnoreCase.Equals(expressionName, "SQUAREDMAGNITUDE")){
-						return new SquaredMagnitudeExpression(inputExpressions, topLevelGenerator);
-				}
-
-				if (StringComparer.OrdinalIgnoreCase.Equals(expressionName, "DOTPRODUCT") && (inputExpressions.Count % 2) == 0){
-					return new DotProductExpression(inputExpressions, topLevelGenerator);
+				if ((inputExpressions.Count % 2) == 0) {
+					if (StringComparer.OrdinalIgnoreCase.Equals(expressionName, "DOTPRODUCT"))
+						return new DotProductExpression(inputExpressions, topLevelGenerator);
+					if (StringComparer.OrdinalIgnoreCase.Equals(expressionName, "DISTANCE"))
+						return new DistanceExpression(inputExpressions, topLevelGenerator);
+					if (StringComparer.OrdinalIgnoreCase.Equals(expressionName, "SQUAREDDISTANCE"))
+						return new SquaredDistanceExpression(inputExpressions, topLevelGenerator);
 				}
 			}
 

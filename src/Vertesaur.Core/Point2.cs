@@ -196,6 +196,7 @@ namespace Vertesaur {
 		}
 
 		/// <inheritdoc/>
+		[Obsolete("This does not belong here")]
 		public int CompareTo(Point2 other) {
 			var c = X.CompareTo(other.X);
 			return 0 == c ? Y.CompareTo(other.Y) : c;

@@ -10,6 +10,9 @@ using Vertesaur.Generation.Contracts;
 namespace Vertesaur.Generation.ExpressionBuilder
 {
 
+	/// <summary>
+	/// The core expression generator for basic arithmetic and comparisons.
+	/// </summary>
 	[Export(typeof(IExpressionGenerator))]
 	public class CoreExpressionGenerator : IExpressionGenerator
 	{
@@ -93,6 +96,30 @@ namespace Vertesaur.Generation.ExpressionBuilder
 				return unchecked((char)(leftHandSide * rightHandSide));
 			}
 
+			public static byte DivideChecked(byte leftHandSide, byte rightHandSide) {
+				return checked((byte)(leftHandSide / rightHandSide));
+			}
+
+			public static byte DivideUnchecked(byte leftHandSide, byte rightHandSide) {
+				return unchecked((byte)(leftHandSide / rightHandSide));
+			}
+
+			public static sbyte DivideChecked(sbyte leftHandSide, sbyte rightHandSide) {
+				return checked((sbyte)(leftHandSide / rightHandSide));
+			}
+
+			public static sbyte DivideUnchecked(sbyte leftHandSide, sbyte rightHandSide) {
+				return unchecked((sbyte)(leftHandSide / rightHandSide));
+			}
+
+			public static char DivideChecked(char leftHandSide, char rightHandSide) {
+				return checked((char)(leftHandSide / rightHandSide));
+			}
+
+			public static char DivideUnchecked(char leftHandSide, char rightHandSide) {
+				return unchecked((char)(leftHandSide / rightHandSide));
+			}
+
 			// ReSharper restore UnusedMember.Local
 
 		}
@@ -137,7 +164,7 @@ namespace Vertesaur.Generation.ExpressionBuilder
 				{"ADD", GenerateArithmetic},
 				{"SUBTRACT", GenerateArithmetic},
 				{"MULTIPLY", GenerateArithmetic},
-				{"DIVIDE", (_,left,right) => Expression.Divide(left, right)},
+				{"DIVIDE", GenerateArithmetic},
 				{"EQUAL", (_,left,right) => Expression.Equal(left, right)},
 				{"NOTEQUAL",(_,left,right) => Expression.NotEqual(left, right)},
 				{"LESS", (_,left,right) => Expression.LessThan(left, right)},
@@ -167,9 +194,7 @@ namespace Vertesaur.Generation.ExpressionBuilder
 			if (resultType == typeof(ulong) || resultType == typeof(uint) || resultType == typeof(ushort) || resultType == typeof(byte) || resultType == typeof(sbyte)) {
 				var zeroConstant = GenerateConstantExpression("0", resultType);
 				Contract.Assume(null != zeroConstant);
-				return GenerateStandardExpression(new FunctionExpressionGenerationRequest(
-					request.TopLevelGenerator, "Subtract",
-					zeroConstant, parameter));
+				return request.TopLevelGenerator.GenerateExpression("Subtract", zeroConstant, parameter);
 			}
 			return Checked ? Expression.NegateChecked(parameter) : Expression.Negate(parameter);
 		}
@@ -201,13 +226,14 @@ namespace Vertesaur.Generation.ExpressionBuilder
 				return Checked ? Expression.SubtractChecked(left, right) : Expression.Subtract(left, right);
 			if(StringComparer.OrdinalIgnoreCase.Equals(request.ExpressionName, "Multiply"))
 				return Checked ? Expression.MultiplyChecked(left, right) : Expression.Multiply(left, right);
+			if (StringComparer.OrdinalIgnoreCase.Equals(request.ExpressionName, "Divide"))
+				return Expression.Divide(left, right);
 			return null;
 		}
 
 		private Expression GenerateMin(IExpressionGenerationRequest request, Expression left, Expression right) {
 			if ((left is ConstantExpression || left is ParameterExpression) && (right is ConstantExpression || right is ParameterExpression)) {
-				var leq = request.TopLevelGenerator.GenerateExpression(
-					new FunctionExpressionGenerationRequest(request.TopLevelGenerator, "LESSEQUAL", left, right));
+				var leq = request.TopLevelGenerator.GenerateExpression("LESSEQUAL", left, right);
 				Contract.Assume(null != leq);
 				return Expression.Condition(leq, left, right);
 			}
@@ -224,8 +250,7 @@ namespace Vertesaur.Generation.ExpressionBuilder
 
 		private Expression GenerateMax(IExpressionGenerationRequest request, Expression left, Expression right) {
 			if ((left is ConstantExpression || left is ParameterExpression) && (right is ConstantExpression || right is ParameterExpression)) {
-				var geq = request.TopLevelGenerator.GenerateExpression(
-					new FunctionExpressionGenerationRequest(request.TopLevelGenerator, "GREATEREQUAL", left, right));
+				var geq = request.TopLevelGenerator.GenerateExpression("GREATEREQUAL", left, right);
 				Contract.Assume(null != geq);
 				return Expression.Condition(geq, left, right);
 			}
@@ -242,11 +267,9 @@ namespace Vertesaur.Generation.ExpressionBuilder
 
 		private Expression GenerateCompareTo(IExpressionGenerationRequest request, Expression left, Expression right) {
 			if ((left is ConstantExpression || left is ParameterExpression) && (right is ConstantExpression || right is ParameterExpression)) {
-				var eq = request.TopLevelGenerator.GenerateExpression(
-					new FunctionExpressionGenerationRequest(request.TopLevelGenerator, "EQUAL", left, right));
+				var eq = request.TopLevelGenerator.GenerateExpression("EQUAL", left, right);
 				Contract.Assume(null != eq);
-				var less = request.TopLevelGenerator.GenerateExpression(
-					new FunctionExpressionGenerationRequest(request.TopLevelGenerator, "LESS", left, right));
+				var less = request.TopLevelGenerator.GenerateExpression("LESS", left, right);
 				Contract.Assume(null != less);
 				var comparableType = typeof(IComparable<>).MakeGenericType(new[] { right.Type });
 				return left.Type.GetInterfaces().Contains(comparableType)
