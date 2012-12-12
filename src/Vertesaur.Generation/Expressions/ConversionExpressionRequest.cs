@@ -4,7 +4,7 @@ using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
 using Vertesaur.Generation.Contracts;
 
-namespace Vertesaur.Generation.ExpressionBuilder
+namespace Vertesaur.Generation.Expressions
 {
 	/// <summary>
 	/// Creates a new conversion expression request.
@@ -22,7 +22,6 @@ namespace Vertesaur.Generation.ExpressionBuilder
 			if (null == generator) throw new ArgumentNullException("generator");
 			if (null == inputExpression) throw new ArgumentNullException("inputExpression");
 			if (null == resultType) throw new ArgumentNullException("resultType");
-			if (typeof(void) == resultType) throw new ArgumentException("Invalid result type.", "resultType");
 			Contract.EndContractBlock();
 			TopLevelGenerator = generator;
 			InputExpression = inputExpression;
@@ -41,7 +40,12 @@ namespace Vertesaur.Generation.ExpressionBuilder
 		public string ExpressionName { get { return "Convert"; } }
 
 		/// <inheritdoc/>
-		public ReadOnlyCollection<Expression> InputExpressions { get { return Array.AsReadOnly(new[]{InputExpression}); } }
+		public ReadOnlyCollection<Expression> InputExpressions {
+			get {
+				Contract.Ensures(Contract.Result<ReadOnlyCollection<Expression>>() != null);
+				return Array.AsReadOnly(new[]{InputExpression});
+			}
+		}
 
 		/// <inheritdoc/>
 		public Type DesiredResultType { get; private set; }

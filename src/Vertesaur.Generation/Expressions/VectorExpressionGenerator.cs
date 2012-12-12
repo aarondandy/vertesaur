@@ -4,7 +4,7 @@ using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
 using Vertesaur.Generation.Contracts;
 
-namespace Vertesaur.Generation.ExpressionBuilder
+namespace Vertesaur.Generation.Expressions
 {
 	/// <summary>
 	/// Generates vector related expressions.
@@ -12,6 +12,11 @@ namespace Vertesaur.Generation.ExpressionBuilder
 	[Export(typeof(IExpressionGenerator))]
 	public class VectorExpressionGenerator : IExpressionGenerator
 	{
+		/// <summary>
+		/// Generates a vector related expression given a supported expression generation request.
+		/// </summary>
+		/// <param name="request">The expression generation request to be processed.</param>
+		/// <returns>A new expression or null if the request is not supported.</returns>
 		public Expression GenerateExpression(IExpressionGenerationRequest request) {
 			if (null == request) throw new ArgumentNullException("request");
 			Contract.EndContractBlock();

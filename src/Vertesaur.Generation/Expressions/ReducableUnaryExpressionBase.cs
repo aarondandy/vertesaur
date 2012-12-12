@@ -3,7 +3,7 @@ using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
 using Vertesaur.Generation.Contracts;
 
-namespace Vertesaur.Generation.ExpressionBuilder
+namespace Vertesaur.Generation.Expressions
 {
 	/// <summary>
 	/// An expression that can be reduced to a compilable expression and which also takes a single expression as input.
@@ -14,15 +14,15 @@ namespace Vertesaur.Generation.ExpressionBuilder
 		/// <summary>
 		/// Creates a new redicable expression with the given single parameter.
 		/// </summary>
-		/// <param name="singleParameter">The single input parameter for the expression.</param>
+		/// <param name="unaryParameter">The single input parameter for the expression.</param>
 		/// <param name="reductionExpressionGenerator">The optional expression generator used for reduction.</param>
 		protected ReducableUnaryExpressionBase(
-			Expression singleParameter,
+			Expression unaryParameter,
 			IExpressionGenerator reductionExpressionGenerator = null
 		) : base(reductionExpressionGenerator){
-			if(null == singleParameter) throw new ArgumentNullException("singleParameter");
+			if(null == unaryParameter) throw new ArgumentNullException("unaryParameter");
 			Contract.EndContractBlock();
-			UnaryParameter = singleParameter;
+			UnaryParameter = unaryParameter;
 			Contract.Assume(null != UnaryParameter);
 		}
 
@@ -32,7 +32,12 @@ namespace Vertesaur.Generation.ExpressionBuilder
 		public Expression UnaryParameter { get; private set; }
 
 		/// <inheritdoc/>
-		public override Type Type { get { return UnaryParameter.Type; } }
+		public override Type Type {
+			get {
+				Contract.Ensures(Contract.Result<Type>() != null);
+				return UnaryParameter.Type ?? typeof(void);
+			}
+		}
 
 		[ContractInvariantMethod]
 		private void CodeContractInvariant() {

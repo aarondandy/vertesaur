@@ -1,7 +1,8 @@
-﻿using System.Diagnostics.Contracts;
+﻿using System;
+using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
 using Vertesaur.Generation.Contracts;
-using Vertesaur.Generation.ExpressionBuilder;
+using Vertesaur.Generation.Expressions;
 
 namespace Vertesaur.Generation.GenericOperations
 {
@@ -62,11 +63,12 @@ namespace Vertesaur.Generation.GenericOperations
 		}
 
 		private CreateConstantFunc BuildConstant(string expressionName) {
-			Contract.Requires(!string.IsNullOrEmpty(expressionName));
+			Contract.Requires(!String.IsNullOrEmpty(expressionName));
 			Contract.EndContractBlock();
-			return Expression.Lambda<CreateConstantFunc>(
-				ExpressionGenerator.GenerateExpression(expressionName, typeof(TValue))
-			).Compile();
+			var expression = ExpressionGenerator.GenerateExpression(expressionName, typeof(TValue));
+			if (null == expression)
+				return null;
+			return Expression.Lambda<CreateConstantFunc>(expression).Compile();
 		}
 
 		private UnaryFunc BuildUnaryFunc(string expressionName){

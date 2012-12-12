@@ -5,7 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using Vertesaur.Generation.Contracts;
 
-namespace Vertesaur.Generation.ExpressionBuilder
+namespace Vertesaur.Generation.Expressions
 {
 	/// <summary>
 	/// An expression representing the magnitude of a set of expressions representing coordinates.
@@ -38,6 +38,7 @@ namespace Vertesaur.Generation.ExpressionBuilder
 
 		/// <inheritdoc/>
 		public override Expression Reduce(){
+			Contract.Ensures(Contract.Result<Expression>() != null);
 			// TODO: use some square root utility method that does not take the square root of a square
 			return ReductionExpressionGenerator.GenerateExpression("SquareRoot",InnerExpression)
 				?? new SquareRootExpression(InnerExpression, ReductionExpressionGenerator);

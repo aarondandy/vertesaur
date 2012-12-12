@@ -2,7 +2,7 @@
 using System.Linq.Expressions;
 using Vertesaur.Generation.Contracts;
 
-namespace Vertesaur.Generation.ExpressionBuilder
+namespace Vertesaur.Generation.Expressions
 {
 	/// <summary>
 	/// An expression representing the square of another expression. SquareExpression(expression) = expression * expression.
@@ -13,29 +13,25 @@ namespace Vertesaur.Generation.ExpressionBuilder
 		/// <summary>
 		/// Creates a new square expression for the given expression.
 		/// </summary>
-		/// <param name="parameter">The expression to square.</param>
+		/// <param name="unaryParameter">The expression to square.</param>
 		/// <param name="reductionExpressionGenerator">The optional expression generator used for reductions.</param>
-		public SquareExpression(Expression parameter, IExpressionGenerator reductionExpressionGenerator = null)
-			: base(parameter, reductionExpressionGenerator)
+		public SquareExpression(Expression unaryParameter, IExpressionGenerator reductionExpressionGenerator = null)
+			: base(unaryParameter, reductionExpressionGenerator)
 		{
-			Contract.Requires(null != parameter);
+			Contract.Requires(null != unaryParameter);
 			Contract.EndContractBlock();
 		}
 
+		/// <inheritdoc/>
 		public override Expression Reduce() {
 			if (UnaryParameter is SquareRootExpression)
 				return ((SquareRootExpression)UnaryParameter).UnaryParameter;
-			if (UnaryParameter is ParameterExpression || UnaryParameter is ConstantExpression){
-				return ReductionExpressionGenerator.GenerateExpression(
-					"MULTIPLY", UnaryParameter, UnaryParameter);
-			}
-			var tempLocal = Parameter(Type);
-			return Block(
-				new[] {tempLocal},
-				Assign(tempLocal, UnaryParameter),
-				ReductionExpressionGenerator.GenerateExpression(
-					"MULTIPLY", tempLocal, tempLocal)
-			);
+			if (UnaryParameter is ParameterExpression || UnaryParameter is ConstantExpression)
+				return ReductionExpressionGenerator.GenerateExpression("MULTIPLY", UnaryParameter, UnaryParameter);
+
+			return new BlockExpressionBuilder().AddUsingAssignedLocal(local => new[] {
+				ReductionExpressionGenerator.GenerateExpression("MULTIPLY", local, local)
+			},UnaryParameter).GetExpression();
 		}
 
 	}

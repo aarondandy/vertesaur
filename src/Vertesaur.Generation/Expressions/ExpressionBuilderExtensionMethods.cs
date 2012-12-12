@@ -3,7 +3,7 @@ using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
 using Vertesaur.Generation.Contracts;
 
-namespace Vertesaur.Generation.ExpressionBuilder
+namespace Vertesaur.Generation.Expressions
 {
 	/// <summary>
 	/// Utility and extension methods to support expression generation.
@@ -38,7 +38,6 @@ namespace Vertesaur.Generation.ExpressionBuilder
 			Contract.Requires(null != generator);
 			Contract.Requires(!String.IsNullOrEmpty(expressionName));
 			Contract.Requires(null != resultType);
-			Contract.Requires(!(typeof(void) == resultType));
 			Contract.Ensures(Contract.Result<IExpressionGenerationRequest>() != null);
 			Contract.EndContractBlock();
 			return new ConstantExpressionGenerationRequest(generator, expressionName, resultType);
@@ -72,7 +71,6 @@ namespace Vertesaur.Generation.ExpressionBuilder
 			Contract.Requires(null != generator);
 			Contract.Requires(!String.IsNullOrEmpty(expressionName));
 			Contract.Requires(null != resultType);
-			Contract.Requires(typeof(void) != resultType);
 			Contract.EndContractBlock();
 			var request = NewRequest(generator, expressionName, resultType);
 			return generator.GenerateExpression(request);

@@ -26,7 +26,7 @@ using System;
 using System.Linq.Expressions;
 using System.Reflection;
 using NUnit.Framework;
-using Vertesaur.Generation.ExpressionBuilder;
+using Vertesaur.Generation.Expressions;
 
 
 namespace Vertesaur.Generation.Test {

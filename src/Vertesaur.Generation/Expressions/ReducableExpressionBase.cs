@@ -3,7 +3,7 @@ using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
 using Vertesaur.Generation.Contracts;
 
-namespace Vertesaur.Generation.ExpressionBuilder
+namespace Vertesaur.Generation.Expressions
 {
 	/// <summary>
 	/// An expression that can be reduced to a compilable expression.
@@ -21,10 +21,13 @@ namespace Vertesaur.Generation.ExpressionBuilder
 			_reductionExpressionGenerator = reductionExpressionGenerator;
 		}
 
+		/// <inheritdoc/>
 		public override bool CanReduce { get { return true; } }
 
+		/// <inheritdoc/>
 		public override ExpressionType NodeType { get { return ExpressionType.Extension; } }
 
+		/// <inheritdoc/>
 		public abstract override Type Type { get; }
 
 		/// <summary>

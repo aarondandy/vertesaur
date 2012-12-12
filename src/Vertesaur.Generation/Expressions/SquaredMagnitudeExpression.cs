@@ -6,7 +6,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using Vertesaur.Generation.Contracts;
 
-namespace Vertesaur.Generation.ExpressionBuilder
+namespace Vertesaur.Generation.Expressions
 {
 	/// <summary>
 	/// An expression representing the squared magnitude of a set of expressions representing coordinates.
@@ -45,14 +45,37 @@ namespace Vertesaur.Generation.ExpressionBuilder
 
 		/// <inheritdoc/>
 		public override Expression Reduce() {
-			var result = ReductionExpressionGenerator.GenerateExpression("Square", Components[0]);
-			for (int i = 1; i < Components.Count; i++){
+			// make sure everything going into the expression can be evaluated multiple times
+			var squareInputs = new List<Expression>(Components.Count);
+			var blockBuilder = new BlockExpressionBuilder();
+			foreach (var component in Components) {
+				if (component is ConstantExpression || component is ParameterExpression) {
+					squareInputs.Add(component);
+				}
+				else {
+					var local = blockBuilder.LocalManager.GetVariable(component.Type);
+					blockBuilder.Add(Expression.Assign(local, component));
+					squareInputs.Add(local);
+				}
+			}
+
+			// build the equation
+			var result = ReductionExpressionGenerator.GenerateExpression("Square", squareInputs[0]);
+			for (int i = 1; i < squareInputs.Count; i++) {
 				var squaredComponentExpression = ReductionExpressionGenerator.GenerateExpression(
-					"Square", Components[i]);
+					"Square", squareInputs[i]);
 				result = ReductionExpressionGenerator.GenerateExpression(
 					"Add", result, squaredComponentExpression);
 			}
-			return result;
+
+			// return the block if it is needed
+			if (blockBuilder.Count > 0) {
+				blockBuilder.Add(result);
+				return blockBuilder.GetExpression();
+			}
+			else {
+				return result;
+			}
 		}
 
 	}

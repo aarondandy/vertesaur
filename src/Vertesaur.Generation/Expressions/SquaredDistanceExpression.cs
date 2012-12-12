@@ -6,7 +6,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using Vertesaur.Generation.Contracts;
 
-namespace Vertesaur.Generation.ExpressionBuilder
+namespace Vertesaur.Generation.Expressions
 {
 	/// <summary>
 	/// An expression representing the squared distance between two points.
@@ -53,7 +53,6 @@ namespace Vertesaur.Generation.ExpressionBuilder
 			}
 			Contract.Assume(deltas.Length != 0);
 			return ReductionExpressionGenerator.GenerateExpression("SquaredMagnitude", deltas);
-
 		}
 
 	}

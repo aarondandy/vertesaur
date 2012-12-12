@@ -2,7 +2,7 @@
 using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
 using Vertesaur.Generation.Contracts;
-using Vertesaur.Generation.ExpressionBuilder;
+using Vertesaur.Generation.Expressions;
 
 namespace Vertesaur.Generation.GenericOperations
 {
@@ -17,12 +17,33 @@ namespace Vertesaur.Generation.GenericOperations
 			Default = new VectorOperations<TValue>(new MefCombinedExpressionGenerator());
 		}
 
+		/// <summary>
+		/// The default vector operation inplementation.
+		/// </summary>
 		public static VectorOperations<TValue> Default { get; private set; }
 
+		/// <summary>
+		/// A delegate for methods that reduce a 2D coordinate down to a single result value of the same component type.
+		/// </summary>
+		/// <param name="x">The x-coordinate.</param>
+		/// <param name="y">The y-coordinate.</param>
+		/// <returns>The result value.</returns>
 		public delegate TValue CoordinateToValue2D(TValue x, TValue y);
 
+		/// <summary>
+		/// A delegate for methods that reduce two 2D coordinates down to a single result value of the same component type.
+		/// </summary>
+		/// <param name="x0">The first x-coordinate.</param>
+		/// <param name="y0">The first y-coordinate.</param>
+		/// <param name="x1">The second x-coordinate.</param>
+		/// <param name="y1">The second y-coordinate.</param>
+		/// <returns>The result value.</returns>
 		public delegate TValue TwoCoordinateToValue2D(TValue x0, TValue y0, TValue x1, TValue y1);
 
+		/// <summary>
+		/// Creates a new vector operation implementation using the given expression generator.
+		/// </summary>
+		/// <param name="expressionGenerator">The expression generator which is used to generate expression for the generic operations at run-time.</param>
 		public VectorOperations(IExpressionGenerator expressionGenerator) {
 			if(null == expressionGenerator) throw new ArgumentNullException("expressionGenerator");
 			Contract.Requires(null != expressionGenerator);
@@ -43,13 +64,15 @@ namespace Vertesaur.Generation.GenericOperations
 			var y0 = Expression.Parameter(typeof(TValue));
 			var x1 = Expression.Parameter(typeof(TValue));
 			var y1 = Expression.Parameter(typeof(TValue));
+			var expression = ExpressionGenerator.GenerateExpression(
+				"Subtract",
+				ExpressionGenerator.GenerateExpression("Multiply", x0, y1),
+				ExpressionGenerator.GenerateExpression("Multiply", y0, x1)
+			);
+			if (expression == null)
+				return null;
 			return Expression.Lambda<TwoCoordinateToValue2D>(
-				ExpressionGenerator.GenerateExpression(
-					"Subtract",
-					ExpressionGenerator.GenerateExpression("Multiply",x0, y1),
-					ExpressionGenerator.GenerateExpression("Multiply",y0, x1)
-				),
-				x0, y0, x1, y1
+				expression, x0, y0, x1, y1
 			).Compile();
 		}
 
@@ -59,9 +82,11 @@ namespace Vertesaur.Generation.GenericOperations
 
 			var tParam0 = Expression.Parameter(typeof(TValue));
 			var tParam1 = Expression.Parameter(typeof(TValue));
+			var expression = ExpressionGenerator.GenerateExpression(expressionName, tParam0, tParam1);
+			if (null == expression)
+				return null;
 			return Expression.Lambda<CoordinateToValue2D>(
-				ExpressionGenerator.GenerateExpression(expressionName,tParam0,tParam1),
-				tParam0, tParam1
+				expression, tParam0, tParam1
 			).Compile();
 		}
 
@@ -73,11 +98,11 @@ namespace Vertesaur.Generation.GenericOperations
 			var tParam1 = Expression.Parameter(typeof(TValue));
 			var tParam2 = Expression.Parameter(typeof(TValue));
 			var tParam3 = Expression.Parameter(typeof(TValue));
+			var expression = ExpressionGenerator.GenerateExpression(expressionName, tParam0, tParam1, tParam2, tParam3);
+			if (null == expression)
+				return null;
 			return Expression.Lambda<TwoCoordinateToValue2D>(
-				ExpressionGenerator.GenerateExpression(
-					expressionName, tParam0, tParam1, tParam2, tParam3
-				),
-				tParam0, tParam1, tParam2, tParam3
+				expression, tParam0, tParam1, tParam2, tParam3
 			).Compile();
 		}
 

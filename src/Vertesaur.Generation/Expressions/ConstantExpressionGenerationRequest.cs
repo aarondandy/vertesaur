@@ -4,29 +4,30 @@ using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
 using Vertesaur.Generation.Contracts;
 
-namespace Vertesaur.Generation.ExpressionBuilder
+namespace Vertesaur.Generation.Expressions
 {
 	/// <summary>
-	/// An expression generation request for a function that takes expressions as input.
+	/// A constant expression generation request to get an expression representing a constant value.
 	/// </summary>
-	public class FunctionExpressionGenerationRequest : IExpressionGenerationRequest
+	public class ConstantExpressionGenerationRequest : IExpressionGenerationRequest
 	{
+
+		private static readonly ReadOnlyCollection<Expression> EmptyExpressionList = Array.AsReadOnly(new Expression[0]);
 
 		/// <summary>
 		/// Creates a new function expression generation request. This request is for a function that accepts one or more expressions as input.
 		/// </summary>
 		/// <param name="generator">The primary generator to be used for the generation of sub expressions.</param>
-		/// <param name="expressionName">The name of the requested expression.</param>
-		/// <param name="inputs">The input expressions for the generated expression.</param>
-		public FunctionExpressionGenerationRequest(IExpressionGenerator generator, string expressionName, params Expression[] inputs){
+		/// <param name="expressionName">The name of the requested constant.</param>
+		/// <param name="resultType">The desired type of the constant.</param>
+		public ConstantExpressionGenerationRequest(IExpressionGenerator generator, string expressionName, Type resultType) {
 			if(null == generator) throw new ArgumentNullException("generator");
 			if(String.IsNullOrEmpty(expressionName)) throw new ArgumentException("Invalid expression name.","expressionName");
-			if(null == inputs) throw new ArgumentNullException("inputs");
-			if(inputs.Length == 0) throw new ArgumentException("At least one input expression is required.", "inputs");
+			if(null == resultType) throw new ArgumentNullException("resultType");
 			Contract.EndContractBlock();
 			TopLevelGenerator = generator;
 			ExpressionName = expressionName;
-			InputExpressions = Array.AsReadOnly(inputs);
+			DesiredResultType = resultType;
 		}
 
 		/// <inheritdoc/>
@@ -36,9 +37,9 @@ namespace Vertesaur.Generation.ExpressionBuilder
 		public string ExpressionName { get; private set; }
 
 		/// <inheritdoc/>
-		public ReadOnlyCollection<Expression> InputExpressions { get; private set; }
+		public ReadOnlyCollection<Expression> InputExpressions { get { return EmptyExpressionList; } }
 
 		/// <inheritdoc/>
-		public Type DesiredResultType { get { return null; } }
+		public Type DesiredResultType { get; private set; }
 	}
 }

@@ -153,7 +153,6 @@ namespace Vertesaur {
 		double ICoordinatePair<double>.Y { get { return Y; } }
 
 		/// <inheritdoc/>
-		[Obsolete("This does not belong here.")]
 		[Pure] public int CompareTo(Vector2 other) {
 			var c = X.CompareTo(other.X);
 			return 0 == c ? Y.CompareTo(other.Y) : c;

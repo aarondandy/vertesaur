@@ -9,7 +9,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using Vertesaur.Generation.Contracts;
 
-namespace Vertesaur.Generation.ExpressionBuilder
+namespace Vertesaur.Generation.Expressions
 {
 	/// <summary>
 	/// A combined expression generator using MEF to locate all available expression generators at run-time.
@@ -47,10 +47,11 @@ namespace Vertesaur.Generation.ExpressionBuilder
 			ComposeFromAssemblies(assemblies);
 		}
 
-		private void ComposeFromAssemblies(Assembly[] assemblies){
+		private void ComposeFromAssemblies(IList<Assembly> assemblies) {
+			Contract.Requires(assemblies != null);
 			ComposablePartCatalog catalog;
 
-			if(assemblies.Length == 0)
+			if(assemblies.Count == 1)
 				catalog = new AssemblyCatalog(assemblies[0]);
 			else
 				catalog = new AggregateCatalog(assemblies.Select(x => new AssemblyCatalog(x)));
@@ -59,6 +60,7 @@ namespace Vertesaur.Generation.ExpressionBuilder
 		}
 
 		private void Compose(ComposablePartCatalog catalog){
+			Contract.Requires(null != catalog);
 			var container = new CompositionContainer(catalog);
 			container.ComposeParts(this);
 		}

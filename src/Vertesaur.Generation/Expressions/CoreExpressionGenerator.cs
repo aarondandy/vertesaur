@@ -7,7 +7,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using Vertesaur.Generation.Contracts;
 
-namespace Vertesaur.Generation.ExpressionBuilder
+namespace Vertesaur.Generation.Expressions
 {
 
 	/// <summary>
@@ -178,18 +178,22 @@ namespace Vertesaur.Generation.ExpressionBuilder
 		}
 
 		private Expression GenerateSquare(IExpressionGenerationRequest request, Expression parameter) {
+			Contract.Requires(null != request);
 			Contract.Requires(null != parameter);
-			Contract.EndContractBlock();
+			Contract.Ensures(Contract.Result<Expression>() != null);
 			return new SquareExpression(parameter, request.TopLevelGenerator);
 		}
 
 		private Expression GenerateSquareRoot(IExpressionGenerationRequest request, Expression parameter) {
+			Contract.Requires(null != request);
 			Contract.Requires(null != parameter);
-			Contract.EndContractBlock();
+			Contract.Ensures(Contract.Result<Expression>() != null);
 			return new SquareRootExpression(parameter, request.TopLevelGenerator);
 		}
 
 		private Expression GenerateNegation(IExpressionGenerationRequest request, Expression parameter) {
+			Contract.Requires(null != request);
+			Contract.Requires(null != parameter);
 			var resultType = parameter.Type;
 			if (resultType == typeof(ulong) || resultType == typeof(uint) || resultType == typeof(ushort) || resultType == typeof(byte) || resultType == typeof(sbyte)) {
 				var zeroConstant = GenerateConstantExpression("0", resultType);
@@ -200,8 +204,11 @@ namespace Vertesaur.Generation.ExpressionBuilder
 		}
 
 		private static string ToTitleCase(string text){
+			Contract.Ensures(Contract.Result<string>() != null);
 			if (String.IsNullOrEmpty(text))
-				return text;
+				return String.Empty;
+			if (text.Length == 1)
+				return text.ToUpperInvariant();
 			return String.Concat(
 				Char.ToUpperInvariant(text[0]),
 				text.Substring(1).ToLowerInvariant()
@@ -209,6 +216,9 @@ namespace Vertesaur.Generation.ExpressionBuilder
 		}
 
 		private Expression GenerateArithmetic(IExpressionGenerationRequest request, Expression left, Expression right) {
+			Contract.Requires(null != request);
+			Contract.Requires(null != left);
+			Contract.Requires(null != right);
 			if ((left.Type == right.Type) && (left.Type == typeof(byte) || left.Type == typeof(char) || left.Type == typeof(sbyte))) {
 				return Expression.Call(
 					typeof(SpecializedOperations).GetMethod(
@@ -232,40 +242,39 @@ namespace Vertesaur.Generation.ExpressionBuilder
 		}
 
 		private Expression GenerateMin(IExpressionGenerationRequest request, Expression left, Expression right) {
+			Contract.Requires(null != request);
+			Contract.Requires(null != left);
+			Contract.Requires(null != right);
 			if ((left is ConstantExpression || left is ParameterExpression) && (right is ConstantExpression || right is ParameterExpression)) {
 				var leq = request.TopLevelGenerator.GenerateExpression("LESSEQUAL", left, right);
 				Contract.Assume(null != leq);
 				return Expression.Condition(leq, left, right);
 			}
 
-			var tempLeft = Expression.Parameter(left.Type);
-			var tempRight = Expression.Parameter(right.Type);
-			return Expression.Block(
-				new[]{tempLeft, tempRight},
-				Expression.Assign(tempLeft, left),
-				Expression.Assign(tempRight, right),
-				GenerateMin(request, tempLeft, tempRight)
-			);
+			return new BlockExpressionBuilder().AddUsingAssignedLocals(locals => new[] {
+				GenerateMin(request, locals[0], locals[1])
+			}, left, right).GetExpression();
 		}
 
 		private Expression GenerateMax(IExpressionGenerationRequest request, Expression left, Expression right) {
+			Contract.Requires(null != request);
+			Contract.Requires(null != left);
+			Contract.Requires(null != right);
 			if ((left is ConstantExpression || left is ParameterExpression) && (right is ConstantExpression || right is ParameterExpression)) {
 				var geq = request.TopLevelGenerator.GenerateExpression("GREATEREQUAL", left, right);
 				Contract.Assume(null != geq);
 				return Expression.Condition(geq, left, right);
 			}
 
-			var tempLeft = Expression.Parameter(left.Type);
-			var tempRight = Expression.Parameter(right.Type);
-			return Expression.Block(
-				new[] { tempLeft, tempRight },
-				Expression.Assign(tempLeft, left),
-				Expression.Assign(tempRight, right),
-				GenerateMax(request, tempLeft, tempRight)
-			);
+			return new BlockExpressionBuilder().AddUsingAssignedLocals(locals => new[] {
+				GenerateMax(request, locals[0], locals[1])
+			}, left, right).GetExpression();
 		}
 
 		private Expression GenerateCompareTo(IExpressionGenerationRequest request, Expression left, Expression right) {
+			Contract.Requires(null != request);
+			Contract.Requires(null != left);
+			Contract.Requires(null != right);
 			if ((left is ConstantExpression || left is ParameterExpression) && (right is ConstantExpression || right is ParameterExpression)) {
 				var eq = request.TopLevelGenerator.GenerateExpression("EQUAL", left, right);
 				Contract.Assume(null != eq);
@@ -293,14 +302,9 @@ namespace Vertesaur.Generation.ExpressionBuilder
 					);
 			}
 
-			var tempLeft = Expression.Parameter(left.Type);
-			var tempRight = Expression.Parameter(right.Type);
-			return Expression.Block(
-				new[] { tempLeft, tempRight },
-				Expression.Assign(tempLeft, left),
-				Expression.Assign(tempRight, right),
-				GenerateCompareTo(request, tempLeft, tempRight)
-			);
+			return new BlockExpressionBuilder().AddUsingAssignedLocals(locals => new[] {
+				GenerateCompareTo(request, locals[0], locals[1])
+			}, left, right).GetExpression();
 		}
 
 		private bool TryGetDoubleConstantValue(string expressionName, out double constantValue) {
@@ -379,7 +383,6 @@ namespace Vertesaur.Generation.ExpressionBuilder
 		private Expression GenerateConversionExpression(Expression expression, Type resultType){
 			Contract.Requires(null != expression);
 			Contract.Requires(null != resultType);
-			Contract.Requires(typeof(void) != resultType);
 			Contract.EndContractBlock();
 
 			if (expression.Type == resultType)
