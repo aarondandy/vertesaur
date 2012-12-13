@@ -25,9 +25,7 @@
 using System;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
-using JetBrains.Annotations;
 using Vertesaur.Contracts;
-using PureAttribute = System.Diagnostics.Contracts.PureAttribute;
 
 namespace Vertesaur {
 
@@ -103,7 +101,7 @@ namespace Vertesaur {
 		/// Constructs a new range from the bounding values of <paramref name="range"/>.
 		/// </summary>
 		/// <param name="range">The bounding values to copy from.</param>
-		public Range([NotNull] IRange<double> range)
+		public Range(IRange<double> range)
 		{
 			if(null == range) throw new ArgumentNullException("range");
 			Contract.EndContractBlock();
@@ -463,8 +461,8 @@ namespace Vertesaur {
 		/// <returns>
 		/// <c>true</c> if the current range is equal to the <paramref name="other"/> range; otherwise, <c>false</c>.
 		/// </returns>
-		[Pure, ContractAnnotation("null=>false")]
-		public bool Equals([CanBeNull] IRange<double> other) {
+		[Pure]
+		public bool Equals(IRange<double> other) {
 			return !ReferenceEquals(null,other)
 				&& Low == other.Low
 				&& High == other.High;
@@ -489,8 +487,7 @@ namespace Vertesaur {
 		/// </returns>
 		/// <param name="obj">Another object to compare to.</param>
 		/// <filterpriority>2</filterpriority>
-		[ContractAnnotation("null=>false")]
-		public override bool Equals([CanBeNull] object obj) {
+		public override bool Equals(object obj) {
 			return null != obj && (
 				(obj is Range) ? Equals((Range)obj)
 				:

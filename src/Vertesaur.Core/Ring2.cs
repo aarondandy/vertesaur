@@ -29,7 +29,6 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using JetBrains.Annotations;
 using Vertesaur.Contracts;
 
 namespace Vertesaur {
@@ -112,7 +111,7 @@ namespace Vertesaur {
 		/// <remarks>
 		/// Only expose this field through the Collection wrapper.
 		/// </remarks>
-		[NotNull] private readonly List<Point2> _pointList;
+		private readonly List<Point2> _pointList;
 
 		/// <summary>
 		/// Constructs a ring with no points.
@@ -133,18 +132,21 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="hole"><c>true</c> to flag as a hole, <c>false</c> to flag as a fill.</param>
 		/// <param name="expectedCapacity">The expected capacity of the ring.</param>
-		public Ring2(bool hole, int expectedCapacity) : this(hole, new List<Point2>(expectedCapacity)) { }
+		public Ring2(bool hole, int expectedCapacity)
+			: this(hole, new List<Point2>(expectedCapacity)) { }
 		/// <summary>
 		/// Constructs a ring with the given points.
 		/// </summary>
 		/// <param name="points">The ordered set of points that define the ring.</param>
-		public Ring2([CanBeNull] IEnumerable<Point2> points) : this(null, null == points ? null : new List<Point2>(points)) { }
+		public Ring2(IEnumerable<Point2> points)
+			: this(null, null == points ? null : new List<Point2>(points)) { }
 		/// <summary>
 		/// Constructs a ring with the given points and with the hole property explicitly set.
 		/// </summary>
 		/// <param name="points">The ordered set of points that define the ring.</param>
 		/// <param name="hole"><c>true</c> to flag as a hole, <c>false</c> to flag as a fill.</param>
-		public Ring2([CanBeNull] IEnumerable<Point2> points, bool hole) : this(hole, null == points ? null : new List<Point2>(points)) { }
+		public Ring2(IEnumerable<Point2> points, bool hole)
+			: this(hole, null == points ? null : new List<Point2>(points)) { }
 
 		/// <summary>
 		/// Construct a new ring which is cloned from the given <paramref name="source"/> ring.
@@ -164,9 +166,9 @@ namespace Vertesaur {
 		/// <remarks>
 		/// All public access to the points must be through the Collection wrapper around the points list.
 		/// </remarks>
-		private Ring2(bool? hole, [CanBeNull] List<Point2> points)
-			: base(points = (points ?? new List<Point2>())) {
-
+		private Ring2(bool? hole,List<Point2> points)
+			: base(points = (points ?? new List<Point2>()))
+		{
 			_hole = hole;
 			_pointList = points;
 			ResetAllPointsCacheData();
@@ -197,10 +199,8 @@ namespace Vertesaur {
 #endif
 		}
 
-		[NotNull]
 		private AllPointsCacheData CalculateAllPointsCacheData() {
 			Contract.Ensures(Contract.Result<AllPointsCacheData>() != null);
-			Contract.EndContractBlock();
 			return new AllPointsCacheData{
 				CalculatedMbr = Mbr.Create(_pointList),
 				AreaSumValue = CalculateAreaSumValue()
@@ -235,10 +235,8 @@ namespace Vertesaur {
 		/// Adds a collection of points to the ring.
 		/// </summary>
 		/// <param name="points">Points to be added.</param>
-		public void AddRange([NotNull, InstantHandle] IEnumerable<Point2> points) {
+		public void AddRange(IEnumerable<Point2> points) {
 			Contract.Requires(null != points);
-			Contract.EndContractBlock();
-
 			_pointList.AddRange(points);
 			ResetAllCache();
 		}
@@ -314,8 +312,7 @@ namespace Vertesaur {
 		}
 
 		/// <inheritdoc/>
-		[ContractAnnotation("null=>false")]
-		public override bool Equals([CanBeNull] object obj) {
+		public override bool Equals(object obj) {
 			return Equals(obj as Ring2);
 		}
 
@@ -334,8 +331,7 @@ namespace Vertesaur {
 		/// <c>true</c> if the current object is equal to the <paramref name="other"/> parameter; otherwise, <c>false</c>.
 		/// </returns>
 		/// <param name="other">An object to compare with this object.</param>
-		[ContractAnnotation("null=>false")]
-		public bool Equals([CanBeNull] Ring2 other) {
+		public bool Equals(Ring2 other) {
 			if (ReferenceEquals(null, other))
 				return false; 
 			if (ReferenceEquals(this, other))
@@ -356,7 +352,6 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="other">Another ring to compare.</param>
 		/// <returns>true when the given ring is spatially equal to this ring.</returns>
-		[ContractAnnotation("null=>false")]
 		public bool SpatiallyEqual(Ring2 other) {
 			if (ReferenceEquals(null, other))
 				return false;
@@ -389,10 +384,9 @@ namespace Vertesaur {
 			return true;
 		}
 
-		private static bool AllPointsOnBoundary([NotNull] Ring2 points, [NotNull] Ring2 boundary) {
+		private static bool AllPointsOnBoundary(Ring2 points, Ring2 boundary) {
 			Contract.Requires(points != null);
 			Contract.Requires(boundary != null);
-			Contract.EndContractBlock();
 
 			int segmentCount = boundary.SegmentCount;
 			if (segmentCount == 0) {
@@ -457,11 +451,10 @@ namespace Vertesaur {
 		/// Be aware that the number of segments may be one more than expected if
 		/// a redundant endpoint is used. When possible please, avoid the use of redundant endpoints.
 		/// </remarks>
-		[NotNull]
 		public Segment2 GetSegment(int i) {
 			if (i < 0 || i >= SegmentCount) throw new ArgumentOutOfRangeException("i", "Parameter i must be positive and less than SegmentCount for this ring.");
 			Contract.Ensures(Contract.Result<Segment2>() != null);
-			Contract.EndContractBlock();
+
 			return new Segment2(
 				_pointList[i],
 				_pointList[((i + 1) >= _pointList.Count) ? 0 : (i + 1)]
@@ -476,10 +469,8 @@ namespace Vertesaur {
 		/// The inverse function will create a hole from a fill or a fill from a hole.
 		/// If the hold flag is not set the point winding order will be reversed.
 		/// </remarks>
-		[NotNull]
 		public Ring2 GetInverse() {
 			Contract.Ensures(Contract.Result<Ring2>() != null);
-			Contract.EndContractBlock();
 			if (Hole.HasValue)
 				return new Ring2(this.Reverse(), !Hole.Value);
 			return new Ring2(this.Reverse());
@@ -539,9 +530,7 @@ namespace Vertesaur {
 		/// </remarks>
 		public double GetArea() {
 			var sum = GetAreaSumValue() / 2.0;
-			return _hole.HasValue && (_hole.Value ^ (sum < 0))
-				? -sum
-				: sum;
+			return _hole.HasValue && (_hole.Value ^ (sum < 0)) ? -sum : sum;
 		}
 
 		/// <summary>
@@ -722,9 +711,8 @@ namespace Vertesaur {
 		/// </summary>
 		/// <returns>A ring.</returns>
 		/// <remarks>Functions as a deep clone.</remarks>
-		[NotNull] public Ring2 Clone() {
+		public Ring2 Clone() {
 			Contract.Ensures(Contract.Result<Ring2>() != null);
-			Contract.EndContractBlock();
 			var points = new List<Point2>(_pointList.Count);
 			points.AddRange(_pointList);
 			Contract.Assume(SegmentCount <= Count);
@@ -803,8 +791,7 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="testContainer">The ring to test with.</param>
 		/// <returns>true if this ring is within the other ring.</returns>
-		[ContractAnnotation("null=>false")]
-		internal bool NonIntersectingWithin([CanBeNull] Ring2 testContainer) {
+		internal bool NonIntersectingWithin(Ring2 testContainer) {
 			if (ReferenceEquals(null, testContainer))
 				return false;
 

@@ -25,7 +25,6 @@
 using System;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
-using JetBrains.Annotations;
 using Vertesaur.Contracts;
 
 namespace Vertesaur {
@@ -73,7 +72,7 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="p">Point of origin.</param>
 		/// <param name="v">The direction of the ray.</param>
-		public Ray2([NotNull] IPoint2<double> p, [NotNull] IVector2<double> v)
+		public Ray2(IPoint2<double> p, IVector2<double> v)
 			: this(new Point2(p), new Vector2(v))
 		{
 			Contract.Requires(p != null);
@@ -91,7 +90,7 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="a">Point of origin.</param>
 		/// <param name="b">A point on the ray.</param>
-		public Ray2([NotNull] IPoint2<double> a, [NotNull] IPoint2<double> b)
+		public Ray2(IPoint2<double> a, IPoint2<double> b)
 			: this(new Point2(a), new Point2(b))
 		{
 			Contract.Requires(a != null);
@@ -101,7 +100,7 @@ namespace Vertesaur {
 		/// Constructs a ray identical to the given <paramref name="ray"/>.
 		/// </summary>
 		/// <param name="ray">A ray.</param>
-		public Ray2([NotNull] Ray2 ray) {
+		public Ray2(Ray2 ray) {
 			if(null == ray) throw new ArgumentNullException("ray");
 			Contract.EndContractBlock();
 			P = ray.P;
@@ -130,8 +129,7 @@ namespace Vertesaur {
 		/// <c>true</c> if the current object is equal to the <paramref name="other"/> parameter; otherwise, <c>false</c>.
 		/// </returns>
 		/// <param name="other">An object to compare with this object.</param>
-		[ContractAnnotation("null=>false")]
-		public bool Equals([CanBeNull] Ray2 other) {
+		public bool Equals(Ray2 other) {
 			return !ReferenceEquals(null, other)
 				&& P.Equals(other.P)
 				&& Direction.Equals(other.Direction);
@@ -142,7 +140,6 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="other">Another ray</param>
 		/// <returns><c>true</c> if the rays are spatially equal.</returns>
-		[ContractAnnotation("null=>false")]
 		public bool SpatiallyEqual(Ray2 other) {
 			return !ReferenceEquals(null, other)
 				&& P.Equals(other.P)
@@ -154,8 +151,7 @@ namespace Vertesaur {
 		}
 
 		/// <inheritdoc/>
-		[ContractAnnotation("null=>false")]
-		public override bool Equals([CanBeNull] object obj) {
+		public override bool Equals(object obj) {
 			return Equals(obj as Ray2);
 		}
 
@@ -193,7 +189,6 @@ namespace Vertesaur {
 		/// </returns>
 		/// <filterpriority>2</filterpriority>
 		/// <remarks>Functions as a deep clone.</remarks>
-		[NotNull]
 		public Ray2 Clone() {
 			Contract.Ensures(Contract.Result<Ray2>() != null);
 			Contract.EndContractBlock();
@@ -209,6 +204,7 @@ namespace Vertesaur {
 		/// </summary>
 		/// <returns>A minimum bounding rectangle.</returns>
 		public Mbr GetMbr() {
+			Contract.Ensures(Contract.Result<Mbr>() != null);
 			// ReSharper disable CompareOfFloatsByEqualityOperator
 			return (
 				(0 == Direction.X)
@@ -298,7 +294,6 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="segment">A segment.</param>
 		/// <returns><c>true</c> when another object intersects this object.</returns>
-		[ContractAnnotation("null=>false")]
 		public bool Intersects(Segment2 segment) {
 			if (ReferenceEquals(null, segment))
 				return false;
@@ -331,7 +326,6 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="ray">A ray.</param>
 		/// <returns><c>true</c> when another object intersects this object.</returns>
-		[ContractAnnotation("null=>false")]
 		public bool Intersects(Ray2 ray) {
 			return null != Intersection(ray);
 		}
@@ -341,7 +335,6 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="line">A line.</param>
 		/// <returns><c>true</c> when another object intersects this object.</returns>
-		[ContractAnnotation("null=>false")]
 		public bool Intersects(Line2 line) {
 			return null != Intersection(line);
 		}
@@ -351,7 +344,6 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="segment">The segment to find the intersection with.</param>
 		/// <returns>The intersection geometry or <c>null</c> for no intersection.</returns>
-		[ContractAnnotation("null=>null")]
 		public IPlanarGeometry Intersection(Segment2 segment) {
 			if(ReferenceEquals(null, segment))
 				return null;
@@ -362,7 +354,6 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="ray">The ray to find the intersection with.</param>
 		/// <returns>The intersection geometry or <c>null</c> for no intersection.</returns>
-		[ContractAnnotation("null=>null")]
 		public IPlanarGeometry Intersection(Ray2 ray) {
 			// ReSharper disable CompareOfFloatsByEqualityOperator
 			if (ReferenceEquals(null, ray))
@@ -436,7 +427,6 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="line">The line to find the intersection with.</param>
 		/// <returns>The intersection geometry or <c>null</c> for no intersection.</returns>
-		[ContractAnnotation("null=>null")]
 		public IPlanarGeometry Intersection(Line2 line) {
 			if(ReferenceEquals(null, line))
 				return null;

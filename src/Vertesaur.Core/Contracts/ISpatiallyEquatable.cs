@@ -22,8 +22,6 @@
 //
 // ===============================================================================
 
-using JetBrains.Annotations;
-
 namespace Vertesaur.Contracts {
 	/// <summary>
 	/// Functionality to determine if an object is geometrically equivalent to this instance.
@@ -35,6 +33,6 @@ namespace Vertesaur.Contracts {
 		/// </summary>
 		/// <param name="other">An object.</param>
 		/// <returns>True when geometrically equivalent.</returns>
-		bool SpatiallyEqual([CanBeNull] TObject other);
+		bool SpatiallyEqual(TObject other);
 	}
 }

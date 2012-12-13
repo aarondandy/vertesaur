@@ -22,8 +22,6 @@
 //
 // ===============================================================================
 
-using JetBrains.Annotations;
-
 namespace Vertesaur.Contracts {
 	/// <summary>
 	/// Functionality to determine if this object touches another.
@@ -42,6 +40,6 @@ namespace Vertesaur.Contracts {
 		/// and there is no intersection between interior regions. At least one object
 		/// must have a dimensionality greater than 0, meaning both can not be points.
 		/// </remarks>
-		bool Touches([CanBeNull] TObject other);
+		bool Touches(TObject other);
 	}
 }

@@ -24,9 +24,8 @@
 
 using System;
 using System.Diagnostics;
-using JetBrains.Annotations;
+using System.Diagnostics.Contracts;
 using Vertesaur.Contracts;
-using PureAttribute = System.Diagnostics.Contracts.PureAttribute;
 
 namespace Vertesaur
 {
@@ -100,8 +99,8 @@ namespace Vertesaur
 		}
 
 		/// <inheritdoc/>
-		[Pure, ContractAnnotation("null=>false")]
-		public bool Equals([CanBeNull] ISpheroid<double> other) {
+		[Pure]
+		public bool Equals(ISpheroid<double> other) {
 			// ReSharper disable CompareOfFloatsByEqualityOperator
 			return !ReferenceEquals(null, other)
 				&& A == other.A
@@ -113,8 +112,8 @@ namespace Vertesaur
 		}
 
 		/// <inheritdoc/>
-		[Pure, ContractAnnotation("null=>false")]
-		public override bool Equals([CanBeNull] object obj) {
+		[Pure]
+		public override bool Equals(object obj) {
 			return Equals(obj as ISpheroid<double>);
 		}
 

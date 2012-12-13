@@ -27,9 +27,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.Contracts;
 using System.Text;
-using JetBrains.Annotations;
 using Vertesaur.Contracts;
-using PureAttribute = System.Diagnostics.Contracts.PureAttribute;
 
 namespace Vertesaur {
 
@@ -68,7 +66,7 @@ namespace Vertesaur {
 		/// Constructs a new line string containing the given ordered set of points.
 		/// </summary>
 		/// <param name="points">The ordered set of points the line string will be composed of.</param>
-		public LineString2([CanBeNull] IEnumerable<Point2> points)
+		public LineString2(IEnumerable<Point2> points)
 			: this(null == points ? null : new List<Point2>(points)) { }
 
 		/// <summary>
@@ -79,14 +77,13 @@ namespace Vertesaur {
 		/// <remarks>
 		/// All public access to the points must be through the Collection wrapper around the points list.
 		/// </remarks>
-		private LineString2([CanBeNull] List<Point2> points)
+		private LineString2(List<Point2> points)
 			: base(points ?? new List<Point2>()) {
 			//_pointList = points;
 		}
 
 		/// <inheritdoc/>
-		[ContractAnnotation("null=>false")]
-		public bool Equals([CanBeNull] LineString2 other) {
+		public bool Equals(LineString2 other) {
 			if (ReferenceEquals(null, other))
 				return false;
 			if (ReferenceEquals(this, other))
@@ -102,8 +99,7 @@ namespace Vertesaur {
 		}
 
 		/// <inheritdoc/>
-		[ContractAnnotation("null=>false")]
-		public override bool Equals([CanBeNull] object obj) {
+		public override bool Equals(object obj) {
 			return Equals(obj as LineString2);
 		}
 
@@ -132,10 +128,8 @@ namespace Vertesaur {
 		/// </summary>
 		/// <returns>A line string.</returns>
 		/// <remarks>Functions as a deep clone.</remarks>
-		[NotNull]
 		public LineString2 Clone() {
 			Contract.Ensures(Contract.Result<LineString2>() != null);
-			Contract.EndContractBlock();
 			return new LineString2(new List<Point2>(this));
 		}
 
@@ -158,14 +152,10 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="i">The segment index.</param>
 		/// <returns>A line segment.</returns>
-		[NotNull]
 		public Segment2 GetSegment(int i) {
-			if(i < 0)
-				throw new ArgumentOutOfRangeException("i", "i must be a positive number");
-			if (i+1 >= Count)
-				throw new ArgumentOutOfRangeException("i", "i must be a valid segment index");
-			Contract.EndContractBlock();
-
+			if(i < 0) throw new ArgumentOutOfRangeException("i", "i must be a positive number");
+			if (i+1 >= Count) throw new ArgumentOutOfRangeException("i", "i must be a valid segment index");
+			Contract.Ensures(Contract.Result<Segment2>() != null);
 			return new Segment2(this[i], this[i+1]);
 		}
 

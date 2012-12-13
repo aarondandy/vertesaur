@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Reflection;
-using JetBrains.Annotations;
 using Vertesaur.Contracts;
 using Vertesaur.Search;
 
@@ -23,12 +22,7 @@ namespace Vertesaur.Transformation
 		/// <param name="startType">The from type of the first transformation.</param>
 		/// <param name="endType">The to type of the last transformation.</param>
 		/// <returns>Transformation nodes providing cast information for a path from start to finish.</returns>
-		[CanBeNull]
-		public static TransformationCastNode[] FindCastPath(
-			[NotNull] IList<ITransformation> transformations,
-			[NotNull] Type startType,
-			[NotNull] Type endType
-		) {
+		public static TransformationCastNode[] FindCastPath(IList<ITransformation> transformations, Type startType, Type endType) {
 			if(null == transformations) throw new ArgumentNullException("transformations");
 			if(null == startType) throw new ArgumentNullException("startType");
 			if(null == endType) throw new ArgumentNullException("endType");
@@ -41,12 +35,12 @@ namespace Vertesaur.Transformation
 			// determine the valid start nodes
 			Contract.Assume(transformations[0] != null);
 			var startNodes = GenerateNodes(transformations[0])
-				.Where(x => x._fromType == startType)
+				.Where(x => x.FromType == startType)
 				.ToArray();
 
 			// if there is only one transformation, just use that
 			if (transformations.Count == 1) {
-				var selectedTx = startNodes.FirstOrDefault(x => x._toType == endType);
+				var selectedTx = startNodes.FirstOrDefault(x => x.ToType == endType);
 				return null != selectedTx ? new[] { selectedTx } : null;
 			}
 
@@ -58,7 +52,7 @@ namespace Vertesaur.Transformation
 				var currentNodes = GenerateNodes(transformations[i]).ToArray();
 				foreach (var priorNode in previousNodes) {
 					foreach (var curNode in currentNodes) {
-						if (priorNode._toType == curNode._fromType) {
+						if (priorNode.ToType == curNode.FromType) {
 							List<TransformationCastNode> edgeData;
 							if (!edges.TryGetValue(priorNode, out edgeData)) {
 								edgeData = new List<TransformationCastNode>();
@@ -72,7 +66,7 @@ namespace Vertesaur.Transformation
 			}
 
 			// the end types are the last nodes that have matching end types
-			var endNodes = previousNodes.Where(x => x._toType == endType).ToArray();
+			var endNodes = previousNodes.Where(x => x.ToType == endType).ToArray();
 
 			// the neighborhood
 			GetDynamicGraphNeighborInfo<TransformationCastNode, int, TransformationCastNode> getNeighborhood = (node, curCost) => {
@@ -105,8 +99,7 @@ namespace Vertesaur.Transformation
 		/// </summary>
 		/// <param name="core">The transformation to generate cast information from.</param>
 		/// <returns>Possible transformation cast nodes.</returns>
-		[NotNull]
-		public static IEnumerable<TransformationCastNode> GenerateNodes([NotNull] ITransformation core) {
+		public static IEnumerable<TransformationCastNode> GenerateNodes(ITransformation core) {
 			if(null == core) throw new ArgumentNullException("core");
 			Contract.Ensures(Contract.Result<IEnumerable<TransformationCastNode>>() != null);
 			Contract.Ensures(Contract.ForAll(Contract.Result<IEnumerable<TransformationCastNode>>(), x => null != x));
@@ -121,43 +114,39 @@ namespace Vertesaur.Transformation
 				});
 		}
 
-		[NotNull] private readonly ITransformation _core;
-		[NotNull] private readonly Type _fromType;
-		[NotNull] private readonly Type _toType;
-
 		/// <summary>
 		/// Create a new transformation cast node.
 		/// </summary>
 		/// <param name="core">The transformation the cast information is related to.</param>
 		/// <param name="fromType">The selected from type.</param>
 		/// <param name="toType">The selected to type.</param>
-		public TransformationCastNode([NotNull] ITransformation core, [NotNull] Type fromType, [NotNull] Type toType) {
+		public TransformationCastNode(ITransformation core, Type fromType, Type toType) {
 			if(null == core) throw new ArgumentNullException("core");
 			if(null == fromType) throw new ArgumentNullException("fromType");
 			if(null == toType) throw new ArgumentNullException("toType");
 			Contract.EndContractBlock();
 
-			_core = core;
-			_fromType = fromType;
-			_toType = toType;
+			Core = core;
+			FromType = fromType;
+			ToType = toType;
 		}
 
 		/// <summary>
 		/// The transformation that the cast information is related to.
 		/// </summary>
-		[NotNull] public ITransformation Core { get { return _core; } }
+		public ITransformation Core { get; private set; }
 		/// <summary>
 		/// The selected from type used to cast the transformation.
 		/// </summary>
-		[NotNull] public Type FromType { get { return _fromType; } }
+		public Type FromType { get; private set; }
 		/// <summary>
 		/// The selected to type used to case the transformation.
 		/// </summary>
-		[NotNull] public Type ToType { get { return _toType; } }
+		public Type ToType { get; private set; }
 
 		private Type MakeGenericTransformationType() {
 			Contract.Assume(2 == TxGenericType.GetGenericArguments().Length);
-			return TxGenericType.MakeGenericType(_fromType, _toType);
+			return TxGenericType.MakeGenericType(FromType, ToType);
 		}
 
 		private static Type MakeGenericEnumerableType(Type itemType) {
@@ -165,38 +154,37 @@ namespace Vertesaur.Transformation
 			return EnumerableGenericType.MakeGenericType(itemType);
 		}
 
-		private bool IsValidTransformValueMethod([NotNull] MethodInfo m) {
+		private bool IsValidTransformValueMethod(MethodInfo m) {
 			Contract.Requires(null != m);
 			Contract.EndContractBlock();
 
-			if (TransformValueMethodName.Equals(m.Name) && m.ReturnType == _toType) {
+			if (TransformValueMethodName.Equals(m.Name) && m.ReturnType == ToType) {
 				var parameters = m.GetParameters();
-				if (parameters.Length == 1 && parameters[0].ParameterType == _fromType) {
+				if (parameters.Length == 1 && parameters[0].ParameterType == FromType) {
 					return true;
 				}
 			}
 			return false;
 		}
 
-		private bool IsValidTransformEnumerableValuesMethod([NotNull] MethodInfo m) {
+		private bool IsValidTransformEnumerableValuesMethod(MethodInfo m) {
 			Contract.Requires(null != m);
 			Contract.EndContractBlock();
-			if (TransformValuesMethodName.Equals(m.Name) && m.ReturnType == MakeGenericEnumerableType(_toType)) {
+			if (TransformValuesMethodName.Equals(m.Name) && m.ReturnType == MakeGenericEnumerableType(ToType)) {
 				var parameters = m.GetParameters();
-				if (parameters.Length == 1 && parameters[0].ParameterType == MakeGenericEnumerableType(_fromType)) {
+				if (parameters.Length == 1 && parameters[0].ParameterType == MakeGenericEnumerableType(FromType)) {
 					return true;
 				}
 			}
 			return false;
 		}
 
-		[NotNull]
 		private IEnumerable<MethodInfo> GetAllCandidateMethods() {
 			Contract.Ensures(Contract.Result<IEnumerable<MethodInfo>>() != null);
 			Contract.Ensures(Contract.ForAll(Contract.Result<IEnumerable<MethodInfo>>(), x => null != x));
 			Contract.EndContractBlock();
 
-			return _core
+			return Core
 				.GetType()
 				.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod)
 				.Concat(MakeGenericTransformationType().GetMethods());
@@ -207,7 +195,6 @@ namespace Vertesaur.Transformation
 		/// </summary>
 		/// <returns>A method info object.</returns>
 		/// <exception cref="System.InvalidOperationException">Thrown if the <c>TransformValue</c> method cannot be found at run time.</exception>
-		[NotNull]
 		public MethodInfo GetTransformValueMethod() {
 			Contract.Ensures(Contract.Result<MethodInfo>() != null);
 			Contract.EndContractBlock();
@@ -222,7 +209,6 @@ namespace Vertesaur.Transformation
 		/// </summary>
 		/// <returns>A method info object.</returns>
 		/// <exception cref="System.InvalidOperationException">Thrown if the <c>TransformValues</c> method cannot be found at run time.</exception>
-		[NotNull]
 		public MethodInfo GetTransformEnumerableValuesMethod() {
 			Contract.Ensures(Contract.Result<MethodInfo>() != null);
 			Contract.EndContractBlock();
@@ -239,7 +225,7 @@ namespace Vertesaur.Transformation
 		/// <returns>The result of transforming the value.</returns>
 		public object TransformValue(object value) {
 			var method = GetTransformValueMethod();
-			return method.Invoke(_core, new[] { value });
+			return method.Invoke(Core, new[] { value });
 		}
 
 		/// <summary>
@@ -248,15 +234,22 @@ namespace Vertesaur.Transformation
 		/// <param name="values">The values to transform.</param>
 		/// <returns>The result of transforming the values.</returns>
 		/// <exception cref="System.InvalidOperationException">Thrown if one of the transformations returns a <c>null</c> enumerable.</exception>
-		public IEnumerable TransformValues([NotNull] IEnumerable values) {
+		public IEnumerable TransformValues(IEnumerable values) {
 			Contract.Requires(values != null);
 			Contract.Ensures(Contract.Result<IEnumerable>() != null);
 			Contract.EndContractBlock();
 
 			var method = GetTransformEnumerableValuesMethod();
-			var result = (IEnumerable)method.Invoke(_core, new object[] {values});
+			var result = (IEnumerable)method.Invoke(Core, new object[] {values});
 			if(null == result) throw new InvalidOperationException("A transformation returned a null enumerable given a non-null enumerable as input.");
 			return result;
+		}
+
+		[ContractInvariantMethod]
+		private void CodeContractInvariant() {
+			Contract.Invariant(null != Core);
+			Contract.Invariant(null != FromType);
+			Contract.Invariant(null != ToType);
 		}
 
 	}

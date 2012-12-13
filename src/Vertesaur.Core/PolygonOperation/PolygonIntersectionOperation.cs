@@ -26,11 +26,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using JetBrains.Annotations;
 using Vertesaur.Contracts;
 using Vertesaur.Utility;
 using CrossingType = Vertesaur.PolygonOperation.PolygonCrossing.CrossingType;
-using PureAttribute = System.Diagnostics.Contracts.PureAttribute;
 
 namespace Vertesaur.PolygonOperation {
 
@@ -42,7 +40,7 @@ namespace Vertesaur.PolygonOperation {
 
 		private sealed class IntersectionResults
 		{
-			[CanBeNull] public Polygon2 Polygon;
+			public Polygon2 Polygon;
 			//public MultiLineString2 LineStrings;
 			//public MultiPoint2 Points;
 		}
@@ -74,7 +72,6 @@ namespace Vertesaur.PolygonOperation {
 					VisitedCrossings.Add(exit);
 			}
 
-			[CanBeNull]
 			public PolygonCrossing FindNextStartableEntrance() {
 				Contract.Assume(null != Entrances);
 				Contract.Assume(null != EntranceHops);
@@ -85,12 +82,10 @@ namespace Vertesaur.PolygonOperation {
 				);
 			}
 
-			[NotNull]
-			public IEnumerable<Ring2> FindUntouchedRings([NotNull] Polygon2 poly, [NotNull, InstantHandle] Func<PolygonCrossing, int> getRingIndex) {
+			public IEnumerable<Ring2> FindUntouchedRings(Polygon2 poly, Func<PolygonCrossing, int> getRingIndex) {
 				Contract.Requires(poly != null);
 				Contract.Requires(getRingIndex != null);
 				Contract.Ensures(Contract.Result<IEnumerable<Ring2>>() != null);
-				Contract.EndContractBlock();
 
 				if(null == VisitedCrossings || 0 == VisitedCrossings.Count)
 					return poly;
@@ -109,35 +104,27 @@ namespace Vertesaur.PolygonOperation {
 			}
 		}
 
-		[Pure] private static PolygonBoundaryLocation GetLocationA([NotNull] PolygonCrossing crossing) {
+		[Pure] private static PolygonBoundaryLocation GetLocationA(PolygonCrossing crossing) {
 			Contract.Requires(crossing != null);
-			Contract.EndContractBlock();
-
 			return crossing.LocationA;
 		}
 
-		[Pure] private static PolygonBoundaryLocation GetLocationB([NotNull] PolygonCrossing crossing) {
+		[Pure] private static PolygonBoundaryLocation GetLocationB(PolygonCrossing crossing) {
 			Contract.Requires(crossing != null);
-			Contract.EndContractBlock();
-
 			return crossing.LocationB;
 		}
 
-		[Pure] private static int GetRingIndexA([NotNull] PolygonCrossing crossing) {
+		[Pure] private static int GetRingIndexA(PolygonCrossing crossing) {
 			Contract.Requires(crossing != null);
-			Contract.EndContractBlock();
-
 			return crossing.LocationA.RingIndex;
 		}
 
-		[Pure] private static int GetRingIndexB([NotNull] PolygonCrossing crossing) {
+		[Pure] private static int GetRingIndexB(PolygonCrossing crossing) {
 			Contract.Requires(crossing != null);
-			Contract.EndContractBlock();
-
 			return crossing.LocationB.RingIndex;
 		}
 
-		[NotNull] private readonly PolygonBinaryOperationOptions _options;
+		private readonly PolygonBinaryOperationOptions _options;
 
 		/// <summary>
 		/// Constructs a default polygon intersection operation.
@@ -152,7 +139,7 @@ namespace Vertesaur.PolygonOperation {
 		/// Using this constructor can help optimize other operators that
 		/// rely on intersection operations, such as union or difference.
 		/// </remarks>
-		internal PolygonIntersectionOperation([CanBeNull] PolygonBinaryOperationOptions options) {
+		internal PolygonIntersectionOperation(PolygonBinaryOperationOptions options) {
 			_options = PolygonBinaryOperationOptions.CloneOrDefault(options);
 		}
 
@@ -162,8 +149,7 @@ namespace Vertesaur.PolygonOperation {
 		/// <param name="a">A polygon.</param>
 		/// <param name="b">A polygon.</param>
 		/// <returns>The intersection result, which may be a geometry collection containing points, segments, and polygons.</returns>
-		[ContractAnnotation("a:null => null; b:null => null"), CanBeNull]
-		public IPlanarGeometry Intersect([CanBeNull] Polygon2 a, [CanBeNull] Polygon2 b) {
+		public IPlanarGeometry Intersect(Polygon2 a, Polygon2 b) {
 			if (null == a || a.Count == 0 || null == b || b.Count == 0)
 				return null;
 			if (ReferenceEquals(a, b))
@@ -198,9 +184,8 @@ namespace Vertesaur.PolygonOperation {
 			return results.Polygon;
 		}
 
-		private static PointWinding DetermineFillWinding([NotNull] IEnumerable<Ring2> rings) {
+		private static PointWinding DetermineFillWinding(IEnumerable<Ring2> rings) {
 			Contract.Requires(null != rings);
-			Contract.EndContractBlock();
 
 			var hint = PointWinding.Unknown;
 			foreach(var ring in rings) {
@@ -220,12 +205,11 @@ namespace Vertesaur.PolygonOperation {
 			return hint;
 		}
 
-		[NotNull]
 		private IntersectionResults BuildFinalResults(
-			[NotNull] PolygonCrossingsData crossingsData,
-			[NotNull] Polygon2 a,
-			[NotNull] Polygon2 b,
-			[NotNull] Polygon2 intersectedPolygon
+			PolygonCrossingsData crossingsData,
+			Polygon2 a,
+			Polygon2 b,
+			Polygon2 intersectedPolygon
 		) {
 			Contract.Requires(crossingsData != null);
 			Contract.Requires(a != null);
@@ -233,7 +217,6 @@ namespace Vertesaur.PolygonOperation {
 			Contract.Requires(intersectedPolygon != null);
 			Contract.Ensures(Contract.Result<IntersectionResults>() != null);
 			Contract.Ensures(intersectedPolygon.Count >= Contract.OldValue(intersectedPolygon).Count);
-			Contract.EndContractBlock();
 
 			if (intersectedPolygon.Count == 0) {
 				var untouchedA = new Polygon2(crossingsData.FindUntouchedRings(a, GetRingIndexA));
@@ -270,12 +253,11 @@ namespace Vertesaur.PolygonOperation {
 			};
 		}
 		
-		[NotNull]
-		private static List<Ring2> FilterQualifiedRingsToBoundaryTree([NotNull] List<Ring2> rings, [NotNull] RingBoundaryTree boundaryTree) {
+		private static List<Ring2> FilterQualifiedRingsToBoundaryTree(List<Ring2> rings, RingBoundaryTree boundaryTree) {
 			Contract.Requires(rings != null);
 			Contract.Requires(boundaryTree != null);
 			Contract.Ensures(Contract.Result<List<Ring2>>() != null);
-			Contract.EndContractBlock();
+
 			var results = new List<Ring2>();
 			for (int ringIndex = 0; ringIndex < rings.Count; ringIndex++) {
 				var ring = rings[ringIndex];
@@ -290,17 +272,15 @@ namespace Vertesaur.PolygonOperation {
 			return results;
 		}
 
-		[NotNull]
 		private static List<Ring2> QualifyRings(
-			[NotNull, InstantHandle] IEnumerable<Ring2> untouchedRings,
-			[NotNull] Polygon2 polygon,
+			IEnumerable<Ring2> untouchedRings,
+			Polygon2 polygon,
 			bool qualifyEqual
 		) {
 			Contract.Requires(untouchedRings != null);
 			Contract.Requires(polygon != null);
 			Contract.Ensures(Contract.Result<List<Ring2>>() != null);
 			Contract.Ensures(Contract.ForAll(Contract.Result<List<Ring2>>(), x => null != x));
-			Contract.EndContractBlock();
 
 			var result = new List<Ring2>();
 			var ringTree = new RingBoundaryTree(polygon);
@@ -319,18 +299,16 @@ namespace Vertesaur.PolygonOperation {
 			return result;
 		}
 
-		[NotNull]
 		private IntersectionResults BuildIntersectionResults(
-			[NotNull] PolygonCrossingsData crossingsData,
+			PolygonCrossingsData crossingsData,
 			PointWinding fillWinding,
-			[NotNull] Polygon2 a,
-			[NotNull] Polygon2 b
+			Polygon2 a,
+			Polygon2 b
 		) {
 			Contract.Requires(null != crossingsData);
 			Contract.Requires(null != a);
 			Contract.Requires(null != b);
 			Contract.Ensures(Contract.Result<IntersectionResults>() != null);
-			Contract.EndContractBlock();
 
 			// now that it is all sorted the turtle starts scooting around, making new rings:
 			//
@@ -344,7 +322,6 @@ namespace Vertesaur.PolygonOperation {
 			//         please wait while SPEED TURTLE!!! assembles your new rings
 
 			var rings = new Polygon2();
-
 			if(null != crossingsData.Entrances)
 				crossingsData.VisitedCrossings = new List<PolygonCrossing>(crossingsData.AllCrossings.Count);
 
@@ -375,19 +352,17 @@ namespace Vertesaur.PolygonOperation {
 			return BuildFinalResults(crossingsData, a, b, rings);
 		}
 
-		[CanBeNull]
 		private PolygonCrossing TraverseASide(
-			[NotNull] PolygonCrossing startExit,
-			[NotNull] List<Point2> buildingRing,
-			[NotNull] PolygonCrossingsData crossingsData,
-			[NotNull] Polygon2 a
+			PolygonCrossing startExit,
+			List<Point2> buildingRing,
+			PolygonCrossingsData crossingsData,
+			Polygon2 a
 		) {
 			Contract.Requires(startExit != null);
 			Contract.Requires(buildingRing != null);
 			Contract.Requires(crossingsData != null);
 			Contract.Requires(a != null);
 			Contract.Ensures(buildingRing.Count >= Contract.OldValue(buildingRing).Count);
-			Contract.EndContractBlock();
 
 			PolygonCrossing exit = startExit;
 			PolygonCrossing entrance;
@@ -410,19 +385,17 @@ namespace Vertesaur.PolygonOperation {
 			return entrance;
 		}
 
-		[CanBeNull]
 		private PolygonCrossing TraverseBSide(
-			[NotNull] PolygonCrossing startEntrance,
-			[NotNull] List<Point2> buildingRing,
-			[NotNull] PolygonCrossingsData crossingsData,
-			[NotNull] Polygon2 b
+			PolygonCrossing startEntrance,
+			List<Point2> buildingRing,
+			PolygonCrossingsData crossingsData,
+			Polygon2 b
 		) {
 			Contract.Requires(startEntrance != null);
 			Contract.Requires(buildingRing != null);
 			Contract.Requires(crossingsData !=  null);
 			Contract.Requires(b != null);
 			Contract.Ensures(buildingRing.Count >= Contract.OldValue(buildingRing).Count);
-			Contract.EndContractBlock();
 
 			PolygonCrossing entrance = startEntrance;
 			PolygonCrossing exit;
@@ -445,11 +418,9 @@ namespace Vertesaur.PolygonOperation {
 			return exit;
 		}
 
-		[CanBeNull]
-		private static PolygonCrossing TraverseASideHops([NotNull] PolygonCrossing start, [NotNull] PolygonCrossingsData crossingsData) {
+		private static PolygonCrossing TraverseASideHops(PolygonCrossing start, PolygonCrossingsData crossingsData) {
 			Contract.Requires(start != null);
 			Contract.Requires(crossingsData != null);
-			Contract.EndContractBlock();
 
 			PolygonCrossing current = start;
 			PolygonCrossing result = null;
@@ -469,11 +440,9 @@ namespace Vertesaur.PolygonOperation {
 			return result;
 		}
 
-		[CanBeNull]
-		private static PolygonCrossing TraverseBSideHops([NotNull] PolygonCrossing start, [NotNull] PolygonCrossingsData crossingsData) {
+		private static PolygonCrossing TraverseBSideHops(PolygonCrossing start, PolygonCrossingsData crossingsData) {
 			Contract.Requires(start != null);
 			Contract.Requires(crossingsData != null);
-			Contract.EndContractBlock();
 
 			PolygonCrossing current = start;
 			PolygonCrossing result = null;
@@ -493,11 +462,10 @@ namespace Vertesaur.PolygonOperation {
 			return result;
 		}
 
-		[NotNull]
 		private static IEnumerable<PolygonCrossing> TraverseCrossings(
-			[NotNull] PolygonCrossing fromCrossing,
-			[NotNull] List<PolygonCrossing> ringCrossings,
-			[NotNull] IComparer<PolygonCrossing> crossingComparer
+			PolygonCrossing fromCrossing,
+			List<PolygonCrossing> ringCrossings,
+			IComparer<PolygonCrossing> crossingComparer
 		) {
 			Contract.Requires(fromCrossing != null);
 			Contract.Requires(ringCrossings != null);
@@ -536,14 +504,13 @@ namespace Vertesaur.PolygonOperation {
 			}
 		}
 
-		[CanBeNull]
 		private PolygonCrossing TraverseASideRing(
-			[NotNull] List<Point2> buildingRing,
-			[NotNull] PolygonCrossing fromCrossing,
-			[NotNull] List<PolygonCrossing> ringCrossings,
-			[NotNull] HashSet<PolygonCrossing> entrances,
-			[NotNull] Polygon2 a,
-			[NotNull] PolygonCrossingsData crossingData
+			List<Point2> buildingRing,
+			PolygonCrossing fromCrossing,
+			List<PolygonCrossing> ringCrossings,
+			HashSet<PolygonCrossing> entrances,
+			Polygon2 a,
+			PolygonCrossingsData crossingData
 		) {
 			Contract.Requires(buildingRing != null);
 			Contract.Requires(fromCrossing != null);
@@ -552,7 +519,6 @@ namespace Vertesaur.PolygonOperation {
 			Contract.Requires(a != null);
 			Contract.Requires(crossingData != null);
 			Contract.Ensures(buildingRing.Count >= Contract.OldValue(buildingRing).Count);
-			Contract.EndContractBlock();
 
 			var fromSegmentLocationA = fromCrossing.LocationA;
 			if (0 == buildingRing.Count || buildingRing[buildingRing.Count-1] != fromCrossing.Point)
@@ -579,14 +545,13 @@ namespace Vertesaur.PolygonOperation {
 			return null;
 		}
 
-		[CanBeNull]
 		private PolygonCrossing TraverseBSideRing(
-			[NotNull] List<Point2> buildingRing,
-			[NotNull] PolygonCrossing fromCrossing,
-			[NotNull] List<PolygonCrossing> ringCrossings,
-			[NotNull] HashSet<PolygonCrossing> exits,
-			[NotNull] Polygon2 b,
-			[NotNull] PolygonCrossingsData crossingData
+			List<Point2> buildingRing,
+			PolygonCrossing fromCrossing,
+			List<PolygonCrossing> ringCrossings,
+			HashSet<PolygonCrossing> exits,
+			Polygon2 b,
+			PolygonCrossingsData crossingData
 		) {
 			Contract.Requires(buildingRing != null);
 			Contract.Requires(fromCrossing != null);
@@ -595,7 +560,6 @@ namespace Vertesaur.PolygonOperation {
 			Contract.Requires(b != null);
 			Contract.Requires(crossingData != null);
 			Contract.Ensures(buildingRing.Count >= Contract.OldValue(buildingRing).Count);
-			Contract.EndContractBlock();
 
 			var fromSegmentLocationB = fromCrossing.LocationB;
 			if (0 == buildingRing.Count || buildingRing[buildingRing.Count - 1] != fromCrossing.Point)
@@ -623,17 +587,16 @@ namespace Vertesaur.PolygonOperation {
 		}
 
 		private static void AddPointsBetweenForward(
-			[NotNull] List<Point2> results,
-			[NotNull] Ring2 ring,
-			[NotNull] PolygonBoundaryLocation from,
-			[NotNull] PolygonBoundaryLocation to
+			List<Point2> results,
+			Ring2 ring,
+			PolygonBoundaryLocation from,
+			PolygonBoundaryLocation to
 		) {
 			Contract.Requires(results != null);
 			Contract.Requires(ring != null);
 			Contract.Requires(from != null);
 			Contract.Requires(to != null);
 			Contract.Ensures(results.Count >= Contract.OldValue(results).Count);
-			Contract.EndContractBlock();
 
 			if (from.SegmentIndex == to.SegmentIndex && from.SegmentRatio <= to.SegmentRatio)
 				return; // no points will result from this
@@ -654,18 +617,16 @@ namespace Vertesaur.PolygonOperation {
 			} while (true);
 		}
 
-		[NotNull]
 		private static Dictionary<int, List<PolygonCrossing>> SortedRingLookUp(
-			[NotNull] List<PolygonCrossing> crossings,
-			[NotNull] Comparison<PolygonCrossing> crossingComparison,
-			[NotNull] Func<PolygonCrossing, int> ringIndexSelector,
+			List<PolygonCrossing> crossings,
+			Comparison<PolygonCrossing> crossingComparison,
+			Func<PolygonCrossing, int> ringIndexSelector,
 			int maxSize
 		) {
 			Contract.Requires(null != crossings);
 			Contract.Requires(null != crossingComparison);
 			Contract.Requires(null != ringIndexSelector);
 			Contract.Ensures(Contract.Result<Dictionary<int, List<PolygonCrossing>>>() != null);
-			Contract.EndContractBlock();
 
 			var result = new Dictionary<int, List<PolygonCrossing>>(maxSize);
 			foreach (var crossing in crossings) {
@@ -689,17 +650,11 @@ namespace Vertesaur.PolygonOperation {
 		/// <param name="crossings">The crossings to calculate. (Note: collection is modified)</param>
 		/// <param name="a">The left hand polgon.</param>
 		/// <param name="b">The right hand polygon.</param>
-		[NotNull]
-		private PolygonCrossingsData BuildCrossingsData(
-			[NotNull] List<PolygonCrossing> crossings,
-			[NotNull] Polygon2 a,
-			[NotNull] Polygon2 b
-		) {
+		private PolygonCrossingsData BuildCrossingsData(List<PolygonCrossing> crossings,Polygon2 a,Polygon2 b) {
 			Contract.Requires(crossings != null);
 			Contract.Requires(a != null);
 			Contract.Requires(b != null);
 			Contract.Ensures(Contract.Result<PolygonCrossingsData>() != null);
-			Contract.EndContractBlock();
 
 			// TODO: maybe 0 should be an invalid value?
 			if (crossings.Count == 0)
@@ -712,10 +667,6 @@ namespace Vertesaur.PolygonOperation {
 				};
 
 			// TODO: test this with one crossing... somehow (is that even possible?)
-			//var result = new PolygonCrossingsData();
-			//result.AllCrossings = crossings;
-			//result.RingCrossingsA = SortedRingLookUp(crossings, PolygonCrossing.LocationAComparer.Default.Compare, GetRingIndexA, a.Count);
-			//result.RingCrossingsB = SortedRingLookUp(crossings, PolygonCrossing.LocationBComparer.Default.Compare, GetRingIndexB, b.Count);
 
 			var ringCrossingsA = SortedRingLookUp(crossings, PolygonCrossing.LocationAComparer.Default.Compare, GetRingIndexA, a.Count);
 			var ringCrossingsB = SortedRingLookUp(crossings, PolygonCrossing.LocationBComparer.Default.Compare, GetRingIndexB, b.Count);
@@ -794,14 +745,6 @@ namespace Vertesaur.PolygonOperation {
 				}
 			}
 
-			
-
-			//result.Entrances = entrances;
-			//result.Exits = exits;
-
-			//result.EntranceHops = new Dictionary<PolygonCrossing, PolygonCrossing>();
-			//result.ExitHops = new Dictionary<PolygonCrossing, PolygonCrossing>();
-
 			var entranceHops = new Dictionary<PolygonCrossing, PolygonCrossing>();
 			var exitHops = new Dictionary<PolygonCrossing, PolygonCrossing>();
 
@@ -838,16 +781,14 @@ namespace Vertesaur.PolygonOperation {
 			return result;
 		}
 
-		[CanBeNull]
 		private static PolygonCrossing FindNextCrossingNotEqual(
-			[NotNull] PolygonCrossing currentCrossing,
-			[NotNull] List<PolygonCrossing> crossingsOnRing,
-			[NotNull] IComparer<PolygonCrossing> crossingComparer
+			PolygonCrossing currentCrossing,
+			List<PolygonCrossing> crossingsOnRing,
+			IComparer<PolygonCrossing> crossingComparer
 		) {
 			Contract.Requires(currentCrossing != null);
 			Contract.Requires(crossingsOnRing != null);
 			Contract.Requires(crossingComparer != null);
-			Contract.EndContractBlock();
 
 			var currentPoint = currentCrossing.Point;
 			var currentCrossingIndex = crossingsOnRing.BinarySearch(currentCrossing, crossingComparer);
@@ -868,18 +809,17 @@ namespace Vertesaur.PolygonOperation {
 		}
 
 		private static Point2 FindNextRingPoint(
-			[NotNull] PolygonCrossing currentCrossing,
-			[NotNull] List<PolygonCrossing> crossingsOnRing,
-			[NotNull] Ring2 ring,
-			[NotNull, InstantHandle] Func<PolygonCrossing, PolygonBoundaryLocation> getLocation,
-			[NotNull] IComparer<PolygonCrossing> crossingComparer
+			PolygonCrossing currentCrossing,
+			List<PolygonCrossing> crossingsOnRing,
+			Ring2 ring,
+			Func<PolygonCrossing, PolygonBoundaryLocation> getLocation,
+			IComparer<PolygonCrossing> crossingComparer
 		) {
 			Contract.Requires(currentCrossing != null);
 			Contract.Requires(crossingsOnRing != null);
 			Contract.Requires(ring != null);
 			Contract.Requires(getLocation != null);
 			Contract.Requires(crossingComparer != null);
-			Contract.EndContractBlock();
 
 			var currentLocation = getLocation(currentCrossing);
 			var segmentCount = ring.SegmentCount;
@@ -897,16 +837,14 @@ namespace Vertesaur.PolygonOperation {
 				: ring[nextSegmentIndex];
 		}
 
-		[CanBeNull]
 		private static PolygonCrossing FindPreviousCrossingNotEqual(
-			[NotNull] PolygonCrossing currentCrossing,
-			[NotNull] List<PolygonCrossing> crossingsOnRing,
-			[NotNull] IComparer<PolygonCrossing> crossingComparer
+			PolygonCrossing currentCrossing,
+			List<PolygonCrossing> crossingsOnRing,
+			IComparer<PolygonCrossing> crossingComparer
 		) {
 			Contract.Requires(currentCrossing != null);
 			Contract.Requires(crossingsOnRing != null);
 			Contract.Requires(crossingComparer != null);
-			Contract.EndContractBlock();
 
 			var currentPoint = currentCrossing.Point;
 			int currentCrossingIndex = crossingsOnRing.BinarySearch(currentCrossing, crossingComparer);
@@ -929,18 +867,17 @@ namespace Vertesaur.PolygonOperation {
 
 // ReSharper disable CompareOfFloatsByEqualityOperator
 		private static Point2 FindPreviousRingPoint(
-			[NotNull] PolygonCrossing currentCrossing,
-			[NotNull] List<PolygonCrossing> crossingsOnRing,
-			[NotNull] Ring2 ring,
-			[NotNull, InstantHandle] Func<PolygonCrossing, PolygonBoundaryLocation> getLocation,
-			[NotNull] IComparer<PolygonCrossing> crossingComparer
+			PolygonCrossing currentCrossing,
+			List<PolygonCrossing> crossingsOnRing,
+			Ring2 ring,
+			Func<PolygonCrossing, PolygonBoundaryLocation> getLocation,
+			IComparer<PolygonCrossing> crossingComparer
 		) {
 			Contract.Requires(currentCrossing != null);
 			Contract.Requires(crossingsOnRing != null);
 			Contract.Requires(ring != null);
 			Contract.Requires(getLocation != null);
 			Contract.Requires(crossingComparer != null);
-			Contract.EndContractBlock();
 
 			var currentLocation = getLocation(currentCrossing);
 			var segmentCount = ring.SegmentCount;
@@ -978,32 +915,25 @@ namespace Vertesaur.PolygonOperation {
 		/// </summary>
 		/// <param name="a">The first polygon to test.</param>
 		/// <param name="b">The second polygon to test.</param>
-		[NotNull]
-		public List<PolygonCrossing> FindPointCrossings(
-			[NotNull] Polygon2 a,
-			[NotNull] Polygon2 b
-		) {
-			if(null == a) throw new ArgumentNullException("a");
-			if(null == b) throw new ArgumentNullException("b");
+		public List<PolygonCrossing> FindPointCrossings(Polygon2 a, Polygon2 b) {
 			Contract.Ensures(Contract.Result<List<PolygonCrossing>>() != null);
-			Contract.EndContractBlock();
-
-			return FindPointCrossingsCore(a, b).AllCrossings ?? new List<PolygonCrossing>();
+			if(null == a || null == b) return new List<PolygonCrossing>(0);
+			return FindPointCrossingsCore(a, b).AllCrossings ?? new List<PolygonCrossing>(0);
 		}
 
-		[NotNull]
-		private PolygonCrossingsData FindPointCrossingsCore(
-			[NotNull] Polygon2 a,
-			[NotNull] Polygon2 b
-		) {
+		private PolygonCrossingsData FindPointCrossingsCore(Polygon2 a, Polygon2 b) {
 			Contract.Requires(a != null);
 			Contract.Requires(b != null);
 			Contract.Ensures(Contract.Result<PolygonCrossingsData>() != null);
-			Contract.EndContractBlock();
 
 			var crossingGenerator = new PolygonPointCrossingGenerator(a, b);
 			var allCrossings = crossingGenerator.GenerateCrossings();
 			return BuildCrossingsData(allCrossings, a, b);
+		}
+
+		[ContractInvariantMethod]
+		private void CodeContractInvariant() {
+			Contract.Invariant(_options != null);
 		}
 
 	}

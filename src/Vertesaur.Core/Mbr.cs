@@ -24,16 +24,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Diagnostics.Contracts;
-using JetBrains.Annotations;
 using Vertesaur.Contracts;
 
 namespace Vertesaur {
 	/// <summary>
 	/// A 2D axis aligned minimum bounding rectangle, also known as an envelope.
 	/// </summary>
-	public struct Mbr :
+	public class Mbr :
 		IEquatable<Mbr>,
 		IEquatable<IMbr<double>>,
 		IMbr<double>,
@@ -51,7 +49,7 @@ namespace Vertesaur {
 		/// <param name="b">A MBR.</param>
 		/// <returns>True if both MBRs have the same X and Y ranges.</returns>
 		public static bool operator ==(Mbr a, Mbr b) {
-			return a.Equals(b);
+			return ReferenceEquals(null, a) ? ReferenceEquals(null, b) : a.Equals(b);
 		}
 
 		/// <summary>
@@ -61,7 +59,7 @@ namespace Vertesaur {
 		/// <param name="b">A MBR.</param>
 		/// <returns>True if both MBRs do not have the same X and Y ranges.</returns>
 		public static bool operator !=(Mbr a, Mbr b) {
-			return !a.Equals(b);
+			return ReferenceEquals(null, a) ? !ReferenceEquals(null, b) : !a.Equals(b);
 		}
 
 		/// <summary>
@@ -69,13 +67,12 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="points">The points to encompass.</param>
 		/// <returns>The MBR encompassing the given points.</returns>
-		public static Mbr Create([NotNull] Point2[] points) {
-			if(null == points)
-				throw new ArgumentNullException("points");
+		public static Mbr Create(Point2[] points) {
+			if(null == points) throw new ArgumentNullException("points");
 			Contract.EndContractBlock();
 
 			if (points.Length == 0)
-				return Invalid;
+				return null;
 			if(points.Length == 1)
 				return new Mbr(points[0]);
 			if(points.Length == 2)
@@ -107,13 +104,12 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="points">The points to encompass.</param>
 		/// <returns>The MBR encompassing the given points.</returns>
-		public static Mbr Create([NotNull] List<Point2> points) {
-			if(null == points)
-				throw new ArgumentNullException("points");
+		public static Mbr Create(List<Point2> points) {
+			if(null == points) throw new ArgumentNullException("points");
 			Contract.EndContractBlock();
 
 			if (points.Count == 0)
-				return Invalid;
+				return null;
 			if (points.Count == 1)
 				return new Mbr(points[0]);
 			if (points.Count == 2)
@@ -145,14 +141,13 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="points">The points to encompass.</param>
 		/// <returns>The MBR encompassing the given points.</returns>
-		public static Mbr Create([NotNull,InstantHandle] IEnumerable<Point2> points) {
-			if(null == points)
-				throw new ArgumentNullException("points");
+		public static Mbr Create(IEnumerable<Point2> points) {
+			if(null == points) throw new ArgumentNullException("points");
 			Contract.EndContractBlock();
 
 			var enumerator = points.GetEnumerator();
 			if (!enumerator.MoveNext())
-				return Invalid;
+				return null;
 			double xMax, yMax;
 			var p = enumerator.Current;
 			var xMin = xMax = p.X;
@@ -176,19 +171,13 @@ namespace Vertesaur {
 		}
 
 		/// <summary>
-		/// An invalid MBR.
-		/// </summary>
-		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
-		public static readonly Mbr Invalid = new Mbr(Double.NaN, Double.NaN);
-
-		/// <summary>
 		/// The x-axis range.
 		/// </summary>
-		public readonly Range X;
+		public Range X { get; private set; }
 		/// <summary>
 		/// The y-axis range.
 		/// </summary>
-		public readonly Range Y;
+		public Range Y { get; private set; }
 		/// <summary>
 		/// Constructs an MBR encapsulating the coordinate <paramref name="x"/>,<paramref name="y"/>.
 		/// </summary>
@@ -215,6 +204,9 @@ namespace Vertesaur {
 		/// <param name="x">A x-axis range.</param>
 		/// <param name="y">A y-axis range.</param>
 		public Mbr(Range x, Range y) {
+			if (null == x) throw new ArgumentNullException("x");
+			if (null == y) throw new ArgumentNullException("y");
+			Contract.EndContractBlock();
 			X = x;
 			Y = y;
 		}
@@ -223,11 +215,10 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="x">A x-axis range.</param>
 		/// <param name="y">A y-axis range.</param>
-		public Mbr([NotNull] IRange<double> x, [NotNull] IRange<double> y) {
+		public Mbr(IRange<double> x, IRange<double> y) {
 			if(null == x) throw new ArgumentNullException("x");
 			if(null == y) throw new ArgumentNullException("y");
 			Contract.EndContractBlock();
-
 			X = new Range(x);
 			Y = new Range(y);
 		}
@@ -237,12 +228,12 @@ namespace Vertesaur {
 		/// <param name="p">A point.</param>
 		public Mbr(Point2 p)
 			: this(p.X, p.Y) { }
+
 		/// <summary>
 		/// Constructs an MBR encapsulating the coordinate pair <paramref name="p"/>.
 		/// </summary>
 		/// <param name="p">A point.</param>
-		public Mbr([NotNull] ICoordinatePair<double> p)
-		{
+		public Mbr(ICoordinatePair<double> p) {
 			if(null == p) throw new ArgumentNullException("p");
 			Contract.EndContractBlock();
 			X = new Range(p.X);
@@ -255,12 +246,13 @@ namespace Vertesaur {
 		/// <param name="b">A point.</param>
 		public Mbr(Point2 a, Point2 b)
 			: this(a.X, a.Y, b.X, b.Y) { }
+
 		/// <summary>
 		/// Constructs an MBR encapsulating the coordinate pairs <paramref name="a"/> and <paramref name="b"/>.
 		/// </summary>
 		/// <param name="a">A point.</param>
 		/// <param name="b">A point.</param>
-		public Mbr([NotNull] ICoordinatePair<double> a, [NotNull] ICoordinatePair<double> b) {
+		public Mbr(ICoordinatePair<double> a, ICoordinatePair<double> b) {
 			if(a == null) throw new ArgumentNullException("a");
 			if(b == null) throw new ArgumentNullException("b");
 			Contract.EndContractBlock();
@@ -271,7 +263,7 @@ namespace Vertesaur {
 		/// Constructs a new MBR with the same bounds as the given MBR.
 		/// </summary>
 		/// <param name="mbr">The MBR to copy the bounds from.</param>
-		public Mbr([NotNull] IMbr<double> mbr) {
+		public Mbr(IMbr<double> mbr) {
 			if(null == mbr) throw new ArgumentNullException("mbr");
 			Contract.EndContractBlock();
 			X = new Range(mbr.XMin, mbr.XMax);
@@ -336,12 +328,11 @@ namespace Vertesaur {
 
 		/// <inheritdoc/>
 		public bool Equals(Mbr other) {
-			return X.Equals(other.X) && Y.Equals(other.Y);
+			return null != other && X.Equals(other.X) && Y.Equals(other.Y);
 		}
 
 		/// <inheritdoc/>
-		[ContractAnnotation("null=>false")]
-		public bool Equals([CanBeNull] IMbr<double> other) {
+		public bool Equals(IMbr<double> other) {
 			return !ReferenceEquals(null, other)
 // ReSharper disable CompareOfFloatsByEqualityOperator
 				&& XMin == other.XMin
@@ -353,13 +344,11 @@ namespace Vertesaur {
 		}
 
 		/// <inheritdoc/>
-		[ContractAnnotation("null=>false")]
-		public override bool Equals([CanBeNull] object obj) {
-			return null != obj && (
-				(obj is Mbr && Equals((Mbr)obj))
-				||
-				Equals(obj as IMbr<double>)
-			);
+		public override bool Equals(object obj) {
+			var mbr = obj as Mbr;
+			return null != mbr
+				? Equals(mbr)
+				: Equals(obj as IMbr<double>);
 		}
 
 		/// <inheritdoc/>
@@ -379,6 +368,7 @@ namespace Vertesaur {
 		/// <param name="y">The y-coordinate of the point.</param>
 		/// <returns>A new MBR encompassing this MBR and the given point.</returns>
 		public Mbr Encompass(double x, double y) {
+			Contract.Ensures(Contract.Result<Mbr>() != null);
 			return new Mbr(X.Encompass(x), Y.Encompass(y));
 		}
 
@@ -388,6 +378,7 @@ namespace Vertesaur {
 		/// <param name="p">The point to encompass.</param>
 		/// <returns>A new MBR encompassing this MBR and the given point.</returns>
 		public Mbr Encompass(Point2 p) {
+			Contract.Ensures(Contract.Result<Mbr>() != null);
 			return Encompass(p.X, p.Y);
 		}
 
@@ -398,7 +389,14 @@ namespace Vertesaur {
 		/// <param name="y">A y-axis range to encompass.</param>
 		/// <returns>A new MBR encompassing this MBR and the given axis ranges.</returns>
 		public Mbr Encompass(Range x, Range y) {
+			Contract.Ensures(Contract.Result<Mbr>() != null);
 			return new Mbr(X.Encompass(x), Y.Encompass(y));
+			/*
+			// if range becomes a reference type...
+			return null == x
+				? (null == y ? this : new Mbr(X, Y.Encompass(y)))
+				: (null == y ? new Mbr(X.Encompass(x), Y) : new Mbr(X.Encompass(x), Y.Encompass(y)));
+			*/
 		}
 
 		/// <summary>
@@ -407,7 +405,8 @@ namespace Vertesaur {
 		/// <param name="mbr">The other MBR to encompass.</param>
 		/// <returns>A new MBR encompassing this MBR and another.</returns>
 		public Mbr Encompass(Mbr mbr) {
-			return Encompass(mbr.X, mbr.Y);
+			Contract.Ensures(Contract.Result<Mbr>() != null);
+			return null == mbr ? this : Encompass(mbr.X, mbr.Y);
 		}
 
 		/// <summary>
@@ -416,6 +415,7 @@ namespace Vertesaur {
 		/// <param name="mbr">A MBR to test intersection with.</param>
 		/// <returns>When an MBR intersects this MBR, <c>true</c>.</returns>
 		public bool Intersects(Mbr mbr) {
+			if (null == mbr) return false;
 			return X.Intersects(mbr.X) && Y.Intersects(mbr.Y);
 		}
 
@@ -431,6 +431,8 @@ namespace Vertesaur {
 
 		/// <inheritdoc/>
 		public bool Touches(Mbr other) {
+			if (null == other)
+				return false;
 			return (X.Touches(other.X) && Y.Intersects(other.Y))
 				|| (Y.Touches(other.Y) && X.Intersects(other.X));
 		}
@@ -447,6 +449,8 @@ namespace Vertesaur {
 			// point with segment: ?
 			// point with point: false
 // ReSharper disable CompareOfFloatsByEqualityOperator
+			if (null == other)
+				return false;
 			return (
 				(
 					((0 == Width) ^ (0 == Height))
@@ -461,27 +465,54 @@ namespace Vertesaur {
 
 		/// <inheritdoc/>
 		public bool Within(Mbr mbr) {
-			return X.Within(mbr.X) && Y.Within(mbr.Y);
+			return null != mbr && X.Within(mbr.X) && Y.Within(mbr.Y);
 		}
 
 		/// <inheritdoc/>
 		public bool Contains(Mbr mbr) {
-			return X.Contains(mbr.X) && Y.Contains(mbr.Y);
+			return null != mbr && X.Contains(mbr.X) && Y.Contains(mbr.Y);
 		}
 
 		/// <inheritdoc/>
 		public bool Overlaps(Mbr other) {
-			throw new NotImplementedException();
+			if (null == other)
+				return false;
+
+			// ReSharper disable CompareOfFloatsByEqualityOperator
+			var yMagnitude = Y.GetMagnitude();
+			if (0 == X.GetMagnitude()) {
+				if (0 == yMagnitude) {
+					return false;
+				}
+				else {
+					if (other.X.GetMagnitude() != 0 || other.Y.GetMagnitude() == 0)
+						return false;
+				}
+			}
+			else {
+				if (0 == yMagnitude) {
+					if (other.X.GetMagnitude() == 0 || other.Y.GetMagnitude() != 0)
+						return false;
+				}
+				else {
+					if (other.X.GetMagnitude() == 0 || other.Y.GetMagnitude() == 0)
+						return false;
+				}
+			}
+			return !Equals(other) && Intersects(other);
+			// ReSharper restore CompareOfFloatsByEqualityOperator
 		}
 
 		/// <inheritdoc/>
 		public bool Disjoint(Mbr other) {
+			if (null == other)
+				return true;
 			return X.Disjoint(other.X) || Y.Disjoint(other.Y);
 		}
 
 		/// <inheritdoc/>
 		bool ISpatiallyEquatable<Mbr>.SpatiallyEqual(Mbr other) {
-			return Equals(other);
+			return null != other && Equals(other);
 		}
 
 		/// <summary>
@@ -525,8 +556,8 @@ namespace Vertesaur {
 		}
 
 		/// <inheritdoc/>
-		public bool Overlaps(Point2 p) {
-			throw new NotImplementedException();
+		bool IRelatableOverlaps<Point2>.Overlaps(Point2 p) {
+			return false;
 		}
 
 		/// <inheritdoc/>
@@ -545,6 +576,8 @@ namespace Vertesaur {
 		/// <param name="mbr">The MBR to calculate distance to.</param>
 		/// <returns>The distance.</returns>
 		public double Distance(Mbr mbr) {
+			if(null == mbr) throw new ArgumentNullException("mbr");
+			Contract.EndContractBlock();
 			return Math.Sqrt(DistanceSquared(mbr));
 		}
 
@@ -554,6 +587,8 @@ namespace Vertesaur {
 		/// <param name="mbr">The MBR to calculate squared distance to.</param>
 		/// <returns>The squared distance.</returns>
 		public double DistanceSquared(Mbr mbr) {
+			if (null == mbr) throw new ArgumentNullException("mbr");
+			Contract.EndContractBlock();
 			return X.DistanceSquared(mbr.X) + X.DistanceSquared(mbr.Y);
 		}
 
@@ -597,6 +632,7 @@ namespace Vertesaur {
 		/// <param name="factor">The ratio to scale the MBR by.</param>
 		/// <returns>A new scaled MBR.</returns>
 		public Mbr GetScaled(double factor) {
+			Contract.Ensures(Contract.Result<Mbr>() != null);
 			return GetScaled(factor, factor);
 		}
 
@@ -607,6 +643,7 @@ namespace Vertesaur {
 		/// <param name="yFactor">THe y-coordinate scaling ratio.</param>
 		/// <returns>A new scaled MBR.</returns>
 		public Mbr GetScaled(double xFactor, double yFactor) {
+			Contract.Ensures(Contract.Result<Mbr>() != null);
 			return new Mbr(X.GetScaled(xFactor),Y.GetScaled(yFactor));
 		}
 
@@ -616,6 +653,7 @@ namespace Vertesaur {
 		/// <param name="factors">The vector containing the x-coordinate and y-coordinate scaling ratios.</param>
 		/// <returns>A new scaled MBR.</returns>
 		public Mbr GetScaled(Vector2 factors) {
+			Contract.Ensures(Contract.Result<Mbr>() != null);
 			return new Mbr(X.GetScaled(factors.X), Y.GetScaled(factors.Y));
 		}
 	}

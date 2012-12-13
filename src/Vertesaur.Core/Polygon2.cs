@@ -27,7 +27,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using JetBrains.Annotations;
 using Vertesaur.Contracts;
 
 namespace Vertesaur {
@@ -54,11 +53,10 @@ namespace Vertesaur {
 		ICloneable
 	{
 
-		private static List<Ring2> BuildListForSingleRing([NotNull] Ring2 ring) {
+		private static List<Ring2> BuildListForSingleRing(Ring2 ring) {
 			if(null == ring) throw new ArgumentNullException("ring");
 			Contract.Requires(ring != null);
 			Contract.Ensures(Contract.Result<List<Ring2>>() != null);
-			Contract.EndContractBlock();
 			return new List<Ring2>(1){ring};
 		}
 
@@ -78,7 +76,7 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="rings">The rings the polygon will be composed of.</param>
 		/// <remarks>The <paramref name="rings"/> are referenced instead of copied.</remarks>
-		public Polygon2([CanBeNull] IEnumerable<Ring2> rings)
+		public Polygon2(IEnumerable<Ring2> rings)
 			: this(null == rings ? null : new List<Ring2>(rings)) { }
 		/// <summary>
 		/// Constructs a new polygon geometry composed of the given ring.
@@ -86,18 +84,17 @@ namespace Vertesaur {
 		/// <param name="ring">The ring the polygon will be composed of.</param>
 		/// <remarks>The <paramref name="ring"/> is referenced instead of copied.</remarks>
 		/// <exception cref="System.ArgumentNullException">Thrown if <paramref name="ring"/> is null.</exception>
-		public Polygon2([NotNull] Ring2 ring)
+		public Polygon2(Ring2 ring)
 			: this(BuildListForSingleRing(ring))
 		{
 			Contract.Requires(ring != null);
-			Contract.EndContractBlock();
 		}
 
 		/// <summary>
 		/// Constructs a new polygon geometry composed of the given points which form a ring.
 		/// </summary>
 		/// <param name="points">The points that will form the ring.</param>
-		public Polygon2([CanBeNull] IEnumerable<Point2> points)
+		public Polygon2(IEnumerable<Point2> points)
 			: this(new Ring2(points)) { }
 
 		/// <summary>
@@ -105,7 +102,7 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="points">The points that will form the ring.</param>
 		/// <param name="hole">True to indicate the polygon represents a hole region.</param>
-		public Polygon2([CanBeNull] IEnumerable<Point2> points, bool hole)
+		public Polygon2(IEnumerable<Point2> points, bool hole)
 			: this(new Ring2(points, hole)) { }
 
 		/// <summary>
@@ -116,7 +113,7 @@ namespace Vertesaur {
 		/// <remarks>
 		/// All public access to the rings must be through the Collection wrapper around the rings list.
 		/// </remarks>
-		private Polygon2([CanBeNull] List<Ring2> rings)
+		private Polygon2(List<Ring2> rings)
 			: base(rings ?? new List<Ring2>()) { }
 
 		/// <summary>
@@ -124,10 +121,10 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="rings">The rings to add.</param>
 		/// <exception cref="System.ArgumentException">Thrown if any of the <paramref name="rings"/> is null.</exception>
-		public void AddRange([NotNull, InstantHandle] IEnumerable<Ring2> rings) {
+		public void AddRange(IEnumerable<Ring2> rings) {
 			if(null == rings) throw new ArgumentNullException("rings");
 			Contract.Requires(Contract.ForAll(rings, x => x != null));
-			Contract.EndContractBlock();
+
 			foreach (var ring in rings) {
 				if(null == ring)
 					throw new ArgumentException("Null rings are not valid.", "rings");
@@ -194,14 +191,14 @@ namespace Vertesaur {
 		/// </summary>
 		/// <returns>A minimum bounding rectangle.</returns>
 		public Mbr GetMbr() {
-			if (Count > 0) {
-				var mbr = this[0].GetMbr();
-				for (var i = 1; i < Count; i++) {
-					mbr = mbr.Encompass(this[i].GetMbr());
-				}
-				return mbr;
+			if (Count <= 0)
+				return null;
+
+			var mbr = this[0].GetMbr();
+			for (var i = 1; i < Count; i++) {
+				mbr = mbr.Encompass(this[i].GetMbr());
 			}
-			return Mbr.Invalid;
+			return mbr;
 		}
 
 		/// <summary>
@@ -321,8 +318,7 @@ namespace Vertesaur {
 		/// <c>true</c> if the current object is equal to the <paramref name="other"/> parameter; otherwise, <c>false</c>.
 		/// </returns>
 		/// <param name="other">An object to compare with this object.</param>
-		[ContractAnnotation("null=>false")]
-		public bool Equals([CanBeNull] Polygon2 other) {
+		public bool Equals(Polygon2 other) {
 			if (ReferenceEquals(null, other))
 				return false;
 			if (ReferenceEquals(this, other))
@@ -343,7 +339,6 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="other">The polygon to compare.</param>
 		/// <returns>True when the polygons are spatially equal.</returns>
-		[ContractAnnotation("null=>false")]
 		public bool SpatiallyEqual(Polygon2 other) {
 			if (ReferenceEquals(null, other))
 				return false;
@@ -374,9 +369,8 @@ namespace Vertesaur {
 		/// </summary>
 		/// <returns>A polygon.</returns>
 		/// <remarks>Functions as a deep clone.</remarks>
-		[NotNull] public Polygon2 Clone() {
+		public Polygon2 Clone() {
 			Contract.Ensures(Contract.Result<Polygon2>() != null);
-			Contract.EndContractBlock();
 			var p = new Polygon2(Count);
 			foreach (var r in this) {
 				p.Add(r.Clone());
@@ -389,8 +383,7 @@ namespace Vertesaur {
 		}
 
 		/// <inheritdoc/>
-		[ContractAnnotation("null=>false")]
-		public override bool Equals([CanBeNull] object obj) {
+		public override bool Equals(object obj) {
 			return Equals(obj as Polygon2);
 		}
 

@@ -24,9 +24,7 @@
 
 using System;
 using System.Diagnostics.Contracts;
-using JetBrains.Annotations;
 using Vertesaur.Contracts;
-using Vertesaur.Transformation;
 
 namespace Vertesaur {
 
@@ -50,7 +48,6 @@ namespace Vertesaur {
 		/// <param name="left">A matrix.</param>
 		/// <param name="right">A matrix.</param>
 		/// <returns>True when equal.</returns>
-		[ContractAnnotation("left:null,right:null=>true; left:notnull,right:null=>false; left:null,right:notnull=>false")]
 		public static bool operator ==(Matrix2 left, Matrix2 right) {
 			return ReferenceEquals(null, left) ? ReferenceEquals(null, right) : left.Equals(right);
 		}
@@ -61,7 +58,6 @@ namespace Vertesaur {
 		/// <param name="left">A matrix.</param>
 		/// <param name="right">A matrix.</param>
 		/// <returns>True when not equal.</returns>
-		[ContractAnnotation("left:null,right:null=>false; left:notnull,right:null=>true; left:null,right:notnull=>true")]
 		public static bool operator !=(Matrix2 left, Matrix2 right) {
 			return !(ReferenceEquals(null, left) ? ReferenceEquals(null, right) : left.Equals(right));
 		}
@@ -72,8 +68,7 @@ namespace Vertesaur {
 		/// <param name="left">The left matrix.</param>
 		/// <param name="right">The right matrix.</param>
 		/// <returns>The result of multiplying the <paramref name="left"/> matrix by the <paramref name="right"/> matrix.</returns>
-		[NotNull]
-		public static Matrix2 operator *([NotNull] Matrix2 left, [NotNull] Matrix2 right) {
+		public static Matrix2 operator *(Matrix2 left, Matrix2 right) {
 			if(null == left) throw new ArgumentNullException("left");
 			if(null == right) throw new ArgumentNullException("right");
 			Contract.Ensures(Contract.Result<Matrix2>() != null);
@@ -87,8 +82,7 @@ namespace Vertesaur {
 		/// <param name="left">The left matrix.</param>
 		/// <param name="right">The right matrix.</param>
 		/// <returns>The resulting matrix.</returns>
-		[NotNull]
-		public static Matrix2 operator +([NotNull] Matrix2 left, [NotNull] Matrix2 right) {
+		public static Matrix2 operator +(Matrix2 left, Matrix2 right) {
 			if (null == left) throw new ArgumentNullException("left");
 			if (null == right) throw new ArgumentNullException("right");
 			Contract.Ensures(Contract.Result<Matrix2>() != null);
@@ -100,7 +94,6 @@ namespace Vertesaur {
 		/// Creates a matrix with all elements set to 0.
 		/// </summary>
 		/// <returns>A matrix of zeros.</returns>
-		[NotNull]
 		public static Matrix2 CreateZero() {
 			Contract.Ensures(Contract.Result<Matrix2>() != null);
 			Contract.EndContractBlock();
@@ -152,7 +145,7 @@ namespace Vertesaur {
 		/// Copies the element values from the given matrix.
 		/// </summary>
 		/// <param name="m">A matrix to copy from.</param>
-		public Matrix2([NotNull] Matrix2 m) {
+		public Matrix2(Matrix2 m) {
 			if(m == null) throw new ArgumentNullException("m");
 			Contract.EndContractBlock();
 
@@ -166,7 +159,7 @@ namespace Vertesaur {
 		/// Copies the element values from the given matrix.
 		/// </summary>
 		/// <param name="m">A matrix to copy from.</param>
-		public Matrix2([NotNull] IMatrix<double> m) {
+		public Matrix2(IMatrix<double> m) {
 			if(m == null) throw new ArgumentNullException("m");
 			if(m.RowCount != OrderValue) throw new ArgumentException("Matrix must have 2 rows","m");
 			if(m.ColumnCount != OrderValue) throw new ArgumentException("Matrix must have 2 columns.", "m");
@@ -249,8 +242,7 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="other">A matrix to compare.</param>
 		/// <returns><see langword="true"/> when the given matrix is equal to this instance.</returns>
-		[ContractAnnotation("null=>false")]
-		public bool Equals([CanBeNull] Matrix2 other) {
+		public bool Equals(Matrix2 other) {
 			return !ReferenceEquals(null, other)
 				&& E00 == other.E00
 				&& E01 == other.E01
@@ -264,8 +256,7 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="other">A matrix to compare.</param>
 		/// <returns><see langword="true"/> when the given matrix is equal to this instance.</returns>
-		[ContractAnnotation("null=>false")]
-		public bool Equals([CanBeNull] IMatrix<double> other) {
+		public bool Equals(IMatrix<double> other) {
 			return !ReferenceEquals(null, other)
 				&& other.RowCount == OrderValue
 				&& other.ColumnCount == OrderValue
@@ -281,8 +272,7 @@ namespace Vertesaur {
 		/// <param name="obj">The <see cref="System.Object"/> to compare with this instance.</param>
 		/// <returns><c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.
 		/// </returns>
-		[ContractAnnotation("null=>false")]
-		public override bool Equals([CanBeNull] object obj) {
+		public override bool Equals(object obj) {
 			return null != obj && (
 				(obj is Matrix2 && Equals(obj as Matrix2))
 				||
@@ -373,8 +363,7 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="right">The right matrix to add.</param>
 		/// <returns>The result.</returns>
-		[NotNull]
-		public Matrix2 Add([NotNull] Matrix2 right) {
+		public Matrix2 Add(Matrix2 right) {
 			Contract.Requires(right != null);
 			Contract.Ensures(Contract.Result<Matrix2>() != null);
 			Contract.EndContractBlock();
@@ -390,7 +379,7 @@ namespace Vertesaur {
 		/// Adds this left matrix by the given <paramref name="right"/> matrix and overwrites this matrix with the sum.
 		/// </summary>
 		/// <param name="right">The right matrix to add.</param>
-		public void AddAssignment([NotNull] Matrix2 right) {
+		public void AddAssignment(Matrix2 right) {
 			Contract.Requires(right != null);
 			Contract.EndContractBlock();
 			E00 += right.E00;
@@ -404,8 +393,7 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="right">The right matrix to subtract.</param>
 		/// <returns>The result.</returns>
-		[NotNull]
-		public Matrix2 Subtract([NotNull]Matrix2 right) {
+		public Matrix2 Subtract(Matrix2 right) {
 			Contract.Requires(right != null);
 			Contract.Ensures(Contract.Result<Matrix2>() != null);
 			Contract.EndContractBlock();
@@ -421,7 +409,7 @@ namespace Vertesaur {
 		/// Subtracts the elements of the <paramref name="right"/> matrix from this matrix and assigns the results back to this matrix.
 		/// </summary>
 		/// <param name="right">The right matrix use to subtract from this matrix.</param>
-		public void SubtractAssignment([NotNull] Matrix2 right) {
+		public void SubtractAssignment(Matrix2 right) {
 			Contract.Requires(right != null);
 			Contract.EndContractBlock();
 			E00 -= right.E00;
@@ -435,8 +423,7 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="right">The right matrix.</param>
 		/// <returns>The result of multiplying this matrix by the right matrix (<c>this * <paramref name="right"/></c>).</returns>
-		[NotNull]
-		public Matrix2 Multiply([NotNull] Matrix2 right) {
+		public Matrix2 Multiply(Matrix2 right) {
 			Contract.Requires(right != null);
 			Contract.Ensures(Contract.Result<Matrix2>() != null);
 			Contract.EndContractBlock();
@@ -452,7 +439,7 @@ namespace Vertesaur {
 		/// Multiplies this matrix by another and stores the result in this matrix (<c>this*=<paramref name="right"/></c>).
 		/// </summary>
 		/// <param name="right">The right matrix.</param>
-		public void MultiplyAssignment([NotNull] Matrix2 right) {
+		public void MultiplyAssignment(Matrix2 right) {
 			Contract.Requires(right != null);
 			Contract.EndContractBlock();
 			var t00 = E00;
@@ -485,7 +472,6 @@ namespace Vertesaur {
 		/// </summary>
 		/// <returns>The inverse of the matrix.</returns>
 		/// <exception cref="Vertesaur.NoInverseException">An inverse requires a valid non-zero finite determinant.</exception>
-		[NotNull]
 		public Matrix2 GetInverse() {
 			Contract.Ensures(Contract.Result<Matrix2>() != null);
 			Contract.EndContractBlock();
@@ -514,7 +500,6 @@ namespace Vertesaur {
 		/// Generates a new matrix which is the transpose of this matrix.
 		/// </summary>
 		/// <returns>The transpose of this matrix.</returns>
-		[NotNull]
 		public Matrix2 GetTransposed() {
 			Contract.Ensures(Contract.Result<Matrix2>() != null);
 			Contract.EndContractBlock();
@@ -572,7 +557,7 @@ namespace Vertesaur {
 		/// Creates a new matrix composed of the same elements.
 		/// </summary>
 		/// <returns>A copy of this matrix.</returns>
-		[NotNull] public Matrix2 Clone() {
+		public Matrix2 Clone() {
 			Contract.Ensures(Contract.Result<Matrix2>() != null);
 			Contract.EndContractBlock();
 			return new Matrix2(this);

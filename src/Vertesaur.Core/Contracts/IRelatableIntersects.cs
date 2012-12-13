@@ -22,8 +22,6 @@
 //
 // ===============================================================================
 
-using JetBrains.Annotations;
-
 namespace Vertesaur.Contracts {
 
 	/// <summary>
@@ -37,7 +35,7 @@ namespace Vertesaur.Contracts {
 		/// </summary>
 		/// <param name="other">An object to test.</param>
 		/// <returns>True if the objects occupy any of the same space.</returns>
-		bool Intersects([CanBeNull] TObject other);
+		bool Intersects(TObject other);
 
 	}
 

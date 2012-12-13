@@ -27,7 +27,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.Contracts;
 using System.Text;
-using JetBrains.Annotations;
 using Vertesaur.Contracts;
 
 namespace Vertesaur {
@@ -60,7 +59,7 @@ namespace Vertesaur {
 		/// Constructs a new multi-point containing the given points.
 		/// </summary>
 		/// <param name="points">The points the multi-point will be composed of.</param>
-		public MultiPoint2([CanBeNull] IEnumerable<Point2> points)
+		public MultiPoint2(IEnumerable<Point2> points)
 			: this(null == points ? null : new List<Point2>(points)) { }
 		/// <summary>
 		/// This private constructor is used to initialize the collection with a new list.
@@ -70,7 +69,7 @@ namespace Vertesaur {
 		/// <remarks>
 		/// All public access to the points must be through the Collection wrapper around the points list.
 		/// </remarks>
-		private MultiPoint2([CanBeNull] List<Point2> points)
+		private MultiPoint2(List<Point2> points)
 			: base(points ?? new List<Point2>()) {
 		}
 
@@ -148,9 +147,8 @@ namespace Vertesaur {
 		/// </summary>
 		/// <returns>A multi-point.</returns>
 		/// <remarks>Functions as a deep clone.</remarks>
-		[NotNull] public MultiPoint2 Clone() {
+		public MultiPoint2 Clone() {
 			Contract.Ensures(Contract.Result<MultiPoint2>() != null);
-			Contract.EndContractBlock();
 			return new MultiPoint2(new List<Point2>(this));
 		}
 
@@ -159,8 +157,7 @@ namespace Vertesaur {
 		}
 
 		/// <inheritdoc/>
-		[ContractAnnotation("null=>false")]
-		public bool Equals([CanBeNull] MultiPoint2 other) {
+		public bool Equals(MultiPoint2 other) {
 			if (ReferenceEquals(null, other))
 				return false; 
 			if (ReferenceEquals(this, other))
@@ -176,8 +173,7 @@ namespace Vertesaur {
 		}
 
 		/// <inheritdoc/>
-		[ContractAnnotation("null=>false")]
-		public override bool Equals([CanBeNull] object obj) {
+		public override bool Equals(object obj) {
 			return Equals(obj as MultiPoint2);
 		}
 

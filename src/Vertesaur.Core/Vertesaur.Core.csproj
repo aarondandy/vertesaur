@@ -143,9 +143,6 @@
     <CodeContractsAnalysisWarningLevel>1</CodeContractsAnalysisWarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="JetBrains.Annotations">
-      <HintPath>..\..\packages\JetBrains.Annotations.7.0\lib\net40\JetBrains.Annotations.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -240,9 +237,6 @@
     <Compile Include="Utility\IterationUtils.cs" />
     <Compile Include="Vector2.cs" />
     <Compile Include="Vector3.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(ProjectDir)..\..\build\NuGet.targets" />

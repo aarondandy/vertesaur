@@ -24,9 +24,7 @@
 
 using System;
 using System.Diagnostics.Contracts;
-using JetBrains.Annotations;
 using Vertesaur.Contracts;
-using PureAttribute = System.Diagnostics.Contracts.PureAttribute;
 
 namespace Vertesaur.SegmentOperation {
 
@@ -83,7 +81,7 @@ namespace Vertesaur.SegmentOperation {
 			/// <summary>
 			/// The geometry of the result.
 			/// </summary>
-			[CanBeNull] IPlanarGeometry Geometry { get; }
+			IPlanarGeometry Geometry { get; }
 		}
 
 		/// <summary>
@@ -179,9 +177,7 @@ namespace Vertesaur.SegmentOperation {
 		/// </summary>
 		public struct NullResult : IResult
 		{
-			IPlanarGeometry IResult.Geometry {
-				[Pure, ContractAnnotation("=>null"), CanBeNull] get { return null; }
-			}
+			IPlanarGeometry IResult.Geometry { get { return null; } }
 		}
 
 // ReSharper disable RedundantDefaultFieldInitializer
@@ -194,13 +190,10 @@ namespace Vertesaur.SegmentOperation {
 		/// <param name="a">The first segment.</param>
 		/// <param name="b">The second segment.</param>
 		/// <returns>The geometry resulting from the intersection.</returns>
-		[CanBeNull]
-		public static IPlanarGeometry Intersection([NotNull] Segment2 a, [NotNull] Segment2 b) {
-			if(null == a) throw new ArgumentNullException("a");
-			if(null == b) throw new ArgumentNullException("b");
-			Contract.EndContractBlock();
-
-			return IntersectionDetails(a, b).Geometry;
+		public static IPlanarGeometry Intersection(Segment2 a, Segment2 b) {
+			return null == a || null == b
+				? null
+				: IntersectionDetails(a, b).Geometry;
 		}
 
 		/// <summary>
@@ -211,7 +204,6 @@ namespace Vertesaur.SegmentOperation {
 		/// <param name="c">The first point of the second segment.</param>
 		/// <param name="d">The second point of the second segment.</param>
 		/// <returns>The geometry resulting from the intersection.</returns>
-		[CanBeNull]
 		public static IPlanarGeometry Intersection(Point2 a, Point2 b, Point2 c, Point2 d) {
 			return IntersectionDetails(a, b, c, d).Geometry;
 		}
@@ -222,12 +214,11 @@ namespace Vertesaur.SegmentOperation {
 		/// <param name="a">The first segment.</param>
 		/// <param name="b">The second segment.</param>
 		/// <returns>The detailed result of the intersection.</returns>
-		[NotNull]
-		public static IResult IntersectionDetails([NotNull] Segment2 a,[NotNull] Segment2 b) {
-			if(null == a) throw new ArgumentNullException("a");
-			if(null == b) throw new ArgumentNullException("b");
+		public static IResult IntersectionDetails(Segment2 a, Segment2 b) {
 			Contract.Ensures(Contract.Result<IResult>() != null);
 			Contract.EndContractBlock();
+			if (null == a || null == b)
+				return DefaultNoIntersection;
 			return IntersectionDetails(a.A, a.B, b.A, b.B);
 		}
 
@@ -239,7 +230,6 @@ namespace Vertesaur.SegmentOperation {
 		/// <param name="c">The first point of the second segment.</param>
 		/// <param name="d">The second point of the second segment.</param>
 		/// <returns>The detailed result of the intersection.</returns>
-		[NotNull]
 		public static IResult IntersectionDetails(Point2 a, Point2 b, Point2 c, Point2 d) {
 			// ReSharper disable CompareOfFloatsByEqualityOperator
 			Contract.Ensures(Contract.Result<IResult>() != null);
@@ -288,12 +278,12 @@ namespace Vertesaur.SegmentOperation {
 			// ReSharper restore CompareOfFloatsByEqualityOperator
 		}
 		
-		[NotNull]
 		private static IResult IntersectionDetailsParallel(Vector2 d0, Vector2 d1, Vector2 e, double squareMagnitude0, double squareMagnitude1, Point2 a, Point2 b, Point2 c, Point2 d) {
 			// ReSharper disable CompareOfFloatsByEqualityOperator
 			Contract.Requires(squareMagnitude0 != 0);
 			Contract.Requires(squareMagnitude1 != 0);
 			// ReSharper restore CompareOfFloatsByEqualityOperator
+			Contract.Ensures(Contract.Result<IResult>() != null);
 			Contract.EndContractBlock();
 
 			var s1 = d0.Dot(e) / squareMagnitude0;

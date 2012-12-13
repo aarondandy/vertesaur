@@ -25,8 +25,6 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using JetBrains.Annotations;
-using PureAttribute = System.Diagnostics.Contracts.PureAttribute;
 
 namespace Vertesaur.PolygonOperation {
 
@@ -212,7 +210,7 @@ namespace Vertesaur.PolygonOperation {
 			public static readonly LocationAComparer Default = new LocationAComparer();
 
 			[Pure]
-			public int Compare([CanBeNull] PolygonCrossing x, [CanBeNull] PolygonCrossing y) {
+			public int Compare(PolygonCrossing x, PolygonCrossing y) {
 				// TODO: force NotNull on x,y to improve performance
 				if(ReferenceEquals(null,x))
 					return ReferenceEquals(null, y) ? 0 : -1;
@@ -231,7 +229,7 @@ namespace Vertesaur.PolygonOperation {
 			public static readonly LocationBComparer Default = new LocationBComparer();
 
 			[Pure]
-			public int Compare([CanBeNull] PolygonCrossing x, [CanBeNull] PolygonCrossing y) {
+			public int Compare(PolygonCrossing x, PolygonCrossing y) {
 				// TODO: force NotNull on x,y to improve performance
 				if (ReferenceEquals(null, x))
 					return ReferenceEquals(null, y) ? 0 : -1;
@@ -251,11 +249,11 @@ namespace Vertesaur.PolygonOperation {
 		/// <summary>
 		/// The crossing location on polygon A.
 		/// </summary>
-		[NotNull] public PolygonBoundaryLocation LocationA { get; private set; }
+		public PolygonBoundaryLocation LocationA { get; private set; }
 		/// <summary>
 		/// The crossing location on polygon A.
 		/// </summary>
-		[NotNull] public PolygonBoundaryLocation LocationB { get; private set; }
+		public PolygonBoundaryLocation LocationB { get; private set; }
 		/// <summary>
 		/// The crossing type.
 		/// </summary>
@@ -267,7 +265,7 @@ namespace Vertesaur.PolygonOperation {
 		/// <param name="p">The calculated point of intersection.</param>
 		/// <param name="locationA">The location on the first polygon boundary.</param>
 		/// <param name="locationB">The location on the second polygon boundary.</param>
-		public PolygonCrossing(Point2 p, [NotNull] PolygonBoundaryLocation locationA, [NotNull] PolygonBoundaryLocation locationB) {
+		public PolygonCrossing(Point2 p, PolygonBoundaryLocation locationA, PolygonBoundaryLocation locationB) {
 			if(null == locationA) throw new ArgumentNullException("locationA");
 			if(null == locationB) throw new ArgumentNullException("locationB");
 			Contract.EndContractBlock();

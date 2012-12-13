@@ -25,9 +25,7 @@
 using System;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
-using JetBrains.Annotations;
 using Vertesaur.Contracts;
-using PureAttribute = System.Diagnostics.Contracts.PureAttribute;
 
 namespace Vertesaur {
 	/// <summary>
@@ -134,7 +132,7 @@ namespace Vertesaur {
 		/// Creates a 2D vector.
 		/// </summary>
 		/// <param name="v">The coordinate tuple to copy values from.</param>
-		public Vector2([NotNull] ICoordinatePair<double> v) {
+		public Vector2(ICoordinatePair<double> v) {
 			if(null == v) throw new ArgumentNullException("v");
 			Contract.EndContractBlock();
 			X = v.X;
@@ -164,14 +162,14 @@ namespace Vertesaur {
 		}
 
 		/// <inheritdoc/>
-		[Pure, ContractAnnotation("null=>false")]
-		public bool Equals([CanBeNull] ICoordinatePair<double> other) {
+		[Pure]
+		public bool Equals(ICoordinatePair<double> other) {
 			return !ReferenceEquals(null, other) && X == other.X && Y == other.Y;
 		}
 
 		/// <inheritdoc/>
-		[Pure, ContractAnnotation("null=>false")]
-		public override bool Equals([CanBeNull] object obj) {
+		[Pure]
+		public override bool Equals(object obj) {
 			return !ReferenceEquals(null, obj) && (
 				(obj is Vector2 && Equals((Vector2)obj))
 				||

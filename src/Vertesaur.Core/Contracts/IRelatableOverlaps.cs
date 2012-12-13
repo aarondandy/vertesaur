@@ -22,8 +22,6 @@
 //
 // ===============================================================================
 
-using JetBrains.Annotations;
-
 namespace Vertesaur.Contracts {
 	/// <summary>
 	/// Functionality to determine if another object can be overlapped by this object.
@@ -59,6 +57,6 @@ namespace Vertesaur.Contracts {
 		/// NOTE: you may get into some awkward situations where a square has an area
 		/// of 0 for example
 		/// </remarks>
-		bool Overlaps([CanBeNull] TObject other);
+		bool Overlaps(TObject other);
 	}
 }

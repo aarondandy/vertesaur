@@ -25,9 +25,7 @@
 using System;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
-using JetBrains.Annotations;
 using Vertesaur.Contracts;
-using PureAttribute = System.Diagnostics.Contracts.PureAttribute;
 
 namespace Vertesaur {
 
@@ -103,7 +101,7 @@ namespace Vertesaur {
 		/// Creates a point with the same coordinates as the given <paramref name="point"/>.
 		/// </summary>
 		/// <param name="point">A coordinate pair.</param>
-		public Point3([NotNull] ICoordinateTriple<double> point) {
+		public Point3(ICoordinateTriple<double> point) {
 			if(null == point) throw new ArgumentNullException("point");
 			Contract.EndContractBlock();
 			X = point.X;
@@ -126,15 +124,13 @@ namespace Vertesaur {
 		}
 
 		/// <inheritdoc/>
-		[ContractAnnotation("null=>false")]
-		public bool Equals([CanBeNull] ICoordinateTriple<double> other) {
+		public bool Equals(ICoordinateTriple<double> other) {
 			return !ReferenceEquals(null, other)
 				&& X == other.X && Y == other.Y && Z == other.Z;
 		}
 
 		/// <inheritdoc/>
-		[ContractAnnotation("null=>false")]
-		public override bool Equals([CanBeNull] object obj) {
+		public override bool Equals(object obj) {
 			return null != obj && (
 				(obj is Point3 && Equals((Point3)obj))
 				||

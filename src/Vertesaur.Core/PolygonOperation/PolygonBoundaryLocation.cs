@@ -24,8 +24,6 @@
 
 using System;
 using System.Diagnostics.Contracts;
-using JetBrains.Annotations;
-using PureAttribute = System.Diagnostics.Contracts.PureAttribute;
 
 namespace Vertesaur.PolygonOperation {
 	/// <summary>
@@ -37,7 +35,7 @@ namespace Vertesaur.PolygonOperation {
 	{
 
 		[Pure]
-		private static int Compare([CanBeNull] PolygonBoundaryLocation a, [CanBeNull] PolygonBoundaryLocation b) {
+		private static int Compare(PolygonBoundaryLocation a, PolygonBoundaryLocation b) {
 			if(ReferenceEquals(a,null)) {
 				if(ReferenceEquals(b, null)) {
 					return 0;
@@ -47,28 +45,30 @@ namespace Vertesaur.PolygonOperation {
 			return a.CompareTo(b);
 		}
 
+		// TODO: can it be made so that null is an invalid parameter for a or b? May help with performance?
+
 		/// <inheritdoc/>
-		public static bool operator ==([CanBeNull] PolygonBoundaryLocation a, [CanBeNull] PolygonBoundaryLocation b) {
+		public static bool operator ==(PolygonBoundaryLocation a, PolygonBoundaryLocation b) {
 			return ReferenceEquals(null,a) ? ReferenceEquals(null,b) : a.Equals(b);
 		}
 		/// <inheritdoc/>
-		public static bool operator !=([CanBeNull] PolygonBoundaryLocation a, [CanBeNull] PolygonBoundaryLocation b) {
+		public static bool operator !=(PolygonBoundaryLocation a, PolygonBoundaryLocation b) {
 			return !(ReferenceEquals(null, a) ? ReferenceEquals(null, b) : a.Equals(b));
 		}
 		/// <inheritdoc/>
-		public static bool operator >([CanBeNull] PolygonBoundaryLocation a, [CanBeNull] PolygonBoundaryLocation b) {
+		public static bool operator >(PolygonBoundaryLocation a, PolygonBoundaryLocation b) {
 			return Compare(a,b) > 0;
 		}
 		/// <inheritdoc/>
-		public static bool operator >=([CanBeNull] PolygonBoundaryLocation a, [CanBeNull] PolygonBoundaryLocation b) {
+		public static bool operator >=(PolygonBoundaryLocation a, PolygonBoundaryLocation b) {
 			return Compare(a, b) >= 0;
 		}
 		/// <inheritdoc/>
-		public static bool operator <([CanBeNull] PolygonBoundaryLocation a, [CanBeNull] PolygonBoundaryLocation b) {
+		public static bool operator <(PolygonBoundaryLocation a, PolygonBoundaryLocation b) {
 			return Compare(a, b) < 0;
 		}
 		/// <inheritdoc/>
-		public static bool operator <=([CanBeNull] PolygonBoundaryLocation a, [CanBeNull] PolygonBoundaryLocation b) {
+		public static bool operator <=(PolygonBoundaryLocation a, PolygonBoundaryLocation b) {
 			return Compare(a, b) <= 0;
 		}
 
@@ -122,14 +122,14 @@ namespace Vertesaur.PolygonOperation {
 		}
 
 		/// <inheritdoc/>
-		[Pure, ContractAnnotation("null => false")]
+		[Pure]
 		public override bool Equals(object obj) {
 			return Equals(obj as PolygonBoundaryLocation);
 		}
 
 		/// <inheritdoc/>
-		[Pure, ContractAnnotation("null => false")]
-		public bool Equals([CanBeNull] PolygonBoundaryLocation other) {
+		[Pure]
+		public bool Equals(PolygonBoundaryLocation other) {
 			return !ReferenceEquals(null, other)
 				&& SegmentIndex == other.SegmentIndex
 // ReSharper disable CompareOfFloatsByEqualityOperator
@@ -146,7 +146,7 @@ namespace Vertesaur.PolygonOperation {
 
 		/// <inheritdoc/>
 		[Pure]
-		public int CompareTo([CanBeNull] PolygonBoundaryLocation other) {
+		public int CompareTo(PolygonBoundaryLocation other) {
 			if (ReferenceEquals(null, other))
 				return 1;
 			var compareResult = RingIndex.CompareTo(other.RingIndex);

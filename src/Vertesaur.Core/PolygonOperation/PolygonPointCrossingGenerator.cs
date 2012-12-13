@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using JetBrains.Annotations;
 using Vertesaur.CodeContracts;
 using Vertesaur.SegmentOperation;
 using Vertesaur.Utility;
@@ -14,7 +13,7 @@ namespace Vertesaur.PolygonOperation
 
 		private struct Segment2Data
 		{
-			public Segment2Data([NotNull] Segment2 segment, int segmentIndex, int ringIndex) {
+			public Segment2Data(Segment2 segment, int segmentIndex, int ringIndex) {
 				Contract.Requires(segment != null);
 				Contract.Requires(segmentIndex >= 0);
 				Contract.Requires(ringIndex >= 0);
@@ -24,7 +23,7 @@ namespace Vertesaur.PolygonOperation
 				RingIndex = ringIndex;
 			}
 
-			[NotNull] public readonly Segment2 Segment;
+			public readonly Segment2 Segment;
 			public readonly int SegmentIndex;
 			public readonly int RingIndex;
 		}
@@ -35,7 +34,7 @@ namespace Vertesaur.PolygonOperation
 #if (SILVERLIGHT)
 		private readonly Dictionary<Ring2, int[]> _sortedRingSegmentIndices;
 
-		public PolygonPointCrossingGenerator([NotNull] Polygon2 a, [NotNull] Polygon2 b) {
+		public PolygonPointCrossingGenerator(Polygon2 a, Polygon2 b) {
 			if(null == a) throw new ArgumentNullException("a");
 			if(null == b) throw new ArgumentNullException("b");
 			Contract.EndContractBlock();
@@ -46,7 +45,7 @@ namespace Vertesaur.PolygonOperation
 		}
 
 		[Obsolete]
-		private int[] GetSortedRingSegmentIndices([NotNull] Ring2 ring) {
+		private int[] GetSortedRingSegmentIndices(Ring2 ring) {
 #warning This method is not thread safe.
 			// TODO: make thread safe? only if used in a parallel way...
 			int[] result;
@@ -59,7 +58,7 @@ namespace Vertesaur.PolygonOperation
 #else
 		private readonly System.Collections.Concurrent.ConcurrentDictionary<Ring2, int[]> _sortedRingSegmentIndices;
 
-		public PolygonPointCrossingGenerator([NotNull] Polygon2 a, [NotNull] Polygon2 b) {
+		public PolygonPointCrossingGenerator(Polygon2 a, Polygon2 b) {
 			if(null == a) throw new ArgumentNullException("a");
 			if(null == b) throw new ArgumentNullException("b");
 			Contract.EndContractBlock();
@@ -69,12 +68,12 @@ namespace Vertesaur.PolygonOperation
 			_sortedRingSegmentIndices = new System.Collections.Concurrent.ConcurrentDictionary<Ring2, int[]>();
 		}
 
-		private int[] GetSortedRingSegmentIndices([NotNull] Ring2 ring) {
+		private int[] GetSortedRingSegmentIndices(Ring2 ring) {
+			Contract.Requires(null != ring);
 			return _sortedRingSegmentIndices.GetOrAdd(ring, GenerateSortedRingSegmentIndices);
 		}
 #endif
 
-		[NotNull]
 		public List<PolygonCrossing> GenerateCrossings() {
 			Contract.Ensures(Contract.Result<List<PolygonCrossing>>() != null);
 			Contract.EndContractBlock();
@@ -85,8 +84,7 @@ namespace Vertesaur.PolygonOperation
 				: GenerateCrossingsSerial();*/
 		}
 
-		[NotNull]
-		private static int[] GenerateSortedRingSegmentIndices([NotNull] Ring2 ring) {
+		private static int[] GenerateSortedRingSegmentIndices(Ring2 ring) {
 			Contract.Requires(ring != null);
 			Contract.Ensures(Contract.Result<int[]>() != null);
 			Contract.EndContractBlock();
@@ -98,7 +96,7 @@ namespace Vertesaur.PolygonOperation
 			return indices;
 		}
 
-		private static int Compare(int indexAStart, int indexBStart, [NotNull] Ring2 ring) {
+		private static int Compare(int indexAStart, int indexBStart, Ring2 ring) {
 			Contract.Requires(ring != null);
 			Contract.Requires(indexAStart >= 0);
 			Contract.Requires(indexAStart < ring.Count);
@@ -119,7 +117,6 @@ namespace Vertesaur.PolygonOperation
 			return compareResult != 0 ? compareResult : Math.Max(a, b).CompareTo(d);
 		}
 
-		[NotNull]
 		private List<PolygonCrossing> GenerateCrossingsSerial() {
 			Contract.Ensures(Contract.Result<List<PolygonCrossing>>() != null);
 			Contract.EndContractBlock();
@@ -143,14 +140,14 @@ namespace Vertesaur.PolygonOperation
 		}
 
 #if (SILVERLIGHT)
-		[NotNull] private List<PolygonCrossing> GenerateCrossingsParallel() {
+		private List<PolygonCrossing> GenerateCrossingsParallel() {
 			Contract.Ensures(Contract.Result<List<PolygonCrossing>>() != null);
 			Contract.EndContractBlock();
 
 			throw new NotImplementedException();
 		}
 #else
-		[NotNull] private List<PolygonCrossing> GenerateCrossingsParallel() {
+		private List<PolygonCrossing> GenerateCrossingsParallel() {
 			Contract.Ensures(Contract.Result<List<PolygonCrossing>>() != null);
 			Contract.EndContractBlock();
 
@@ -163,7 +160,7 @@ namespace Vertesaur.PolygonOperation
 
 		private sealed class RingCrossingGenerationTask
 		{
-			public RingCrossingGenerationTask([NotNull] Ring2 ringA, [NotNull] Ring2 ringB, int ringIndexA, int ringIndexB) {
+			public RingCrossingGenerationTask(Ring2 ringA, Ring2 ringB, int ringIndexA, int ringIndexB) {
 				CodeContractHelper.RequiresListIndexValid(ringA, ringIndexA);
 				CodeContractHelper.RequiresListIndexValid(ringB, ringIndexB);
 				Contract.EndContractBlock();
@@ -174,8 +171,8 @@ namespace Vertesaur.PolygonOperation
 				RingIndexB = ringIndexB;
 			}
 
-			[NotNull] public Ring2 RingA { get; private set; }
-			[NotNull] public Ring2 RingB { get; private set; }
+			public Ring2 RingA { get; private set; }
+			public Ring2 RingB { get; private set; }
 			public int RingIndexA { get; private set; }
 			public int RingIndexB { get; private set; }
 
@@ -192,8 +189,7 @@ namespace Vertesaur.PolygonOperation
 			}
 		}
 
-		[NotNull]
-		private List<PolygonCrossing> Process([NotNull] RingCrossingGenerationTask task) {
+		private List<PolygonCrossing> Process(RingCrossingGenerationTask task) {
 			Contract.Requires(task != null);
 			Contract.Ensures(Contract.Result<List<PolygonCrossing>>() != null);
 			Contract.EndContractBlock();
@@ -201,7 +197,6 @@ namespace Vertesaur.PolygonOperation
 			return GenerateRingCrossings(task.RingA, task.RingB, task.RingIndexA, task.RingIndexB);
 		}
 
-		[NotNull]
 		private IEnumerable<RingCrossingGenerationTask> GenerateRingCrossingGenerationTasks() {
 			Contract.Ensures(Contract.Result<IEnumerable<RingCrossingGenerationTask>>() != null);
 			Contract.EndContractBlock();
@@ -222,8 +217,7 @@ namespace Vertesaur.PolygonOperation
 			}
 		}
 
-		[NotNull]
-		private List<PolygonCrossing> GenerateRingCrossings([NotNull] Ring2 ringA, [NotNull] Ring2 ringB, int ringIndexA, int ringIndexB) {
+		private List<PolygonCrossing> GenerateRingCrossings(Ring2 ringA, Ring2 ringB, int ringIndexA, int ringIndexB) {
 			CodeContractHelper.RequiresNotNullOrEmpty(ringA);
 			CodeContractHelper.RequiresNotNullOrEmpty(ringB);
 			Contract.Requires(ringIndexA >= 0);
@@ -246,8 +240,7 @@ namespace Vertesaur.PolygonOperation
 		/// <param name="ringB">The second ring to test.</param>
 		/// <param name="ringIndexA">The ring index on polygon a.</param>
 		/// <param name="ringIndexB">The ring index on polygon b.</param>
-		[NotNull]
-		private List<PolygonCrossing> GenerateRingCrossingsSorted([NotNull] Ring2 ringA, [NotNull] Ring2 ringB, int ringIndexA, int ringIndexB) {
+		private List<PolygonCrossing> GenerateRingCrossingsSorted(Ring2 ringA, Ring2 ringB, int ringIndexA, int ringIndexB) {
 			CodeContractHelper.RequiresListIndexValid(ringA, ringIndexA);
 			CodeContractHelper.RequiresListIndexValid(ringB, ringIndexB);
 			Contract.Ensures(Contract.Result<List<PolygonCrossing>>() != null);
@@ -320,8 +313,7 @@ namespace Vertesaur.PolygonOperation
 			return crossings;
 		}
 
-		[NotNull]
-		private static List<PolygonCrossing> GenerateRingCrossingsBruteForce([NotNull] Ring2 ringA, [NotNull] Ring2 ringB, int ringIndexA, int ringIndexB) {
+		private static List<PolygonCrossing> GenerateRingCrossingsBruteForce(Ring2 ringA, Ring2 ringB, int ringIndexA, int ringIndexB) {
 			CodeContractHelper.RequiresNotNullOrEmpty(ringA);
 			CodeContractHelper.RequiresNotNullOrEmpty(ringB);
 			Contract.Requires(ringIndexA >= 0);
@@ -365,7 +357,7 @@ namespace Vertesaur.PolygonOperation
 			return crossings;
 		}
 
-		private static void AddPointCrossings([NotNull] List<PolygonCrossing> results, Segment2Data segmentDataA, Segment2Data segmentDataB) {
+		private static void AddPointCrossings(List<PolygonCrossing> results, Segment2Data segmentDataA, Segment2Data segmentDataB) {
 			Contract.Requires(results != null);
 			Contract.Ensures(results.Count >= Contract.OldValue(results).Count);
 			Contract.EndContractBlock();
@@ -394,7 +386,6 @@ namespace Vertesaur.PolygonOperation
 			}
 		}
 
-		[NotNull]
 		private static PolygonCrossing CreatePolygonCrossing(
 			SegmentIntersectionOperation.PointResult pointResult,
 			Segment2Data segmentDataA, Segment2Data segmentDataB

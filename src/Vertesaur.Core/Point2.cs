@@ -25,9 +25,7 @@
 using System;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
-using JetBrains.Annotations;
 using Vertesaur.Contracts;
-using PureAttribute = System.Diagnostics.Contracts.PureAttribute;
 
 namespace Vertesaur {
 
@@ -149,9 +147,8 @@ namespace Vertesaur {
 		/// Creates a point with the same coordinates as the given <paramref name="point"/>.
 		/// </summary>
 		/// <param name="point">A coordinate pair.</param>
-		public Point2([NotNull] ICoordinatePair<double> point) {
-			if(null == point)
-				throw new ArgumentNullException("point");
+		public Point2(ICoordinatePair<double> point) {
+			if(null == point) throw new ArgumentNullException("point");
 			Contract.EndContractBlock();
 			X = point.X;
 			Y = point.Y;
@@ -169,15 +166,13 @@ namespace Vertesaur {
 		}
 
 		/// <inheritdoc/>
-		[ContractAnnotation("null=>false")]
-		public bool Equals([CanBeNull] ICoordinatePair<double> other) {
+		public bool Equals(ICoordinatePair<double> other) {
 			return !ReferenceEquals(null, other)
 				&& X == other.X && Y == other.Y;
 		}
 
 		/// <inheritdoc/>
-		[ContractAnnotation("null=>false")]
-		public override bool Equals([CanBeNull] object obj) {
+		public override bool Equals(object obj) {
 			return null != obj && (
 				(obj is Point2 && Equals((Point2)obj))
 				||
@@ -260,6 +255,7 @@ namespace Vertesaur {
 
 		/// <inheritdoc/>
 		public Mbr GetMbr() {
+			Contract.Ensures(Contract.Result<Mbr>() != null);
 			return new Mbr(this);
 		}
 

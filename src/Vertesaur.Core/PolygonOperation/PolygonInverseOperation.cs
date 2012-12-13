@@ -22,8 +22,8 @@
 //
 // ===============================================================================
 
+using System.Diagnostics.Contracts;
 using System.Linq;
-using JetBrains.Annotations;
 
 namespace Vertesaur.PolygonOperation
 {
@@ -38,8 +38,8 @@ namespace Vertesaur.PolygonOperation
 		/// </summary>
 		/// <param name="polygon">The polygon to get the inverse of.</param>
 		/// <returns>An inverted polygon.</returns>
-		[ContractAnnotation("null => null; notnull => notnull"), CanBeNull]
-		public static Polygon2 Invert([CanBeNull] Polygon2 polygon) {
+		public static Polygon2 Invert(Polygon2 polygon) {
+			Contract.Ensures(polygon == null ? Contract.Result<Polygon2>() == null : Contract.Result<Polygon2>() != null);
 			return null == polygon ? null : new Polygon2(polygon.Select(Invert));
 		}
 
@@ -48,8 +48,8 @@ namespace Vertesaur.PolygonOperation
 		/// </summary>
 		/// <param name="ring">The ring to get the inverse of.</param>
 		/// <returns>An inverted polygon.</returns>
-		[ContractAnnotation("null => null; notnull => notnull"), CanBeNull]
-		public static Ring2 Invert([CanBeNull] Ring2 ring) {
+		public static Ring2 Invert(Ring2 ring) {
+			Contract.Ensures(ring == null ? Contract.Result<Ring2>() == null : Contract.Result<Ring2>() != null);
 			return null == ring ? null : ring.GetInverse();
 		}
 	}

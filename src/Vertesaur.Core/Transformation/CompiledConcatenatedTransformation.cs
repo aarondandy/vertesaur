@@ -26,7 +26,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using JetBrains.Annotations;
 using Vertesaur.Contracts;
 using System.Linq.Expressions;
 
@@ -41,8 +40,7 @@ namespace Vertesaur.Transformation
 	public class CompiledConcatenatedTransformation<TFrom,TTo> : ConcatenatedTransformation<TFrom, TTo>
 	{
 
-		[NotNull]
-		private Expression BuildSingleTransformExpression([NotNull] Expression input) {
+		private Expression BuildSingleTransformExpression(Expression input) {
 			Contract.Requires(input != null);
 			Contract.Ensures(Contract.Result<Expression>() != null);
 			Contract.EndContractBlock();
@@ -66,7 +64,7 @@ namespace Vertesaur.Transformation
 		/// Creates a new concatenated transformation that is JIT compiled into a single typed expression.
 		/// </summary>
 		/// <param name="transformations"></param>
-		public CompiledConcatenatedTransformation([NotNull, InstantHandle] IEnumerable<ITransformation> transformations)
+		public CompiledConcatenatedTransformation(IEnumerable<ITransformation> transformations)
 			: base(transformations)
 		{
 			Contract.Requires(transformations != null);
@@ -90,11 +88,9 @@ namespace Vertesaur.Transformation
 		}
 
 		/// <inheritdoc/>
-		[NotNull]
 		public new CompiledConcatenatedTransformation<TTo, TFrom> GetInverse() {
-			Contract.Requires(HasInverse);
+			if(!HasInverse) throw new NoInverseException();
 			Contract.Ensures(Contract.Result<CompiledConcatenatedTransformation<TTo, TFrom>>() != null);
-			Contract.EndContractBlock();
 			return (CompiledConcatenatedTransformation<TTo, TFrom>)CreateInverseConcatenatedOperation();
 		}
 
@@ -116,7 +112,7 @@ namespace Vertesaur.Transformation
 		/// Constructs a new concatenated transformation.
 		/// </summary>
 		/// <param name="transformations">The transformations that will compose the concatenated operation.</param>
-		public CompiledConcatenatedTransformation([NotNull, InstantHandle] IEnumerable<ITransformation> transformations)
+		public CompiledConcatenatedTransformation(IEnumerable<ITransformation> transformations)
 			: base(transformations)
 		{
 			Contract.Requires(transformations != null);
@@ -135,12 +131,9 @@ namespace Vertesaur.Transformation
 		}
 
 		/// <inheritdoc/>
-		[NotNull]
 		public new CompiledConcatenatedTransformation<TValue> GetInverse() {
-			Contract.Requires(HasInverse);
+			if(!HasInverse) throw new NoInverseException();
 			Contract.Ensures(Contract.Result<CompiledConcatenatedTransformation<TValue>>() != null);
-			Contract.EndContractBlock();
-
 			return (CompiledConcatenatedTransformation<TValue>)CreateInverseConcatenatedOperation();
 		}
 

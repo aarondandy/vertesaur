@@ -24,7 +24,6 @@
 
 using System;
 using System.Diagnostics.Contracts;
-using JetBrains.Annotations;
 using Vertesaur.Contracts;
 
 namespace Vertesaur {
@@ -49,7 +48,6 @@ namespace Vertesaur {
 		/// <param name="left">The left matrix.</param>
 		/// <param name="right">The right matrix.</param>
 		/// <returns>True if equal</returns>
-		[ContractAnnotation("left:null,right:null=>true; left:notnull,right:null=>false; left:null,right:notnull=>false")]
 		public static bool operator ==(Matrix3 left, Matrix3 right) {
 			return (ReferenceEquals(null, left) ? ReferenceEquals(null, right) : left.Equals(right));
 		}
@@ -60,7 +58,6 @@ namespace Vertesaur {
 		/// <param name="left">The left matrix.</param>
 		/// <param name="right">The right matrix.</param>
 		/// <returns>True if not equal</returns>
-		[ContractAnnotation("left:null,right:null=>false; left:notnull,right:null=>true; left:null,right:notnull=>true")]
 		public static bool operator !=(Matrix3 left, Matrix3 right) {
 			return (ReferenceEquals(null, left) ? !ReferenceEquals(null, right) : !left.Equals(right));
 		}
@@ -71,8 +68,7 @@ namespace Vertesaur {
 		/// <param name="left">The left matrix.</param>
 		/// <param name="right">The right matrix.</param>
 		/// <returns>The result of multiplying <paramref name="left"/> and <paramref name="right"/>.</returns>
-		[NotNull]
-		public static Matrix3 operator *([NotNull] Matrix3 left, [NotNull] Matrix3 right) {
+		public static Matrix3 operator *(Matrix3 left, Matrix3 right) {
 			if(null == left) throw new ArgumentNullException("left");
 			if(null == right) throw new ArgumentNullException("right");
 			Contract.Ensures(Contract.Result<Matrix3>() != null);
@@ -86,8 +82,7 @@ namespace Vertesaur {
 		/// <param name="left">The left matrix.</param>
 		/// <param name="right">The right matrix.</param>
 		/// <returns>The resulting matrix.</returns>
-		[NotNull]
-		public static Matrix3 operator +([NotNull] Matrix3 left, [NotNull] Matrix3 right) {
+		public static Matrix3 operator +(Matrix3 left, Matrix3 right) {
 			if (null == left) throw new ArgumentNullException("left");
 			if (null == right) throw new ArgumentNullException("right");
 			Contract.Ensures(Contract.Result<Matrix3>() != null);
@@ -99,7 +94,6 @@ namespace Vertesaur {
 		/// Creates a matrix with all elements set to 0.
 		/// </summary>
 		/// <returns>A matrix of zeros.</returns>
-		[NotNull]
 		public static Matrix3 CreateZero() {
 			Contract.Ensures(Contract.Result<Matrix3>() != null);
 			Contract.EndContractBlock();
@@ -182,7 +176,7 @@ namespace Vertesaur {
 		/// Copies the element values from the given matrix.
 		/// </summary>
 		/// <param name="m">A matrix to copy from.</param>
-		public Matrix3([NotNull] Matrix3 m) {
+		public Matrix3(Matrix3 m) {
 			if(null == m) throw new ArgumentNullException("m");
 			Contract.EndContractBlock();
 			E00 = m.E00;
@@ -200,7 +194,7 @@ namespace Vertesaur {
 		/// Copies the element values from the given matrix.
 		/// </summary>
 		/// <param name="m">A matrix to copy from.</param>
-		public Matrix3([NotNull] IMatrix<double> m) {
+		public Matrix3(IMatrix<double> m) {
 			if (m == null) throw new ArgumentNullException("m");
 			if (m.RowCount != OrderValue) throw new ArgumentException("Matrix must have 3 rows", "m");
 			if (m.ColumnCount != OrderValue) throw new ArgumentException("Matrix must have 3 columns.", "m");
@@ -342,8 +336,7 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="other">A matrix to compare.</param>
 		/// <returns><see langword="true"/> when the given matrix is equal to this instance.</returns>
-		[ContractAnnotation("null=>false")]
-		public bool Equals([CanBeNull] Matrix3 other) {
+		public bool Equals(Matrix3 other) {
 			return !ReferenceEquals(null, other)
 				&& E00 == other.E00
 				&& E01 == other.E01
@@ -362,8 +355,7 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="other">A matrix to compare.</param>
 		/// <returns><see langword="true"/> when the given matrix is equal to this instance.</returns>
-		[ContractAnnotation("null=>false")]
-		public bool Equals([CanBeNull] IMatrix<double> other) {
+		public bool Equals(IMatrix<double> other) {
 			return !ReferenceEquals(null, other)
 				&& OrderValue == other.RowCount
 				&& OrderValue == other.ColumnCount
@@ -385,8 +377,7 @@ namespace Vertesaur {
 		/// <param name="obj">The <see cref="System.Object"/> to compare with this instance.</param>
 		/// <returns><c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.
 		/// </returns>
-		[ContractAnnotation("null=>false")]
-		public override bool Equals([CanBeNull] object obj) {
+		public override bool Equals(object obj) {
 			return null != obj && (
 				(obj is Matrix3 && Equals(obj as Matrix3))
 				||
@@ -532,7 +523,6 @@ namespace Vertesaur {
 		/// </summary>
 		/// <returns>The inverse of the matrix.</returns>
 		/// <exception cref="Vertesaur.NoInverseException">An inverse requires a valid non-zero finite determinant.</exception>
-		[NotNull]
 		public Matrix3 GetInverse() {
 			Contract.Ensures(Contract.Result<Matrix3>() != null);
 			Contract.EndContractBlock();
@@ -572,7 +562,6 @@ namespace Vertesaur {
 		/// Generates a new matrix which is the transpose of this matrix.
 		/// </summary>
 		/// <returns>The transpose of this matrix.</returns>
-		[NotNull]
 		public Matrix3 GetTransposed() {
 			Contract.Ensures(Contract.Result<Matrix3>() != null);
 			Contract.EndContractBlock();
@@ -588,8 +577,7 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="right">The right matrix to multiply by.</param>
 		/// <returns>A product of this matrix multiplied by the given <paramref name="right"/> matrix.</returns>
-		[NotNull]
-		public Matrix3 Multiply([NotNull] Matrix3 right) {
+		public Matrix3 Multiply(Matrix3 right) {
 			if(null == right) throw new ArgumentNullException("right");
 			Contract.Ensures(Contract.Result<Matrix3>() != null);
 			Contract.EndContractBlock();
@@ -610,7 +598,7 @@ namespace Vertesaur {
 		/// Multiplies this left matrix by the given <paramref name="right"/> matrix and overwrites this matrix with the product.
 		/// </summary>
 		/// <param name="right">The right matrix to multiply by.</param>
-		public void MultiplyAssignment([NotNull] Matrix3 right) {
+		public void MultiplyAssignment(Matrix3 right) {
 			if (null == right) throw new ArgumentNullException("right");
 			Contract.EndContractBlock();
 			SetElements(
@@ -631,8 +619,7 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="right">The right matrix to add.</param>
 		/// <returns>The result.</returns>
-		[NotNull]
-		public Matrix3 Add([NotNull] Matrix3 right) {
+		public Matrix3 Add(Matrix3 right) {
 			if (null == right) throw new ArgumentNullException("right");
 			Contract.Ensures(Contract.Result<Matrix3>() != null);
 			Contract.EndContractBlock();
@@ -653,7 +640,7 @@ namespace Vertesaur {
 		/// Adds this left matrix by the given <paramref name="right"/> matrix and overwrites this matrix with the sum.
 		/// </summary>
 		/// <param name="right">The right matrix to add.</param>
-		public void AddAssignment([NotNull] Matrix3 right) {
+		public void AddAssignment(Matrix3 right) {
 			if (null == right) throw new ArgumentNullException("right");
 			Contract.EndContractBlock();
 			E00 += right.E00;
@@ -671,7 +658,7 @@ namespace Vertesaur {
 		/// Creates a new matrix composed of the same elements.
 		/// </summary>
 		/// <returns>A copy of this matrix.</returns>
-		[NotNull] public Matrix3 Clone() {
+		public Matrix3 Clone() {
 			Contract.Ensures(Contract.Result<Matrix3>() != null);
 			Contract.EndContractBlock();
 			return new Matrix3(this);

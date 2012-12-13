@@ -24,7 +24,6 @@
 
 using System;
 using System.Diagnostics;
-using JetBrains.Annotations;
 using Vertesaur.Contracts;
 
 namespace Vertesaur
@@ -94,8 +93,7 @@ namespace Vertesaur
 		double ISpheroid<double>.ESecondSquared { get { return 0.0; } }
 
 		/// <inheritdoc/>
-		[ContractAnnotation("null=>false")]
-		public override bool Equals([CanBeNull] object obj) {
+		public override bool Equals(object obj) {
 			return Equals(obj as ISpheroid<double>);
 		}
 
@@ -105,8 +103,7 @@ namespace Vertesaur
 		}
 
 		/// <inheritdoc/>
-		[ContractAnnotation("null=>false")]
-		public bool Equals([CanBeNull] ISpheroid<double> other) {
+		public bool Equals(ISpheroid<double> other) {
 			// ReSharper disable CompareOfFloatsByEqualityOperator
 			return (
 				!ReferenceEquals(null, other)

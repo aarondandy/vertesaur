@@ -22,8 +22,6 @@
 //
 // ===============================================================================
 
-using JetBrains.Annotations;
-
 namespace Vertesaur.Contracts {
 	/// <summary>
 	/// Allows this object to have its intersection computed with another object.
@@ -37,6 +35,6 @@ namespace Vertesaur.Contracts {
 		/// </summary>
 		/// <param name="other">The other object to calculate the intersection from.</param>
 		/// <returns>The intersection result.</returns>
-		[CanBeNull] TResult Intersection([CanBeNull] TObject other);
+		TResult Intersection(TObject other);
 	}
 }

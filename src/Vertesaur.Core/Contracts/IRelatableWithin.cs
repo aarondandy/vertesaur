@@ -22,8 +22,6 @@
 //
 // ===============================================================================
 
-using JetBrains.Annotations;
-
 namespace Vertesaur.Contracts {
 	/// <summary>
 	/// Functionality to determine if an object can be contained within another object.
@@ -42,6 +40,6 @@ namespace Vertesaur.Contracts {
 		/// and there is no intersection between the interior of this instance and the
 		/// exterior of the other instance.
 		/// </remarks>
-		bool Within([CanBeNull] TObject other);
+		bool Within(TObject other);
 	}
 }

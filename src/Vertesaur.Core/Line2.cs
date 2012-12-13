@@ -25,9 +25,7 @@
 using System;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
-using JetBrains.Annotations;
 using Vertesaur.Contracts;
-using PureAttribute = System.Diagnostics.Contracts.PureAttribute;
 
 namespace Vertesaur {
 
@@ -64,7 +62,6 @@ namespace Vertesaur {
 		/// <remarks>
 		/// <code>y = (m*x) + b</code>
 		/// </remarks>
-		[NotNull]
 		public static Line2 SlopeIntercept(double m, double b) {
 			Contract.Ensures(Contract.Result<Line2>() != null);
 			Contract.EndContractBlock();
@@ -81,7 +78,6 @@ namespace Vertesaur {
 		/// <remarks>
 		/// <code>(A*x) + (B*y) + C = 0</code>
 		/// </remarks>
-		[NotNull]
 		public static Line2 General(double a, double b, double c) {
 			Contract.Ensures(Contract.Result<Line2>() != null);
 			Contract.EndContractBlock();
@@ -98,7 +94,6 @@ namespace Vertesaur {
 		/// <remarks>
 		/// <code>(A*x) + (B*y) = C</code>
 		/// </remarks>
-		[NotNull]
 		public static Line2 Standard(double a, double b, double c) {
 			Contract.Ensures(Contract.Result<Line2>() != null);
 			Contract.EndContractBlock();
@@ -161,7 +156,7 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="p">A point on the line.</param>
 		/// <param name="d">The direction of the line.</param>
-		public Line2([NotNull] IPoint2<double> p, [NotNull] IVector2<double> d)
+		public Line2(IPoint2<double> p, IVector2<double> d)
 			: this(new Point2(p), new Vector2(d))
 		{
 			Contract.Requires(p != null);
@@ -182,7 +177,7 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="a">A point.</param>
 		/// <param name="b">A point.</param>
-		public Line2([NotNull] IPoint2<double> a, [NotNull] IPoint2<double> b)
+		public Line2(IPoint2<double> a, IPoint2<double> b)
 			: this(new Point2(a), new Point2(b))
 		{
 			Contract.Requires(a != null);
@@ -194,7 +189,7 @@ namespace Vertesaur {
 		/// Constructs a line with infinite length identical to the given <paramref name="line"/> which is defined by the same points and direction..
 		/// </summary>
 		/// <param name="line">A line.</param>
-		public Line2([NotNull] Line2 line) {
+		public Line2(Line2 line) {
 			if(null == line)
 				throw new ArgumentNullException("line");
 			Contract.EndContractBlock();
@@ -225,8 +220,7 @@ namespace Vertesaur {
 		/// <c>true</c> if the current object is equal to the <paramref name="other"/> parameter; otherwise, <c>false</c>.
 		/// </returns>
 		/// <param name="other">An object to compare with this object.</param>
-		[ContractAnnotation("null=>false")]
-		public bool Equals([CanBeNull] Line2 other) {
+		public bool Equals(Line2 other) {
 			return ReferenceEquals(this,other) || (
 				!ReferenceEquals(null, other)
 				&& P.Equals(other.P)
@@ -241,8 +235,7 @@ namespace Vertesaur {
 		/// <returns>
 		/// <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.
 		/// </returns>
-		[ContractAnnotation("null=>false")]
-		public override bool Equals([CanBeNull] object obj) {
+		public override bool Equals(object obj) {
 			return Equals(obj as Line2);
 		}
 
@@ -282,11 +275,8 @@ namespace Vertesaur {
 		/// </returns>
 		/// <filterpriority>2</filterpriority>
 		/// <remarks>Functions as a deep clone and a shallow clone.</remarks>
-		[NotNull]
 		public Line2 Clone() {
 			Contract.Ensures(Contract.Result<Line2>() != null);
-			Contract.EndContractBlock();
-
 			return new Line2(this);
 		}
 
@@ -301,6 +291,7 @@ namespace Vertesaur {
 		/// <returns>A minimum bounding rectangle.</returns>
 		[Pure]
 		public Mbr GetMbr() {
+			Contract.Ensures(Contract.Result<Mbr>() != null);
 			// ReSharper disable CompareOfFloatsByEqualityOperator
 			return (
 				(0 == Direction.X)
@@ -377,7 +368,6 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="segment">A segment.</param>
 		/// <returns><c>true</c> when another object intersects this object.</returns>
-		[ContractAnnotation("null=>false")]
 		public bool Intersects(Segment2 segment) {
 			throw new NotImplementedException();
 		}
@@ -387,7 +377,6 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="ray">A ray.</param>
 		/// <returns><c>true</c> when another object intersects this object.</returns>
-		[ContractAnnotation("null=>false")]
 		public bool Intersects(Ray2 ray) {
 			throw new NotImplementedException();
 		}
@@ -397,7 +386,6 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="line">A line.</param>
 		/// <returns><c>true</c> when another object intersects this object.</returns>
-		[ContractAnnotation("null=>false")]
 		public bool Intersects(Line2 line) {
 			throw new NotImplementedException();
 		}

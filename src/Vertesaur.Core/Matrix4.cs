@@ -25,7 +25,6 @@
 using System;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
-using JetBrains.Annotations;
 using Vertesaur.Contracts;
 
 namespace Vertesaur {
@@ -50,7 +49,6 @@ namespace Vertesaur {
 		/// <param name="left">A matrix.</param>
 		/// <param name="right">A matrix.</param>
 		/// <returns>True when both matrices are equal.</returns>
-		[ContractAnnotation("left:null,right:null=>true; left:notnull,right:null=>false; left:null,right:notnull=>false")]
 		public static bool operator ==(Matrix4 left, Matrix4 right) {
 			return (ReferenceEquals(null, left) ? ReferenceEquals(null, right) : left.Equals(right));
 		}
@@ -61,7 +59,6 @@ namespace Vertesaur {
 		/// <param name="left">A matrix.</param>
 		/// <param name="right">A matrix.</param>
 		/// <returns>True when both matrices are not equal.</returns>
-		[ContractAnnotation("left:null,right:null=>false; left:notnull,right:null=>true; left:null,right:notnull=>true")]
 		public static bool operator !=(Matrix4 left, Matrix4 right) {
 			return (ReferenceEquals(null, left) ? !ReferenceEquals(null, right) : !left.Equals(right));
 		}
@@ -72,8 +69,7 @@ namespace Vertesaur {
 		/// <param name="left">Left matrix.</param>
 		/// <param name="right">Right matrix.</param>
 		/// <returns>Returns the product of two matrices.</returns>
-		[NotNull]
-		public static Matrix4 operator *([NotNull] Matrix4 left, [NotNull] Matrix4 right) {
+		public static Matrix4 operator *(Matrix4 left, Matrix4 right) {
 			if(null == left) throw new ArgumentNullException("left");
 			if(null == right) throw new ArgumentNullException("right");
 			Contract.Ensures(Contract.Result<Matrix4>() != null);
@@ -87,8 +83,7 @@ namespace Vertesaur {
 		/// <param name="left">The left matrix.</param>
 		/// <param name="right">The right matrix.</param>
 		/// <returns>The resulting matrix.</returns>
-		[NotNull]
-		public static Matrix4 operator +([NotNull] Matrix4 left, [NotNull] Matrix4 right) {
+		public static Matrix4 operator +(Matrix4 left, Matrix4 right) {
 			if (null == left) throw new ArgumentNullException("left");
 			if (null == right) throw new ArgumentNullException("right");
 			Contract.Ensures(Contract.Result<Matrix4>() != null);
@@ -100,7 +95,6 @@ namespace Vertesaur {
 		/// Creates a matrix with all elements set to 0.
 		/// </summary>
 		/// <returns>A matrix of zeros.</returns>
-		[NotNull]
 		public static Matrix4 CreateZero() {
 			Contract.Ensures(Contract.Result<Matrix4>() != null);
 			Contract.EndContractBlock();
@@ -228,7 +222,7 @@ namespace Vertesaur {
 		/// Copies the element values from the given matrix.
 		/// </summary>
 		/// <param name="m">A matrix to copy from.</param>
-		public Matrix4([NotNull] Matrix4 m) {
+		public Matrix4(Matrix4 m) {
 			if(m == null) throw new ArgumentNullException("m");
 			Contract.EndContractBlock();
 			E00 = m.E00;
@@ -255,7 +249,7 @@ namespace Vertesaur {
 		/// Copies the element values from the given matrix.
 		/// </summary>
 		/// <param name="m">A matrix to copy from.</param>
-		public Matrix4([NotNull] IMatrix<double> m) {
+		public Matrix4(IMatrix<double> m) {
 			if (m == null) throw new ArgumentNullException("m");
 			if (m.RowCount != OrderValue) throw new ArgumentException("Matrix must have 4 rows", "m");
 			if (m.ColumnCount != OrderValue) throw new ArgumentException("Matrix must have 4 columns.", "m");
@@ -303,8 +297,7 @@ namespace Vertesaur {
 		}
 
 		/// <inheritdoc/>
-		[ContractAnnotation("null=>false")]
-		public bool Equals([CanBeNull] Matrix4 other) {
+		public bool Equals(Matrix4 other) {
 			return !ReferenceEquals(null, other)
 				&& E00 == other.E00
 				&& E01 == other.E01
@@ -326,8 +319,7 @@ namespace Vertesaur {
 		}
 
 		/// <inheritdoc/>
-		[ContractAnnotation("null=>false")]
-		public bool Equals([CanBeNull] IMatrix<double> other) {
+		public bool Equals(IMatrix<double> other) {
 			return !ReferenceEquals(null, other)
 				&& OrderValue == other.RowCount
 				&& OrderValue == other.ColumnCount
@@ -383,12 +375,10 @@ namespace Vertesaur {
 		/// <param name="obj">The <see cref="System.Object"/> to compare with this instance.</param>
 		/// <returns><c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.
 		/// </returns>
-		[ContractAnnotation("null=>false")]
-		public override bool Equals([CanBeNull] object obj) {
+		public override bool Equals(object obj) {
 			return null != obj && (
 				(obj is Matrix4 && Equals(obj as Matrix4))
-				||
-				(obj is IMatrix<double> && Equals(obj as IMatrix<double>))
+				|| (obj is IMatrix<double> && Equals(obj as IMatrix<double>))
 			);
 		}
 
@@ -665,7 +655,6 @@ namespace Vertesaur {
 		/// </summary>
 		/// <returns>The inverse of the matrix.</returns>
 		/// <exception cref="Vertesaur.NoInverseException">An inverse requires a valid non-zero finite determinant.</exception>
-		[NotNull]
 		public Matrix4 GetInverse() {
 			Contract.Ensures(Contract.Result<Matrix4>() != null);
 			Contract.EndContractBlock();
@@ -728,7 +717,7 @@ namespace Vertesaur {
 		/// Generates a new matrix which is the transpose of this matrix.
 		/// </summary>
 		/// <returns>The transpose of this matrix.</returns>
-		[NotNull] public Matrix4 GetTransposed() {
+		public Matrix4 GetTransposed() {
 			Contract.Ensures(Contract.Result<Matrix4>() != null);
 			Contract.EndContractBlock();
 			return new Matrix4(
@@ -744,7 +733,7 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="right">The right matrix to multiply by.</param>
 		/// <returns>A product of this matrix multiplied by the given <paramref name="right"/> matrix.</returns>
-		[NotNull] public Matrix4 Multiply([NotNull] Matrix4 right) {
+		public Matrix4 Multiply(Matrix4 right) {
 			if(null == right) throw new ArgumentNullException("right");
 			Contract.Ensures(Contract.Result<Matrix4>() != null);
 			Contract.EndContractBlock();
@@ -772,7 +761,7 @@ namespace Vertesaur {
 		/// Multiplies this left matrix by the given <paramref name="right"/> matrix and overwrites this matrix with the product.
 		/// </summary>
 		/// <param name="right">The right matrix to multiply by.</param>
-		public void MultiplyAssignment([NotNull] Matrix4 right) {
+		public void MultiplyAssignment(Matrix4 right) {
 			if (null == right) throw new ArgumentNullException("right");
 			Contract.EndContractBlock();
 			SetElements(
@@ -800,7 +789,7 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="right">The right matrix to add.</param>
 		/// <returns>The result.</returns>
-		[NotNull] public Matrix4 Add([NotNull] Matrix4 right) {
+		public Matrix4 Add(Matrix4 right) {
 			if (null == right) throw new ArgumentNullException("right");
 			Contract.Ensures(Contract.Result<Matrix4>() != null);
 			Contract.EndContractBlock();
@@ -828,7 +817,7 @@ namespace Vertesaur {
 		/// Adds this left matrix by the given <paramref name="right"/> matrix and overwrites this matrix with the sum.
 		/// </summary>
 		/// <param name="right">The right matrix to add.</param>
-		public void AddAssignment([NotNull] Matrix4 right) {
+		public void AddAssignment(Matrix4 right) {
 			if (null == right) throw new ArgumentNullException("right");
 			Contract.EndContractBlock();
 			E00 += right.E00;
@@ -856,8 +845,7 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="right">The right matrix to subtract.</param>
 		/// <returns>The result.</returns>
-		[NotNull]
-		public Matrix4 Subtract([NotNull] Matrix4 right) {
+		public Matrix4 Subtract(Matrix4 right) {
 			if (null == right) throw new ArgumentNullException("right");
 			Contract.Ensures(Contract.Result<Matrix4>() != null);
 			Contract.EndContractBlock();
@@ -927,7 +915,7 @@ namespace Vertesaur {
 
 		/// <inheritdoc/>
 		public bool IsLowerTriangular {
-			[JetBrains.Annotations.Pure] get {
+			get {
 				return 0 == E01 && 0 == E02 && 0 == E03
 								&& 0 == E12 && 0 == E13
 											&& 0 == E23;
@@ -938,7 +926,6 @@ namespace Vertesaur {
 		/// Creates a new 4x4 matrix with the same elements.
 		/// </summary>
 		/// <returns>A clone of this matrix.</returns>
-		[NotNull]
 		public Matrix4 Clone() {
 			Contract.Ensures(Contract.Result<Matrix4>() != null);
 			Contract.EndContractBlock();

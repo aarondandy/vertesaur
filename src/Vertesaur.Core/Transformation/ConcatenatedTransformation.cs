@@ -26,11 +26,9 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using JetBrains.Annotations;
 using Vertesaur.Contracts;
 using System.Collections;
 using System.Diagnostics.Contracts;
-using PureAttribute = System.Diagnostics.Contracts.PureAttribute;
 
 namespace Vertesaur.Transformation
 {
@@ -41,14 +39,12 @@ namespace Vertesaur.Transformation
 	public class ConcatenatedTransformation : ITransformation
 	{
 
-		[NotNull] private readonly ITransformation[] _transformations;
-
 		/// <summary>
 		/// Creates a new concatenated transformation composed of a sequence of transformations.
 		/// </summary>
 		/// <param name="transformations">A sequence of transformations.</param>
 		/// <exception cref="System.ArgumentException">Thrown if a transformation is <c>null</c>.</exception>
-		public ConcatenatedTransformation([NotNull, InstantHandle] IEnumerable<ITransformation> transformations) {
+		public ConcatenatedTransformation(IEnumerable<ITransformation> transformations) {
 			if (null == transformations) throw new ArgumentNullException("transformations");
 			Contract.EndContractBlock();
 
@@ -57,7 +53,7 @@ namespace Vertesaur.Transformation
 				if (txArray[i] == null)
 					throw new ArgumentException("null transformations are not valid.");
 
-			_transformations = txArray;
+			Transformations = Array.AsReadOnly(txArray);
 				
 		}
 
@@ -68,28 +64,24 @@ namespace Vertesaur.Transformation
 		/// <remarks>
 		/// The parameter is used as is so make sure to clone before passing it in.
 		/// </remarks>
-		private ConcatenatedTransformation([NotNull] ITransformation[] transformations) {
+		private ConcatenatedTransformation(ITransformation[] transformations) {
 			Contract.Requires(transformations != null);
 			Contract.Requires(Contract.ForAll(transformations, x => null != x));
-			Contract.EndContractBlock();
-
-			_transformations = transformations;
+			Transformations = Array.AsReadOnly(transformations);
 		}
 
 		/// <summary>
 		/// Generates an inverse set of transformation operations that represent the inverse of this transformations..
 		/// </summary>
 		/// <returns></returns>
-		[NotNull]
 		protected ITransformation[] CreateInverseOperations() {
-			if(!HasInverse)
-				throw new NoInverseException();
+			if(!HasInverse) throw new NoInverseException();
 			Contract.Ensures(Contract.Result<ITransformation[]>() != null);
 			Contract.EndContractBlock();
 
-			var inverseTransformations = new ITransformation[_transformations.Length];
+			var inverseTransformations = new ITransformation[Transformations.Count];
 			for(int i = 0; i < inverseTransformations.Length; i++) {
-				var tx = _transformations[_transformations.Length - 1 - i];
+				var tx = Transformations[Transformations.Count - 1 - i];
 				var ix = tx.GetInverse();
 				inverseTransformations[i] = ix;
 			}
@@ -100,37 +92,24 @@ namespace Vertesaur.Transformation
 		/// Creates a new concatenated transformation that is the inverse of this transformation.
 		/// </summary>
 		/// <returns>The inverse transformation.</returns>
-		[NotNull]
 		protected virtual ConcatenatedTransformation CreateInverseConcatenatedOperation() {
 			Contract.Requires(HasInverse);
 			Contract.Ensures(Contract.Result<ConcatenatedTransformation>() != null);
-			Contract.EndContractBlock();
-
 			return new ConcatenatedTransformation(CreateInverseOperations());
 		}
 
 		/// <summary>
 		/// Gets the transformations that make up this concatenated transformation.
 		/// </summary>
-		public ReadOnlyCollection<ITransformation> Transformations {
-			[NotNull] get {
-				Contract.Ensures(Contract.Result<ReadOnlyCollection<ITransformation>>() != null);
-				Contract.EndContractBlock();
-
-				return Array.AsReadOnly(_transformations);
-			}
-		}
+		public ReadOnlyCollection<ITransformation> Transformations { get; private set; }
 
 		/// <summary>
 		/// Creates a new concatenated transformation that is the inverse of this transformation.
 		/// </summary>
 		/// <returns>The inverse transformation.</returns>
-		[NotNull]
 		public ConcatenatedTransformation GetInverse() {
 			Contract.Requires(HasInverse);
 			Contract.Ensures(Contract.Result<ConcatenatedTransformation>() != null);
-			Contract.EndContractBlock();
-
 			return CreateInverseConcatenatedOperation();
 		}
 
@@ -141,13 +120,18 @@ namespace Vertesaur.Transformation
 		/// <inheritdoc/>
 		public bool HasInverse {
 			get {
-				if(_transformations.Length == 0)
+				if(Transformations.Count == 0)
 					return true;
-				for (int i = 0; i < _transformations.Length; i++)
-					if (!_transformations[i].HasInverse)
+				for (int i = 0; i < Transformations.Count; i++)
+					if (!Transformations[i].HasInverse)
 						return false;
 				return true;
 			}
+		}
+
+		[ContractInvariantMethod]
+		private void CodeContractInvariant() {
+			Contract.Invariant(null != Transformations);
 		}
 	}
 
@@ -157,43 +141,33 @@ namespace Vertesaur.Transformation
 	public class ConcatenatedTransformation<TFrom, TTo> : ConcatenatedTransformation, ITransformation<TFrom, TTo>
 	{
 
-		[NotNull] private readonly TransformationCastNode[] _transformationPath;
-
 		/// <summary>
 		/// Creates a new concatenated transformation composed of a sequence of transformations.
 		/// </summary>
 		/// <param name="transformations">A sequence of transformations.</param>
 		/// <exception cref="System.InvalidOperationException">Thrown when a valid casting path can not be determined.</exception>
-		public ConcatenatedTransformation([NotNull, InstantHandle] IEnumerable<ITransformation> transformations) : base(transformations) {
+		public ConcatenatedTransformation(IEnumerable<ITransformation> transformations) : base(transformations) {
 			Contract.Requires(transformations != null);
-			Contract.EndContractBlock();
 
 			var path = TransformationCastNode.FindCastPath(Transformations, typeof(TFrom), typeof(TTo));
 			if(null == path)
 				throw new InvalidOperationException("A concatenated transformation casting path could not be found.");
-			_transformationPath = path;
+			TransformationPath = Array.AsReadOnly(path);
 		}
 
 		/// <summary>
 		/// The chosen transformation cast path used when compiling the concatenated transformation.
 		/// </summary>
-		[NotNull] public ReadOnlyCollection<TransformationCastNode> TransformationPath {
-			[Pure] get {
-				Contract.Ensures(Contract.Result<ReadOnlyCollection<TransformationCastNode>>() != null);
-				Contract.EndContractBlock();
-
-				return Array.AsReadOnly(_transformationPath);
-			}
-		}
+		public ReadOnlyCollection<TransformationCastNode> TransformationPath { get; private set; }
 
 		/// <inheritdoc/>
 		public virtual TTo TransformValue(TFrom value) {
-			if(_transformationPath.Length == 1)
-				return ((ITransformation<TFrom, TTo>)(_transformationPath[0].Core)).TransformValue(value);
+			if(TransformationPath.Count == 1)
+				return ((ITransformation<TFrom, TTo>)(TransformationPath[0].Core)).TransformValue(value);
 
 			object tempValue = value;
-			for (int i = 0; i < _transformationPath.Length; i++) {
-				tempValue = _transformationPath[i].TransformValue(tempValue);
+			for (int i = 0; i < TransformationPath.Count; i++) {
+				tempValue = TransformationPath[i].TransformValue(tempValue);
 			}
 			return (TTo)tempValue;
 		}
@@ -201,33 +175,27 @@ namespace Vertesaur.Transformation
 		/// <inheritdoc/>
 		public virtual IEnumerable<TTo> TransformValues(IEnumerable<TFrom> values) {
 			Contract.Ensures(Contract.Result<IEnumerable<TTo>>() != null);
-			Contract.EndContractBlock();
 
 			if(Transformations.Count == 1)
-				return ((ITransformation<TFrom, TTo>)(_transformationPath[0].Core)).TransformValues(values);
+				return ((ITransformation<TFrom, TTo>)(TransformationPath[0].Core)).TransformValues(values);
 
 			IEnumerable tempValues = values;
-			for (int i = 0; i < _transformationPath.Length; i++) {
-				tempValues = _transformationPath[i].TransformValues(tempValues);
+			for (int i = 0; i < TransformationPath.Count; i++) {
+				tempValues = TransformationPath[i].TransformValues(tempValues);
 			}
 			return (IEnumerable<TTo>)tempValues;
 		}
 
 		/// <inheritdoc/>
-		[NotNull]
 		public new ConcatenatedTransformation<TTo, TFrom> GetInverse(){
-			Contract.Requires(HasInverse);
+			if(!HasInverse) throw new NoInverseException();
 			Contract.Ensures(Contract.Result<ConcatenatedTransformation<TTo, TFrom>>() != null);
-			Contract.EndContractBlock();
-
 			return (ConcatenatedTransformation<TTo,TFrom>)CreateInverseConcatenatedOperation();
 		}
 
 		/// <inheritdoc/>
 		ITransformation<TTo, TFrom> ITransformation<TFrom, TTo>.GetInverse() {
 			Contract.Ensures(Contract.Result<ITransformation<TTo, TFrom>>() != null);
-			Contract.EndContractBlock();
-
 			return GetInverse();
 		}
 
@@ -238,8 +206,8 @@ namespace Vertesaur.Transformation
 
 		[ContractInvariantMethod]
 		private void CodeContractInvariant() {
-			Contract.Invariant(null != _transformationPath);
-			Contract.Invariant(Contract.ForAll(_transformationPath, x => null != x));
+			Contract.Invariant(null != TransformationPath);
+			Contract.Invariant(Contract.ForAll(TransformationPath, x => null != x));
 		}
 	}
 
@@ -252,7 +220,7 @@ namespace Vertesaur.Transformation
 		/// Creates a new concatenated transformation composed of the given transformations.
 		/// </summary>
 		/// <param name="transformations"></param>
-		public ConcatenatedTransformation([NotNull, InstantHandle] IEnumerable<ITransformation> transformations)
+		public ConcatenatedTransformation(IEnumerable<ITransformation> transformations)
 			: base(transformations)
 		{
 			Contract.Requires(transformations != null);
@@ -266,12 +234,9 @@ namespace Vertesaur.Transformation
 		}
 
 		/// <inheritdoc/>
-		[NotNull]
 		public new ConcatenatedTransformation<TValue> GetInverse(){
-			Contract.Requires(HasInverse);
+			if(!HasInverse) throw new NoInverseException();
 			Contract.Ensures(Contract.Result<ConcatenatedTransformation<TValue>>() != null);
-			Contract.EndContractBlock();
-
 			return (ConcatenatedTransformation<TValue>)CreateInverseConcatenatedOperation();
 		}
 

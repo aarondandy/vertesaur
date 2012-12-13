@@ -22,7 +22,7 @@
 //
 // ===============================================================================
 
-using JetBrains.Annotations;
+using System.Diagnostics.Contracts;
 using Vertesaur.Contracts;
 
 namespace Vertesaur.PolygonOperation {
@@ -53,7 +53,7 @@ namespace Vertesaur.PolygonOperation {
 		/// </summary>
 		public PolygonUnionOperation() : this(null) { }
 
-		internal PolygonUnionOperation([CanBeNull] PolygonIntersectionOperation inverseIntersectionOperation) {
+		internal PolygonUnionOperation(PolygonIntersectionOperation inverseIntersectionOperation) {
 			_inverseIntersectionOperation = inverseIntersectionOperation ?? DefaultInverseIntersectionOperation;
 		}
 
@@ -63,8 +63,12 @@ namespace Vertesaur.PolygonOperation {
 		/// <param name="a">A polygon.</param>
 		/// <param name="b">A polygon.</param>
 		/// <returns>The union of <paramref name="a"/> and <paramref name="b"/>.</returns>
-		[ContractAnnotation("a:null,b:null=>null;a:notnull=>notnull;b:notnull=>notnull"), CanBeNull]
-		public IPlanarGeometry Union([CanBeNull] Polygon2 a, [CanBeNull] Polygon2 b) {
+		public IPlanarGeometry Union(Polygon2 a, Polygon2 b) {
+			Contract.Ensures(
+				a == null && b == null
+				? Contract.Result<IPlanarGeometry>() == null
+				: Contract.Result<IPlanarGeometry>() != null
+			);
 			if (null == a)
 				return b;
 			if (null == b)

@@ -24,7 +24,6 @@
 
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using JetBrains.Annotations;
 
 namespace Vertesaur.Contracts
 {
@@ -42,7 +41,7 @@ namespace Vertesaur.Contracts
 		/// Gets the inverse of this transformation if one exists.
 		/// </summary>
 		/// <returns>A transformation.</returns>
-		[NotNull] ITransformation GetInverse();
+		ITransformation GetInverse();
 	}
 
 	/// <summary>
@@ -65,12 +64,12 @@ namespace Vertesaur.Contracts
 		/// </summary>
 		/// <param name="values">The values transform from.</param>
 		/// <returns>A transformed set of values.</returns>
-		[NotNull] IEnumerable<TTo> TransformValues([NotNull] IEnumerable<TFrom> values);
+		IEnumerable<TTo> TransformValues(IEnumerable<TFrom> values);
 		/// <summary>
 		/// Gets the inverse of this transformation if one exists.
 		/// </summary>
 		/// <returns>A transformation.</returns>
-		[NotNull] new ITransformation<TTo, TFrom> GetInverse();
+		new ITransformation<TTo, TFrom> GetInverse();
 	}
 
 	/// <summary>
@@ -85,13 +84,13 @@ namespace Vertesaur.Contracts
 		/// Transforms a set of values.
 		/// </summary>
 		/// <param name="values">The values to be transformed in place.</param>
-		void TransformValues([NotNull] TValue[] values);
+		void TransformValues(TValue[] values);
 
 		/// <summary>
 		/// Gets the inverse of this transformation if one exists.
 		/// </summary>
 		/// <returns>A transformation.</returns>
-		[NotNull] new ITransformation<TValue> GetInverse();
+		new ITransformation<TValue> GetInverse();
 	}
 
 	[ContractClassFor(typeof(ITransformation))]

@@ -26,7 +26,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.Contracts;
-using JetBrains.Annotations;
 using Vertesaur.Contracts;
 
 namespace Vertesaur {
@@ -63,7 +62,7 @@ namespace Vertesaur {
 		/// Constructs a new multi-line string containing the given line strings.
 		/// </summary>
 		/// <param name="lineStrings">The line strings.</param>
-		public MultiLineString2([CanBeNull] IEnumerable<LineString2> lineStrings)
+		public MultiLineString2(IEnumerable<LineString2> lineStrings)
 			: this(null == lineStrings ? null : new List<LineString2>(lineStrings)) { }
 		
 		/// <summary>
@@ -74,7 +73,7 @@ namespace Vertesaur {
 		/// <remarks>
 		/// All public access to the points must be through the Collection wrapper around the points list.
 		/// </remarks>
-		private MultiLineString2([CanBeNull] List<LineString2> lineStrings)
+		private MultiLineString2(List<LineString2> lineStrings)
 			: base(lineStrings ?? new List<LineString2>()) { }
 
 		/// <summary>
@@ -84,8 +83,7 @@ namespace Vertesaur {
 		/// <c>true</c> if the current object is equal to the <paramref name="other"/> parameter; otherwise, <c>false</c>.
 		/// </returns>
 		/// <param name="other">An object to compare with this object.</param>
-		[ContractAnnotation("null=>false")]
-		public bool Equals([CanBeNull] MultiLineString2 other) {
+		public bool Equals(MultiLineString2 other) {
 			if (ReferenceEquals(null, other))
 				return false; 
 			if (ReferenceEquals(this, other))
@@ -102,8 +100,7 @@ namespace Vertesaur {
 		}
 
 		/// <inheritdoc/>
-		[ContractAnnotation("null=>false")]
-		public override bool Equals([CanBeNull] object obj) {
+		public override bool Equals(object obj) {
 			return Equals(obj as MultiLineString2);
 		}
 
@@ -129,9 +126,9 @@ namespace Vertesaur {
 		/// </summary>
 		/// <returns>A multi-line string.</returns>
 		/// <remarks>Functions as a deep clone.</remarks>
-		[NotNull] public MultiLineString2 Clone() {
+		public MultiLineString2 Clone() {
 			Contract.Ensures(Contract.Result<MultiLineString2>() != null);
-			Contract.EndContractBlock();
+
 			var lines = new List<LineString2>(Count);
 			for (var i = 0; i < Count; i++) {
 				lines.Add(this[i].Clone());
@@ -149,7 +146,7 @@ namespace Vertesaur {
 		/// <returns>A minimum bounding rectangle.</returns>
 		public Mbr GetMbr() {
 			if (Count <= 0)
-				return Mbr.Invalid;
+				return null;
 			
 			var mbr = this[0].GetMbr();
 			for (var i = 1; i < Count; i++) {

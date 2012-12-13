@@ -25,7 +25,6 @@
 using System;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
-using JetBrains.Annotations;
 using Vertesaur.Contracts;
 using Vertesaur.SegmentOperation;
 
@@ -172,7 +171,6 @@ namespace Vertesaur {
 		/// <param name="c">An end point on the second segment.</param>
 		/// <param name="d">Another end point on the second segment.</param>
 		/// <returns>The resulting intersection geometry.</returns>
-		[CanBeNull]
 		public static IPlanarGeometry Intersection(Point2 a, Point2 b, Point2 c, Point2 d) {
 			Order(ref a, ref b, ref c, ref d);
 			return SegmentIntersectionOperation.Intersection(a, b, c, d);
@@ -186,7 +184,6 @@ namespace Vertesaur {
 		/// <param name="c">An end point on the ray segment.</param>
 		/// <param name="d">The direction of the ray.</param>
 		/// <returns>The resulting intersection geometry.</returns>
-		[CanBeNull]
 		public static IPlanarGeometry IntersectionRay(Point2 a, Point2 b, Point2 c, Vector2 d) {
 			throw new NotImplementedException();
 		}
@@ -199,7 +196,6 @@ namespace Vertesaur {
 		/// <param name="c">An end point on the ray segment.</param>
 		/// <param name="d">The direction of the ray.</param>
 		/// <returns>The resulting intersection geometry.</returns>
-		[CanBeNull]
 		public static IPlanarGeometry IntersectionLine(Point2 a, Point2 b, Point2 c, Vector2 d) {
 			throw new NotImplementedException();
 		}
@@ -263,7 +259,7 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="a">A point.</param>
 		/// <param name="b">A point.</param>
-		public Segment2([NotNull] IPoint2<double> a, [NotNull] IPoint2<double> b)
+		public Segment2(IPoint2<double> a, IPoint2<double> b)
 			: this(new Point2(a), new Point2(b))
 		{
 			Contract.Requires(a != null);
@@ -284,7 +280,7 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="p">A point.</param>
 		/// <param name="d">A direction.</param>
-		public Segment2([NotNull] IPoint2<double> p, [NotNull] IVector2<double> d)
+		public Segment2(IPoint2<double> p, IVector2<double> d)
 			: this(new Point2(p), new Vector2(d))
 		{
 			Contract.Requires(p != null);
@@ -294,7 +290,7 @@ namespace Vertesaur {
 		/// Creates a new segment using the same end points as the given <paramref name="segment"/>.
 		/// </summary>
 		/// <param name="segment">The segment to copy from.</param>
-		public Segment2([NotNull] Segment2 segment) {
+		public Segment2(Segment2 segment) {
 			if(segment == null) throw new ArgumentNullException("segment");
 			Contract.EndContractBlock();
 			A = segment.A;
@@ -317,8 +313,7 @@ namespace Vertesaur {
 		IPoint2<double> ISegment2<double>.B { get { return B; } }
 
 		/// <inheritdoc/>
-		[ContractAnnotation("null=>false")]
-		public bool Equals([CanBeNull] Segment2 other) {
+		public bool Equals(Segment2 other) {
 			return !ReferenceEquals(null, other)
 				&& A.Equals(other.A)
 				&& B.Equals(other.B);
@@ -329,7 +324,6 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="other">Another ray</param>
 		/// <returns><c>true</c> if the segments are spatially equal.</returns>
-		[ContractAnnotation("null=>false")]
 		public bool SpatiallyEqual(Segment2 other) {
 			return !ReferenceEquals(null, other) && (
 				A.Equals(other.A)
@@ -339,8 +333,7 @@ namespace Vertesaur {
 		}
 
 		/// <inheritdoc/>
-		[ContractAnnotation("null=>false")]
-		public override bool Equals([CanBeNull] object obj) {
+		public override bool Equals(object obj) {
 			return Equals(obj as Segment2);
 		}
 
@@ -378,10 +371,8 @@ namespace Vertesaur {
 		/// </returns>
 		/// <filterpriority>2</filterpriority>
 		/// <remarks>Functions as a deep clone.</remarks>
-		[NotNull]
 		public Segment2 Clone() {
 			Contract.Ensures(Contract.Result<Segment2>() != null);
-			Contract.EndContractBlock();
 			return new Segment2(this);
 		}
 
@@ -394,6 +385,7 @@ namespace Vertesaur {
 		/// </summary>
 		/// <returns>A minimum bounding rectangle.</returns>
 		public Mbr GetMbr() {
+			Contract.Ensures(Contract.Result<Mbr>() != null);
 			return new Mbr(A, B);
 		}
 
@@ -431,7 +423,7 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="other">The segment to calculate distance to.</param>
 		/// <returns>The distance.</returns>
-		public double Distance([CanBeNull] Segment2 other) {
+		public double Distance(Segment2 other) {
 			if (ReferenceEquals(null, other))
 				return Double.NaN;
 			throw new NotImplementedException();
@@ -442,7 +434,7 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="other">The segment to calculate squared distance to.</param>
 		/// <returns>The squared distance.</returns>
-		public double DistanceSquared([CanBeNull] Segment2 other) {
+		public double DistanceSquared(Segment2 other) {
 			if (ReferenceEquals(null, other))
 				return Double.NaN;
 			throw new NotImplementedException();
@@ -462,7 +454,6 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="segment">A segment.</param>
 		/// <returns><c>true</c> when another object intersects this object.</returns>
-		[ContractAnnotation("null=>false")]
 		public bool Intersects(Segment2 segment) {
 			return !ReferenceEquals(null,segment) && Intersects(A, B, segment.A, segment.B);
 		}
@@ -473,7 +464,6 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="ray">A ray.</param>
 		/// <returns><c>true</c> when another object intersects this object.</returns>
-		[ContractAnnotation("null=>false")]
 		public bool Intersects(Ray2 ray) {
 			return !ReferenceEquals(null,ray) && ray.Intersects(this);
 		}
@@ -483,7 +473,6 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="line">A line.</param>
 		/// <returns><c>true</c> when another object intersects this object.</returns>
-		[ContractAnnotation("null=>false")]
 		public bool Intersects(Line2 line) {
 			if (ReferenceEquals(null, line))
 				return false;
@@ -495,7 +484,6 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="segment">The segment to find the intersection with.</param>
 		/// <returns>The intersection geometry or <c>null</c> for no intersection.</returns>
-		[ContractAnnotation("null=>null")]
 		public IPlanarGeometry Intersection(Segment2 segment) {
 			return ReferenceEquals(null, segment)
 				? null
@@ -506,7 +494,6 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="ray">The ray to find the intersection with.</param>
 		/// <returns>The intersection geometry or <c>null</c> for no intersection.</returns>
-		[ContractAnnotation("null=>null")]
 		public IPlanarGeometry Intersection(Ray2 ray) {
 			return ReferenceEquals(null, ray)
 				? null
@@ -517,7 +504,6 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="line">The line to find the intersection with.</param>
 		/// <returns>The intersection geometry or <c>null</c> for no intersection.</returns>
-		[ContractAnnotation("null=>null")]
 		public IPlanarGeometry Intersection(Line2 line) {
 			return ReferenceEquals(null, line)
 				? null
@@ -530,7 +516,7 @@ namespace Vertesaur {
 		/// <param name="other">The other segment to compare.</param>
 		/// <returns>A comparison value, see <see cref="IComparable.CompareTo"/>.</returns>
 		[Obsolete]
-		public int CompareTo([CanBeNull] Segment2 other) {
+		public int CompareTo(Segment2 other) {
 			if (ReferenceEquals(null,other))
 				return 1;
 			return Compare(A, B, other.A, other.B);

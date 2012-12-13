@@ -22,8 +22,6 @@
 //
 // ===============================================================================
 
-using JetBrains.Annotations;
-
 namespace Vertesaur.Contracts {
 	/// <summary>
 	/// Functionality to determine if two objects are disjoint.
@@ -36,6 +34,6 @@ namespace Vertesaur.Contracts {
 		/// </summary>
 		/// <param name="other">An object to test.</param>
 		/// <returns>True if the objects do not occupy any of the same space.</returns>
-		bool Disjoint([CanBeNull] TObject other);
+		bool Disjoint(TObject other);
 	}
 }

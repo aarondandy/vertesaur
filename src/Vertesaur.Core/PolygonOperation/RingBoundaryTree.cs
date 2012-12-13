@@ -27,7 +27,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using JetBrains.Annotations;
 
 namespace Vertesaur.PolygonOperation
 {
@@ -49,7 +48,7 @@ namespace Vertesaur.PolygonOperation
 			/// Constructs a new node collection from the given nodes.
 			/// </summary>
 			/// <param name="nodes"></param>
-			public NodeCollection([CanBeNull] List<Node> nodes)
+			public NodeCollection(List<Node> nodes)
 				: base(nodes ?? new List<Node>())
 			{
 				_nodes = nodes;
@@ -87,7 +86,7 @@ namespace Vertesaur.PolygonOperation
 			/// <remarks>
 			/// The logic assumes the given ring does not intersect the boundary of any node within this collection or any node deeper in the tree.
 			/// </remarks>
-			public bool NonIntersectingContains([NotNull] Ring2 other) {
+			public bool NonIntersectingContains(Ring2 other) {
 				if(null == other) throw new ArgumentNullException("other");
 				Contract.EndContractBlock();
 
@@ -98,9 +97,9 @@ namespace Vertesaur.PolygonOperation
 			}
 
 
-			private bool NonIntersectingFillsContains([NotNull] Ring2 other) {
+			private bool NonIntersectingFillsContains(Ring2 other) {
 				Contract.Requires(other != null);
-				Contract.EndContractBlock();
+
 				for (int i = 0; i < _nodes.Count; i++) {
 					var node = _nodes[i];
 					if (other.NonIntersectingWithin(node.Ring))
@@ -109,9 +108,8 @@ namespace Vertesaur.PolygonOperation
 				return false;
 			}
 
-			private bool NonIntersectingHolesContains([NotNull] Ring2 other) {
+			private bool NonIntersectingHolesContains(Ring2 other) {
 				Contract.Requires(other != null);
-				Contract.EndContractBlock();
 
 				foreach (var node in _nodes) {
 					if (!other.NonIntersectingWithin(node.Ring))
@@ -124,15 +122,14 @@ namespace Vertesaur.PolygonOperation
 			/// Removes all nodes satisfying the given predicate.
 			/// </summary>
 			/// <param name="predicate">determines if a node should be removed.</param>
-			public void RemoveAll([NotNull, InstantHandle] Predicate<Node> predicate) {
+			public void RemoveAll(Predicate<Node> predicate) {
 				if(null == predicate) throw new ArgumentNullException("predicate");
 				Contract.EndContractBlock();
 
 				_nodes.RemoveAll(predicate);
 			}
 
-			[ContractAnnotation("null=>false")]
-			private bool IsNodeValid([CanBeNull] Node item) {
+			private bool IsNodeValid(Node item) {
 				if (null == item)
 					return false;
 
@@ -170,22 +167,21 @@ namespace Vertesaur.PolygonOperation
 		/// </summary>
 		public sealed class Node : NodeCollection
 		{
-			private readonly Ring2 _ring;
 
-			internal Node([NotNull] Ring2 ring, [CanBeNull] IEnumerable<Node> children)
+			internal Node(Ring2 ring, IEnumerable<Node> children)
 				: this(ring, null == children ? null : new List<Node>(children))
 			{
-				if (null == ring) throw new ArgumentNullException("ring");
+				Contract.Requires(null != ring);
 				Contract.EndContractBlock();
 			}
 
-			private Node([NotNull] Ring2 ring, [CanBeNull] List<Node> children)
+			private Node(Ring2 ring, List<Node> children)
 				: base(children)
 			{
 				if (null == ring) throw new ArgumentNullException("ring");
 				Contract.EndContractBlock();
 
-				_ring = ring;
+				Ring = ring;
 				
 				if(!NodesAreValid(!Hole))
 					throw new ArgumentException("Fill/Hole mismatch.","children");
@@ -194,26 +190,23 @@ namespace Vertesaur.PolygonOperation
 			/// <summary>
 			/// The ring the node represents.
 			/// </summary>
-			[NotNull] public Ring2 Ring {
-				get {
-					Contract.Ensures(Contract.Result<Ring2>() != null);
-					Contract.EndContractBlock();
-					return _ring;
-				}
-			}
+			public Ring2 Ring { get; private set; }
 
 			/// <summary>
 			/// True when the ring is explicitly set to being a hole.
 			/// </summary>
-			public bool Hole { get { return _ring.Hole.HasValue && _ring.Hole.Value; } }
+			public bool Hole { get { return Ring.Hole.HasValue && Ring.Hole.Value; } }
+
+			[ContractInvariantMethod]
+			private void CodeContractInvariant() {
+				Contract.Invariant(Ring != null);
+			}
 
 		}
 
-		[NotNull]
-		private static List<Node> BuildTree([NotNull, InstantHandle] IEnumerable<Ring2> rings) {
+		private static List<Node> BuildTree(IEnumerable<Ring2> rings) {
 			if(null == rings) throw new ArgumentNullException("rings");
 			Contract.Ensures(Contract.Result<List<Node>>() != null);
-			Contract.EndContractBlock();
 
 			var roots = new List<Node>();
 			foreach (var ring in rings.Where(x => null != x)) {
@@ -223,11 +216,10 @@ namespace Vertesaur.PolygonOperation
 			return roots;
 		}
 
-		[NotNull]
-		private static List<Node> BuildTree([NotNull] Polygon2 polygon) {
+		private static List<Node> BuildTree(Polygon2 polygon) {
 			if (null == polygon) throw new ArgumentNullException("polygon");
 			Contract.Ensures(Contract.Result<List<Node>>() != null);
-			Contract.EndContractBlock();
+
 			var roots = new List<Node>();
 			for (int i = 0; i < polygon.Count; i++) {
 				Contract.Assume(null != polygon[i]);
@@ -236,10 +228,10 @@ namespace Vertesaur.PolygonOperation
 			return roots;
 		}
 
-		private static void ApplyRingToRoots([NotNull] List<Node> roots, [NotNull] Ring2 ring) {
+		private static void ApplyRingToRoots(List<Node> roots, Ring2 ring) {
 			Contract.Requires(null != roots);
 			Contract.Requires(null != ring);
-			Contract.EndContractBlock();
+
 			Contract.Assume(Contract.ForAll(roots, x => null != x));
 			var parent = FindParent(ring, roots);
 			if (null == parent) {
@@ -254,19 +246,18 @@ namespace Vertesaur.PolygonOperation
 			}
 		}
 		
-		[NotNull]
-		private static IEnumerable<Node> BoundBy([NotNull] IEnumerable<Node> nodes, [NotNull] Ring2 ring) {
+		private static IEnumerable<Node> BoundBy(IEnumerable<Node> nodes, Ring2 ring) {
 			Contract.Requires(nodes != null);
 			Contract.Requires(ring != null);
-			Contract.EndContractBlock();
+			Contract.Ensures(Contract.Result<IEnumerable<Node>>() != null);
+
 			return nodes.Where(n => RingIsNonIntersectingBoundBy(n.Ring, ring));
 		}
 
-		[CanBeNull]
-		private static Node FindParent([NotNull] Ring2 ring, [NotNull, InstantHandle] IEnumerable<Node> roots) {
+		private static Node FindParent(Ring2 ring, IEnumerable<Node> roots) {
 			Contract.Requires(ring != null);
 			Contract.Requires(roots != null);
-			Contract.EndContractBlock();
+
 			foreach (var node in roots) {
 				if (RingIsNonIntersectingBoundBy(ring, node.Ring)) {
 					Contract.Assume(null != node);
@@ -276,10 +267,10 @@ namespace Vertesaur.PolygonOperation
 			return null;
 		}
 
-		private static bool RingIsNonIntersectingBoundBy([NotNull] Ring2 ring, [NotNull] Ring2 container) {
+		private static bool RingIsNonIntersectingBoundBy(Ring2 ring, Ring2 container) {
 			Contract.Requires(null != ring);
 			Contract.Requires(null != container);
-			Contract.EndContractBlock();
+
 			if (ring.GetMbr().Within(container.GetMbr())) {
 				for (var i = 0; i < ring.Count; i++) {
 					var intersectionCount = container.IntersectionPositiveXRayCount(ring[i]);
@@ -290,14 +281,12 @@ namespace Vertesaur.PolygonOperation
 			return false;
 		}
 
-		[NotNull] private readonly NodeCollection _roots;
-
 		/// <summary>
 		/// Constructs a ring boundary tree from a collection of non-intersecting rings.
 		/// </summary>
 		/// <param name="rings">A collection of non-intersecting rings.</param>
 		/// <exception cref="System.ArgumentNullException">Thrown if <paramref name="rings"/> is null.</exception>
-		public RingBoundaryTree([NotNull, InstantHandle] IEnumerable<Ring2> rings)
+		public RingBoundaryTree(IEnumerable<Ring2> rings)
 			: this(BuildTree(rings))
 		{
 			Contract.Requires(null != rings);
@@ -309,19 +298,18 @@ namespace Vertesaur.PolygonOperation
 		/// </summary>
 		/// <param name="polygon">A collection of non-intersecting rings.</param>
 		/// <exception cref="System.ArgumentNullException">Thrown if <paramref name="polygon"/> is null.</exception>
-		public RingBoundaryTree([NotNull] Polygon2 polygon)
+		public RingBoundaryTree(Polygon2 polygon)
 			: this(BuildTree(polygon))
 		{
 			Contract.Requires(null != polygon);
-			Contract.EndContractBlock();
 		}
 
-		private RingBoundaryTree([NotNull] List<Node> roots) {
+		private RingBoundaryTree(List<Node> roots) {
 			Contract.Requires(null != roots);
-			Contract.EndContractBlock();
-			_roots = new NodeCollection(roots);
-			var hole = _roots.NodesAreHole;
-			if (!_roots.NodesAreValid(hole.HasValue && hole.Value))
+
+			Roots = new NodeCollection(roots);
+			var hole = Roots.NodesAreHole;
+			if (!Roots.NodesAreValid(hole.HasValue && hole.Value))
 				throw new ArgumentException("Root fill/hole mismatch.", "roots");
 		}
 
@@ -334,15 +322,18 @@ namespace Vertesaur.PolygonOperation
 		/// The logic assumes the given ring does not intersect the boundary of any node within this collection or any node deeper in the tree.
 		/// </remarks>
 		public bool NonIntersectingContains(Ring2 other) {
-			return null != other && _roots.NonIntersectingContains(other);
+			return null != other && Roots.NonIntersectingContains(other);
 		}
 
 		/// <summary>
 		/// The root nodes for the tree.
 		/// </summary>
-		[NotNull] public IEnumerable<Node> Roots { get { return new ReadOnlyCollection<Node>(_roots); } }
+		public NodeCollection Roots { get; private set; }
 
+		[ContractInvariantMethod]
+		private void CodeContractInvariant() {
+			Contract.Invariant(null != Roots);
+		}
 
-		
 	}
 }

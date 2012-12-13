@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using JetBrains.Annotations;
 
 namespace Vertesaur.Search
 {
@@ -17,7 +16,7 @@ namespace Vertesaur.Search
 	/// <param name="node">The node to find neighbors for.</param>
 	/// <param name="currentCost">The current cost to get to the given node.</param>
 	/// <returns>Neighbor node info.</returns>
-	public delegate IEnumerable<DynamicGraphNodeData<TNode, TCost, TEdge>> GetDynamicGraphNeighborInfo<TNode, TCost, TEdge>([NotNull] TNode node, TCost currentCost);
+	public delegate IEnumerable<DynamicGraphNodeData<TNode, TCost, TEdge>> GetDynamicGraphNeighborInfo<TNode, TCost, TEdge>(TNode node, TCost currentCost);
 
 	/// <summary>
 	/// Holds information about graph nodes.
@@ -38,7 +37,11 @@ namespace Vertesaur.Search
 		/// <param name="node">The node the data relates to.</param>
 		/// <param name="cost">The cost related to the edge.</param>
 		/// <param name="edge">The edge data related to the node.</param>
-		public DynamicGraphNodeData([NotNull] TNode node, TCost cost, TEdge edge) {
+		public DynamicGraphNodeData(TNode node, TCost cost, TEdge edge) {
+			// ReSharper disable CompareNonConstrainedGenericWithNull
+			if(null == node) throw new ArgumentNullException("node");
+			// ReSharper restore CompareNonConstrainedGenericWithNull
+			Contract.EndContractBlock();
 			Node = node;
 			Cost = cost;
 			Edge = edge;
@@ -82,9 +85,9 @@ namespace Vertesaur.Search
 		/// <param name="generateNeighborInfo">Generates neighbor information.</param>
 		/// <returns>An optimal path or null on failure.</returns>
 		public static ReadOnlyCollection<DynamicGraphNodeData<TNode, TCost, TEdge>> FindPath<TNode, TCost, TEdge>(
-			[NotNull] TNode start,
-			[NotNull] TNode target,
-			[NotNull, InstantHandle] GetDynamicGraphNeighborInfo<TNode, TCost, TEdge> generateNeighborInfo
+			TNode start,
+			TNode target,
+			GetDynamicGraphNeighborInfo<TNode, TCost, TEdge> generateNeighborInfo
 		) {
 			// ReSharper disable CompareNonConstrainedGenericWithNull
 			if (null == start) throw new ArgumentNullException("start");
@@ -109,11 +112,11 @@ namespace Vertesaur.Search
 		/// <param name="nodeComparer">Node equality comparer.</param>
 		/// <returns>An optimal path or null on failure.</returns>
 		public static ReadOnlyCollection<DynamicGraphNodeData<TNode, TCost, TEdge>> FindPath<TNode, TCost, TEdge>(
-			[NotNull] TNode start,
-			[NotNull] TNode target,
-			[NotNull, InstantHandle] GetDynamicGraphNeighborInfo<TNode, TCost, TEdge> generateNeighborInfo,
-			[CanBeNull] IComparer<TCost> costComparer,
-			[CanBeNull] IEqualityComparer<TNode> nodeComparer 
+			TNode start,
+			TNode target,
+			GetDynamicGraphNeighborInfo<TNode, TCost, TEdge> generateNeighborInfo,
+			IComparer<TCost> costComparer,
+			IEqualityComparer<TNode> nodeComparer 
 		) {
 			// ReSharper disable CompareNonConstrainedGenericWithNull
 			if (null == start) throw new ArgumentNullException("start");
@@ -137,13 +140,13 @@ namespace Vertesaur.Search
 	public class DynamicGraph<TNode, TCost, TEdge> : DynamicGraphBase<TNode, TCost, TEdge>
 	{
 
-		[NotNull] private readonly GetDynamicGraphNeighborInfo<TNode, TCost, TEdge> _generateNeighborInfo;
+		private readonly GetDynamicGraphNeighborInfo<TNode, TCost, TEdge> _generateNeighborInfo;
 
 		/// <summary>
 		/// Creates a new dynamic graph using the given neighbor data.
 		/// </summary>
 		/// <param name="generateNeighborInfo">Generates neighbor information for a given node.</param>
-		public DynamicGraph([NotNull] GetDynamicGraphNeighborInfo<TNode, TCost, TEdge> generateNeighborInfo)
+		public DynamicGraph(GetDynamicGraphNeighborInfo<TNode, TCost, TEdge> generateNeighborInfo)
 			: this(generateNeighborInfo, null, null)
 		{
 			Contract.Requires(generateNeighborInfo != null);
@@ -156,21 +159,16 @@ namespace Vertesaur.Search
 		/// <param name="generateNeighborInfo">Generates neighbor information for a given node.</param>
 		/// <param name="costComparer">Used to compare node cost values.</param>
 		/// <param name="nodeComparer">Compares nodes to determine equality.</param>
-		public DynamicGraph([NotNull] GetDynamicGraphNeighborInfo<TNode, TCost, TEdge> generateNeighborInfo, [CanBeNull] IComparer<TCost> costComparer, [CanBeNull] IEqualityComparer<TNode> nodeComparer)
+		public DynamicGraph(GetDynamicGraphNeighborInfo<TNode, TCost, TEdge> generateNeighborInfo, IComparer<TCost> costComparer,  IEqualityComparer<TNode> nodeComparer)
 			: base(costComparer, nodeComparer) 
 		{
-			if(null == generateNeighborInfo)
-				throw new ArgumentNullException("generateNeighborInfo");
+			if(null == generateNeighborInfo) throw new ArgumentNullException("generateNeighborInfo");
 			Contract.EndContractBlock();
-
 			_generateNeighborInfo = generateNeighborInfo;
 		}
 
 		/// <inheritdoc/>
 		protected override IEnumerable<DynamicGraphNodeData<TNode, TCost, TEdge>> GetNeighborInfo(TNode node, TCost currentCost) {
-			Contract.Ensures(Contract.Result<IEnumerable<DynamicGraphNodeData<TNode, TCost, TEdge>>>() != null);
-			Contract.EndContractBlock();
-
 			return _generateNeighborInfo(node, currentCost) ?? Enumerable.Empty<DynamicGraphNodeData<TNode, TCost, TEdge>>();
 		}
 
@@ -183,9 +181,9 @@ namespace Vertesaur.Search
 		protected override IEnumerable<DynamicGraphNodeData<TNode, TCost, TEdge>> GetNeighborInfo(TNode node, TCost currentCost) {
 			// ReSharper disable CompareNonConstrainedGenericWithNull
 			Contract.Requires(null != node);
+			Contract.Ensures(Contract.Result<IEnumerable<DynamicGraphNodeData<TNode, TCost, TEdge>>>() != null);
+			return Enumerable.Empty<DynamicGraphNodeData<TNode, TCost, TEdge>>();
 			// ReSharper restore CompareNonConstrainedGenericWithNull
-			Contract.EndContractBlock();
-			throw new NotImplementedException();
 		}
 	}
 
@@ -210,7 +208,7 @@ namespace Vertesaur.Search
 		/// </summary>
 		/// <param name="costComparer">Used to compare node cost values.</param>
 		/// <param name="nodeComparer">Compares nodes to determine equality.</param>
-		protected DynamicGraphBase([CanBeNull] IComparer<TCost> costComparer, IEqualityComparer<TNode> nodeComparer) {
+		protected DynamicGraphBase(IComparer<TCost> costComparer, IEqualityComparer<TNode> nodeComparer) {
 			CostComparer = costComparer ?? Comparer<TCost>.Default;
 			NodeComparer = nodeComparer ?? EqualityComparer<TNode>.Default;
 		}
@@ -218,11 +216,11 @@ namespace Vertesaur.Search
 		/// <summary>
 		/// Used to compare node cost values.
 		/// </summary>
-		[NotNull] public IComparer<TCost> CostComparer { get; private set; }
+		public IComparer<TCost> CostComparer { get; private set; }
 		/// <summary>
 		/// Compares nodes to determine equality.
 		/// </summary>
-		[NotNull] public IEqualityComparer<TNode> NodeComparer { get; private set; } 
+		public IEqualityComparer<TNode> NodeComparer { get; private set; } 
 
 		/// <summary>
 		/// Generates neighbor information with the calculated complete costs from start to current node.
@@ -230,11 +228,11 @@ namespace Vertesaur.Search
 		/// <param name="node">The node to generate neighbor information for.</param>
 		/// <param name="currentCost">The current cost required to navigate to the given node.</param>
 		/// <returns>Generated neighbor information.</returns>
-		protected abstract IEnumerable<DynamicGraphNodeData<TNode, TCost, TEdge>> GetNeighborInfo([NotNull] TNode node, TCost currentCost);
+		protected abstract IEnumerable<DynamicGraphNodeData<TNode, TCost, TEdge>> GetNeighborInfo(TNode node, TCost currentCost);
 
 		private void FindSmallestNodeData(
-			[NotNull] HashSet<TNode> keys,
-			[NotNull] Dictionary<TNode, DynamicGraphNodeData<TNode, TCost, TEdge>> lookUp,
+			HashSet<TNode> keys,
+			Dictionary<TNode, DynamicGraphNodeData<TNode, TCost, TEdge>> lookUp,
 			out TNode smallestNode,
 			out DynamicGraphNodeData<TNode, TCost, TEdge> smallestEdge
 		) {
@@ -287,8 +285,7 @@ namespace Vertesaur.Search
 		/// <param name="target">The target node of the search.</param>
 		/// <returns>The shortest path from the start node to the target node if one exists.</returns>
 		/// <exception cref="System.ArgumentException">Thrown if a node or edge encountered within the graph is <c>null</c>.</exception>
-		[CanBeNull]
-		public ReadOnlyCollection<DynamicGraphNodeData<TNode, TCost, TEdge>> FindPath([NotNull] TNode start, [NotNull] TNode target) {
+		public ReadOnlyCollection<DynamicGraphNodeData<TNode, TCost, TEdge>> FindPath(TNode start, TNode target) {
 			// ReSharper disable CompareNonConstrainedGenericWithNull
 			if(null == start) throw new ArgumentNullException("start");
 			if(null == target) throw new ArgumentNullException("target");
@@ -297,7 +294,7 @@ namespace Vertesaur.Search
 
 			// initialize the look-ups
 			var nodeDataCache = new Dictionary<TNode, DynamicGraphNodeData<TNode, TCost, TEdge>>(NodeComparer){
-				{start,new DynamicGraphNodeData<TNode, TCost, TEdge>(default(TNode),default(TCost),default(TEdge))}
+				{start,new DynamicGraphNodeData<TNode, TCost, TEdge>(start,default(TCost),default(TEdge))}
 			};
 			var visitRequired = new HashSet<TNode>(NodeComparer) { start }; // NOTE: in order for a node to be in this collection it must have a corresponding key in the pathData dictionary.
 			DynamicGraphNodeData<TNode, TCost, TEdge> nodeData;
@@ -370,6 +367,12 @@ namespace Vertesaur.Search
 
 			return null; // no path was found
 
+		}
+
+		[ContractInvariantMethod]
+		private void CodeContractInvariant() {
+			Contract.Invariant(CostComparer != null);
+			Contract.Invariant(NodeComparer != null);
 		}
 
 	}

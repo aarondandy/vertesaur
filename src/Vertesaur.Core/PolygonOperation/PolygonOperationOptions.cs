@@ -24,7 +24,6 @@
 
 using System;
 using System.Diagnostics.Contracts;
-using JetBrains.Annotations;
 
 namespace Vertesaur.PolygonOperation {
 
@@ -38,8 +37,7 @@ namespace Vertesaur.PolygonOperation {
 		/// </summary>
 		/// <param name="options">The object to clone.</param>
 		/// <returns>A new object.</returns>
-		[NotNull]
-		public static PolygonOperationOptions CloneOrDefault([CanBeNull] PolygonOperationOptions options) {
+		public static PolygonOperationOptions CloneOrDefault(PolygonOperationOptions options) {
 			Contract.Ensures(Contract.Result<PolygonOperationOptions>() != null);
 			Contract.EndContractBlock();
 
@@ -57,7 +55,7 @@ namespace Vertesaur.PolygonOperation {
 		/// Copy constructor.
 		/// </summary>
 		/// <param name="options">Object to copy.</param>
-		public PolygonOperationOptions([NotNull] PolygonOperationOptions options) {
+		public PolygonOperationOptions(PolygonOperationOptions options) {
 			if(null == options) throw new ArgumentNullException("options");
 			Contract.EndContractBlock();
 

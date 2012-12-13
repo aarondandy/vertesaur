@@ -24,7 +24,7 @@
 
 using System;
 using System.Diagnostics;
-using JetBrains.Annotations;
+using System.Diagnostics.Contracts;
 using Vertesaur.Contracts;
 
 namespace Vertesaur {
@@ -142,8 +142,7 @@ namespace Vertesaur {
 		}
 
 		/// <inheritdoc/>
-		[ContractAnnotation("null=>false")]
-		public bool Equals([CanBeNull] ISphericalCoordinate<double> other) {
+		public bool Equals(ISphericalCoordinate<double> other) {
 			// ReSharper disable CompareOfFloatsByEqualityOperator
 			return !ReferenceEquals(null, other)
 				&& Rho == other.Rho
@@ -153,8 +152,7 @@ namespace Vertesaur {
 		}
 
 		/// <inheritdoc/>
-		[ContractAnnotation("null=>false")]
-		public override bool Equals([CanBeNull] object obj) {
+		public override bool Equals(object obj) {
 			return obj is SphericalCoord
 				? Equals((SphericalCoord)obj)
 				: Equals(obj as ISphericalCoordinate<double>);

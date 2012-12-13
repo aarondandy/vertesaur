@@ -22,8 +22,6 @@
 //
 // ===============================================================================
 
-using JetBrains.Annotations;
-
 namespace Vertesaur.Contracts {
 	/// <summary>
 	/// Functionality to determine if this object crosses another.
@@ -36,6 +34,6 @@ namespace Vertesaur.Contracts {
 		/// </summary>
 		/// <param name="other">An object to test.</param>
 		/// <returns>True if this object crosses the <paramref name="other"/>.</returns>
-		bool Crosses([CanBeNull] TObject other);
+		bool Crosses(TObject other);
 	}
 }
