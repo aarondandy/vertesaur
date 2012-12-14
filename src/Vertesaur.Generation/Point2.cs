@@ -115,6 +115,26 @@ namespace Vertesaur.Generation
 		}
 
 		/// <summary>
+		/// Convert a generically typed point to a double typed point.
+		/// </summary>
+		/// <param name="value">The point to cast and convert.</param>
+		/// <returns>The resulting double point representation of the casted generic point.</returns>
+		public static explicit operator Point2(Point2<TValue> value) {
+			var x = BasicOperations<TValue>.Default.ToDouble(value.X);
+			var y = BasicOperations<TValue>.Default.ToDouble(value.Y);
+			return new Point2(x, y);
+		}
+
+		/// <summary>
+		/// Convert a double typed point to a generically typed point.
+		/// </summary>
+		/// <param name="value">The point to cast and convert.</param>
+		/// <returns>The resulting generic point representation of the casted double point.</returns>
+		public static explicit operator Point2<TValue>(Point2 value) {
+			return new Point2<TValue>(value);
+		}
+
+		/// <summary>
 		/// The x-coordinate of this point.
 		/// </summary>
 		public readonly TValue X;
@@ -150,6 +170,21 @@ namespace Vertesaur.Generation
 			Contract.EndContractBlock();
 			X = p.X;
 			Y = p.Y;
+			Contract.Assume(null != X);
+			Contract.Assume(null != Y);
+			// ReSharper restore CompareNonConstrainedGenericWithNull
+		}
+
+		/// <summary>
+		/// Constructs a new point from a double typed point, converting the coordinate values.
+		/// </summary>
+		/// <param name="p">The point to convert and clone from.</param>
+		/// <exception cref="System.ArgumentException">Coordinate type conversion fails.</exception>
+		public Point2(Point2 p) {
+			// ReSharper disable CompareNonConstrainedGenericWithNull
+			X = BasicOperations<TValue>.Default.FromDouble(p.X);
+			Y = BasicOperations<TValue>.Default.FromDouble(p.Y);
+			if(null == X || null == Y) throw new ArgumentException("Converted to a null coordinate.","p");
 			Contract.Assume(null != X);
 			Contract.Assume(null != Y);
 			// ReSharper restore CompareNonConstrainedGenericWithNull
@@ -209,11 +244,13 @@ namespace Vertesaur.Generation
 		/// <param name="delta">An offset vector.</param>
 		/// <returns>An offset point.</returns>
 		public Point2<TValue> Add(Vector2<TValue> delta) {
+			// ReSharper disable CompareNonConstrainedGenericWithNull
 			var x = BasicOperations<TValue>.Default.Add(X, delta.X);
 			var y = BasicOperations<TValue>.Default.Add(Y, delta.Y);
 			Contract.Assume(null != x);
 			Contract.Assume(null != y);
 			return new Point2<TValue>(x, y);
+			// ReSharper restore CompareNonConstrainedGenericWithNull
 		}
 
 		/// <summary>
@@ -222,11 +259,13 @@ namespace Vertesaur.Generation
 		/// <param name="b">The other point.</param>
 		/// <returns>The vector difference.</returns>
 		public Vector2<TValue> Difference(Point2<TValue> b) {
+			// ReSharper disable CompareNonConstrainedGenericWithNull
 			var x = BasicOperations<TValue>.Default.Subtract(X, b.X);
 			var y = BasicOperations<TValue>.Default.Subtract(Y, b.Y);
 			Contract.Assume(null != x);
 			Contract.Assume(null != y);
 			return new Vector2<TValue>(x, y);
+			// ReSharper restore CompareNonConstrainedGenericWithNull
 		}
 
 		/// <summary>
@@ -235,11 +274,13 @@ namespace Vertesaur.Generation
 		/// <param name="b">The vector.</param>
 		/// <returns>The offset point.</returns>
 		public Point2<TValue> Difference(Vector2<TValue> b) {
+			// ReSharper disable CompareNonConstrainedGenericWithNull
 			var x = BasicOperations<TValue>.Default.Subtract(X, b.X);
 			var y = BasicOperations<TValue>.Default.Subtract(Y, b.Y);
 			Contract.Assume(null != x);
 			Contract.Assume(null != y);
 			return new Point2<TValue>(x, y);
+			// ReSharper restore CompareNonConstrainedGenericWithNull
 		}
 
 

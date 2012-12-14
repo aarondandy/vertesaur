@@ -43,6 +43,15 @@ namespace Vertesaur.Core.Test {
 		}
 
 		[Test]
+		public void VectorCastTest() {
+			var a = new Point2(2, 3);
+			Vector2 b = a;
+			Point2 c = b;
+			Assert.AreEqual(a.X, c.X);
+			Assert.AreEqual(a.Y, c.Y);
+		}
+
+		[Test]
 		public void ComponentConstructorTest() {
 			var p = new Point2(1, 2);
 			Assert.AreEqual(1, p.X);

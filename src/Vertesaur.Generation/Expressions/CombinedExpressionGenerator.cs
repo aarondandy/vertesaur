@@ -27,7 +27,6 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Linq.Expressions;
-using JetBrains.Annotations;
 using Vertesaur.Generation.Contracts;
 
 namespace Vertesaur.Generation.Expressions
@@ -45,7 +44,7 @@ namespace Vertesaur.Generation.Expressions
 		/// Constructs a new combined expression generators from the given operation providers.
 		/// </summary>
 		/// <param name="expressionGenerators">The ordered list of generators to combine.</param>
-		public CombinedExpressionGenerator([NotNull] IEnumerable<IExpressionGenerator> expressionGenerators) {
+		public CombinedExpressionGenerator(IEnumerable<IExpressionGenerator> expressionGenerators) {
 			if (null == expressionGenerators) throw new ArgumentNullException("expressionGenerators");
 			Contract.Ensures(_expressionGenerators != null);
 			Contract.EndContractBlock();

@@ -1,6 +1,6 @@
 ﻿// ===============================================================================
 //
-// Copyright (c) 2011 Aaron Dandy 
+// Copyright (c) 2011,2012 Aaron Dandy 
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -115,6 +115,31 @@ namespace Vertesaur {
 		}
 
 		/// <summary>
+		/// Multiplies the point by a scalar.
+		/// </summary>
+		/// <param name="tuple">The point to multiply.</param>
+		/// <param name="factor">The scalar value to multiply by.</param>
+		/// <returns>The resulting scaled point.</returns>
+		public static Point2 operator *(Point2 tuple, double factor) {
+			return new Point2(tuple.X * factor, tuple.Y * factor);
+		}
+
+		/// <summary>
+		/// Multiplies the point by a scalar.
+		/// </summary>
+		/// <param name="tuple">The point to multiply.</param>
+		/// <param name="factor">The scalar value to multiply by.</param>
+		/// <returns>The resulting scaled point.</returns>
+		public static Point2 operator *(double factor, Point2 tuple) {
+			return new Point2(tuple.X * factor, tuple.Y * factor);
+		}
+
+		/// <inheritdoc/>
+		public static implicit operator Vector2(Point2 value) {
+			return new Vector2(value);
+		}
+
+		/// <summary>
 		/// A point with all components set to zero.
 		/// </summary>
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
@@ -153,6 +178,13 @@ namespace Vertesaur {
 			X = point.X;
 			Y = point.Y;
 		}
+
+		/// <summary>
+		/// Clones a point from a vector.
+		/// </summary>
+		/// <param name="vector">The vector to clone.</param>
+		public Point2(Vector2 vector)
+			: this(vector.X, vector.Y) { }
 
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		double ICoordinatePair<double>.X { get { return X; } }

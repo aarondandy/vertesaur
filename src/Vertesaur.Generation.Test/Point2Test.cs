@@ -23,6 +23,7 @@
 // ===============================================================================
 
 using System;
+using System.Linq;
 using System.Reflection;
 using NUnit.Framework;
 
@@ -31,6 +32,49 @@ namespace Vertesaur.Generation.Test
 	[TestFixture]
 	public class Point2Test
 	{
+
+		private Vector2 CastToDoubleVector(object o) {
+			var cast = o.GetType()
+				.GetMethods(BindingFlags.Static | BindingFlags.Public)
+				.First(x =>
+					(x.Name == "op_Implicit" || x.Name == "op_Explicit")
+					&& x.ReturnParameter.ParameterType == typeof(Vector2)
+					&& x.GetParameters().Count() == 1 && x.GetParameters()[0].ParameterType == o.GetType());
+			return (Vector2)cast.Invoke(o, new[] { o });
+		}
+
+		private object CastFromDoubleVector(Vector2 input, Type desiredCoordinateType) {
+			var vectorType = GetGenericVectorType(desiredCoordinateType);
+			var cast = vectorType
+				.GetMethods(BindingFlags.Static | BindingFlags.Public)
+				.First(x =>
+					(x.Name == "op_Implicit" || x.Name == "op_Explicit")
+					&& x.ReturnParameter.ParameterType == vectorType
+					&& x.GetParameters().Count() == 1 && x.GetParameters()[0].ParameterType == typeof(Vector2));
+			return cast.Invoke(null, new object[] { input });
+		}
+
+		private Point2 CastToDoublePoint(object o) {
+			var cast = o.GetType()
+				.GetMethods(BindingFlags.Static | BindingFlags.Public)
+				.First(x =>
+					(x.Name == "op_Implicit" || x.Name == "op_Explicit")
+					&& x.ReturnParameter.ParameterType == typeof(Point2)
+					&& x.GetParameters().Count() == 1 && x.GetParameters()[0].ParameterType == o.GetType());
+			return (Point2)cast.Invoke(o, new[] { o });
+		}
+
+		private object CastFromDoublePoint(Point2 input, Type desiredCoordinateType) {
+			var vectorType = GetGenericPointType(desiredCoordinateType);
+			var cast = vectorType
+				.GetMethods(BindingFlags.Static | BindingFlags.Public)
+				.First(x =>
+					(x.Name == "op_Implicit" || x.Name == "op_Explicit")
+					&& x.ReturnParameter.ParameterType == vectorType
+					&& x.GetParameters().Count() == 1 && x.GetParameters()[0].ParameterType == typeof(Point2));
+			return cast.Invoke(null, new object[] { input });
+		}
+
 		private Type GetGenericPointType(Type elementType) {
 			return typeof(Point2<>).MakeGenericType(new[] { elementType });
 		}
@@ -110,11 +154,12 @@ namespace Vertesaur.Generation.Test
 		[TestCase(typeof(float), 1, 3, 2, 4, 3, 7)]
 		[Test]
 		public void AddTest(Type t, double x0, double y0, double x1, double y1, double xExpected, double yExpected) {
-			var a = CreatePoint(t, x0, y0);
-			var b = CreateVector(t, x1, y1);
+			var a = CastFromDoublePoint(new Point2(x0, y0), t);
+			var b = CastFromDoubleVector(new Vector2(x1, y1), t);
 			var c = a.GetType().GetMethod("Add", new[] {b.GetType()}).Invoke(a, new[] {b});
-			Assert.AreEqual(xExpected, c.GetType().GetField("X").GetValue(c));
-			Assert.AreEqual(yExpected, c.GetType().GetField("Y").GetValue(c));
+			var doubleC = CastToDoublePoint(c);
+			Assert.AreEqual(xExpected, doubleC.X);
+			Assert.AreEqual(yExpected, doubleC.Y);
 		}
 
 		[TestCase(typeof(double), 3, 7, 2, 4, 1, 3)]
@@ -126,8 +171,9 @@ namespace Vertesaur.Generation.Test
 			var a = CreatePoint(t, x0, y0);
 			var b = CreatePoint(t, x1, y1);
 			var c = a.GetType().GetMethod("Difference", new[] {b.GetType()}).Invoke(a, new[] {b});
-			Assert.AreEqual(xExpected, c.GetType().GetField("X").GetValue(c));
-			Assert.AreEqual(yExpected, c.GetType().GetField("Y").GetValue(c));
+			var doubleC = CastToDoubleVector(c);
+			Assert.AreEqual(xExpected, doubleC.X);
+			Assert.AreEqual(yExpected, doubleC.Y);
 		}
 
 	}

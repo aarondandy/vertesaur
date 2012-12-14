@@ -23,6 +23,7 @@
 // ===============================================================================
 
 using System;
+using System.Linq;
 using System.Reflection;
 using NUnit.Framework;
 
@@ -31,6 +32,27 @@ namespace Vertesaur.Generation.Test
 	[TestFixture]
 	public class Vector2Test
 	{
+
+		private Vector2 CastToDoubleVector(object o) {
+			var cast = o.GetType()
+				.GetMethods(BindingFlags.Static | BindingFlags.Public)
+				.First(x =>
+					(x.Name == "op_Implicit" || x.Name == "op_Explicit")
+					&& x.ReturnParameter.ParameterType == typeof(Vector2)
+					&& x.GetParameters().Count() == 1 && x.GetParameters()[0].ParameterType == o.GetType());
+			return (Vector2)cast.Invoke(o, new[] {o});
+		}
+
+		private object CastFromDoubleVector(Vector2 input, Type desiredCoordinateType) {
+			var vectorType = GetGenericVectorType(desiredCoordinateType);
+			var cast = vectorType
+				.GetMethods(BindingFlags.Static | BindingFlags.Public)
+				.First(x =>
+					(x.Name == "op_Implicit" || x.Name == "op_Explicit")
+					&& x.ReturnParameter.ParameterType == vectorType
+					&& x.GetParameters().Count() == 1 && x.GetParameters()[0].ParameterType == typeof(Vector2));
+			return cast.Invoke(null, new object[] {input});
+		}
 
 		private Type GetGenericVectorType(Type elementType) {
 			return typeof(Vector2<>).MakeGenericType(new[] {elementType});
@@ -68,7 +90,6 @@ namespace Vertesaur.Generation.Test
 		public void MagnitudeTest(Type t, object x, object y, object m) {
 			var a = CreateVector(t, x, y);
 			var mResult = a.GetType().GetMethod("GetMagnitude").Invoke(a, new object[0]);
-
 			Assert.AreEqual(
 				(double)Convert.ChangeType(m, typeof(double)),
 				(double)Convert.ChangeType(mResult, typeof(double)),
@@ -81,12 +102,11 @@ namespace Vertesaur.Generation.Test
 		[TestCase(typeof(byte), 3, 2, 13)]
 		[TestCase(typeof(decimal), 3000.3, 2000.1, 13002200.1)]
 		[Test]
-		public void MagnitudeSquaredTest(Type t, object x, object y, object m) {
+		public void MagnitudeSquaredTest(Type t, object x, object y, double mExpected) {
 			var a = CreateVector(t, x, y);
 			var mResult = a.GetType().GetMethod("GetMagnitudeSquared").Invoke(a, new object[0]);
-
 			Assert.AreEqual(
-				(double)Convert.ChangeType(m, typeof(double)),
+				mExpected,
 				(double)Convert.ChangeType(mResult, typeof(double)),
 				0.00001
 			);
@@ -97,7 +117,7 @@ namespace Vertesaur.Generation.Test
 		[TestCase(typeof(decimal), 3000.3, 2000.1)]
 		[Test]
 		public void NegativeTest(Type t, double x, double y) {
-			var a = CreateVector(t, x, y);
+			var a = CastFromDoubleVector(new Vector2(x, y), t);
 			var b = a.GetType().GetMethod("GetNegative").Invoke(a, new object[0]);
 			Assert.AreEqual(-x, b.GetType().GetField("X").GetValue(b));
 			Assert.AreEqual(-y, b.GetType().GetField("Y").GetValue(b));
@@ -132,18 +152,11 @@ namespace Vertesaur.Generation.Test
 		[TestCase(typeof(float), 3, 4, 3.0 / 5.0, 4.0 / 5.0)]
 		[Test]
 		public void NormalizedTest(Type t, double x, double y, double expectedX, double expectedY) {
-			var a = CreateVector(t, x, y);
+			var a = CastFromDoubleVector(new Vector2(x, y), t);
 			var b = a.GetType().GetMethod("GetNormalized").Invoke(a, new object[0]);
-			Assert.AreEqual(
-				expectedX,
-				(double)Convert.ChangeType(b.GetType().GetField("X").GetValue(b),typeof(double)),
-				0.0000001
-			);
-			Assert.AreEqual(
-				expectedY,
-				(double)Convert.ChangeType(b.GetType().GetField("Y").GetValue(b), typeof(double)),
-				0.0000001
-			);
+			var doubleB = CastToDoubleVector(b);
+			Assert.AreEqual(expectedX, doubleB.X, 0.0000001);
+			Assert.AreEqual(expectedY, doubleB.Y, 0.0000001);
 		}
 
 		[TestCase(typeof(double), 1.5, 2.9, 1.23, 1.845, 3.567)]

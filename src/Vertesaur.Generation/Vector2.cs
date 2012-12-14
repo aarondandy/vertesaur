@@ -25,7 +25,6 @@
 using System;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
-using JetBrains.Annotations;
 using Vertesaur.Contracts;
 using Vertesaur.Generation.GenericOperations;
 
@@ -98,19 +97,41 @@ namespace Vertesaur.Generation
 		/// </summary>
 		/// <returns>A zero constant value.</returns>
 		public static Vector2<TValue> CreateZero() {
+			// ReSharper disable CompareNonConstrainedGenericWithNull
 			var v = BasicOperations<TValue>.Default.ZeroValue;
 			Contract.Assume(null != v);
 			return new Vector2<TValue>(v,v);
+			// ReSharper restore CompareNonConstrainedGenericWithNull
+		}
+
+		/// <summary>
+		/// Convert a generically typed vector to a double typed vector.
+		/// </summary>
+		/// <param name="value">The vector to cast and convert.</param>
+		/// <returns>The resulting double vector representation of the casted generic vector.</returns>
+		public static explicit operator Vector2(Vector2<TValue> value) {
+			var x = BasicOperations<TValue>.Default.ToDouble(value.X);
+			var y = BasicOperations<TValue>.Default.ToDouble(value.Y);
+			return new Vector2(x, y);
+		}
+
+		/// <summary>
+		/// Convert a double typed vector to a generically typed vector.
+		/// </summary>
+		/// <param name="value">The vector to cast and convert.</param>
+		/// <returns>The resulting generic vector representation of the casted double vector.</returns>
+		public static explicit operator Vector2<TValue>(Vector2 value) {
+			return new Vector2<TValue>(value);
 		}
 
 		/// <summary>
 		/// The x-coordinate of this vector.
 		/// </summary>
-		[NotNull] public readonly TValue X;
+		public readonly TValue X;
 		/// <summary>
 		/// The y-coordinate of this vector.
 		/// </summary>
-		[NotNull] public readonly TValue Y;
+		public readonly TValue Y;
 
 		/// <summary>
 		/// Creates a 2D vector.
@@ -146,7 +167,22 @@ namespace Vertesaur.Generation
 		}
 
 		/// <summary>
-		/// The x-coordinate of this point.
+		/// Constructs a new vector from a double typed vector, converting the coordinate values.
+		/// </summary>
+		/// <param name="v">The vector to convert and clone from.</param>
+		/// <exception cref="System.ArgumentException">Coordinate type conversion fails.</exception>
+		public Vector2(Vector2 v) {
+			// ReSharper disable CompareNonConstrainedGenericWithNull
+			X = BasicOperations<TValue>.Default.FromDouble(v.X);
+			Y = BasicOperations<TValue>.Default.FromDouble(v.Y);
+			if(null == X || null == Y) throw new ArgumentException("Converted to a null coordinate.","v");
+			Contract.Assume(null != X);
+			Contract.Assume(null != Y);
+			// ReSharper restore CompareNonConstrainedGenericWithNull
+		}
+
+		/// <summary>
+		/// The x-coordinate of this vector.
 		/// </summary>
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		TValue ICoordinatePair<TValue>.X {
@@ -154,7 +190,7 @@ namespace Vertesaur.Generation
 		}
 
 		/// <summary>
-		/// The y-coordinate of this point.
+		/// The y-coordinate of this vector.
 		/// </summary>
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		TValue ICoordinatePair<TValue>.Y {
@@ -198,11 +234,13 @@ namespace Vertesaur.Generation
 		/// <param name="rightHandSide">The vector to add.</param>
 		/// <returns>A result of adding this vector with the given vector.</returns>
 		public Vector2<TValue> Add(Vector2<TValue> rightHandSide){
+			// ReSharper disable CompareNonConstrainedGenericWithNull
 			var x = BasicOperations<TValue>.Default.Add(X, rightHandSide.X);
 			var y = BasicOperations<TValue>.Default.Add(Y, rightHandSide.Y);
 			Contract.Assume(null != x);
 			Contract.Assume(null != y);
 			return new Vector2<TValue>(x,y);
+			// ReSharper restore CompareNonConstrainedGenericWithNull
 		}
 
 		/// <summary>
@@ -211,11 +249,13 @@ namespace Vertesaur.Generation
 		/// <param name="rightHandSide">The vector to add.</param>
 		/// <returns>A result of adding this vector with the given vector.</returns>
 		public Point2<TValue> Add(Point2<TValue> rightHandSide) {
+			// ReSharper disable CompareNonConstrainedGenericWithNull
 			var x = BasicOperations<TValue>.Default.Add(X, rightHandSide.X);
 			var y = BasicOperations<TValue>.Default.Add(Y, rightHandSide.Y);
 			Contract.Assume(null != x);
 			Contract.Assume(null != y);
 			return new Point2<TValue>(x, y);
+			// ReSharper restore CompareNonConstrainedGenericWithNull
 		}
 
 		/// <summary>
@@ -224,11 +264,13 @@ namespace Vertesaur.Generation
 		/// <param name="rightHandSide">The vector to subtract.</param>
 		/// <returns>A result of subtracting the given vector from this vector.</returns>
 		public Vector2<TValue> Difference(Vector2<TValue> rightHandSide){
+			// ReSharper disable CompareNonConstrainedGenericWithNull
 			var x = BasicOperations<TValue>.Default.Subtract(X, rightHandSide.X);
 			var y = BasicOperations<TValue>.Default.Subtract(Y, rightHandSide.Y);
 			Contract.Assume(null != x);
 			Contract.Assume(null != y);
 			return new Vector2<TValue>(x,y);
+			// ReSharper restore CompareNonConstrainedGenericWithNull
 		}
 
 		/// <summary>
@@ -237,11 +279,13 @@ namespace Vertesaur.Generation
 		/// <param name="rightHandSide">The vector to subtract.</param>
 		/// <returns>A result of subtracting the given vector from this vector.</returns>
 		public Point2<TValue> Difference(Point2<TValue> rightHandSide) {
+			// ReSharper disable CompareNonConstrainedGenericWithNull
 			var x = BasicOperations<TValue>.Default.Subtract(X, rightHandSide.X);
 			var y = BasicOperations<TValue>.Default.Subtract(Y, rightHandSide.Y);
 			Contract.Assume(null != x);
 			Contract.Assume(null != y);
 			return new Point2<TValue>(x, y);
+			// ReSharper restore CompareNonConstrainedGenericWithNull
 		}
 
 		/// <summary>
@@ -258,11 +302,13 @@ namespace Vertesaur.Generation
 		/// </summary>
 		/// <returns>A vector with the same component values but different signs.</returns>
 		public Vector2<TValue> GetNegative() {
+			// ReSharper disable CompareNonConstrainedGenericWithNull
 			var x = BasicOperations<TValue>.Default.Negate(X);
 			var y = BasicOperations<TValue>.Default.Negate(Y);
 			Contract.Assume(null != x);
 			Contract.Assume(null != y);
 			return new Vector2<TValue>(x, y);
+			// ReSharper restore CompareNonConstrainedGenericWithNull
 		}
 
 		/// <summary>
@@ -271,14 +317,15 @@ namespace Vertesaur.Generation
 		/// <param name="factor">The scaling factor.</param>
 		/// <returns>A scaled vector.</returns>
 		public Vector2<TValue> GetScaled(TValue factor) {
+			// ReSharper disable CompareNonConstrainedGenericWithNull
 			if(null == factor) throw new ArgumentNullException("factor");
 			Contract.EndContractBlock();
-
 			var x = BasicOperations<TValue>.Default.Multiply(X, factor);
 			var y = BasicOperations<TValue>.Default.Multiply(Y, factor);
 			Contract.Assume(null != x);
 			Contract.Assume(null != y);
 			return new Vector2<TValue>(x,y);
+			// ReSharper restore CompareNonConstrainedGenericWithNull
 		}
 
 		/// <summary>
@@ -297,10 +344,12 @@ namespace Vertesaur.Generation
 		/// </summary>
 		/// <returns>A vector.</returns>
 		public Vector2<TValue> GetPerpendicularClockwise() {
+			// ReSharper disable CompareNonConstrainedGenericWithNull
 			var x = BasicOperations<TValue>.Default.Negate(X);
 			Contract.Assume(null != Y);
 			Contract.Assume(null != x);
 			return new Vector2<TValue>(Y, x);
+			// ReSharper restore CompareNonConstrainedGenericWithNull
 		}
 
 		/// <summary>
@@ -308,10 +357,12 @@ namespace Vertesaur.Generation
 		/// </summary>
 		/// <returns>A vector.</returns>
 		public Vector2<TValue> GetPerpendicularCounterClockwise() {
+			// ReSharper disable CompareNonConstrainedGenericWithNull
 			var y = BasicOperations<TValue>.Default.Negate(Y);
 			Contract.Assume(null != y);
 			Contract.Assume(null != X);
 			return new Vector2<TValue>(y, X);
+			// ReSharper restore CompareNonConstrainedGenericWithNull
 		}
 
 		/// <summary>
@@ -319,6 +370,7 @@ namespace Vertesaur.Generation
 		/// </summary>
 		/// <returns>A unit length vector.</returns>
 		public Vector2<TValue> GetNormalized() {
+			// ReSharper disable CompareNonConstrainedGenericWithNull
 			var m = GetMagnitude();
 			if (BasicOperations<TValue>.Default.ZeroValue.Equals(m))
 				return CreateZero();
@@ -328,6 +380,7 @@ namespace Vertesaur.Generation
 			Contract.Assume(null != x);
 			Contract.Assume(null != y);
 			return new Vector2<TValue>(x,y);
+			// ReSharper restore CompareNonConstrainedGenericWithNull
 		}
 
 	}

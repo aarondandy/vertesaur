@@ -43,6 +43,15 @@ namespace Vertesaur.Core.Test {
 		}
 
 		[Test]
+		public void PointCastTest() {
+			var a = new Vector2(2, 3);
+			Point2 b = a;
+			Vector2 c = b;
+			Assert.AreEqual(a.X, c.X);
+			Assert.AreEqual(a.Y, c.Y);
+		}
+
+		[Test]
 		public void CoordinatePairConstructorGetTest() {
 			ICoordinatePair<double> p = new Point2(3, 4);
 			var a = new Vector2(p);

@@ -90,6 +90,32 @@ namespace Vertesaur {
 		}
 
 		/// <summary>
+		/// Multiplies the vector by a scalar.
+		/// </summary>
+		/// <param name="tuple">The vector to multiply.</param>
+		/// <param name="factor">The scalar value to multiply by.</param>
+		/// <returns>The resulting scaled vector.</returns>
+		public static Vector2 operator *(Vector2 tuple, double factor) {
+			return tuple.GetScaled(factor);
+		}
+
+		/// <summary>
+		/// Multiplies the vector by a scalar.
+		/// </summary>
+		/// <param name="tuple">The vector to multiply.</param>
+		/// <param name="factor">The scalar value to multiply by.</param>
+		/// <returns>The resulting scaled vector.</returns>
+		public static Vector2 operator *(double factor, Vector2 tuple) {
+			return tuple.GetScaled(factor);
+		}
+
+
+		/// <inheritdoc/>
+		public static implicit operator Point2(Vector2 value) {
+			return new Point2(value);
+		}
+
+		/// <summary>
 		/// A vector with all components set to zero.
 		/// </summary>
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
@@ -138,6 +164,13 @@ namespace Vertesaur {
 			X = v.X;
 			Y = v.Y;
 		}
+
+		/// <summary>
+		/// Clones a vector from a point.
+		/// </summary>
+		/// <param name="p">The point to clone.</param>
+		public Vector2(Point2 p)
+			: this(p.X,p.Y) { }
 
 		/// <summary>
 		/// The x-coordinate of this point.

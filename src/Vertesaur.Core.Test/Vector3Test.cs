@@ -45,6 +45,16 @@ namespace Vertesaur.Core.Test {
 		}
 
 		[Test]
+		public void PointCastTest() {
+			var a = new Vector3(2, 3, 4);
+			Point3 b = a;
+			Vector3 c = b;
+			Assert.AreEqual(a.X, c.X);
+			Assert.AreEqual(a.Y, c.Y);
+			Assert.AreEqual(a.Z, c.Z);
+		}
+
+		[Test]
 		public void CoordinatePairConstructorGetTest() {
 			ICoordinateTriple<double> p = new Point3(3, 4, 5);
 			var a = new Vector3(p);

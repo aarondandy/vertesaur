@@ -77,6 +77,30 @@ namespace Vertesaur {
 		}
 
 		/// <summary>
+		/// Multiplies a matrix by a factor value.
+		/// </summary>
+		/// <param name="matrix">The matrix to multiply.</param>
+		/// <param name="factor">The factor value to multiply the matrix by.</param>
+		/// <returns>A matrix with all elements scaled.</returns>
+		public static Matrix2 operator *(Matrix2 matrix, double factor) {
+			if (null == matrix) throw new ArgumentNullException("matrix");
+			Contract.Ensures(Contract.Result<Matrix2>() != null);
+			return matrix.Multiply(factor);
+		}
+
+		/// <summary>
+		/// Multiplies a matrix by a factor value.
+		/// </summary>
+		/// <param name="matrix">The matrix to multiply.</param>
+		/// <param name="factor">The factor value to multiply the matrix by.</param>
+		/// <returns>A matrix with all elements scaled.</returns>
+		public static Matrix2 operator *(double factor, Matrix2 matrix) {
+			if (null == matrix) throw new ArgumentNullException("matrix");
+			Contract.Ensures(Contract.Result<Matrix2>() != null);
+			return matrix.Multiply(factor);
+		}
+
+		/// <summary>
 		/// Implements the operator +.
 		/// </summary>
 		/// <param name="left">The left matrix.</param>
@@ -416,6 +440,32 @@ namespace Vertesaur {
 			E01 -= right.E01;
 			E10 -= right.E10;
 			E11 -= right.E11;
+		}
+
+		/// <summary>
+		/// Multiplies all elements of this matrix by a single factor, returning the result as a new matrix.
+		/// </summary>
+		/// <param name="factor">The factor to multiply by.</param>
+		/// <returns>The scaled matrix.</returns>
+		public Matrix2 Multiply(double factor) {
+			Contract.Ensures(Contract.Result<Matrix2>() != null);
+			return new Matrix2(
+				E00 * factor,
+				E01 * factor,
+				E10 * factor,
+				E11 * factor
+			);
+		}
+
+		/// <summary>
+		/// Multiplies all elements of this matrix by a single factor, assigning the result to this matrix.
+		/// </summary>
+		/// <param name="factor">The factor to multiply by.</param>
+		public void MultiplyAssign(double factor) {
+			E00 *= factor;
+			E01 *= factor;
+			E10 *= factor;
+			E11 *= factor;
 		}
 
 		/// <summary>

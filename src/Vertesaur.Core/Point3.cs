@@ -1,6 +1,6 @@
 ﻿// ===============================================================================
 //
-// Copyright (c) 2011 Aaron Dandy 
+// Copyright (c) 2011,2012 Aaron Dandy 
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -63,6 +63,75 @@ namespace Vertesaur {
 		}
 
 		/// <summary>
+		/// Multiplies a row vector by a right matrix.
+		/// </summary>
+		/// <param name="left">The row vector.</param>
+		/// <param name="right">The right matrix.</param>
+		/// <returns></returns>
+		public static Point3 operator *(Point3 left, Matrix3 right) {
+			Contract.Requires(null != right);
+			return left.MultiplyAsRow(right);
+		}
+
+		/// <summary>
+		/// Multiplies a left matrix by a column vector.
+		/// </summary>
+		/// <param name="left">The left matrix.</param>
+		/// <param name="right">The column vector.</param>
+		/// <returns>A transformed vector.</returns>
+		public static Point3 operator *(Matrix3 left, Point3 right) {
+			Contract.Requires(null != left);
+			return right.MultiplyAsColumn(left);
+		}
+
+		/// <summary>
+		/// Multiplies a row vector by a right matrix.
+		/// </summary>
+		/// <param name="left">The row vector.</param>
+		/// <param name="right">The right matrix.</param>
+		/// <returns></returns>
+		public static Point3 operator *(Point3 left, Matrix4 right) {
+			Contract.Requires(null != right);
+			return left.MultiplyAsRow(right);
+		}
+
+		/// <summary>
+		/// Multiplies a left matrix by a column vector.
+		/// </summary>
+		/// <param name="left">The left matrix.</param>
+		/// <param name="right">The column vector.</param>
+		/// <returns>A transformed vector.</returns>
+		public static Point3 operator *(Matrix4 left, Point3 right) {
+			Contract.Requires(null != left);
+			return right.MultiplyAsColumn(left);
+		}
+
+		/// <summary>
+		/// Multiplies the point by a scalar.
+		/// </summary>
+		/// <param name="tuple">The point to multiply.</param>
+		/// <param name="factor">The scalar value to multiply by.</param>
+		/// <returns>The resulting scaled point.</returns>
+		public static Point3 operator *(Point3 tuple, double factor) {
+			return new Point3(tuple.X * factor, tuple.Y * factor, tuple.Z * factor);
+		}
+
+		/// <summary>
+		/// Multiplies the point by a scalar.
+		/// </summary>
+		/// <param name="tuple">The point to multiply.</param>
+		/// <param name="factor">The scalar value to multiply by.</param>
+		/// <returns>The resulting scaled point.</returns>
+		public static Point3 operator *(double factor, Point3 tuple) {
+			return new Point3(tuple.X * factor, tuple.Y * factor, tuple.Z * factor);
+		}
+
+		/// <inheritdoc/>
+		public static implicit operator Vector3(Point3 value) {
+			return new Vector3(value);
+		}
+
+		/// <summary>
 		/// A point with all components set to zero.
 		/// </summary>
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
@@ -109,6 +178,13 @@ namespace Vertesaur {
 			Z = point.Z;
 		}
 
+		/// <summary>
+		/// Clone a new point from a vector.
+		/// </summary>
+		/// <param name="vector">The vector to clone.</param>
+		public Point3(Vector3 vector)
+			: this(vector.X, vector.Y, vector.Z) { }
+
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
 		double ICoordinateTriple<double>.X { get { return X; } }
 
@@ -133,16 +209,14 @@ namespace Vertesaur {
 		public override bool Equals(object obj) {
 			return null != obj && (
 				(obj is Point3 && Equals((Point3)obj))
-				||
-				Equals(obj as ICoordinateTriple<double>)
+				|| Equals(obj as ICoordinateTriple<double>)
 			);
 		}
 
 		/// <summary>
 		/// Determines if the point is valid.
 		/// </summary>
-		[Pure]
-		public bool IsValid {
+		[Pure] public bool IsValid {
 			get { return !Double.IsNaN(X) && !Double.IsNaN(Y) && !Double.IsNaN(Z); }
 		}
 
@@ -220,6 +294,104 @@ namespace Vertesaur {
 		/// <returns>The vector difference.</returns>
 		public Vector3 Difference(Point3 b) {
 			return new Vector3(X - b.X, Y - b.Y, Z - b.Z);
+		}
+
+		/// <summary>
+		/// Calculates the result of multiplying this point as a row by a matrix.
+		/// </summary>
+		/// <param name="rightMatrix">The matrix to multiply by.</param>
+		/// <returns>The result of multiplying this point by the given matrix.</returns>
+		[Pure] public Point3 MultiplyAsRow(Matrix3 rightMatrix) {
+			if (null == rightMatrix) throw new ArgumentNullException("rightMatrix");
+			Contract.EndContractBlock();
+			return new Point3(
+				(X * rightMatrix.E00)
+				+ (Y * rightMatrix.E10)
+				+ (Z * rightMatrix.E20)
+				,
+				(X * rightMatrix.E01)
+				+ (Y * rightMatrix.E11)
+				+ (Z * rightMatrix.E21)
+				,
+				(X * rightMatrix.E02)
+				+ (Y * rightMatrix.E12)
+				+ (Z * rightMatrix.E22)
+			);
+		}
+
+		/// <summary>
+		/// Calculates the result of multiply a matrix by this point as a column.
+		/// </summary>
+		/// <param name="leftMatrix">The matrix to multiply by.</param>
+		/// <returns>The result of multiplying the given matrix by this point.</returns>
+		[Pure] public Point3 MultiplyAsColumn(Matrix3 leftMatrix) {
+			if (null == leftMatrix) throw new ArgumentNullException("leftMatrix");
+			Contract.EndContractBlock();
+			return new Point3(
+				(leftMatrix.E00 * X)
+				+ (leftMatrix.E01 * Y)
+				+ (leftMatrix.E02 * Z)
+				,
+				(leftMatrix.E10 * X)
+				+ (leftMatrix.E11 * Y)
+				+ (leftMatrix.E12 * Z)
+				,
+				(leftMatrix.E20 * X)
+				+ (leftMatrix.E21 * Y)
+				+ (leftMatrix.E22 * Z)
+			);
+		}
+
+		/// <summary>
+		/// Calculates the result of multiplying this point as a row by a matrix.
+		/// </summary>
+		/// <param name="rightMatrix">The matrix to multiply by.</param>
+		/// <returns>The result of multiplying this point by the given matrix.</returns>
+		[Pure] public Point3 MultiplyAsRow(Matrix4 rightMatrix) {
+			if (null == rightMatrix) throw new ArgumentNullException("rightMatrix");
+			Contract.EndContractBlock();
+			return new Point3(
+				(X * rightMatrix.E00)
+				+ (Y * rightMatrix.E10)
+				+ (Z * rightMatrix.E20)
+				+ rightMatrix.E30
+				,
+				(X * rightMatrix.E01)
+				+ (Y * rightMatrix.E11)
+				+ (Z * rightMatrix.E21)
+				+ rightMatrix.E31
+				,
+				(X * rightMatrix.E02)
+				+ (Y * rightMatrix.E12)
+				+ (Z * rightMatrix.E22)
+				+ rightMatrix.E32
+			);
+		}
+
+		/// <summary>
+		/// Calculates the result of multiply a matrix by this point as a column.
+		/// </summary>
+		/// <param name="leftMatrix">The matrix to multiply by.</param>
+		/// <returns>The result of multiplying the given matrix by this point.</returns>
+		[Pure] public Point3 MultiplyAsColumn(Matrix4 leftMatrix) {
+			if (null == leftMatrix) throw new ArgumentNullException("leftMatrix");
+			Contract.EndContractBlock();
+			return new Point3(
+				(leftMatrix.E00 * X)
+				+ (leftMatrix.E01 * Y)
+				+ (leftMatrix.E02 * Z)
+				+ leftMatrix.E03
+				,
+				(leftMatrix.E10 * X)
+				+ (leftMatrix.E11 * Y)
+				+ (leftMatrix.E12 * Z)
+				+ leftMatrix.E13
+				,
+				(leftMatrix.E20 * X)
+				+ (leftMatrix.E21 * Y)
+				+ (leftMatrix.E22 * Z)
+				+ leftMatrix.E23
+			);
 		}
 
 		/// <inheritdoc/>

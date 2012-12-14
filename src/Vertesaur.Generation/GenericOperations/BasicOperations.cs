@@ -58,9 +58,18 @@ namespace Vertesaur.Generation.GenericOperations
 			Multiply = BuildBinaryFunc("Multiply");
 			Divide = BuildBinaryFunc("Divide");
 			Negate = BuildUnaryFunc("Negate");
-
+			ToDouble = BuildConversion<TValue,double>();
+			FromDouble = BuildConversion<double,TValue>();
 			_zeroValueGenerator = BuildConstant("0");
 		}
+
+		private Func<TFrom, TTo> BuildConversion<TFrom,TTo>() {
+			var inputParam = Expression.Parameter(typeof(TFrom));
+			var expression = ExpressionGenerator.GenerateConversionExpression(typeof(TTo), inputParam);
+			if(null == expression)
+				return null;
+			return Expression.Lambda<Func<TFrom, TTo>>(expression, inputParam).Compile();
+		} 
 
 		private CreateConstantFunc BuildConstant(string expressionName) {
 			Contract.Requires(!String.IsNullOrEmpty(expressionName));
@@ -119,6 +128,14 @@ namespace Vertesaur.Generation.GenericOperations
 		/// A run-time executable generic negation function.
 		/// </summary>
 		public readonly UnaryFunc Negate;
+		/// <summary>
+		/// Converts a generic typed value to the double type.
+		/// </summary>
+		public readonly Func<TValue, double> ToDouble;
+		/// <summary>
+		/// Convertes a double typed value to the generic type.
+		/// </summary>
+		public readonly Func<double, TValue> FromDouble; 
 
 		private readonly CreateConstantFunc _zeroValueGenerator;
 

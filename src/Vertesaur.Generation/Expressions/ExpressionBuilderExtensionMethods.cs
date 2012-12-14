@@ -23,7 +23,6 @@ namespace Vertesaur.Generation.Expressions
 			Contract.Requires(null != inputExpressions);
 			Contract.Requires(inputExpressions.Length != 0);
 			Contract.Ensures(Contract.Result<IExpressionGenerationRequest>() != null);
-			Contract.EndContractBlock();
 			return new FunctionExpressionGenerationRequest(generator, expressionName, inputExpressions);
 		}
 
@@ -39,8 +38,22 @@ namespace Vertesaur.Generation.Expressions
 			Contract.Requires(!String.IsNullOrEmpty(expressionName));
 			Contract.Requires(null != resultType);
 			Contract.Ensures(Contract.Result<IExpressionGenerationRequest>() != null);
-			Contract.EndContractBlock();
 			return new ConstantExpressionGenerationRequest(generator, expressionName, resultType);
+		}
+
+		/// <summary>
+		/// Creates a new conversion expression request.
+		/// </summary>
+		/// <param name="generator">The expression generator to use.</param>
+		/// <param name="resultType">The desired result type of the conversion expression.</param>
+		/// <param name="input">The input expression to be converted.</param>
+		/// <returns>A new expression generation request.</returns>
+		public static IExpressionGenerationRequest NewConversionRequest(this IExpressionGenerator generator, Type resultType, Expression input) {
+			Contract.Requires(null != generator);
+			Contract.Requires(null != resultType);
+			Contract.Requires(null != input);
+			Contract.Ensures(Contract.Result<IExpressionGenerationRequest>() != null);
+			return new ConversionExpressionRequest(generator, input, resultType);
 		}
 
 		/// <summary>
@@ -55,7 +68,6 @@ namespace Vertesaur.Generation.Expressions
 			Contract.Requires(!String.IsNullOrEmpty(expressionName));
 			Contract.Requires(null != inputExpressions);
 			Contract.Requires(inputExpressions.Length != 0);
-			Contract.EndContractBlock();
 			var request = NewRequest(generator, expressionName, inputExpressions);
 			return generator.GenerateExpression(request);
 		}
@@ -66,13 +78,27 @@ namespace Vertesaur.Generation.Expressions
 		/// <param name="generator">The expression generator to use.</param>
 		/// <param name="expressionName">The name of the requested expression.</param>
 		/// <param name="resultType">The desired result type of the expression.</param>
-		/// <returns>A new reqiested expression or null if one could not be generated.</returns>
+		/// <returns>A new requested expression or null if one could not be generated.</returns>
 		public static Expression GenerateExpression(this IExpressionGenerator generator, string expressionName, Type resultType) {
 			Contract.Requires(null != generator);
 			Contract.Requires(!String.IsNullOrEmpty(expressionName));
 			Contract.Requires(null != resultType);
-			Contract.EndContractBlock();
 			var request = NewRequest(generator, expressionName, resultType);
+			return generator.GenerateExpression(request);
+		}
+
+		/// <summary>
+		/// Creates a new conversion expression.
+		/// </summary>
+		/// <param name="generator">The expression generator to use.</param>
+		/// <param name="resultType">The desired result type of the expression to convert to.</param>
+		/// <param name="input">The input expression to convert from.</param>
+		/// <returns>A new requested conversion expression or null if one could not be generated.</returns>
+		public static Expression GenerateConversionExpression(this IExpressionGenerator generator, Type resultType, Expression input) {
+			Contract.Requires(null != generator);
+			Contract.Requires(null != resultType);
+			Contract.Requires(null != input);
+			var request = NewConversionRequest(generator, resultType, input);
 			return generator.GenerateExpression(request);
 		}
 

@@ -80,6 +80,75 @@ namespace Vertesaur {
 		}
 
 		/// <summary>
+		/// Multiplies a row vector by a right matrix.
+		/// </summary>
+		/// <param name="left">The row vector.</param>
+		/// <param name="right">The right matrix.</param>
+		/// <returns></returns>
+		public static Vector3 operator *(Vector3 left, Matrix3 right) {
+			Contract.Requires(null != right);
+			return left.MultiplyAsRow(right);
+		}
+
+		/// <summary>
+		/// Multiplies a left matrix by a column vector.
+		/// </summary>
+		/// <param name="left">The left matrix.</param>
+		/// <param name="right">The column vector.</param>
+		/// <returns>A transformed vector.</returns>
+		public static Vector3 operator *(Matrix3 left, Vector3 right) {
+			Contract.Requires(null != left);
+			return right.MultiplyAsColumn(left);
+		}
+
+		/// <summary>
+		/// Multiplies a row vector by a right matrix.
+		/// </summary>
+		/// <param name="left">The row vector.</param>
+		/// <param name="right">The right matrix.</param>
+		/// <returns></returns>
+		public static Vector3 operator *(Vector3 left, Matrix4 right) {
+			Contract.Requires(null != right);
+			return left.MultiplyAsRow(right);
+		}
+
+		/// <summary>
+		/// Multiplies a left matrix by a column vector.
+		/// </summary>
+		/// <param name="left">The left matrix.</param>
+		/// <param name="right">The column vector.</param>
+		/// <returns>A transformed vector.</returns>
+		public static Vector3 operator *(Matrix4 left, Vector3 right) {
+			Contract.Requires(null != left);
+			return right.MultiplyAsColumn(left);
+		}
+
+		/// <summary>
+		/// Multiplies the vector by a scalar.
+		/// </summary>
+		/// <param name="tuple">The vector to multiply.</param>
+		/// <param name="factor">The scalar value to multiply by.</param>
+		/// <returns>The resulting scaled vector.</returns>
+		public static Vector3 operator *(Vector3 tuple, double factor) {
+			return tuple.GetScaled(factor);
+		}
+
+		/// <summary>
+		/// Multiplies the vector by a scalar.
+		/// </summary>
+		/// <param name="tuple">The vector to multiply.</param>
+		/// <param name="factor">The scalar value to multiply by.</param>
+		/// <returns>The resulting scaled vector.</returns>
+		public static Vector3 operator *(double factor, Vector3 tuple) {
+			return tuple.GetScaled(factor);
+		}
+
+		/// <inheritdoc/>
+		public static implicit operator Point3(Vector3 value) {
+			return new Point3(value);
+		}
+
+		/// <summary>
 		/// A vector with all components set to zero.
 		/// </summary>
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
@@ -140,6 +209,13 @@ namespace Vertesaur {
 			Y = v.Y;
 			Z = v.Z;
 		}
+
+		/// <summary>
+		/// Clones this vector from a point.
+		/// </summary>
+		/// <param name="p">The point to clone.</param>
+		public Vector3(Point3 p)
+			: this(p.X, p.Y, p.Z) { }
 
 		/// <inheritdoc/>
 		[DebuggerBrowsable(DebuggerBrowsableState.Never)]
@@ -319,7 +395,107 @@ namespace Vertesaur {
 			get { return !Double.IsNaN(X) && !Double.IsNaN(Y) && !Double.IsNaN(Z); }
 		}
 
-		// ReSharper restore CompareOfFloatsByEqualityOperator
+		/// <summary>
+		/// Calculates the result of multiplying this vector as a row by a matrix.
+		/// </summary>
+		/// <param name="rightMatrix">The matrix to multiply by.</param>
+		/// <returns>The result of multiplying this vector by the given matrix.</returns>
+		[Pure]
+		public Vector3 MultiplyAsRow(Matrix3 rightMatrix) {
+			if (null == rightMatrix) throw new ArgumentNullException("rightMatrix");
+			Contract.EndContractBlock();
+			return new Vector3(
+				(X * rightMatrix.E00)
+				+ (Y * rightMatrix.E10)
+				+ (Z * rightMatrix.E20)
+				,
+				(X * rightMatrix.E01)
+				+ (Y * rightMatrix.E11)
+				+ (Z * rightMatrix.E21)
+				,
+				(X * rightMatrix.E02)
+				+ (Y * rightMatrix.E12)
+				+ (Z * rightMatrix.E22)
+			);
+		}
+
+		/// <summary>
+		/// Calculates the result of multiply a matrix by this vector as a column.
+		/// </summary>
+		/// <param name="leftMatrix">The matrix to multiply by.</param>
+		/// <returns>The result of multiplying the given matrix by this vector.</returns>
+		[Pure]
+		public Vector3 MultiplyAsColumn(Matrix3 leftMatrix) {
+			if (null == leftMatrix) throw new ArgumentNullException("leftMatrix");
+			Contract.EndContractBlock();
+			return new Vector3(
+				(leftMatrix.E00 * X)
+				+ (leftMatrix.E01 * Y)
+				+ (leftMatrix.E02 * Z)
+				,
+				(leftMatrix.E10 * X)
+				+ (leftMatrix.E11 * Y)
+				+ (leftMatrix.E12 * Z)
+				,
+				(leftMatrix.E20 * X)
+				+ (leftMatrix.E21 * Y)
+				+ (leftMatrix.E22 * Z)
+			);
+		}
+
+		/// <summary>
+		/// Calculates the result of multiplying this vector as a row by a matrix.
+		/// </summary>
+		/// <param name="rightMatrix">The matrix to multiply by.</param>
+		/// <returns>The result of multiplying this vector by the given matrix.</returns>
+		[Pure]
+		public Vector3 MultiplyAsRow(Matrix4 rightMatrix) {
+			if (null == rightMatrix) throw new ArgumentNullException("rightMatrix");
+			Contract.EndContractBlock();
+			return new Vector3(
+				(X * rightMatrix.E00)
+				+ (Y * rightMatrix.E10)
+				+ (Z * rightMatrix.E20)
+				+ rightMatrix.E30
+				,
+				(X * rightMatrix.E01)
+				+ (Y * rightMatrix.E11)
+				+ (Z * rightMatrix.E21)
+				+ rightMatrix.E31
+				,
+				(X * rightMatrix.E02)
+				+ (Y * rightMatrix.E12)
+				+ (Z * rightMatrix.E22)
+				+ rightMatrix.E32
+			);
+		}
+
+		/// <summary>
+		/// Calculates the result of multiply a matrix by this vector as a column.
+		/// </summary>
+		/// <param name="leftMatrix">The matrix to multiply by.</param>
+		/// <returns>The result of multiplying the given matrix by this Vector3.</returns>
+		[Pure]
+		public Vector3 MultiplyAsColumn(Matrix4 leftMatrix) {
+			if(null == leftMatrix) throw new ArgumentNullException("leftMatrix");
+			Contract.EndContractBlock();
+			return new Vector3(
+				(leftMatrix.E00 * X)
+				+ (leftMatrix.E01 * Y)
+				+ (leftMatrix.E02 * Z)
+				+ leftMatrix.E03
+				,
+				(leftMatrix.E10 * X)
+				+ (leftMatrix.E11 * Y)
+				+ (leftMatrix.E12 * Z)
+				+ leftMatrix.E13
+				,
+				(leftMatrix.E20 * X)
+				+ (leftMatrix.E21 * Y)
+				+ (leftMatrix.E22 * Z)
+				+ leftMatrix.E23
+			);
+		}
 
 	}
 }

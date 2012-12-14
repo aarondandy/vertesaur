@@ -78,6 +78,30 @@ namespace Vertesaur {
 		}
 
 		/// <summary>
+		/// Multiplies a matrix by a factor value.
+		/// </summary>
+		/// <param name="matrix">The matrix to multiply.</param>
+		/// <param name="factor">The factor value to multiply the matrix by.</param>
+		/// <returns>A matrix with all elements scaled.</returns>
+		public static Matrix4 operator *(Matrix4 matrix, double factor) {
+			if (null == matrix) throw new ArgumentNullException("matrix");
+			Contract.Ensures(Contract.Result<Matrix4>() != null);
+			return matrix.Multiply(factor);
+		}
+
+		/// <summary>
+		/// Multiplies a matrix by a factor value.
+		/// </summary>
+		/// <param name="matrix">The matrix to multiply.</param>
+		/// <param name="factor">The factor value to multiply the matrix by.</param>
+		/// <returns>A matrix with all elements scaled.</returns>
+		public static Matrix4 operator *(double factor, Matrix4 matrix) {
+			if (null == matrix) throw new ArgumentNullException("matrix");
+			Contract.Ensures(Contract.Result<Matrix4>() != null);
+			return matrix.Multiply(factor);
+		}
+
+		/// <summary>
 		/// Implements the operator +.
 		/// </summary>
 		/// <param name="left">The left matrix.</param>
@@ -726,6 +750,58 @@ namespace Vertesaur {
 				E02, E12, E22, E32,
 				E03, E13, E23, E33
 			);
+		}
+
+		/// <summary>
+		/// Multiplies all elements of this matrix by a single factor, returning the result as a new matrix.
+		/// </summary>
+		/// <param name="factor">The factor to multiply by.</param>
+		/// <returns>The scaled matrix.</returns>
+		public Matrix4 Multiply(double factor) {
+			Contract.Ensures(Contract.Result<Matrix4>() != null);
+			return new Matrix4(
+				E00 * factor,
+				E01 * factor,
+				E02 * factor,
+				E03 * factor,
+				E10 * factor,
+				E11 * factor,
+				E12 * factor,
+				E13 * factor,
+				E20 * factor,
+				E21 * factor,
+				E22 * factor,
+				E23 * factor,
+				E30 * factor,
+				E31 * factor,
+				E32 * factor,
+				E33 * factor
+			);
+		}
+
+		/// <summary>
+		/// Multiplies all elements of this matrix by a single factor, assigning the result to this matrix.
+		/// </summary>
+		/// <param name="factor">The factor to multiply by.</param>
+		public void MultiplyAssign(double factor) {
+			E00 *= factor;
+			E01 *= factor;
+			E02 *= factor;
+			E03 *= factor;
+			E10 *= factor;
+			E11 *= factor;
+			E12 *= factor;
+			E13 *= factor;
+			E20 *= factor;
+			E21 *= factor;
+			E22 *= factor;
+			E23 *= factor;
+			E30 *= factor;
+			E31 *= factor;
+			E32 *= factor;
+			E33 *= factor;
+			Contract.Assume(OrderValue == RowCount);
+			Contract.Assume(OrderValue == ColumnCount);
 		}
 
 		/// <summary>
