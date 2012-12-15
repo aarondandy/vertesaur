@@ -434,7 +434,7 @@ namespace Vertesaur {
 			throw new NotImplementedException();
 		}
 
-
+		/// <inheritdoc/>
 		public IPlanarGeometry Intersection(Point2 other) {
 			return Intersects(other) ? (IPlanarGeometry)other : null;
 		}

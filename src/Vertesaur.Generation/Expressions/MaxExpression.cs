@@ -1,24 +1,32 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
 using Vertesaur.Generation.Contracts;
 
 namespace Vertesaur.Generation.Expressions
 {
+	/// <summary>
+	/// A maximum value expression which determines the maximum value of two expressions.
+	/// </summary>
 	public class MaxExpression : ReducableBinaryExpressionBase
 	{
 
+		/// <summary>
+		/// Creates a new maximum value expression.
+		/// </summary>
+		/// <param name="left">An expression to use.</param>
+		/// <param name="right">An expression to use.</param>
+		/// <param name="generator">/// <inheritdoc/></param>
 		public MaxExpression(Expression left, Expression right, IExpressionGenerator generator = null)
-			: base(left, right, generator) { }
+			: base(left, right, generator) { Contract.Requires(null != left); Contract.Requires(null != right); }
 
+		/// <inheritdoc/>
 		public override Type Type {
 			get { return  LeftParameter.Type; }
 		}
 
+		/// <inheritdoc/>
 		public override Expression Reduce() {
 			var method = typeof(Math).GetMethod(
 				"Max",

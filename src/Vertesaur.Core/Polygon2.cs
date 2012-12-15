@@ -406,17 +406,19 @@ namespace Vertesaur {
 			Contract.Invariant(Contract.ForAll(0, Count, i => this[i] != null));
 		}
 
-
+		/// <inheritdoc/>
 		public IPlanarGeometry Intersection(Point2 other) {
 			return Intersects(other) ? (IPlanarGeometry)other : null;
 		}
 
+		/// <inheritdoc/>
 		public bool Intersects(MultiPoint2 other) {
 			if (Count == 0 || ReferenceEquals(null, other) || other.Count == 0)
 				return false;
 			return other.Any(Intersects);
 		}
 
+		/// <inheritdoc/>
 		public IPlanarGeometry Intersection(MultiPoint2 other) {
 			if (Count == 0 || ReferenceEquals(null, other) || other.Count == 0)
 				return null;

@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
 using System.Reflection;
 using Vertesaur.Generation.Contracts;
 
 namespace Vertesaur.Generation.Expressions
 {
+	/// <summary>
+	/// An expression equivalent to the constant E raised to the Nth power.
+	/// </summary>
 	public class ExpExpression : ReducableUnaryExpressionBase
 	{
 		private static readonly MethodInfo MathExpMethod;
@@ -16,9 +20,15 @@ namespace Vertesaur.Generation.Expressions
 				null, new[] { typeof(double) }, null);
 		}
 
+		/// <summary>
+		/// Creates a new E^N expression.
+		/// </summary>
+		/// <param name="input">The expression used to raise E to a power.</param>
+		/// <param name="generator">The optional expression generator used during reduction.</param>
 		public ExpExpression(Expression input, IExpressionGenerator generator = null)
-			: base(input, generator) { }
+			: base(input, generator) { Contract.Requires(null != input); }
 
+		/// <inheritdoc/>
 		public override Expression Reduce() {
 			if (typeof(double) == Type)
 				return Call(MathExpMethod, UnaryParameter);

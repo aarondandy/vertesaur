@@ -394,25 +394,25 @@ namespace Vertesaur {
 			throw new NotImplementedException();
 		}
 
-
+		/// <inheritdoc/>
 		public IPlanarGeometry Intersection(Segment2 other) {
 			return ReferenceEquals(null, other)
 				? null
 				: other.Intersection(this);
 		}
-
+		/// <inheritdoc/>
 		public IPlanarGeometry Intersection(Line2 other) {
 			if (ReferenceEquals(null, other))
 				return null;
 			throw new NotImplementedException();
 		}
-
+		/// <inheritdoc/>
 		public IPlanarGeometry Intersection(Ray2 other) {
 			if (ReferenceEquals(null, other))
 				return null;
 			throw new NotImplementedException();
 		}
-
+		/// <inheritdoc/>
 		public IPlanarGeometry Intersection(Point2 other) {
 			return Intersects(other) ? (IPlanarGeometry)other : null;
 		}

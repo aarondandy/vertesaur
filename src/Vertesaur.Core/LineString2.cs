@@ -161,9 +161,10 @@ namespace Vertesaur {
 		/// <param name="i">The segment index.</param>
 		/// <returns>A line segment.</returns>
 		public Segment2 GetSegment(int i) {
-			if(i < 0) throw new ArgumentOutOfRangeException("i", "i must be a positive number");
-			if (i+1 >= Count) throw new ArgumentOutOfRangeException("i", "i must be a valid segment index");
+			if (i < 0) throw new ArgumentOutOfRangeException("i", "i must be a positive number");
+			if (i >= SegmentCount) throw new ArgumentOutOfRangeException("i", "i must be a valid segment index");
 			Contract.Ensures(Contract.Result<Segment2>() != null);
+			Contract.Assume((i + 1) < Count);
 			return new Segment2(this[i], this[i+1]);
 		}
 
@@ -270,23 +271,23 @@ namespace Vertesaur {
 			var m = GetMagnitude();
 			return m * m;
 		}
-
+		/// <inheritdoc/>
 		public IPlanarGeometry Intersection(Point2 other) {
 			return Intersects(other) ? (IPlanarGeometry)other : null;
 		}
-
+		/// <inheritdoc/>
 		public bool Intersects(MultiPoint2 other) {
 			if (Count == 0 || ReferenceEquals(null, other) || other.Count == 0)
 				return false;
 			return other.Any(Intersects);
 		}
-
+		/// <inheritdoc/>
 		public IPlanarGeometry Intersection(MultiPoint2 other) {
 			if (Count == 0 || ReferenceEquals(null, other) || other.Count == 0)
 				return null;
 			return MultiPoint2.FixToProperPlanerGeometryResult(new MultiPoint2(other.Where(Intersects)));
 		}
-
+		/// <inheritdoc/>
 		public bool Intersects(LineString2 other) {
 			if (Count == 0 || ReferenceEquals(null, other) || other.Count == 0)
 				return false;
@@ -302,7 +303,7 @@ namespace Vertesaur {
 			}
 			return false;
 		}
-
+		/// <inheritdoc/>
 		public IPlanarGeometry Intersection(LineString2 other) {
 			if (Count == 0 || ReferenceEquals(null, other) || other.Count == 0)
 				return null;
@@ -311,6 +312,8 @@ namespace Vertesaur {
 			if (other.Count == 1)
 				return Intersects(other[0]) ? (IPlanarGeometry)other[0] : null;
 
+			throw new NotImplementedException();
+			/*
 			var resultBag = new List<IPlanarGeometry>();
 			for (int segmentIndexA = 0; segmentIndexA < SegmentCount; segmentIndexA++) {
 				var segmentA = GetSegment(segmentIndexA);
@@ -326,9 +329,9 @@ namespace Vertesaur {
 			if (resultBag.Count == 1)
 				return resultBag[0];
 
-			throw new NotImplementedException("need to return a bag of results");
+			throw new NotImplementedException("need to return a bag of results");*/
 		}
-
+		/// <inheritdoc/>
 		public bool Intersects(Segment2 other) {
 			if (Count == 0 || ReferenceEquals(null, other))
 				return false;
@@ -337,7 +340,7 @@ namespace Vertesaur {
 
 			throw new NotImplementedException();
 		}
-
+		/// <inheritdoc/>
 		public IPlanarGeometry Intersection(Segment2 other) {
 			if (Count == 0 || ReferenceEquals(null, other))
 				return null;

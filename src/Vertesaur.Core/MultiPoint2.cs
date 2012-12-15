@@ -204,17 +204,18 @@ namespace Vertesaur {
 			return sb.ToString();
 		}
 
+		/// <inheritdoc/>
 		public IPlanarGeometry Intersection(MultiPoint2 other) {
 			if(ReferenceEquals(null, other))
 				return null;
 			var intersectedPoints = new MultiPoint2(other.Where(Contains));
 			return FixToProperPlanerGeometryResult(intersectedPoints);
 		}
-
+		/// <inheritdoc/>
 		public IPlanarGeometry Intersection(Point2 other) {
 			return Intersects(other) ? (IPlanarGeometry)other : null;
 		}
-
+		/// <inheritdoc/>
 		public bool Intersects(MultiPoint2 other) {
 			if (Count == 0 || ReferenceEquals(null, other) || other.Count == 0)
 				return false;
@@ -236,39 +237,39 @@ namespace Vertesaur {
 			}
 			return false;
 		}
-
+		/// <inheritdoc/>
 		public bool Intersects(Segment2 other) {
 			return !ReferenceEquals(null, other)
 				&& Count > 0
 				&& this.Any(other.Intersects);
 		}
-
+		/// <inheritdoc/>
 		public IPlanarGeometry Intersection(Segment2 other) {
 			if (ReferenceEquals(null, other) || Count == 0)
 				return null;
 			var intersectedPoints = new MultiPoint2(this.Where(other.Intersects));
 			return FixToProperPlanerGeometryResult(intersectedPoints);
 		}
-
+		/// <inheritdoc/>
 		public bool Intersects(Line2 other) {
 			return !ReferenceEquals(null, other)
 				&& Count > 0
 				&& this.Any(other.Intersects);
 		}
-
+		/// <inheritdoc/>
 		public IPlanarGeometry Intersection(Line2 other) {
 			if (ReferenceEquals(null, other) || Count == 0)
 				return null;
 			var intersectedPoints = new MultiPoint2(this.Where(other.Intersects));
 			return FixToProperPlanerGeometryResult(intersectedPoints);
 		}
-
+		/// <inheritdoc/>
 		public bool Intersects(Ray2 other) {
 			return !ReferenceEquals(null, other)
 				&& Count > 0
 				&& this.Any(other.Intersects);
 		}
-
+		/// <inheritdoc/>
 		public IPlanarGeometry Intersection(Ray2 other) {
 			if (ReferenceEquals(null, other) || Count == 0)
 				return null;

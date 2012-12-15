@@ -1,10 +1,14 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
 using System.Reflection;
 using Vertesaur.Generation.Contracts;
 
 namespace Vertesaur.Generation.Expressions
 {
+	/// <summary>
+	/// A natural logarithm expression.
+	/// </summary>
 	public class LogExpression : ReducableUnaryExpressionBase
 	{
 		private static readonly MethodInfo MathLogMethod;
@@ -16,9 +20,15 @@ namespace Vertesaur.Generation.Expressions
 				null, new[] { typeof(double) }, null);
 		}
 
+		/// <summary>
+		/// Creates a new natural logarithm expression.
+		/// </summary>
+		/// <param name="input">The expression to calculate the natural logarithm of.</param>
+		/// <param name="generator">The optional expression generator used during reduction.</param>
 		public LogExpression(Expression input, IExpressionGenerator generator = null)
-			: base(input, generator) { }
+			: base(input, generator) { Contract.Requires(null != input); }
 
+		/// <inheritdoc/>
 		public override Expression Reduce() {
 			return typeof(double) == Type
 				? (Expression)Call(MathLogMethod, UnaryParameter)

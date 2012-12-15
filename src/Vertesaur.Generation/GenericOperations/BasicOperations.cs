@@ -38,6 +38,14 @@ namespace Vertesaur.Generation.GenericOperations
 		public delegate TValue BinaryFunc(TValue left, TValue right);
 
 		/// <summary>
+		/// Defines a method that accepts two coordinates in reverse order.
+		/// </summary>
+		/// <param name="y">The y-coordinate.</param>
+		/// <param name="x">The x-coordinate.</param>
+		/// <returns>THe result of the operation.</returns>
+		public delegate TValue ReverseCoordinates(TValue y, TValue x);
+
+		/// <summary>
 		/// Defines a method that should return a constant value.
 		/// </summary>
 		/// <returns>A constant value.</returns>
@@ -63,27 +71,85 @@ namespace Vertesaur.Generation.GenericOperations
 		/// A run-time executable generic negation function.
 		/// </summary>
 		public readonly UnaryFunc Negate;
-
+		/// <summary>
+		/// A run-time sine generic function.
+		/// </summary>
 		public readonly UnaryFunc Sin;
+		/// <summary>
+		/// A run-time cosine generic function.
+		/// </summary>
 		public readonly UnaryFunc Cos;
+		/// <summary>
+		/// A run-time tangent generic function.
+		/// </summary>
 		public readonly UnaryFunc Tan;
+		/// <summary>
+		/// A run-time arc-sine generic function.
+		/// </summary>
 		public readonly UnaryFunc Asin;
+		/// <summary>
+		/// A run-time arc-cosine generic function.
+		/// </summary>
 		public readonly UnaryFunc Acos;
+		/// <summary>
+		/// A run-time arc-tangent generic function.
+		/// </summary>
 		public readonly UnaryFunc Atan;
+		/// <summary>
+		/// A run-time hyperbolic sine generic function.
+		/// </summary>
 		public readonly UnaryFunc Sinh;
+		/// <summary>
+		/// A run-time hyperbolic cosine generic function.
+		/// </summary>
 		public readonly UnaryFunc Cosh;
+		/// <summary>
+		/// A run-time hyperbolic tangent generic function.
+		/// </summary>
 		public readonly UnaryFunc Tanh;
+		/// <summary>
+		/// A run-time ceiling generic function.
+		/// </summary>
 		public readonly UnaryFunc Ceiling;
+		/// <summary>
+		/// A run-time floor generic function.
+		/// </summary>
 		public readonly UnaryFunc Floor;
+		/// <summary>
+		/// A run-time truncate generic function.
+		/// </summary>
 		public readonly UnaryFunc Truncate;
+		/// <summary>
+		/// A run-time natural logarithm generic function.
+		/// </summary>
 		public readonly UnaryFunc Log;
+		/// <summary>
+		/// A run-time base 10 logarithm generic function.
+		/// </summary>
 		public readonly UnaryFunc Log10;
+		/// <summary>
+		/// A run-time E^n generic function.
+		/// </summary>
 		public readonly UnaryFunc Exp;
+		/// <summary>
+		/// A run-time absolute value generic function.
+		/// </summary>
 		public readonly UnaryFunc Abs;
-
-		public readonly BinaryFunc Atan2;
+		/// <summary>
+		/// A run-time arc-tangent 2 generic function accepting a y-coordinate and x-coordinate.
+		/// </summary>
+		public readonly ReverseCoordinates Atan2;
+		/// <summary>
+		/// A run-time power generic function.
+		/// </summary>
 		public readonly BinaryFunc Pow;
+		/// <summary>
+		/// A run-time minimum generic function.
+		/// </summary>
 		public readonly BinaryFunc Min;
+		/// <summary>
+		/// A run-time maximum generic function.
+		/// </summary>
 		public readonly BinaryFunc Max;
 
 		/// <summary>
@@ -123,7 +189,7 @@ namespace Vertesaur.Generation.GenericOperations
 			Log10 = BuildUnaryFunc("Log10");
 			Exp = BuildUnaryFunc("Exp");
 			Abs = BuildUnaryFunc("Abs");
-			Atan2 = BuildBinaryFunc("Atan2");
+			Atan2 = BuildBinaryFunc<ReverseCoordinates>("Atan2");
 			Pow = BuildBinaryFunc("Pow");
 			Ceiling = BuildUnaryFunc("Ceiling");
 			Floor = BuildUnaryFunc("Floor");
@@ -164,12 +230,17 @@ namespace Vertesaur.Generation.GenericOperations
 
 		private BinaryFunc BuildBinaryFunc(string expressionName){
 			Contract.Requires(!string.IsNullOrEmpty(expressionName));
+			return BuildBinaryFunc<BinaryFunc>(expressionName);
+		}
+
+		private TResult BuildBinaryFunc<TResult>(string expressionName) where TResult: class{
+			Contract.Requires(!string.IsNullOrEmpty(expressionName));
 			var tParam0 = Expression.Parameter(typeof(TValue));
 			var tParam1 = Expression.Parameter(typeof(TValue));
 			var expression = ExpressionGenerator.Generate(expressionName,tParam0, tParam1);
 			if (null == expression)
 				return null;
-			return Expression.Lambda<BinaryFunc>(expression, tParam0, tParam1).Compile();
+			return Expression.Lambda<TResult>(expression, tParam0, tParam1).Compile();
 		}
 
 		/// <summary>

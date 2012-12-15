@@ -522,7 +522,7 @@ namespace Vertesaur {
 				return 1;
 			return Compare(A, B, other.A, other.B);
 		}
-
+		/// <inheritdoc/>
 		public IPlanarGeometry Intersection(Point2 other) {
 			return Intersects(other) ? (IPlanarGeometry)other : null;
 		}

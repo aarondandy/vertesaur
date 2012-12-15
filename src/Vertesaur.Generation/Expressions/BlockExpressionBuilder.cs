@@ -104,10 +104,9 @@ namespace Vertesaur.Generation.Expressions
 		/// <summary>
 		/// Add expressions using a captured expression as local variables provided by the local manager.
 		/// </summary>
-		/// <param name="generator">The generator that will create the statment expressions.</param>
+		/// <param name="generator">The generator that will create the statement expressions.</param>
 		/// <param name="expressionToCapture">The expression to capture as a local variable.</param>
 		/// <returns>A reference to this block expression builder for chaining.</returns>
-		[Obsolete]
 		public BlockExpressionBuilder AddUsingAssignedLocal(Func<ParameterExpression, IEnumerable<Expression>> generator, Expression expressionToCapture) {
 			if (null == generator) throw new ArgumentNullException("generator");
 			if (null == expressionToCapture) throw new ArgumentNullException("expressionToCapture");
@@ -123,6 +122,12 @@ namespace Vertesaur.Generation.Expressions
 			return this;
 		}
 
+		/// <summary>
+		/// Adds expression using captured expression which are assigned to local variables only if they are not already constant or values stored in memory.
+		/// </summary>
+		/// <param name="generator">The generator that will create the statement expressions.</param>
+		/// <param name="expressionToCapture">The expression to capture as a local variable.</param>
+		/// <returns>A reference to this block expression builder for chaining.</returns>
 		public BlockExpressionBuilder AddUsingMemoryLocationOrConstant(Func<Expression, IEnumerable<Expression>> generator, Expression expressionToCapture) {
 			if (null == generator) throw new ArgumentNullException("generator");
 			if (null == expressionToCapture) throw new ArgumentNullException("expressionToCapture");
@@ -155,10 +160,9 @@ namespace Vertesaur.Generation.Expressions
 		/// <summary>
 		/// Add expressions using captured expressions as local variables provided by the local manager.
 		/// </summary>
-		/// <param name="generator">The generator that will create the statment expressions.</param>
+		/// <param name="generator">The generator that will create the statement expressions.</param>
 		/// <param name="expressionsToCapture">The expressions to capture as local variables.</param>
 		/// <returns>A reference to this block expression builder for chaining.</returns>
-		[Obsolete]
 		public BlockExpressionBuilder AddUsingAssignedLocals(Func<ParameterExpression[], IEnumerable<Expression>> generator, params Expression[] expressionsToCapture) {
 			if (null == generator) throw new ArgumentNullException("generator");
 			if (null == expressionsToCapture) throw new ArgumentNullException("expressionsToCapture");
@@ -180,6 +184,12 @@ namespace Vertesaur.Generation.Expressions
 			return this;
 		}
 
+		/// <summary>
+		/// Adds expression using captured expression which are assigned to local variables only if they are not already constant or values stored in memory.
+		/// </summary>
+		/// <param name="generator">The generator that will create the statement expressions.</param>
+		/// <param name="expressionsToCapture">The expressions to capture as local variables.</param>
+		/// <returns>A reference to this block expression builder for chaining.</returns>
 		public BlockExpressionBuilder AddUsingMemoryLocationsOrConstants(Func<Expression[], IEnumerable<Expression>> generator, params Expression[] expressionsToCapture) {
 			if (null == generator) throw new ArgumentNullException("generator");
 			if (null == expressionsToCapture) throw new ArgumentNullException("expressionsToCapture");

@@ -250,11 +250,11 @@ namespace Vertesaur {
 			}
 			return false;
 		}
-
+		/// <inheritdoc/>
 		public IPlanarGeometry Intersection(Point2 other) {
 			return Intersects(other) ? (IPlanarGeometry)other : null;
 		}
-
+		/// <inheritdoc/>
 		public bool Intersects(MultiPoint2 other) {
 			for (var i = 0; i < Count; i++) {
 				if (this[i].Intersects(other))
@@ -262,7 +262,7 @@ namespace Vertesaur {
 			}
 			return false;
 		}
-
+		/// <inheritdoc/>
 		public IPlanarGeometry Intersection(MultiPoint2 other) {
 			if (Count == 0)
 				return null;

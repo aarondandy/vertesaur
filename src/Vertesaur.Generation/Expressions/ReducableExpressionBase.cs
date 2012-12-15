@@ -43,6 +43,7 @@ namespace Vertesaur.Generation.Expressions
 			}
 		}
 
+		/// <inheritdoc/>
 		public abstract override Expression Reduce();
 
 		[ContractInvariantMethod]
