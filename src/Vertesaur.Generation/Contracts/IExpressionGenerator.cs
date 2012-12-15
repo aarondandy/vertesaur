@@ -39,14 +39,14 @@ namespace Vertesaur.Generation.Contracts
 		/// </summary>
 		/// <param name="request">The request for an expression that is to be generated.</param>
 		/// <returns>A generated expression matching the request or null if the requested expression could not be generated.</returns>
-		Expression GenerateExpression(IExpressionGenerationRequest request);
+		Expression Generate(IExpressionGenerationRequest request);
 	}
 
 	[ContractClassFor(typeof(IExpressionGenerator))]
 	internal abstract class ExpressionGeneratorCodeContract : IExpressionGenerator
 	{
 
-		public Expression GenerateExpression(IExpressionGenerationRequest request) {
+		public Expression Generate(IExpressionGenerationRequest request) {
 			Contract.Requires(null != request);
 			Contract.EndContractBlock();
 			throw new NotImplementedException();

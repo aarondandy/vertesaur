@@ -64,10 +64,10 @@ namespace Vertesaur.Generation.GenericOperations
 			var y0 = Expression.Parameter(typeof(TValue));
 			var x1 = Expression.Parameter(typeof(TValue));
 			var y1 = Expression.Parameter(typeof(TValue));
-			var expression = ExpressionGenerator.GenerateExpression(
+			var expression = ExpressionGenerator.Generate(
 				"Subtract",
-				ExpressionGenerator.GenerateExpression("Multiply", x0, y1),
-				ExpressionGenerator.GenerateExpression("Multiply", y0, x1)
+				ExpressionGenerator.Generate("Multiply", x0, y1),
+				ExpressionGenerator.Generate("Multiply", y0, x1)
 			);
 			if (expression == null)
 				return null;
@@ -82,7 +82,7 @@ namespace Vertesaur.Generation.GenericOperations
 
 			var tParam0 = Expression.Parameter(typeof(TValue));
 			var tParam1 = Expression.Parameter(typeof(TValue));
-			var expression = ExpressionGenerator.GenerateExpression(expressionName, tParam0, tParam1);
+			var expression = ExpressionGenerator.Generate(expressionName, tParam0, tParam1);
 			if (null == expression)
 				return null;
 			return Expression.Lambda<CoordinateToValue2D>(
@@ -98,7 +98,7 @@ namespace Vertesaur.Generation.GenericOperations
 			var tParam1 = Expression.Parameter(typeof(TValue));
 			var tParam2 = Expression.Parameter(typeof(TValue));
 			var tParam3 = Expression.Parameter(typeof(TValue));
-			var expression = ExpressionGenerator.GenerateExpression(expressionName, tParam0, tParam1, tParam2, tParam3);
+			var expression = ExpressionGenerator.Generate(expressionName, tParam0, tParam1, tParam2, tParam3);
 			if (null == expression)
 				return null;
 			return Expression.Lambda<TwoCoordinateToValue2D>(

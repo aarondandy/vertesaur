@@ -49,10 +49,10 @@ namespace Vertesaur.Generation.Expressions
 			var halfCount = Components.Count / 2;
 			var deltas = new Expression[halfCount];
 			for (int i = 0; i < halfCount; i++) {
-				deltas[i] = ReductionExpressionGenerator.GenerateExpression("Subtract", Components[i], Components[halfCount + i]);
+				deltas[i] = ReductionExpressionGenerator.Generate("Subtract", Components[i], Components[halfCount + i]);
 			}
 			Contract.Assume(deltas.Length != 0);
-			return ReductionExpressionGenerator.GenerateExpression("SquaredMagnitude", deltas);
+			return ReductionExpressionGenerator.Generate("SquaredMagnitude", deltas);
 		}
 
 	}

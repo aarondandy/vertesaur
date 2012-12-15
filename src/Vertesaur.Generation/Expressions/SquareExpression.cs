@@ -26,11 +26,11 @@ namespace Vertesaur.Generation.Expressions
 		public override Expression Reduce() {
 			if (UnaryParameter is SquareRootExpression)
 				return ((SquareRootExpression)UnaryParameter).UnaryParameter;
-			if (UnaryParameter is ParameterExpression || UnaryParameter is ConstantExpression)
-				return ReductionExpressionGenerator.GenerateExpression("MULTIPLY", UnaryParameter, UnaryParameter);
+			if (UnaryParameter.IsMemoryLocationOrConstant())
+				return ReductionExpressionGenerator.Generate("MULTIPLY", UnaryParameter, UnaryParameter);
 
-			return new BlockExpressionBuilder().AddUsingAssignedLocal(local => new[] {
-				ReductionExpressionGenerator.GenerateExpression("MULTIPLY", local, local)
+			return new BlockExpressionBuilder().AddUsingMemoryLocationOrConstant(local => new[] {
+				ReductionExpressionGenerator.Generate("MULTIPLY", local, local)
 			},UnaryParameter).GetExpression();
 		}
 

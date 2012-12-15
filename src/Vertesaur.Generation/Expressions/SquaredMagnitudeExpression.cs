@@ -49,7 +49,7 @@ namespace Vertesaur.Generation.Expressions
 			var squareInputs = new List<Expression>(Components.Count);
 			var blockBuilder = new BlockExpressionBuilder();
 			foreach (var component in Components) {
-				if (component is ConstantExpression || component is ParameterExpression) {
+				if (component.IsMemoryLocationOrConstant()) {
 					squareInputs.Add(component);
 				}
 				else {
@@ -60,11 +60,11 @@ namespace Vertesaur.Generation.Expressions
 			}
 
 			// build the equation
-			var result = ReductionExpressionGenerator.GenerateExpression("Square", squareInputs[0]);
+			var result = ReductionExpressionGenerator.Generate("Square", squareInputs[0]);
 			for (int i = 1; i < squareInputs.Count; i++) {
-				var squaredComponentExpression = ReductionExpressionGenerator.GenerateExpression(
+				var squaredComponentExpression = ReductionExpressionGenerator.Generate(
 					"Square", squareInputs[i]);
-				result = ReductionExpressionGenerator.GenerateExpression(
+				result = ReductionExpressionGenerator.Generate(
 					"Add", result, squaredComponentExpression);
 			}
 

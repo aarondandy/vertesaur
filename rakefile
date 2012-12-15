@@ -1,0 +1,35 @@
+require 'albacore'
+
+def extract_assembly_version(filePath)
+	File.open(filePath,'r') do |file|
+		file.each_line do |line|
+			current_line = line.strip
+			line_match = /.*AssemblyVersion[(]\s*\"(\d+[.]\d+[.]\d+)[.].*\".*/.match(current_line)
+			if(line_match) then return line_match[1] end
+		end
+	end
+	nil
+end
+
+task :default => [:build,:make_nupkg]
+
+task :make_nupkg => [:make_nupkg_core,:make_nupkg_generation]
+
+msbuild :build do |msb|
+	msb.targets = [:Clean, :Build]
+	msb.solution = "./vertesaur-all.sln"
+	msb.properties = {:configuration => :Release}
+end
+
+exec :make_nupkg_core do |cmd|
+	asmVersion3 = extract_assembly_version "./src/VertesaurAssemblyInfo.cs"
+	puts "Version: #{asmVersion3}"
+	cmd.command = "./.nuget/nuget.exe"
+	cmd.parameters = "pack build/vertesaur.nuspec -Verbosity detailed -Version #{asmVersion3} -OutputDirectory ./build/packed/ -Properties Configuration=Release"
+end
+
+exec :make_nupkg_generation do |cmd|
+	asmVersion3 = extract_assembly_version "./src/VertesaurAssemblyInfo.cs"
+	cmd.command = "./.nuget/nuget.exe"
+	cmd.parameters = "pack build/vertesaur.generation.nuspec -Verbosity detailed -Version #{asmVersion3} -OutputDirectory ./build/packed/ -Properties Configuration=Release"
+end

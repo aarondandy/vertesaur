@@ -43,6 +43,8 @@ namespace Vertesaur.Generation.Expressions
 			}
 		}
 
+		public abstract override Expression Reduce();
+
 		[ContractInvariantMethod]
 		private void CodeContractInvariant(){
 			Contract.Invariant(null != ReductionExpressionGenerator);

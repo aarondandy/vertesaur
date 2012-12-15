@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.Contracts;
+using System.Linq;
 using Vertesaur.Contracts;
 
 namespace Vertesaur {
@@ -42,6 +43,9 @@ namespace Vertesaur {
 		IHasMagnitude<double>,
 		IEquatable<MultiLineString2>,
 		IRelatableIntersects<Point2>,
+		IHasIntersectionOperation<Point2, IPlanarGeometry>,
+		IRelatableIntersects<MultiPoint2>,
+		IHasIntersectionOperation<MultiPoint2, IPlanarGeometry>,
 		IHasDistance<Point2,double>,
 		IHasMbr<Mbr,double>,
 		IHasCentroid<Point2>,
@@ -247,6 +251,23 @@ namespace Vertesaur {
 			return false;
 		}
 
+		public IPlanarGeometry Intersection(Point2 other) {
+			return Intersects(other) ? (IPlanarGeometry)other : null;
+		}
+
+		public bool Intersects(MultiPoint2 other) {
+			for (var i = 0; i < Count; i++) {
+				if (this[i].Intersects(other))
+					return true;
+			}
+			return false;
+		}
+
+		public IPlanarGeometry Intersection(MultiPoint2 other) {
+			if (Count == 0)
+				return null;
+			return MultiPoint2.FixToProperPlanerGeometryResult(new MultiPoint2(other.Where(Intersects)));
+		}
 	}
 
 	// ReSharper restore LoopCanBeConvertedToQuery

@@ -53,11 +53,11 @@ namespace Vertesaur.Generation.Expressions
 		}
 
 		/// <inheritdoc/>
-		public Expression GenerateExpression(IExpressionGenerationRequest request) {
+		public Expression Generate(IExpressionGenerationRequest request) {
 			if (null == request) throw new ArgumentNullException("request");
 			Contract.EndContractBlock();
 			return _expressionGenerators
-				.Select(x => x.GenerateExpression(request))
+				.Select(x => x.Generate(request))
 				.FirstOrDefault(x => null != x);
 		}
 	}

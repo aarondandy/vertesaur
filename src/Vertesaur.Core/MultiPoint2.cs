@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.Contracts;
+using System.Linq;
 using System.Text;
 using Vertesaur.Contracts;
 
@@ -38,12 +39,29 @@ namespace Vertesaur {
 		Collection<Point2>,
 		IPlanarGeometry,
 		IEquatable<MultiPoint2>,
-		IRelatableIntersects<Point2>,
 		IHasDistance<Point2, double>,
 		IHasMbr<Mbr, double>,
 		IHasCentroid<Point2>,
+		IRelatableIntersects<MultiPoint2>,
+		IHasIntersectionOperation<MultiPoint2, IPlanarGeometry>,
+		IRelatableIntersects<Point2>,
+		IHasIntersectionOperation<Point2, IPlanarGeometry>,
+		IRelatableIntersects<Segment2>,
+		IHasIntersectionOperation<Segment2, IPlanarGeometry>,
+		IRelatableIntersects<Line2>,
+		IHasIntersectionOperation<Line2, IPlanarGeometry>,
+		IRelatableIntersects<Ray2>,
+		IHasIntersectionOperation<Ray2, IPlanarGeometry>,
 		ICloneable
 	{
+
+		internal static IPlanarGeometry FixToProperPlanerGeometryResult(MultiPoint2 result) {
+			if (null == result || result.Count == 0)
+				return null;
+			if (result.Count == 1)
+				return result[0];
+			return result;
+		}
 
 		/// <summary>
 		/// Constructs a new empty multi-point.
@@ -98,20 +116,6 @@ namespace Vertesaur {
 					minDist = localDist;
 			}
 			return minDist;
-		}
-
-		/// <summary>
-		/// Determines if a point intersects this multi-point.
-		/// </summary>
-		/// <param name="p">A point to test intersection with.</param>
-		/// <returns>True when a point intersects this multi-point.</returns>
-		public bool Intersects(Point2 p) {
-			for (var i = 0; i < Count; i++) {
-				if (this[i].Equals(p)) {
-					return true;
-				}
-			}
-			return false;
 		}
 
 		/// <summary>
@@ -200,6 +204,77 @@ namespace Vertesaur {
 			return sb.ToString();
 		}
 
+		public IPlanarGeometry Intersection(MultiPoint2 other) {
+			if(ReferenceEquals(null, other))
+				return null;
+			var intersectedPoints = new MultiPoint2(other.Where(Contains));
+			return FixToProperPlanerGeometryResult(intersectedPoints);
+		}
+
+		public IPlanarGeometry Intersection(Point2 other) {
+			return Intersects(other) ? (IPlanarGeometry)other : null;
+		}
+
+		public bool Intersects(MultiPoint2 other) {
+			if (Count == 0 || ReferenceEquals(null, other) || other.Count == 0)
+				return false;
+			if (ReferenceEquals(this, other))
+				return Count > 0;
+			return this.Any(other.Contains);
+		}
+
+		/// <summary>
+		/// Determines if a point intersects this multi-point.
+		/// </summary>
+		/// <param name="p">A point to test intersection with.</param>
+		/// <returns>True when a point intersects this multi-point.</returns>
+		public bool Intersects(Point2 p) {
+			for (var i = 0; i < Count; i++) {
+				if (this[i].Equals(p)) {
+					return true;
+				}
+			}
+			return false;
+		}
+
+		public bool Intersects(Segment2 other) {
+			return !ReferenceEquals(null, other)
+				&& Count > 0
+				&& this.Any(other.Intersects);
+		}
+
+		public IPlanarGeometry Intersection(Segment2 other) {
+			if (ReferenceEquals(null, other) || Count == 0)
+				return null;
+			var intersectedPoints = new MultiPoint2(this.Where(other.Intersects));
+			return FixToProperPlanerGeometryResult(intersectedPoints);
+		}
+
+		public bool Intersects(Line2 other) {
+			return !ReferenceEquals(null, other)
+				&& Count > 0
+				&& this.Any(other.Intersects);
+		}
+
+		public IPlanarGeometry Intersection(Line2 other) {
+			if (ReferenceEquals(null, other) || Count == 0)
+				return null;
+			var intersectedPoints = new MultiPoint2(this.Where(other.Intersects));
+			return FixToProperPlanerGeometryResult(intersectedPoints);
+		}
+
+		public bool Intersects(Ray2 other) {
+			return !ReferenceEquals(null, other)
+				&& Count > 0
+				&& this.Any(other.Intersects);
+		}
+
+		public IPlanarGeometry Intersection(Ray2 other) {
+			if (ReferenceEquals(null, other) || Count == 0)
+				return null;
+			var intersectedPoints = new MultiPoint2(this.Where(other.Intersects));
+			return FixToProperPlanerGeometryResult(intersectedPoints);
+		}
 	}
 
 }

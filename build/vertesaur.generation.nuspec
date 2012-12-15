@@ -4,13 +4,13 @@
 		<id>Vertesaur.Generation</id>
 		<version>$version$</version>
 		<title>Vertesaur: Generation</title>
-		<authors>$author$</authors>
+		<authors>aarondandy</authors>
 		<description>A computational geometry and math library for the CLR with potential medical, gaming, and GIS uses.</description>
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
 		<tags>Geometry</tags>
 		<projectUrl>http://mediocresoft.com/vertesaur/</projectUrl>
 		<dependencies>
-			<dependency id="Vertesaur.Core" />
+			<dependency id="Vertesaur.Core" version="$version$"/>
 		</dependencies>
 	</metadata>
 	<files>

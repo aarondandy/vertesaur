@@ -50,6 +50,10 @@ namespace Vertesaur {
 		IRelatableIntersects<Segment2>,
 		IRelatableIntersects<Ray2>,
 		IRelatableIntersects<Line2>,
+		IHasIntersectionOperation<Segment2, IPlanarGeometry>,
+		IHasIntersectionOperation<Line2, IPlanarGeometry>,
+		IHasIntersectionOperation<Ray2, IPlanarGeometry>,
+		IHasIntersectionOperation<Point2, IPlanarGeometry>,
 		ICloneable
 	{
 
@@ -390,6 +394,28 @@ namespace Vertesaur {
 			throw new NotImplementedException();
 		}
 
+
+		public IPlanarGeometry Intersection(Segment2 other) {
+			return ReferenceEquals(null, other)
+				? null
+				: other.Intersection(this);
+		}
+
+		public IPlanarGeometry Intersection(Line2 other) {
+			if (ReferenceEquals(null, other))
+				return null;
+			throw new NotImplementedException();
+		}
+
+		public IPlanarGeometry Intersection(Ray2 other) {
+			if (ReferenceEquals(null, other))
+				return null;
+			throw new NotImplementedException();
+		}
+
+		public IPlanarGeometry Intersection(Point2 other) {
+			return Intersects(other) ? (IPlanarGeometry)other : null;
+		}
 	}
 
 }

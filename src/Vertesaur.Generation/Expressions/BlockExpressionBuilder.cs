@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace Vertesaur.Generation.Expressions
 {
@@ -106,6 +107,7 @@ namespace Vertesaur.Generation.Expressions
 		/// <param name="generator">The generator that will create the statment expressions.</param>
 		/// <param name="expressionToCapture">The expression to capture as a local variable.</param>
 		/// <returns>A reference to this block expression builder for chaining.</returns>
+		[Obsolete]
 		public BlockExpressionBuilder AddUsingAssignedLocal(Func<ParameterExpression, IEnumerable<Expression>> generator, Expression expressionToCapture) {
 			if (null == generator) throw new ArgumentNullException("generator");
 			if (null == expressionToCapture) throw new ArgumentNullException("expressionToCapture");
@@ -121,12 +123,42 @@ namespace Vertesaur.Generation.Expressions
 			return this;
 		}
 
+		public BlockExpressionBuilder AddUsingMemoryLocationOrConstant(Func<Expression, IEnumerable<Expression>> generator, Expression expressionToCapture) {
+			if (null == generator) throw new ArgumentNullException("generator");
+			if (null == expressionToCapture) throw new ArgumentNullException("expressionToCapture");
+			Contract.Ensures(Contract.Result<BlockExpressionBuilder>() == this);
+			Contract.EndContractBlock();
+			LocalExpressionVariableManager.VariableUsage usage;
+			Expression capturedExpression;
+			if (expressionToCapture.IsMemoryLocationOrConstant()) {
+				usage = null;
+				capturedExpression = expressionToCapture;
+			}
+			else {
+				usage = LocalManager.Use(expressionToCapture.Type);
+				capturedExpression = usage.Variable;
+				Add(Expression.Assign(usage.Variable, expressionToCapture));
+			}
+			try {
+				var expressions = generator(capturedExpression);
+				if(null == expressions)
+					throw new InvalidOperationException("Generator may not return null.");
+				AddRange(expressions);
+			}
+			finally {
+				if(null != usage)
+					usage.Dispose();
+			}
+			return this;
+		}
+
 		/// <summary>
 		/// Add expressions using captured expressions as local variables provided by the local manager.
 		/// </summary>
 		/// <param name="generator">The generator that will create the statment expressions.</param>
 		/// <param name="expressionsToCapture">The expressions to capture as local variables.</param>
 		/// <returns>A reference to this block expression builder for chaining.</returns>
+		[Obsolete]
 		public BlockExpressionBuilder AddUsingAssignedLocals(Func<ParameterExpression[], IEnumerable<Expression>> generator, params Expression[] expressionsToCapture) {
 			if (null == generator) throw new ArgumentNullException("generator");
 			if (null == expressionsToCapture) throw new ArgumentNullException("expressionsToCapture");
@@ -144,6 +176,38 @@ namespace Vertesaur.Generation.Expressions
 			}
 			finally {
 				LocalManager.ReleaseVariables(locals);
+			}
+			return this;
+		}
+
+		public BlockExpressionBuilder AddUsingMemoryLocationsOrConstants(Func<Expression[], IEnumerable<Expression>> generator, params Expression[] expressionsToCapture) {
+			if (null == generator) throw new ArgumentNullException("generator");
+			if (null == expressionsToCapture) throw new ArgumentNullException("expressionsToCapture");
+			Contract.Ensures(Contract.Result<BlockExpressionBuilder>() == this);
+			Contract.EndContractBlock();
+			var usages = Array.ConvertAll(expressionsToCapture, e => e.IsMemoryLocationOrConstant() ? null : LocalManager.Use(e.Type));
+			try {
+				var capturedExpressions = new Expression[expressionsToCapture.Length];
+				for (int i = 0; i < capturedExpressions.Length; i++) {
+					var usage = usages[i];
+					if (null == usage) {
+						capturedExpressions[i] = expressionsToCapture[i];
+					}
+					else {
+						Add(Expression.Assign(usage.Variable, expressionsToCapture[i]));
+						capturedExpressions[i] = usage.Variable;
+					}
+				}
+				var expressions = generator(capturedExpressions);
+				if (null == expressions)
+					throw new InvalidOperationException("Generator may not return null.");
+				AddRange(expressions);
+			}
+			finally {
+				for (int i = 0; i < usages.Length; i++) {
+					if(null != usages[i])
+						usages[i].Dispose();
+				}
 			}
 			return this;
 		}

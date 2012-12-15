@@ -47,12 +47,12 @@ namespace Vertesaur.Generation.Expressions
 		/// <inheritdoc/>
 		public override Expression Reduce(){
 			var halfCount = Components.Count / 2;
-			var result = ReductionExpressionGenerator.GenerateExpression(
+			var result = ReductionExpressionGenerator.Generate(
 				"Multiply", Components[0], Components[halfCount]);
 			for (int i = 1; i < halfCount; i++){
-				var mulComponentExpression = ReductionExpressionGenerator.GenerateExpression(
+				var mulComponentExpression = ReductionExpressionGenerator.Generate(
 					"Multiply", Components[i], Components[i + halfCount]);
-				result = ReductionExpressionGenerator.GenerateExpression(
+				result = ReductionExpressionGenerator.Generate(
 					"Add", result, mulComponentExpression);
 			}
 			return result;

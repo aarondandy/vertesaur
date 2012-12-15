@@ -17,7 +17,7 @@ namespace Vertesaur.Generation.Expressions
 		/// </summary>
 		/// <param name="request">The expression generation request to be processed.</param>
 		/// <returns>A new expression or null if the request is not supported.</returns>
-		public Expression GenerateExpression(IExpressionGenerationRequest request) {
+		public Expression Generate(IExpressionGenerationRequest request) {
 			if (null == request) throw new ArgumentNullException("request");
 			Contract.EndContractBlock();
 

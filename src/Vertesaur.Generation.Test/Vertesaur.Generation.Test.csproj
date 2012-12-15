@@ -62,6 +62,7 @@
       <Link>Properties\VertesaurAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="CoreExpressionGeneratorTests.cs" />
+    <Compile Include="MathFunctionsTest.cs" />
     <Compile Include="Point2Test.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Vector2Test.cs" />

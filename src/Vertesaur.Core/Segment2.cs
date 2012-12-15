@@ -45,6 +45,7 @@ namespace Vertesaur {
 		IHasIntersectionOperation<Segment2, IPlanarGeometry>,
 		IHasIntersectionOperation<Ray2, IPlanarGeometry>,
 		IHasIntersectionOperation<Line2, IPlanarGeometry>,
+		IHasIntersectionOperation<Point2, IPlanarGeometry>,
 		IHasDistance<Point2, double>,
 		IHasCentroid<Point2>,
 		IHasMbr<Mbr,double>,
@@ -520,6 +521,10 @@ namespace Vertesaur {
 			if (ReferenceEquals(null,other))
 				return 1;
 			return Compare(A, B, other.A, other.B);
+		}
+
+		public IPlanarGeometry Intersection(Point2 other) {
+			return Intersects(other) ? (IPlanarGeometry)other : null;
 		}
 	}
 }

@@ -158,7 +158,23 @@ namespace Vertesaur.Generation.Expressions
 			_standardUnaryExpressionGeneratorLookup = new Dictionary<string, Func<IExpressionGenerationRequest, Expression, Expression>>(StringComparer.OrdinalIgnoreCase){
 				{"SQUARE", GenerateSquare},
 				{"SQUAREROOT", GenerateSquareRoot},
-				{"NEGATE", GenerateNegation}
+				{"NEGATE", GenerateNegation},
+				{"SIN", (g,i) => new SinExpression(i,g.TopLevelGenerator)},
+				{"COS", (g,i) => new CosExpression(i,g.TopLevelGenerator)},
+				{"TAN", (g,i) => new TanExpression(i,g.TopLevelGenerator)},
+				{"ASIN", (g,i) => new AsinExpression(i,g.TopLevelGenerator)},
+				{"ACOS", (g,i) => new AcosExpression(i,g.TopLevelGenerator)},
+				{"ATAN", (g,i) => new AtanExpression(i,g.TopLevelGenerator)},
+				{"CEILING", (g,i) => new CeilingExpression(i,g.TopLevelGenerator)},
+				{"FLOOR", (g,i) => new FloorExpression(i,g.TopLevelGenerator)},
+				{"TRUNCATE",(g,i) => new TruncateExpression(i,g.TopLevelGenerator)},
+				{"COSH", (g,i) => new CoshExpression(i,g.TopLevelGenerator)},
+				{"SINH", (g,i) => new SinhExpression(i,g.TopLevelGenerator)},
+				{"TANH", (g,i) => new TanhExpression(i,g.TopLevelGenerator)},
+				{"LOG", (g,i) => new LogExpression(i,g.TopLevelGenerator)},
+				{"LOG10", (g,i) => new Log10Expression(i,g.TopLevelGenerator)},
+				{"EXP", (g,i) => new ExpExpression(i,g.TopLevelGenerator)},
+				{"ABS", (g,i) => new AbsExpression(i,g.TopLevelGenerator)}
 			};
 			_standardBinaryExpressionGeneratorLookup = new Dictionary<string, Func<IExpressionGenerationRequest, Expression, Expression, Expression>>(StringComparer.OrdinalIgnoreCase){
 				{"ADD", GenerateArithmetic},
@@ -171,10 +187,30 @@ namespace Vertesaur.Generation.Expressions
 				{"LESSEQUAL", (_,left,right) => Expression.LessThanOrEqual(left, right)},
 				{"GREATER", (_,left,right) => Expression.GreaterThan(left, right)},
 				{"GREATEREQUAL", (_,left,right) => Expression.GreaterThanOrEqual(left, right)},
-				{"MIN", GenerateMin},
-				{"MAX", GenerateMax},
-				{"COMPARETO", GenerateCompareTo}
+				{"MIN", (g,left,right) => new MinExpression(left,right,g.TopLevelGenerator)},
+				{"MAX", (g,left,right) => new MaxExpression(left,right,g.TopLevelGenerator)},
+				{"COMPARETO", GenerateCompareTo},
+				{"ATAN2", (g,left,right) => new Atan2Expression(left,right,g.TopLevelGenerator)},
+				{"POW", CreatePow}
 			};
+		}
+
+		private Expression CreatePow(IExpressionGenerationRequest request, Expression left, Expression right) {
+			Contract.Requires(null != request);
+			Contract.Requires(null != left);
+			Contract.Requires(null != right);
+			Contract.Ensures(Contract.Result<Expression>() != null);
+
+			if (left.Type == typeof(double) && right.Type == typeof(double))
+				return Expression.Power(left, right);
+
+			return request.TopLevelGenerator.GenerateConversionExpression(
+				left.Type,
+				Expression.Power(
+					request.TopLevelGenerator.GenerateConversionExpression(typeof(double), left),
+					request.TopLevelGenerator.GenerateConversionExpression(typeof(double), right)
+				)
+			);
 		}
 
 		private Expression GenerateSquare(IExpressionGenerationRequest request, Expression parameter) {
@@ -198,7 +234,7 @@ namespace Vertesaur.Generation.Expressions
 			if (resultType == typeof(ulong) || resultType == typeof(uint) || resultType == typeof(ushort) || resultType == typeof(byte) || resultType == typeof(sbyte)) {
 				var zeroConstant = GenerateConstantExpression("0", resultType);
 				Contract.Assume(null != zeroConstant);
-				return request.TopLevelGenerator.GenerateExpression("Subtract", zeroConstant, parameter);
+				return request.TopLevelGenerator.Generate("Subtract", zeroConstant, parameter);
 			}
 			return Checked ? Expression.NegateChecked(parameter) : Expression.Negate(parameter);
 		}
@@ -241,44 +277,14 @@ namespace Vertesaur.Generation.Expressions
 			return null;
 		}
 
-		private Expression GenerateMin(IExpressionGenerationRequest request, Expression left, Expression right) {
-			Contract.Requires(null != request);
-			Contract.Requires(null != left);
-			Contract.Requires(null != right);
-			if ((left is ConstantExpression || left is ParameterExpression) && (right is ConstantExpression || right is ParameterExpression)) {
-				var leq = request.TopLevelGenerator.GenerateExpression("LESSEQUAL", left, right);
-				Contract.Assume(null != leq);
-				return Expression.Condition(leq, left, right);
-			}
-
-			return new BlockExpressionBuilder().AddUsingAssignedLocals(locals => new[] {
-				GenerateMin(request, locals[0], locals[1])
-			}, left, right).GetExpression();
-		}
-
-		private Expression GenerateMax(IExpressionGenerationRequest request, Expression left, Expression right) {
-			Contract.Requires(null != request);
-			Contract.Requires(null != left);
-			Contract.Requires(null != right);
-			if ((left is ConstantExpression || left is ParameterExpression) && (right is ConstantExpression || right is ParameterExpression)) {
-				var geq = request.TopLevelGenerator.GenerateExpression("GREATEREQUAL", left, right);
-				Contract.Assume(null != geq);
-				return Expression.Condition(geq, left, right);
-			}
-
-			return new BlockExpressionBuilder().AddUsingAssignedLocals(locals => new[] {
-				GenerateMax(request, locals[0], locals[1])
-			}, left, right).GetExpression();
-		}
-
 		private Expression GenerateCompareTo(IExpressionGenerationRequest request, Expression left, Expression right) {
 			Contract.Requires(null != request);
 			Contract.Requires(null != left);
 			Contract.Requires(null != right);
-			if ((left is ConstantExpression || left is ParameterExpression) && (right is ConstantExpression || right is ParameterExpression)) {
-				var eq = request.TopLevelGenerator.GenerateExpression("EQUAL", left, right);
+			if (left.IsMemoryLocationOrConstant() && right.IsMemoryLocationOrConstant()) {
+				var eq = request.TopLevelGenerator.Generate("EQUAL", left, right);
 				Contract.Assume(null != eq);
-				var less = request.TopLevelGenerator.GenerateExpression("LESS", left, right);
+				var less = request.TopLevelGenerator.Generate("LESS", left, right);
 				Contract.Assume(null != less);
 				var comparableType = typeof(IComparable<>).MakeGenericType(new[] { right.Type });
 				return left.Type.GetInterfaces().Contains(comparableType)
@@ -302,7 +308,7 @@ namespace Vertesaur.Generation.Expressions
 					);
 			}
 
-			return new BlockExpressionBuilder().AddUsingAssignedLocals(locals => new[] {
+			return new BlockExpressionBuilder().AddUsingMemoryLocationsOrConstants(locals => new[] {
 				GenerateCompareTo(request, locals[0], locals[1])
 			}, left, right).GetExpression();
 		}
@@ -328,8 +334,23 @@ namespace Vertesaur.Generation.Expressions
 				constantValue = Math.PI;
 				return true;
 			}
+			if (expressionName.Equals("HALFPI", StringComparison.OrdinalIgnoreCase)) {
+				constantValue = Math.PI / 2.0;
+				return true;
+			}
+			if (expressionName.Equals("QUARTERPI", StringComparison.OrdinalIgnoreCase)) {
+				constantValue = Math.PI / 4.0;
+				return true;
+			}
 			if (expressionName.Equals("E", StringComparison.OrdinalIgnoreCase)) {
 				constantValue = Math.E;
+				return true;
+			}
+			if (
+				expressionName.Equals("UNDEFINED", StringComparison.OrdinalIgnoreCase)
+				|| expressionName.Equals("INVALID", StringComparison.OrdinalIgnoreCase)
+			) {
+				constantValue = Double.NaN;
 				return true;
 			}
 			return Double.TryParse(expressionName, out constantValue);
@@ -350,14 +371,27 @@ namespace Vertesaur.Generation.Expressions
 			if (!TryGetDoubleConstantValue(expressionName, out constantValue))
 				return null;
 
-			if (resultType == typeof (double))
+			if (resultType == typeof(double)) {
 				return Expression.Constant(constantValue);
-			if (resultType == typeof(float))
+			}
+			if (resultType == typeof(float)) {
+				if (Double.IsNaN(constantValue))
+					return Expression.Constant(Single.NaN);
 				return Expression.Constant(unchecked((float)constantValue));
-			if (resultType == typeof(decimal))
+			}
+			if (resultType == typeof(decimal)) {
+				if (Double.IsNaN(constantValue)) {
+					return null;
+				}
 				return Expression.Constant(unchecked((decimal)constantValue));
-			if (resultType == typeof (int))
-				return Expression.Constant(unchecked((int) constantValue));
+			}
+			if (resultType == typeof(int)) {
+				if (Double.IsNaN(constantValue))
+					return Expression.Constant(0);
+				return Expression.Constant(unchecked((int)constantValue));
+			}
+			if (Double.IsNaN(constantValue))
+				return null;
 			return GenerateConversionExpression(Expression.Constant(constantValue), resultType);
 		}
 
@@ -393,7 +427,7 @@ namespace Vertesaur.Generation.Expressions
 		}
 
 		/// <inheritdoc/>
-		public Expression GenerateExpression(IExpressionGenerationRequest request) {
+		public Expression Generate(IExpressionGenerationRequest request) {
 			if(null == request) throw new ArgumentNullException("request");
 			if(String.IsNullOrEmpty(request.ExpressionName)) throw new ArgumentException("Invalid request expression name.", "request");
 			Contract.EndContractBlock();
@@ -418,6 +452,7 @@ namespace Vertesaur.Generation.Expressions
 
 			return GenerateStandardExpression(request);
 		}
+
 	}
 
 }

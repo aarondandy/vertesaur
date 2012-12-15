@@ -47,6 +47,9 @@ namespace Vertesaur {
 		IHasArea<double>,
 		IEquatable<Polygon2>,
 		IRelatableIntersects<Point2>,
+		IHasIntersectionOperation<Point2,IPlanarGeometry>,
+		IRelatableIntersects<MultiPoint2>,
+		IHasIntersectionOperation<MultiPoint2,IPlanarGeometry>,
 		IHasDistance<Point2, double>,
 		IHasCentroid<Point2>,
 		ISpatiallyEquatable<Polygon2>,
@@ -403,5 +406,21 @@ namespace Vertesaur {
 			Contract.Invariant(Contract.ForAll(0, Count, i => this[i] != null));
 		}
 
+
+		public IPlanarGeometry Intersection(Point2 other) {
+			return Intersects(other) ? (IPlanarGeometry)other : null;
+		}
+
+		public bool Intersects(MultiPoint2 other) {
+			if (Count == 0 || ReferenceEquals(null, other) || other.Count == 0)
+				return false;
+			return other.Any(Intersects);
+		}
+
+		public IPlanarGeometry Intersection(MultiPoint2 other) {
+			if (Count == 0 || ReferenceEquals(null, other) || other.Count == 0)
+				return null;
+			return MultiPoint2.FixToProperPlanerGeometryResult(new MultiPoint2(other.Where(Intersects)));
+		}
 	}
 }

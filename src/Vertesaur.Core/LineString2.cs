@@ -26,6 +26,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.Contracts;
+using System.Linq;
 using System.Text;
 using Vertesaur.Contracts;
 
@@ -46,6 +47,13 @@ namespace Vertesaur {
 		IHasMagnitude<double>,
 		IEquatable<LineString2>,
 		IRelatableIntersects<Point2>,
+		IHasIntersectionOperation<Point2,IPlanarGeometry>,
+		IRelatableIntersects<MultiPoint2>,
+		IHasIntersectionOperation<MultiPoint2, IPlanarGeometry>,
+		IRelatableIntersects<LineString2>,
+		IHasIntersectionOperation<LineString2,IPlanarGeometry>,
+		IRelatableIntersects<Segment2>,
+		IHasIntersectionOperation<Segment2, IPlanarGeometry>,
 		IHasDistance<Point2,double>,
 		ICloneable
 	{
@@ -263,5 +271,79 @@ namespace Vertesaur {
 			return m * m;
 		}
 
+		public IPlanarGeometry Intersection(Point2 other) {
+			return Intersects(other) ? (IPlanarGeometry)other : null;
+		}
+
+		public bool Intersects(MultiPoint2 other) {
+			if (Count == 0 || ReferenceEquals(null, other) || other.Count == 0)
+				return false;
+			return other.Any(Intersects);
+		}
+
+		public IPlanarGeometry Intersection(MultiPoint2 other) {
+			if (Count == 0 || ReferenceEquals(null, other) || other.Count == 0)
+				return null;
+			return MultiPoint2.FixToProperPlanerGeometryResult(new MultiPoint2(other.Where(Intersects)));
+		}
+
+		public bool Intersects(LineString2 other) {
+			if (Count == 0 || ReferenceEquals(null, other) || other.Count == 0)
+				return false;
+			if (Count == 1)
+				return other.Intersects(this[0]);
+			if (other.Count == 1)
+				return Intersects(other[0]);
+
+			for (int segmentIndexA = 0; segmentIndexA < SegmentCount; segmentIndexA++) {
+				var segmentA = GetSegment(segmentIndexA);
+				if (other.Intersects(segmentA))
+					return true;
+			}
+			return false;
+		}
+
+		public IPlanarGeometry Intersection(LineString2 other) {
+			if (Count == 0 || ReferenceEquals(null, other) || other.Count == 0)
+				return null;
+			if (Count == 1)
+				return other.Intersects(this[0]) ? (IPlanarGeometry)this[0] : null;
+			if (other.Count == 1)
+				return Intersects(other[0]) ? (IPlanarGeometry)other[0] : null;
+
+			var resultBag = new List<IPlanarGeometry>();
+			for (int segmentIndexA = 0; segmentIndexA < SegmentCount; segmentIndexA++) {
+				var segmentA = GetSegment(segmentIndexA);
+				var segmentIntersectionResult = other.Intersection(segmentA);
+				if(null != segmentIntersectionResult)
+					resultBag.Add(segmentIntersectionResult);
+			}
+
+			throw new NotImplementedException("need to flatten the result bag");
+			throw new NotImplementedException("need to remove intersected items that are fully contained within others");
+			if (resultBag.Count == 0)
+				return null;
+			if (resultBag.Count == 1)
+				return resultBag[0];
+
+			throw new NotImplementedException("need to return a bag of results");
+		}
+
+		public bool Intersects(Segment2 other) {
+			if (Count == 0 || ReferenceEquals(null, other))
+				return false;
+			if (Count == 1)
+				return other.Intersects(this[0]);
+
+			throw new NotImplementedException();
+		}
+
+		public IPlanarGeometry Intersection(Segment2 other) {
+			if (Count == 0 || ReferenceEquals(null, other))
+				return null;
+			if (Count == 1)
+				return other.Intersection(this[0]);
+			throw new NotImplementedException();
+		}
 	}
 }

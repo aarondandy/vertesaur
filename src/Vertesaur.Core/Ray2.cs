@@ -45,6 +45,7 @@ namespace Vertesaur {
 		IHasIntersectionOperation<Segment2, IPlanarGeometry>,
 		IHasIntersectionOperation<Ray2, IPlanarGeometry>,
 		IHasIntersectionOperation<Line2, IPlanarGeometry>,
+		IHasIntersectionOperation<Point2, IPlanarGeometry>,
 		ICloneable
 	{
 
@@ -345,9 +346,9 @@ namespace Vertesaur {
 		/// <param name="segment">The segment to find the intersection with.</param>
 		/// <returns>The intersection geometry or <c>null</c> for no intersection.</returns>
 		public IPlanarGeometry Intersection(Segment2 segment) {
-			if(ReferenceEquals(null, segment))
-				return null;
-			throw new NotImplementedException();
+			return ReferenceEquals(null, segment)
+				? null
+				: segment.Intersection(this);
 		}
 		/// <summary>
 		/// Calculates the intersection geometry between this ray and another.
@@ -433,5 +434,9 @@ namespace Vertesaur {
 			throw new NotImplementedException();
 		}
 
+
+		public IPlanarGeometry Intersection(Point2 other) {
+			return Intersects(other) ? (IPlanarGeometry)other : null;
+		}
 	}
 }

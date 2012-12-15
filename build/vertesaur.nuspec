@@ -4,7 +4,7 @@
 		<id>Vertesaur.Core</id>
 		<version>$version$</version>
 		<title>Vertesaur</title>
-		<authors>$author$</authors>
+		<authors>aarondandy</authors>
 		<description>A computational geometry and math library for the CLR with potential medical, gaming, and GIS uses.</description>
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
 		<tags>Geometry</tags>

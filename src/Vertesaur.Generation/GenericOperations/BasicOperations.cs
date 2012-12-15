@@ -44,71 +44,6 @@ namespace Vertesaur.Generation.GenericOperations
 		public delegate TValue CreateConstantFunc();
 
 		/// <summary>
-		/// Creates a new basic generic operations implementation using the given expression generator.
-		/// </summary>
-		/// <param name="expressionGenerator">The expression generator that will be used to build the generic methods at run-time.</param>
-		public BasicOperations(IExpressionGenerator expressionGenerator){
-			Contract.Requires(null != expressionGenerator);
-			Contract.Ensures(null != ExpressionGenerator);
-			Contract.EndContractBlock();
-			ExpressionGenerator = expressionGenerator;
-
-			Add = BuildBinaryFunc("Add");
-			Subtract = BuildBinaryFunc("Subtract");
-			Multiply = BuildBinaryFunc("Multiply");
-			Divide = BuildBinaryFunc("Divide");
-			Negate = BuildUnaryFunc("Negate");
-			ToDouble = BuildConversion<TValue,double>();
-			FromDouble = BuildConversion<double,TValue>();
-			_zeroValueGenerator = BuildConstant("0");
-		}
-
-		private Func<TFrom, TTo> BuildConversion<TFrom,TTo>() {
-			var inputParam = Expression.Parameter(typeof(TFrom));
-			var expression = ExpressionGenerator.GenerateConversionExpression(typeof(TTo), inputParam);
-			if(null == expression)
-				return null;
-			return Expression.Lambda<Func<TFrom, TTo>>(expression, inputParam).Compile();
-		} 
-
-		private CreateConstantFunc BuildConstant(string expressionName) {
-			Contract.Requires(!String.IsNullOrEmpty(expressionName));
-			Contract.EndContractBlock();
-			var expression = ExpressionGenerator.GenerateExpression(expressionName, typeof(TValue));
-			if (null == expression)
-				return null;
-			return Expression.Lambda<CreateConstantFunc>(expression).Compile();
-		}
-
-		private UnaryFunc BuildUnaryFunc(string expressionName){
-			Contract.Requires(!string.IsNullOrEmpty(expressionName));
-			Contract.EndContractBlock();
-
-			var tParam = Expression.Parameter(typeof (TValue));
-			var expression = ExpressionGenerator.GenerateExpression(expressionName, tParam);
-			if (null == expression)
-				return null;
-			return Expression.Lambda<UnaryFunc>(expression,tParam).Compile();
-		}
-
-		private BinaryFunc BuildBinaryFunc(string expressionName){
-			Contract.Requires(!string.IsNullOrEmpty(expressionName));
-			Contract.EndContractBlock();
-
-			var tParam0 = Expression.Parameter(typeof(TValue));
-			var tParam1 = Expression.Parameter(typeof(TValue));
-			var expression = ExpressionGenerator.GenerateExpression(expressionName,tParam0, tParam1);
-			if (null == expression)
-				return null;
-			return Expression.Lambda<BinaryFunc>(expression,tParam0, tParam1).Compile();
-		}
-
-		/// <summary>
-		/// The expression generator that was used to create the run-time executable generic functions.
-		/// </summary>
-		public IExpressionGenerator ExpressionGenerator { get; private set; }
-
-		/// <summary>
 		/// A run-time executable generic addition function.
 		/// </summary>
 		public readonly BinaryFunc Add;
@@ -128,6 +63,29 @@ namespace Vertesaur.Generation.GenericOperations
 		/// A run-time executable generic negation function.
 		/// </summary>
 		public readonly UnaryFunc Negate;
+
+		public readonly UnaryFunc Sin;
+		public readonly UnaryFunc Cos;
+		public readonly UnaryFunc Tan;
+		public readonly UnaryFunc Asin;
+		public readonly UnaryFunc Acos;
+		public readonly UnaryFunc Atan;
+		public readonly UnaryFunc Sinh;
+		public readonly UnaryFunc Cosh;
+		public readonly UnaryFunc Tanh;
+		public readonly UnaryFunc Ceiling;
+		public readonly UnaryFunc Floor;
+		public readonly UnaryFunc Truncate;
+		public readonly UnaryFunc Log;
+		public readonly UnaryFunc Log10;
+		public readonly UnaryFunc Exp;
+		public readonly UnaryFunc Abs;
+
+		public readonly BinaryFunc Atan2;
+		public readonly BinaryFunc Pow;
+		public readonly BinaryFunc Min;
+		public readonly BinaryFunc Max;
+
 		/// <summary>
 		/// Converts a generic typed value to the double type.
 		/// </summary>
@@ -135,7 +93,91 @@ namespace Vertesaur.Generation.GenericOperations
 		/// <summary>
 		/// Convertes a double typed value to the generic type.
 		/// </summary>
-		public readonly Func<double, TValue> FromDouble; 
+		public readonly Func<double, TValue> FromDouble;
+
+		/// <summary>
+		/// Creates a new basic generic operations implementation using the given expression generator.
+		/// </summary>
+		/// <param name="expressionGenerator">The expression generator that will be used to build the generic methods at run-time.</param>
+		public BasicOperations(IExpressionGenerator expressionGenerator){
+			Contract.Requires(null != expressionGenerator);
+			Contract.Ensures(null != ExpressionGenerator);
+			Contract.EndContractBlock();
+			ExpressionGenerator = expressionGenerator;
+
+			Add = BuildBinaryFunc("Add");
+			Subtract = BuildBinaryFunc("Subtract");
+			Multiply = BuildBinaryFunc("Multiply");
+			Divide = BuildBinaryFunc("Divide");
+			Negate = BuildUnaryFunc("Negate");
+			Sin = BuildUnaryFunc("Sin");
+			Cos = BuildUnaryFunc("Cos");
+			Tan = BuildUnaryFunc("Tan");
+			Asin = BuildUnaryFunc("Asin");
+			Acos = BuildUnaryFunc("Acos");
+			Atan = BuildUnaryFunc("Atan");
+			Sinh = BuildUnaryFunc("Sinh");
+			Cosh = BuildUnaryFunc("Cosh");
+			Tanh = BuildUnaryFunc("Tanh");
+			Log = BuildUnaryFunc("Log");
+			Log10 = BuildUnaryFunc("Log10");
+			Exp = BuildUnaryFunc("Exp");
+			Abs = BuildUnaryFunc("Abs");
+			Atan2 = BuildBinaryFunc("Atan2");
+			Pow = BuildBinaryFunc("Pow");
+			Ceiling = BuildUnaryFunc("Ceiling");
+			Floor = BuildUnaryFunc("Floor");
+			Truncate = BuildUnaryFunc("Truncate");
+			Min = BuildBinaryFunc("Min");
+			Max = BuildBinaryFunc("Max");
+
+			ToDouble = BuildConversion<TValue, double>();
+			FromDouble = BuildConversion<double,TValue>();
+			_zeroValueGenerator = BuildConstant("0");
+		}
+
+		private Func<TFrom, TTo> BuildConversion<TFrom,TTo>() {
+			var inputParam = Expression.Parameter(typeof(TFrom));
+			var expression = ExpressionGenerator.GenerateConversionExpression(typeof(TTo), inputParam);
+			if(null == expression)
+				return null;
+			return Expression.Lambda<Func<TFrom, TTo>>(expression, inputParam).Compile();
+		} 
+
+		private CreateConstantFunc BuildConstant(string expressionName) {
+			Contract.Requires(!String.IsNullOrEmpty(expressionName));
+			Contract.EndContractBlock();
+			var expression = ExpressionGenerator.Generate(expressionName, typeof(TValue));
+			if (null == expression)
+				return null;
+			return Expression.Lambda<CreateConstantFunc>(expression).Compile();
+		}
+
+		private UnaryFunc BuildUnaryFunc(string expressionName){
+			Contract.Requires(!string.IsNullOrEmpty(expressionName));
+			var tParam = Expression.Parameter(typeof (TValue));
+			var expression = ExpressionGenerator.Generate(expressionName, tParam);
+			if (null == expression)
+				return null;
+			return Expression.Lambda<UnaryFunc>(expression,tParam).Compile();
+		}
+
+		private BinaryFunc BuildBinaryFunc(string expressionName){
+			Contract.Requires(!string.IsNullOrEmpty(expressionName));
+			var tParam0 = Expression.Parameter(typeof(TValue));
+			var tParam1 = Expression.Parameter(typeof(TValue));
+			var expression = ExpressionGenerator.Generate(expressionName,tParam0, tParam1);
+			if (null == expression)
+				return null;
+			return Expression.Lambda<BinaryFunc>(expression, tParam0, tParam1).Compile();
+		}
+
+		/// <summary>
+		/// The expression generator that was used to create the run-time executable generic functions.
+		/// </summary>
+		public IExpressionGenerator ExpressionGenerator { get; private set; }
+
+		
 
 		private readonly CreateConstantFunc _zeroValueGenerator;
 

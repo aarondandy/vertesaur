@@ -63,13 +63,13 @@ namespace Vertesaur.Generation.Expressions
 		/// <param name="expressionName">The name of the requested expression.</param>
 		/// <param name="inputExpressions">The requested inputs for the expression.</param>
 		/// <returns>A new requested expression or null if one could not be generated.</returns>
-		public static Expression GenerateExpression(this IExpressionGenerator generator, string expressionName, params Expression[] inputExpressions) {
+		public static Expression Generate(this IExpressionGenerator generator, string expressionName, params Expression[] inputExpressions) {
 			Contract.Requires(null != generator);
 			Contract.Requires(!String.IsNullOrEmpty(expressionName));
 			Contract.Requires(null != inputExpressions);
 			Contract.Requires(inputExpressions.Length != 0);
 			var request = NewRequest(generator, expressionName, inputExpressions);
-			return generator.GenerateExpression(request);
+			return generator.Generate(request);
 		}
 
 		/// <summary>
@@ -79,12 +79,12 @@ namespace Vertesaur.Generation.Expressions
 		/// <param name="expressionName">The name of the requested expression.</param>
 		/// <param name="resultType">The desired result type of the expression.</param>
 		/// <returns>A new requested expression or null if one could not be generated.</returns>
-		public static Expression GenerateExpression(this IExpressionGenerator generator, string expressionName, Type resultType) {
+		public static Expression Generate(this IExpressionGenerator generator, string expressionName, Type resultType) {
 			Contract.Requires(null != generator);
 			Contract.Requires(!String.IsNullOrEmpty(expressionName));
 			Contract.Requires(null != resultType);
 			var request = NewRequest(generator, expressionName, resultType);
-			return generator.GenerateExpression(request);
+			return generator.Generate(request);
 		}
 
 		/// <summary>
@@ -99,7 +99,7 @@ namespace Vertesaur.Generation.Expressions
 			Contract.Requires(null != resultType);
 			Contract.Requires(null != input);
 			var request = NewConversionRequest(generator, resultType, input);
-			return generator.GenerateExpression(request);
+			return generator.Generate(request);
 		}
 
 	}

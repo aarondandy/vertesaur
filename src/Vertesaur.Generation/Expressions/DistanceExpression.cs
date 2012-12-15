@@ -44,7 +44,7 @@ namespace Vertesaur.Generation.Expressions
 		public override Expression Reduce() {
 			Contract.Ensures(Contract.Result<Expression>() != null);
 			// TODO: use some square root utility method that does not take the square root of a square
-			return ReductionExpressionGenerator.GenerateExpression("SquareRoot", InnerExpression)
+			return ReductionExpressionGenerator.Generate("SquareRoot", InnerExpression)
 				?? new SquareRootExpression(InnerExpression, ReductionExpressionGenerator);
 		}
 
