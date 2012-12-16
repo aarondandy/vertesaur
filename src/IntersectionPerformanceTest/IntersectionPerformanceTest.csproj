@@ -73,8 +73,8 @@
       <Project>{DED4013E-C292-4CE9-B4B6-FB6B2F839D60}</Project>
       <Name>Vertesaur.Core.PolygonOperation.Test</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\src\Vertesaur.Core\Vertesaur.Core.csproj">
-      <Project>{3202D8B1-CA6C-4403-912B-8D9063CA022A}</Project>
+    <ProjectReference Include="..\Vertesaur.Core\Vertesaur.Core.csproj">
+      <Project>{3202d8b1-ca6c-4403-912b-8d9063ca022a}</Project>
       <Name>Vertesaur.Core</Name>
     </ProjectReference>
   </ItemGroup>

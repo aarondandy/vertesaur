@@ -11,7 +11,7 @@ def extract_assembly_version(filePath)
 	nil
 end
 
-task :default => [:build,:make_nupkg]
+task :default => [:build,:sign_asm,:make_nupkg]
 
 task :make_nupkg => [:make_nupkg_core,:make_nupkg_generation]
 
@@ -20,6 +20,11 @@ msbuild :build do |msb|
 	msb.solution = "./vertesaur-all.sln"
 	msb.properties = {:configuration => :Release}
 end
+
+exec :sign_asm do |cmd|
+	cmd.command = "./build/sign_release_assemblies.bat"
+end
+
 
 exec :make_nupkg_core do |cmd|
 	asmVersion3 = extract_assembly_version "./src/VertesaurAssemblyInfo.cs"
