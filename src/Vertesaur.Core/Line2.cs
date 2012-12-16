@@ -373,7 +373,7 @@ namespace Vertesaur {
 		/// <param name="segment">A segment.</param>
 		/// <returns><c>true</c> when another object intersects this object.</returns>
 		public bool Intersects(Segment2 segment) {
-			throw new NotImplementedException();
+			return !ReferenceEquals(null, segment) && segment.Intersects(this);
 		}
 
 		/// <summary>
@@ -382,16 +382,81 @@ namespace Vertesaur {
 		/// <param name="ray">A ray.</param>
 		/// <returns><c>true</c> when another object intersects this object.</returns>
 		public bool Intersects(Ray2 ray) {
-			throw new NotImplementedException();
+			// ReSharper disable CompareOfFloatsByEqualityOperator
+			if (ReferenceEquals(null, ray))
+				return false;
+
+			Point2 a, c;
+			Vector2 d0, d1;
+			a = P;
+			c = ray.P;
+			d0 = Direction;
+			d1 = ray.Direction;
+			var e = c - a;
+			var cross = (d0.X * d1.Y) - (d1.X * d0.Y);
+			var magnitudeSquared0 = d0.GetMagnitudeSquared();
+
+			if (cross * cross > d1.GetMagnitudeSquared() * magnitudeSquared0 * Double.Epsilon) {
+				// not parallel
+				var s = ((e.X * d1.Y) - (e.Y * d1.X)) / cross;
+
+				var t = ((e.X * d0.Y) - (e.Y * d0.X)) / cross;
+				if (t < 0)
+					return false; // not intersecting on other ray
+
+				return true; // it must intersect at a point
+			}
+
+			// parallel
+			cross = (e.X * d0.Y) - (e.Y * d0.X);
+			if (cross * cross > e.GetMagnitudeSquared() * magnitudeSquared0 * Double.Epsilon)
+				return false; // no intersection
+
+			return true;
+			// ReSharper restore CompareOfFloatsByEqualityOperator
 		}
 
 		/// <summary>
-		/// Determines if this line intersect another <paramref name="line"/>.
+		/// Determines if this line intersect another line.
 		/// </summary>
-		/// <param name="line">A line.</param>
+		/// <param name="other">A line.</param>
 		/// <returns><c>true</c> when another object intersects this object.</returns>
-		public bool Intersects(Line2 line) {
-			throw new NotImplementedException();
+		public bool Intersects(Line2 other) {
+			// ReSharper disable CompareOfFloatsByEqualityOperator
+			if (ReferenceEquals(null, other))
+				return false;
+			if (ReferenceEquals(this, other) || P.Equals(other.P) && Direction.Equals(other.Direction))
+				return true;
+
+			Point2 a, c;
+			Vector2 d0, d1;
+			// order the lines
+			var compareResult = P.CompareTo(other.P);
+			if (0 < ((compareResult == 0) ? Direction.CompareTo(other.Direction) : compareResult)) {
+				a = other.P;
+				c = P;
+				d0 = other.Direction;
+				d1 = Direction;
+			}
+			else {
+				a = P;
+				c = other.P;
+				d0 = Direction;
+				d1 = other.Direction;
+			}
+			var e = c - a;
+			var cross = (d0.X * d1.Y) - (d1.X * d0.Y);
+			var magnitudeSquared0 = d0.GetMagnitudeSquared();
+			if (cross * cross > d1.GetMagnitudeSquared() * magnitudeSquared0 * Double.Epsilon)
+				return true; // not parallel
+
+			// parallel
+			cross = (e.X * d0.Y) - (e.Y * d0.X);
+			if (cross * cross > e.GetMagnitudeSquared() * magnitudeSquared0 * Double.Epsilon)
+				return false;
+
+			return true; // are same line
+			// ReSharper restore CompareOfFloatsByEqualityOperator
 		}
 
 		/// <inheritdoc/>
@@ -402,16 +467,83 @@ namespace Vertesaur {
 		}
 		/// <inheritdoc/>
 		public IPlanarGeometry Intersection(Line2 other) {
+			// ReSharper disable CompareOfFloatsByEqualityOperator
 			if (ReferenceEquals(null, other))
 				return null;
-			throw new NotImplementedException();
+			if (ReferenceEquals(this, other) || P.Equals(other.P) && Direction.Equals(other.Direction))
+				return Clone();
+
+			Point2 a, c;
+			Vector2 d0, d1;
+			// order the lines
+			var compareResult = P.CompareTo(other.P);
+			if (0 < ((compareResult == 0) ? Direction.CompareTo(other.Direction) : compareResult)) {
+				a = other.P;
+				c = P;
+				d0 = other.Direction;
+				d1 = Direction;
+			}
+			else {
+				a = P;
+				c = other.P;
+				d0 = Direction;
+				d1 = other.Direction;
+			}
+			var e = c - a;
+			var cross = (d0.X * d1.Y) - (d1.X * d0.Y);
+			var magnitudeSquared0 = d0.GetMagnitudeSquared();
+			if (cross * cross > d1.GetMagnitudeSquared() * magnitudeSquared0 * Double.Epsilon)
+				return a + d0.GetScaled(((e.X * d1.Y) - (e.Y * d1.X)) / cross); // not parallel
+
+			// parallel
+			cross = (e.X * d0.Y) - (e.Y * d0.X);
+			if (cross * cross > e.GetMagnitudeSquared() * magnitudeSquared0 * Double.Epsilon)
+				return null; // no intersection
+
+			return Clone(); // are same line
+			// ReSharper restore CompareOfFloatsByEqualityOperator
 		}
+
 		/// <inheritdoc/>
-		public IPlanarGeometry Intersection(Ray2 other) {
-			if (ReferenceEquals(null, other))
+		public IPlanarGeometry Intersection(Ray2 ray) {
+			// ReSharper disable CompareOfFloatsByEqualityOperator
+			if (ReferenceEquals(null, ray))
 				return null;
-			throw new NotImplementedException();
+
+			Point2 a, c;
+			Vector2 d0, d1;
+			a = P;
+			c = ray.P;
+			d0 = Direction;
+			d1 = ray.Direction;
+			var e = c - a;
+			var cross = (d0.X * d1.Y) - (d1.X * d0.Y);
+			var magnitudeSquared0 = d0.GetMagnitudeSquared();
+
+			if (cross * cross > d1.GetMagnitudeSquared() * magnitudeSquared0 * Double.Epsilon) {
+				// not parallel
+				var s = ((e.X * d1.Y) - (e.Y * d1.X)) / cross;
+
+				var t = ((e.X * d0.Y) - (e.Y * d0.X)) / cross;
+				if (t < 0)
+					return null; // not intersecting on other ray
+
+				if (0 == s)
+					return a;
+				if (0 == t)
+					return c;
+				return a + d0.GetScaled(s); // it must intersect at a point, so find where
+			}
+
+			// parallel
+			cross = (e.X * d0.Y) - (e.Y * d0.X);
+			if (cross * cross > e.GetMagnitudeSquared() * magnitudeSquared0 * Double.Epsilon)
+				return null; // no intersection
+
+			return ray.Clone();
+			// ReSharper restore CompareOfFloatsByEqualityOperator
 		}
+
 		/// <inheritdoc/>
 		public IPlanarGeometry Intersection(Point2 other) {
 			return Intersects(other) ? (IPlanarGeometry)other : null;

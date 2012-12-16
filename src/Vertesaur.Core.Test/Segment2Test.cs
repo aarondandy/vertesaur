@@ -385,6 +385,77 @@ namespace Vertesaur.Core.Test {
 			res = b.Intersection(a);
 			Assert.IsNull(res);
 		}
+
+		[Test]
+		public void LineIntersectionResultTest(){
+			var a = new Segment2(new Point2(0, -1), new Point2(0, 1));
+			var b = new Line2(new Point2(1, 1), new Vector2(1, 1));
+			var c = new Line2(new Point2(1, 1), new Vector2(0, 1));
+			var d = new Line2(new Point2(0, 0), new Vector2(0, 1));
+
+			Assert.AreEqual(new Point2(0,0), a.Intersection(b));
+			Assert.AreEqual(null, a.Intersection(c));
+			Assert.AreEqual(a, a.Intersection(d));
+		}
+
+		[Test]
+		public void LineIntersectionCheckTest() {
+			var a = new Segment2(new Point2(0, -1), new Point2(0, 1));
+			var b = new Line2(new Point2(1, 1), new Vector2(1, 1));
+			var c = new Line2(new Point2(1, 1), new Vector2(0, 1));
+			var d = new Line2(new Point2(0, 0), new Vector2(0, 1));
+
+			Assert.IsTrue(a.Intersects(b));
+			Assert.IsFalse(a.Intersects(c));
+			Assert.IsTrue(a.Intersects(d));
+		}
+
+		[Test]
+		public void RayIntersectionResultTest(){
+			var a = new Segment2(new Point2(0, -1), new Point2(0, 1));
+			var b = new Ray2(new Point2(1, 1), new Vector2(1, 1));
+			var c = new Ray2(new Point2(1, 1), new Vector2(-1, -1));
+			var d = new Ray2(new Point2(0, 1), new Vector2(0, 1));
+			var e = new Ray2(new Point2(0, -1), new Vector2(0, -1));
+			var f = new Ray2(new Point2(0, 0), new Vector2(0, 3));
+
+			Assert.AreEqual(null, a.Intersection(b));
+			Assert.AreEqual(new Point2(0,0), a.Intersection(c));
+
+			Assert.AreEqual(null, a.Intersection(new Ray2(new Point2(0, 2), new Vector2(0, 1))));
+			Assert.AreEqual(null, a.Intersection(new Ray2(new Point2(0, -2), new Vector2(0, -1))));
+
+			Assert.AreEqual(new Point2(0, 1), a.Intersection(d));
+			Assert.AreEqual(a, a.Intersection(d.GetReverse()));
+			Assert.AreEqual(new Point2(0, -1), a.Intersection(e));
+			Assert.AreEqual(a, a.Intersection(e.GetReverse()));
+			Assert.AreEqual(new Segment2(f.P,a.B), a.Intersection(f));
+			Assert.AreEqual(new Segment2(a.A, f.P), a.Intersection(f.GetReverse()));
+		}
+
+		[Test]
+		public void RayIntersectionCheckTest() {
+			var a = new Segment2(new Point2(0, -1), new Point2(0, 1));
+			var b = new Ray2(new Point2(1, 1), new Vector2(1, 1));
+			var c = new Ray2(new Point2(1, 1), new Vector2(-1, -1));
+			var d = new Ray2(new Point2(0, 1), new Vector2(0, 1));
+			var e = new Ray2(new Point2(0, -1), new Vector2(0, -1));
+			var f = new Ray2(new Point2(0, 0), new Vector2(0, 3));
+
+			Assert.IsFalse(a.Intersects(b));
+			Assert.IsTrue(a.Intersects(c));
+
+			Assert.IsFalse(a.Intersects(new Ray2(new Point2(0, 2), new Vector2(0, 1))));
+			Assert.IsFalse(a.Intersects(new Ray2(new Point2(0, -2), new Vector2(0, -1))));
+
+			Assert.IsTrue(a.Intersects(d));
+			Assert.IsTrue(a.Intersects(d.GetReverse()));
+			Assert.IsTrue(a.Intersects(e));
+			Assert.IsTrue(a.Intersects(e.GetReverse()));
+			Assert.IsTrue(a.Intersects(f));
+			Assert.IsTrue(a.Intersects(f.GetReverse()));
+		}
+
 	}
 }
 

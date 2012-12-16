@@ -147,6 +147,60 @@ namespace Vertesaur.Core.Test {
 			Assert.AreEqual(1, l.GetMbr().XMax);
 		}
 
+		[Test]
+		public void IntersectionResultTest(){
+			var a = new Line2(new Point2(3, 3), new Vector2(1, 1));
+			var b = new Line2(new Point2(0, 1), new Vector2(0, 1));
+			var c = new Line2(new Point2(2, 2), new Vector2(-1, -1));
+			var d = new Line2(new Point2(2, 3), new Vector2(-1, -1));
+
+			Assert.AreEqual(new Point2(0,0), a.Intersection(b));
+			Assert.AreEqual(a, a.Intersection(c));
+			Assert.AreEqual(null, a.Intersection(d));
+		}
+
+		[Test]
+		public void IntersectionCheckTest() {
+			var a = new Line2(new Point2(3, 3), new Vector2(1, 1));
+			var b = new Line2(new Point2(0, 1), new Vector2(0, 1));
+			var c = new Line2(new Point2(2, 2), new Vector2(-1, -1));
+			var d = new Line2(new Point2(2, 3), new Vector2(-1, -1));
+
+			Assert.IsTrue(a.Intersects(b));
+			Assert.IsTrue(a.Intersects(c));
+			Assert.IsFalse(a.Intersects(d));
+		}
+
+		[Test]
+		public void IntersectionRayResultTest() {
+			var a = new Line2(new Point2(3, 3), new Vector2(1, 1));
+			var b = new Ray2(new Point2(0, 1), new Vector2(0, 1));
+			var c = new Ray2(new Point2(2, 2), new Vector2(-1, -1));
+			var d = new Ray2(new Point2(2, 3), new Vector2(-1, -1));
+
+			Assert.AreEqual(null, a.Intersection(b));
+			Assert.AreEqual(new Point2(0,0), a.Intersection(b.GetReverse()));
+			Assert.AreEqual(c, a.Intersection(c));
+			Assert.AreEqual(c.GetReverse(), a.Intersection(c.GetReverse()));
+			Assert.AreEqual(null, a.Intersection(d));
+			Assert.AreEqual(null, a.Intersection(d.GetReverse()));
+		}
+
+		[Test]
+		public void IntersectionRayCheckTest() {
+			var a = new Line2(new Point2(3, 3), new Vector2(1, 1));
+			var b = new Ray2(new Point2(0, 1), new Vector2(0, 1));
+			var c = new Ray2(new Point2(2, 2), new Vector2(-1, -1));
+			var d = new Ray2(new Point2(2, 3), new Vector2(-1, -1));
+
+			Assert.IsFalse(a.Intersects(b));
+			Assert.IsTrue(a.Intersects(b.GetReverse()));
+			Assert.IsTrue(a.Intersects(c));
+			Assert.IsTrue(a.Intersects(c.GetReverse()));
+			Assert.IsFalse(a.Intersects(d));
+			Assert.IsFalse(a.Intersects(d.GetReverse()));
+		}
+
 	}
 }
 

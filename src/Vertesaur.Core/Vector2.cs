@@ -216,7 +216,7 @@ namespace Vertesaur {
 		}
 
 		/// <inheritdoc/>
-		public override string ToString() {
+		[Pure] public override string ToString() {
 			return String.Concat(X, ' ', Y);
 		}
 

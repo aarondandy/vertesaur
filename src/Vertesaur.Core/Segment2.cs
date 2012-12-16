@@ -178,30 +178,6 @@ namespace Vertesaur {
 		}
 
 		/// <summary>
-		/// Calculates the geometry resulting from the intersection of a line segment and a ray.
-		/// </summary>
-		/// <param name="a">An end point on the segment.</param>
-		/// <param name="b">Another end point on the segment.</param>
-		/// <param name="c">An end point on the ray segment.</param>
-		/// <param name="d">The direction of the ray.</param>
-		/// <returns>The resulting intersection geometry.</returns>
-		public static IPlanarGeometry IntersectionRay(Point2 a, Point2 b, Point2 c, Vector2 d) {
-			throw new NotImplementedException();
-		}
-
-		/// <summary>
-		/// Calculates the geometry resulting from the intersection of a line segment and a ray.
-		/// </summary>
-		/// <param name="a">An end point on the segment.</param>
-		/// <param name="b">Another end point on the segment.</param>
-		/// <param name="c">An end point on the ray segment.</param>
-		/// <param name="d">The direction of the ray.</param>
-		/// <returns>The resulting intersection geometry.</returns>
-		public static IPlanarGeometry IntersectionLine(Point2 a, Point2 b, Point2 c, Vector2 d) {
-			throw new NotImplementedException();
-		}
-
-		/// <summary>
 		/// Compares two segments defined by their end points.
 		/// </summary>
 		/// <param name="a">A point on the first segment.</param>
@@ -302,7 +278,7 @@ namespace Vertesaur {
 		/// The direction of the line segment from A to B with the same magnitude.
 		/// </summary>
 		public Vector2 Direction {
-			get { return B - A; }
+			get { return B.Difference(A); }
 		}
 
 		/// <inheritdoc/>
@@ -477,7 +453,29 @@ namespace Vertesaur {
 		public bool Intersects(Line2 line) {
 			if (ReferenceEquals(null, line))
 				return false;
-			throw new NotImplementedException();
+
+			var c = line.P;
+
+			// ReSharper disable CompareOfFloatsByEqualityOperator
+			var d0 = Direction;
+			var d1 = line.Direction;
+			var e = c - A;
+			var cross = (d0.X * d1.Y) - (d1.X * d0.Y);
+			var magnitudeSquared0 = d0.GetMagnitudeSquared();
+
+			if (cross * cross > d1.GetMagnitudeSquared() * magnitudeSquared0 * Double.Epsilon) {
+				// not parallel
+				var s = ((e.X * d1.Y) - (e.Y * d1.X)) / cross;
+				if (s < 0 || s > 1)
+					return false; // not intersecting on this segment
+
+				return true; // it must intersect at a point
+			}
+
+			// parallel
+			cross = (e.X * d0.Y) - (e.Y * d0.X);
+			return !(cross * cross > e.GetMagnitudeSquared() * magnitudeSquared0 * Double.Epsilon);
+			// ReSharper restore CompareOfFloatsByEqualityOperator
 		}
 
 		/// <summary>
@@ -496,9 +494,68 @@ namespace Vertesaur {
 		/// <param name="ray">The ray to find the intersection with.</param>
 		/// <returns>The intersection geometry or <c>null</c> for no intersection.</returns>
 		public IPlanarGeometry Intersection(Ray2 ray) {
-			return ReferenceEquals(null, ray)
-				? null
-				: IntersectionRay(A, B, ray.P, ray.Direction);
+			// ReSharper disable CompareOfFloatsByEqualityOperator
+			if(ReferenceEquals(null, ray))
+				return null;
+
+			var d0 = Direction;
+			var d1 = ray.Direction;
+			var e = ray.P - A;
+			var cross = (d0.X * d1.Y) - (d1.X * d0.Y);
+			var magnitudeSquared0 = d0.GetMagnitudeSquared();
+
+			if (cross * cross > d1.GetMagnitudeSquared() * magnitudeSquared0 * Double.Epsilon) {
+				// not parallel
+				var s = ((e.X * d1.Y) - (e.Y * d1.X)) / cross;
+				if (s < 0 || s > 1)
+					return null; // not intersecting on this segment
+
+				var t = ((e.X * d0.Y) - (e.Y * d0.X)) / cross;
+				if (t < 0)
+					return null; // not intersecting on the ray
+
+				if (0 == s)
+					return A;
+				if (0 == t)
+					return ray.P;
+				return A + d0.GetScaled(s); // it must intersect at a point, so find where
+			}
+
+			// parallel
+			cross = (e.X * d0.Y) - (e.Y * d0.X);
+			if (cross * cross > e.GetMagnitudeSquared() * magnitudeSquared0 * Double.Epsilon)
+				return null; // no intersection
+
+			var sa = d0.Dot(e) / magnitudeSquared0;
+			var sb = sa + (d0.Dot(d1) / magnitudeSquared0);
+			var sd = sb - sa;
+
+			if (sd < 0){
+				if (sa >= 1.0){
+					return Clone(); // start point is past the segment but pointing back at it
+				}
+				if (sa < 0){
+					return null; // start point is before the segment
+				}
+				if (sa == 0){
+					return A; // start point is on the start of the segment
+				}
+				return new Segment2(A, ray.P); // start point is somewhere inside the segment
+			}
+			if (sd > 0){
+				if (sa > 1.0){
+					return null; // start point is past the segment and pointing away
+				}
+				if (sa == 1.0){
+					return B; // start point is on the segment end and pointing away
+				}
+				if (sa <= 0){
+					return Clone(); // start point is before the segment and going through it
+				}
+				return new Segment2(ray.P, B); // start point is in the segment and going through it to the end
+			}
+			return null;
+			// ReSharper restore CompareOfFloatsByEqualityOperator
 		}
 		/// <summary>
 		/// Calculates the intersection geometry between this segment and a line.
@@ -506,9 +563,40 @@ namespace Vertesaur {
 		/// <param name="line">The line to find the intersection with.</param>
 		/// <returns>The intersection geometry or <c>null</c> for no intersection.</returns>
 		public IPlanarGeometry Intersection(Line2 line) {
-			return ReferenceEquals(null, line)
-				? null
-				: IntersectionLine(A, B, line.P, line.Direction);
+			if(ReferenceEquals(null, line))
+				return null;
+
+			var c = line.P;
+
+			// ReSharper disable CompareOfFloatsByEqualityOperator
+			var d0 = Direction;
+			var d1 = line.Direction;
+			var e = c - A;
+			var cross = (d0.X * d1.Y) - (d1.X * d0.Y);
+			var magnitudeSquared0 = d0.GetMagnitudeSquared();
+
+			if (cross * cross > d1.GetMagnitudeSquared() * magnitudeSquared0 * Double.Epsilon) {
+				// not parallel
+				var s = ((e.X * d1.Y) - (e.Y * d1.X)) / cross;
+				if (s < 0 || s > 1)
+					return null; // not intersecting on this segment
+
+				var t = ((e.X * d0.Y) - (e.Y * d0.X)) / cross;
+
+				if (0 == s)
+					return A;
+				if (0 == t)
+					return c;
+				return A + d0.GetScaled(s); // it must intersect at a point, so find where
+			}
+
+			// parallel
+			cross = (e.X * d0.Y) - (e.Y * d0.X);
+			if (cross * cross > e.GetMagnitudeSquared() * magnitudeSquared0 * Double.Epsilon)
+				return null; // no intersection
+
+			return Clone();
+			// ReSharper restore CompareOfFloatsByEqualityOperator
 		}
 
 		/// <summary>

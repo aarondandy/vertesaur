@@ -337,7 +337,7 @@ namespace Vertesaur {
 		/// <param name="line">A line.</param>
 		/// <returns><c>true</c> when another object intersects this object.</returns>
 		public bool Intersects(Line2 line) {
-			return null != Intersection(line);
+			return !ReferenceEquals(null,line) && line.Intersects(this);
 		}
 
 		/// <summary>
@@ -359,6 +359,9 @@ namespace Vertesaur {
 			// ReSharper disable CompareOfFloatsByEqualityOperator
 			if (ReferenceEquals(null, ray))
 				return null;
+			if (ReferenceEquals(this, ray) || P.Equals(ray.P) && Direction.Equals(ray.Direction))
+				return Clone();
+
 			Point2 a, c;
 			Vector2 d0, d1;
 			// next order the segments
@@ -378,7 +381,7 @@ namespace Vertesaur {
 			var cross = (d0.X * d1.Y) - (d1.X * d0.Y);
 			var magnitudeSquared0 = d0.GetMagnitudeSquared();
 
-			if (cross * cross > magnitudeSquared0 * d1.GetMagnitudeSquared() * Double.Epsilon) {
+			if (cross * cross > d1.GetMagnitudeSquared() * magnitudeSquared0 * Double.Epsilon) {
 				// not parallel
 				var s = ((e.X * d1.Y) - (e.Y * d1.X)) / cross;
 				if (s < 0)
@@ -386,7 +389,7 @@ namespace Vertesaur {
 
 				var t = ((e.X * d0.Y) - (e.Y * d0.X)) / cross;
 				if (t < 0)
-					return null; // not intersecting on other segment
+					return null; // not intersecting on other ray
 
 				if (0 == s)
 					return a;
@@ -397,7 +400,7 @@ namespace Vertesaur {
 
 			// parallel
 			cross = (e.X * d0.Y) - (e.Y * d0.X);
-			if (cross * cross > magnitudeSquared0 * e.GetMagnitudeSquared() * Double.Epsilon)
+			if (cross * cross > e.GetMagnitudeSquared() * magnitudeSquared0 * Double.Epsilon)
 				return null; // no intersection
 
 			var sa = d0.Dot(e) / magnitudeSquared0;
@@ -431,12 +434,20 @@ namespace Vertesaur {
 		public IPlanarGeometry Intersection(Line2 line) {
 			if(ReferenceEquals(null, line))
 				return null;
-			throw new NotImplementedException();
+			return line.Intersection(this);
 		}
 
 		/// <inheritdoc/>
 		public IPlanarGeometry Intersection(Point2 other) {
 			return Intersects(other) ? (IPlanarGeometry)other : null;
+		}
+
+		/// <summary>
+		/// Creates a new ray starting from the same point of origin but going in the opposite direction.
+		/// </summary>
+		/// <returns>A new reversed ray.</returns>
+		public Ray2 GetReverse() {
+			return new Ray2(P, Direction.GetNegative());
 		}
 	}
 }

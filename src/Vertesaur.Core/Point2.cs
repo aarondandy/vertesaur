@@ -193,18 +193,18 @@ namespace Vertesaur {
 		double ICoordinatePair<double>.Y { get { return Y; } }
 
 		/// <inheritdoc/>
-		public bool Equals(Point2 other) {
+		[Pure] public bool Equals(Point2 other) {
 			return X == other.X && Y == other.Y;
 		}
 
 		/// <inheritdoc/>
-		public bool Equals(ICoordinatePair<double> other) {
+		[Pure] public bool Equals(ICoordinatePair<double> other) {
 			return !ReferenceEquals(null, other)
 				&& X == other.X && Y == other.Y;
 		}
 
 		/// <inheritdoc/>
-		public override bool Equals(object obj) {
+		[Pure] public override bool Equals(object obj) {
 			return null != obj && (
 				(obj is Point2 && Equals((Point2)obj))
 				||
@@ -213,17 +213,17 @@ namespace Vertesaur {
 		}
 
 		/// <inheritdoc/>
-		public override int GetHashCode() {
+		[Pure] public override int GetHashCode() {
 			return X.GetHashCode();
 		}
 
 		/// <inheritdoc/>
-		public override string ToString() {
+		[Pure] public override string ToString() {
 			return String.Concat(X, ' ', Y);
 		}
 
 		/// <inheritdoc/>
-		public int CompareTo(Point2 other) {
+		[Pure] public int CompareTo(Point2 other) {
 			var c = X.CompareTo(other.X);
 			return 0 == c ? Y.CompareTo(other.Y) : c;
 		}
@@ -263,7 +263,7 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="delta">An offset vector.</param>
 		/// <returns>An offset point.</returns>
-		public Point2 Add(Vector2 delta) {
+		[Pure] public Point2 Add(Vector2 delta) {
 			return new Point2(X + delta.X, Y + delta.Y);
 		}
 
@@ -272,7 +272,7 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="b">The other point.</param>
 		/// <returns>The vector difference.</returns>
-		public Vector2 Difference(Point2 b) {
+		[Pure] public Vector2 Difference(Point2 b) {
 			return new Vector2(X - b.X, Y - b.Y);
 		}
 
@@ -281,12 +281,12 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="b">The vector.</param>
 		/// <returns>The offset point.</returns>
-		public Point2 Difference(Vector2 b) {
+		[Pure] public Point2 Difference(Vector2 b) {
 			return new Point2(X - b.X, Y - b.Y);
 		}
 
 		/// <inheritdoc/>
-		public Mbr GetMbr() {
+		[Pure] public Mbr GetMbr() {
 			Contract.Ensures(Contract.Result<Mbr>() != null);
 			return new Mbr(this);
 		}
@@ -294,8 +294,7 @@ namespace Vertesaur {
 		/// <summary>
 		/// Determines if the point is valid.
 		/// </summary>
-		[Pure]
-		public bool IsValid {
+		[Pure] public bool IsValid {
 			get { return !Double.IsNaN(X) && !Double.IsNaN(Y); }
 		}
 

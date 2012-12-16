@@ -195,18 +195,18 @@ namespace Vertesaur {
 		double ICoordinateTriple<double>.Z { get { return Z; } }
 
 		/// <inheritdoc/>
-		public bool Equals(Point3 other) {
+		[Pure] public bool Equals(Point3 other) {
 			return X == other.X && Y == other.Y && Z == other.Z;
 		}
 
 		/// <inheritdoc/>
-		public bool Equals(ICoordinateTriple<double> other) {
+		[Pure] public bool Equals(ICoordinateTriple<double> other) {
 			return !ReferenceEquals(null, other)
 				&& X == other.X && Y == other.Y && Z == other.Z;
 		}
 
 		/// <inheritdoc/>
-		public override bool Equals(object obj) {
+		[Pure] public override bool Equals(object obj) {
 			return null != obj && (
 				(obj is Point3 && Equals((Point3)obj))
 				|| Equals(obj as ICoordinateTriple<double>)
@@ -221,17 +221,17 @@ namespace Vertesaur {
 		}
 
 		/// <inheritdoc/>
-		public override int GetHashCode() {
+		[Pure] public override int GetHashCode() {
 			return X.GetHashCode();
 		}
 
 		/// <inheritdoc/>
-		public override string ToString() {
+		[Pure] public override string ToString() {
 			return String.Concat(X, ' ', Y, ' ', Z);
 		}
 
 		/// <inheritdoc/>
-		public int CompareTo(Point3 other) {
+		[Pure] public int CompareTo(Point3 other) {
 			var c = X.CompareTo(other.X);
 			return 0 != c
 				? c
@@ -283,7 +283,7 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="delta">An offset vector.</param>
 		/// <returns>An offset point.</returns>
-		public Point3 Add(Vector3 delta) {
+		[Pure] public Point3 Add(Vector3 delta) {
 			return new Point3(X + delta.X, Y + delta.Y, Z + delta.Z);
 		}
 
@@ -292,7 +292,7 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="b">The other point.</param>
 		/// <returns>The vector difference.</returns>
-		public Vector3 Difference(Point3 b) {
+		[Pure] public Vector3 Difference(Point3 b) {
 			return new Vector3(X - b.X, Y - b.Y, Z - b.Z);
 		}
 
