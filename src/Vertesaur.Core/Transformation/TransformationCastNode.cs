@@ -191,7 +191,7 @@ namespace Vertesaur.Transformation
 		}
 
 		/// <summary>
-		/// Gets the method info for this specific cast of the transfom value method.
+		/// Gets the method info for this specific cast of the transform value method.
 		/// </summary>
 		/// <returns>A method info object.</returns>
 		/// <exception cref="System.InvalidOperationException">Thrown if the <c>TransformValue</c> method cannot be found at run time.</exception>
@@ -205,7 +205,7 @@ namespace Vertesaur.Transformation
 		}
 
 		/// <summary>
-		/// Gets the method info for this specific cast of the transfom values method.
+		/// Gets the method info for this specific cast of the transform values method.
 		/// </summary>
 		/// <returns>A method info object.</returns>
 		/// <exception cref="System.InvalidOperationException">Thrown if the <c>TransformValues</c> method cannot be found at run time.</exception>
@@ -221,7 +221,7 @@ namespace Vertesaur.Transformation
 		/// <summary>
 		/// Transforms a value using the current type selection.
 		/// </summary>
-		/// <param name="value">The value to transfom.</param>
+		/// <param name="value">The value to transform.</param>
 		/// <returns>The result of transforming the value.</returns>
 		public object TransformValue(object value) {
 			var method = GetTransformValueMethod();
@@ -229,7 +229,7 @@ namespace Vertesaur.Transformation
 		}
 
 		/// <summary>
-		/// Transfoms a set of values using the current type selection.
+		/// Transforms a set of values using the current type selection.
 		/// </summary>
 		/// <param name="values">The values to transform.</param>
 		/// <returns>The result of transforming the values.</returns>

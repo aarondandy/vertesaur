@@ -9,7 +9,7 @@ namespace Vertesaur.Generation.Expressions
 	/// <summary>
 	/// An absolute value expression.
 	/// </summary>
-	public class AbsExpression : ReducableUnaryExpressionBase
+	public class AbsExpression : ReducibleUnaryExpressionBase
 	{
 
 		/// <summary>
@@ -43,7 +43,7 @@ namespace Vertesaur.Generation.Expressions
 		private Expression GenerateExpression(Expression parameter) {
 			Contract.Assume(null != parameter);
 			Contract.Assume(parameter.IsMemoryLocationOrConstant());
-			return Expression.Condition(
+			return Condition(
 				ReductionExpressionGenerator.Generate("GREATEREQUAL", parameter, ReductionExpressionGenerator.Generate("ZERO", Type)),
 				parameter,
 				ReductionExpressionGenerator.Generate("NEGATE", parameter)

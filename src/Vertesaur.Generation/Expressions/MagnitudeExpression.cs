@@ -10,7 +10,7 @@ namespace Vertesaur.Generation.Expressions
 	/// <summary>
 	/// An expression representing the magnitude of a set of expressions representing coordinates.
 	/// </summary>
-	public class MagnitudeExpression : ReducableExpressionBase
+	public class MagnitudeExpression : ReducibleExpressionBase
 	{
 
 		/// <summary>

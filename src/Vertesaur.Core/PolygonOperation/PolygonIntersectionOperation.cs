@@ -648,7 +648,7 @@ namespace Vertesaur.PolygonOperation {
 		/// Builds required crossing data. 
 		/// </summary>
 		/// <param name="crossings">The crossings to calculate. (Note: collection is modified)</param>
-		/// <param name="a">The left hand polgon.</param>
+		/// <param name="a">The left hand polygon.</param>
 		/// <param name="b">The right hand polygon.</param>
 		private PolygonCrossingsData BuildCrossingsData(List<PolygonCrossing> crossings,Polygon2 a,Polygon2 b) {
 			Contract.Requires(crossings != null);

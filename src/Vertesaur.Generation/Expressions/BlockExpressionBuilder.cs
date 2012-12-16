@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
-using System.Reflection;
 
 namespace Vertesaur.Generation.Expressions
 {
@@ -35,7 +34,7 @@ namespace Vertesaur.Generation.Expressions
 		}
 
 		/// <summary>
-		/// Builds a new block expression using the required local variables and statments.
+		/// Builds a new block expression using the required local variables and statements.
 		/// </summary>
 		/// <returns></returns>
 		public BlockExpression GetExpression() {
@@ -43,7 +42,7 @@ namespace Vertesaur.Generation.Expressions
 		}
 
 		/// <summary>
-		/// Add a group of statment expressions to this block expression builder.
+		/// Add a group of statement expressions to this block expression builder.
 		/// </summary>
 		/// <param name="expressions">The expressions to add.</param>
 		/// <returns>A reference to this block expression builder for chaining.</returns>
@@ -61,7 +60,7 @@ namespace Vertesaur.Generation.Expressions
 		/// Add expressions using a temporary local provided from the local manager.
 		/// </summary>
 		/// <param name="localType">The local variable type.</param>
-		/// <param name="generator">The generator that will create the statment expressions.</param>
+		/// <param name="generator">The generator that will create the statement expressions.</param>
 		/// <returns>A reference to this block expression builder for chaining.</returns>
 		public BlockExpressionBuilder AddUsingLocal(Func<ParameterExpression, IEnumerable<Expression>> generator, Type localType) {
 			if(null == localType) throw new ArgumentNullException("localType");
@@ -80,7 +79,7 @@ namespace Vertesaur.Generation.Expressions
 		/// <summary>
 		/// Add expressions using temporary local variables provided by the local manager.
 		/// </summary>
-		/// <param name="generator">The generator that will create the statment expressions.</param>
+		/// <param name="generator">The generator that will create the statement expressions.</param>
 		/// <param name="types">The types of the local variables to create.</param>
 		/// <returns>A reference to this block expression builder for chaining.</returns>
 		public BlockExpressionBuilder AddUsingLocals(Func<ParameterExpression[], IEnumerable<Expression>> generator, params Type[] types) {

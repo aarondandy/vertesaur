@@ -11,7 +11,7 @@ namespace Vertesaur.Generation.Expressions
 	/// <summary>
 	/// An expression representing the dot product of two vectors.
 	/// </summary>
-	public class DotProductExpression : ReducableExpressionBase
+	public class DotProductExpression : ReducibleExpressionBase
 	{
 
 		/// <summary>

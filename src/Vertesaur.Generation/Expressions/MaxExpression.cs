@@ -9,7 +9,7 @@ namespace Vertesaur.Generation.Expressions
 	/// <summary>
 	/// A maximum value expression which determines the maximum value of two expressions.
 	/// </summary>
-	public class MaxExpression : ReducableBinaryExpressionBase
+	public class MaxExpression : ReducibleBinaryExpressionBase
 	{
 
 		/// <summary>
@@ -51,7 +51,7 @@ namespace Vertesaur.Generation.Expressions
 			Contract.Assume(null != right);
 			Contract.Assume(left.IsMemoryLocationOrConstant());
 			Contract.Assume(right.IsMemoryLocationOrConstant());
-			return Expression.Condition(
+			return Condition(
 				ReductionExpressionGenerator.Generate("GREATEREQUAL", left, right),
 				left,
 				right

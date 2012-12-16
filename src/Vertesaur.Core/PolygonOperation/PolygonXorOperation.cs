@@ -60,7 +60,7 @@ namespace Vertesaur.PolygonOperation
 		/// </summary>
 		/// <param name="a">A polygon.</param>
 		/// <param name="b">A polygon.</param>
-		/// <returns>The symetric difference of <paramref name="a"/> and <paramref name="b"/>.</returns>
+		/// <returns>The symmetric difference of <paramref name="a"/> and <paramref name="b"/>.</returns>
 		public IPlanarGeometry Xor(Polygon2 a, Polygon2 b) {
 			if (null == a)
 				return b;

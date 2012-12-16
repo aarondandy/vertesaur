@@ -9,7 +9,7 @@ namespace Vertesaur.Generation.Expressions
 	/// <summary>
 	/// A tangent expression.
 	/// </summary>
-	public class TanExpression : ReducableUnaryExpressionBase
+	public class TanExpression : ReducibleUnaryExpressionBase
 	{
 		private static readonly MethodInfo MathTanMethod;
 

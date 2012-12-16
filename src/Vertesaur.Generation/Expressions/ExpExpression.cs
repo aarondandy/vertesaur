@@ -9,7 +9,7 @@ namespace Vertesaur.Generation.Expressions
 	/// <summary>
 	/// An expression equivalent to the constant E raised to the Nth power.
 	/// </summary>
-	public class ExpExpression : ReducableUnaryExpressionBase
+	public class ExpExpression : ReducibleUnaryExpressionBase
 	{
 		private static readonly MethodInfo MathExpMethod;
 

@@ -9,7 +9,7 @@ namespace Vertesaur.Generation.Expressions
 	/// <summary>
 	/// A ceiling expression.
 	/// </summary>
-	public class CeilingExpression : ReducableUnaryExpressionBase
+	public class CeilingExpression : ReducibleUnaryExpressionBase
 	{
 		private static readonly MethodInfo MathCeilingDoubleMethod;
 		private static readonly MethodInfo MathCeilingDecimalMethod;

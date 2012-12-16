@@ -16,7 +16,7 @@ namespace Vertesaur.Generation.Expressions
 	{
 
 		/// <summary>
-		/// A variable container that returns the expression varaible back to an unused pool when disposed.
+		/// A variable container that returns the expression variable back to an unused pool when disposed.
 		/// </summary>
 		public sealed class VariableUsage : IDisposable
 		{
@@ -90,7 +90,7 @@ namespace Vertesaur.Generation.Expressions
 		}
 
 		/// <summary>
-		/// Manually requests an unusued variable from the pending pool or creates a new variable.
+		/// Manually requests an unused variable from the pending pool or creates a new variable.
 		/// </summary>
 		/// <param name="type">The type of the variable to create.</param>
 		/// <returns>A new variable that can be used.</returns>
@@ -105,7 +105,7 @@ namespace Vertesaur.Generation.Expressions
 		}
 
 		/// <summary>
-		/// Manually releases a varaible that is currently in use so it can be demoted to the pending variable pool.
+		/// Manually releases a variable that is currently in use so it can be demoted to the pending variable pool.
 		/// </summary>
 		/// <param name="variable">The variable to manually release.</param>
 		/// <returns>True when the variable was released to the pending pool.</returns>
@@ -121,7 +121,7 @@ namespace Vertesaur.Generation.Expressions
 		}
 
 		/// <summary>
-		/// Manually releases multiple varaibles that are currently in use to they can be demoted to the pending variable pool.
+		/// Manually releases multiple variables that are currently in use to they can be demoted to the pending variable pool.
 		/// </summary>
 		/// <param name="variables">The variables to manually release.</param>
 		/// <returns>True when any of the given variables has been released.</returns>
@@ -137,9 +137,9 @@ namespace Vertesaur.Generation.Expressions
 		}
 
 		/// <summary>
-		/// Creates a new expression variable or reuses an unused expression varaible.
+		/// Creates a new expression variable or reuses an unused expression variable.
 		/// </summary>
-		/// <param name="type">The type of the variable to create or resuse.</param>
+		/// <param name="type">The type of the variable to create or reuse.</param>
 		/// <returns>A new or unused variable expression container.</returns>
 		public VariableUsage Use(Type type) {
 			Contract.Requires(null != type);

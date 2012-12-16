@@ -437,7 +437,7 @@ namespace Vertesaur.PolygonOperation.Test {
 					new Point2(3.0,1.0),
 					new Point2(2.0,2.0),
 					new Point2(1.5,1.5),
-					new Point2(1.0,2.0),
+					new Point2(1.0,2.0)
 				}, false),
 				new Ring2(new[]{
 					new Point2(1.0,1.0),
@@ -487,7 +487,7 @@ namespace Vertesaur.PolygonOperation.Test {
 					new Point2(1.5,.5), 
 					new Point2(.5,.5), 
 					new Point2(1,1), 
-					new Point2(0,1),
+					new Point2(0,1)
 				}, false),
 				new Ring2(cascadeBoxes.A, false)
 			) {
@@ -529,7 +529,7 @@ namespace Vertesaur.PolygonOperation.Test {
 					new Point2(4,4),
 					new Point2(0,4),
 					new Point2(0,3),
-					new Point2(3,3),
+					new Point2(3,3)
 				}, false)
 			) {
 				CrossingPoints = new List<Point2>(0)
@@ -545,7 +545,7 @@ namespace Vertesaur.PolygonOperation.Test {
 					new Point2(0.47160068846815834,0.36367346938775513),
 					new Point2(0.49160068846815835,0.38367346938775515),
 					new Point2(0.47160068846815834,0.40367346938775517),
-					new Point2(0.47074010327022375,0.40281288418982059),
+					new Point2(0.47074010327022375,0.40281288418982059)
 				}, false),
 				new Ring2(new[]{
 					new Point2(0.49160068846815835,0.38367346938775515),
@@ -572,7 +572,7 @@ namespace Vertesaur.PolygonOperation.Test {
 					new Point2(0.43611015490533561,0.4285714285714286),
 					new Point2(0.45611015490533563,0.40857142857142859),
 					new Point2(0.47611015490533565,0.4285714285714286),
-					new Point2(0.4742291615441358,0.43045242193262845),
+					new Point2(0.4742291615441358,0.43045242193262845)
 				}, false),
 				new Ring2(new[]{
 					new Point2(0.47611015490533565,0.4285714285714286),

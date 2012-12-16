@@ -9,7 +9,7 @@ namespace Vertesaur.Generation.Expressions
 	/// <summary>
 	/// A hyperbolic tangent expression.
 	/// </summary>
-	public class TanhExpression : ReducableUnaryExpressionBase
+	public class TanhExpression : ReducibleUnaryExpressionBase
 	{
 
 		private static readonly MethodInfo MathTanhMethod;

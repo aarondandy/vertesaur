@@ -10,7 +10,7 @@ namespace Vertesaur.Generation.Expressions
 	/// <summary>
 	/// A floor expression.
 	/// </summary>
-	public class FloorExpression : ReducableUnaryExpressionBase
+	public class FloorExpression : ReducibleUnaryExpressionBase
 	{
 
 		private static readonly MethodInfo MathFloorDoubleMethod;

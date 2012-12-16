@@ -9,7 +9,7 @@ namespace Vertesaur.Generation.Expressions
 	/// <summary>
 	/// An arc-tangent 2 expression accepting a y-coordinate and x-coordinate.
 	/// </summary>
-	public class Atan2Expression : ReducableBinaryExpressionBase
+	public class Atan2Expression : ReducibleBinaryExpressionBase
 	{
 		private static readonly MethodInfo MathAtan2DoubleMethod;
 

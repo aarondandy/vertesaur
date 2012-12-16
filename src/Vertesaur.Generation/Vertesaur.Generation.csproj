@@ -159,9 +159,12 @@
     <Compile Include="Contracts\IExpressionGenerator.cs" />
     <Compile Include="Expressions\AbsExpression.cs" />
     <Compile Include="Expressions\AcosExpression.cs" />
+    <Compile Include="Expressions\AcoshExpression.cs" />
     <Compile Include="Expressions\AsinExpression.cs" />
+    <Compile Include="Expressions\AsinhExpression.cs" />
     <Compile Include="Expressions\Atan2Expression.cs" />
     <Compile Include="Expressions\AtanExpression.cs" />
+    <Compile Include="Expressions\AtanhExpression.cs" />
     <Compile Include="Expressions\BlockExpressionBuilder.cs" />
     <Compile Include="Expressions\CeilingExpression.cs" />
     <Compile Include="Expressions\CombinedExpressionGenerator.cs" />

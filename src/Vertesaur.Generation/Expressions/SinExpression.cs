@@ -9,7 +9,7 @@ namespace Vertesaur.Generation.Expressions
 	/// <summary>
 	/// A sine expression.
 	/// </summary>
-	public class SinExpression : ReducableUnaryExpressionBase
+	public class SinExpression : ReducibleUnaryExpressionBase
 	{
 		private static readonly MethodInfo MathSinMethod;
 

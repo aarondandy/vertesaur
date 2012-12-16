@@ -83,18 +83,18 @@ namespace Vertesaur.Generation.Test
 			return typeof(Vector2<>).MakeGenericType(new[] { elementType });
 		}
 
-		private ConstructorInfo GetConsutrctorPoint(Type elementType) {
+		private ConstructorInfo GetConstructorPoint(Type elementType) {
 			var vectorType = GetGenericPointType(elementType);
 			return vectorType.GetConstructor(new[] { elementType, elementType });
 		}
 
-		private ConstructorInfo GetConsutrctorVector(Type elementType) {
+		private ConstructorInfo GetConstructorVector(Type elementType) {
 			var vectorType = GetGenericVectorType(elementType);
 			return vectorType.GetConstructor(new[] { elementType, elementType });
 		}
 
 		private object CreatePoint(Type elementType, object x, object y) {
-			var constructor = GetConsutrctorPoint(elementType);
+			var constructor = GetConstructorPoint(elementType);
 			return constructor.Invoke(new[] {
 				Convert.ChangeType(x, elementType),
 				Convert.ChangeType(y, elementType)
@@ -102,7 +102,7 @@ namespace Vertesaur.Generation.Test
 		}
 
 		private object CreateVector(Type elementType, object x, object y) {
-			var constructor = GetConsutrctorVector(elementType);
+			var constructor = GetConstructorVector(elementType);
 			return constructor.Invoke(new[] {
 				Convert.ChangeType(x, elementType),
 				Convert.ChangeType(y, elementType)

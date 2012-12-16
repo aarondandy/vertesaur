@@ -9,7 +9,7 @@ namespace Vertesaur.Generation.Expressions
 	/// <summary>
 	/// A natural logarithm expression.
 	/// </summary>
-	public class LogExpression : ReducableUnaryExpressionBase
+	public class LogExpression : ReducibleUnaryExpressionBase
 	{
 		private static readonly MethodInfo MathLogMethod;
 

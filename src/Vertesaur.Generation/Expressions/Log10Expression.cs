@@ -9,7 +9,7 @@ namespace Vertesaur.Generation.Expressions
 	/// <summary>
 	/// A base 10 logarithm expression.
 	/// </summary>
-	public class Log10Expression : ReducableUnaryExpressionBase
+	public class Log10Expression : ReducibleUnaryExpressionBase
 	{
 		private static readonly MethodInfo MathLog10Method;
 

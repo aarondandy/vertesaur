@@ -9,7 +9,7 @@ namespace Vertesaur.Generation.Expressions
 	/// <summary>
 	/// A hyperbolic sine expression.
 	/// </summary>
-	public class SinhExpression : ReducableUnaryExpressionBase
+	public class SinhExpression : ReducibleUnaryExpressionBase
 	{
 
 		private static readonly MethodInfo MathSinhMethod;

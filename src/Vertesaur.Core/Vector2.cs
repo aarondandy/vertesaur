@@ -273,7 +273,7 @@ namespace Vertesaur {
 		}
 
 		/// <summary>
-		/// Calculates the difference resulting from subtractiong the given point from this vector.
+		/// Calculates the difference resulting from subtracting the given point from this vector.
 		/// </summary>
 		/// <param name="rightHandSide">The point to subtract.</param>
 		/// <returns>A result of subtracting the given point from this vector.</returns>

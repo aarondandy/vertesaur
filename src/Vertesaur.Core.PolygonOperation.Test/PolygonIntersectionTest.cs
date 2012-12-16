@@ -117,7 +117,9 @@ namespace Vertesaur.PolygonOperation.Test {
 			if (null == r)
 				return null;
 			return r.Hole.HasValue
+				// ReSharper disable PossibleInvalidOperationException
 				? new Ring2(r.Reverse(), r.Hole.Value)
+				// ReSharper restore PossibleInvalidOperationException
 				: new Ring2(r.Reverse());
 		}
 
@@ -411,12 +413,14 @@ namespace Vertesaur.PolygonOperation.Test {
 			var data = _polyPairData["Fuzzed: 3"];
 			var intersectionOperation = new PolygonIntersectionOperation();
 			var result = intersectionOperation.Intersect(data.A, data.B) as Polygon2;
+			Assert.IsNotNull(result);
 			Assert.IsTrue(result
 				.SelectMany(r => r)
 				.Select(p => data.R.DistanceSquared(p))
 				.All(d => d < 0.000000000000000001)
 			);
 			var result2 = intersectionOperation.Intersect(data.B, data.A) as Polygon2;
+			Assert.IsNotNull(result2);
 			Assert.IsTrue(result2
 				.SelectMany(r => r)
 				.Select(p => data.R.DistanceSquared(p))

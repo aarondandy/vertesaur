@@ -53,7 +53,7 @@ namespace Vertesaur.Core.Test
 			};
 
 			// add the reverse edges
-			foreach(var reversedEdgeData in edges.Select(x => new{Key = new DualKey<int>(x.Key.B,x.Key.A), Value = x.Value}).ToList()){
+			foreach(var reversedEdgeData in edges.Select(x => new{Key = new DualKey<int>(x.Key.B,x.Key.A), x.Value}).ToList()){
 				edges.Add(reversedEdgeData.Key, reversedEdgeData.Value);
 			}
 

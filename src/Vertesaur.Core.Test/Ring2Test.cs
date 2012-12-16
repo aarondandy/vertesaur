@@ -96,26 +96,26 @@ namespace Vertesaur.Core.Test {
 		[Test]
 		public void CentroidTest() {
 			var a = new Ring2(new[] {
-                new Point2(0,0), 
-                new Point2(1,0), 
-                new Point2(1,.5), 
-                new Point2(.5,.5), 
-                new Point2(.5,.75), 
-                new Point2(0,.75), 
-            });
+				new Point2(0,0), 
+				new Point2(1,0), 
+				new Point2(1,.5), 
+				new Point2(.5,.5), 
+				new Point2(.5,.75), 
+				new Point2(0,.75)
+			});
 			Assert.AreEqual(new Point2(9 / 20.0, 13 / 40.0), a.GetCentroid());
 		}
 
 		[Test]
 		public void DetermineWindingTest() {
 			var a = new Ring2(new[] {
-                new Point2(0,0), 
-                new Point2(1,0), 
-                new Point2(1,.5), 
-                new Point2(.5,.5), 
-                new Point2(.5,.75), 
-                new Point2(0,.75), 
-            });
+				new Point2(0,0), 
+				new Point2(1,0), 
+				new Point2(1,.5), 
+				new Point2(.5,.5), 
+				new Point2(.5,.75), 
+				new Point2(0,.75)
+			});
 			Assert.AreEqual(PointWinding.CounterClockwise, a.DetermineWinding());
 			a = new Ring2(new[] { new Point2(0, 1), new Point2(1, 0), new Point2(0, 0) });
 			Assert.AreEqual(PointWinding.Clockwise, a.DetermineWinding());

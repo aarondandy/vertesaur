@@ -9,7 +9,7 @@ namespace Vertesaur.Generation.Expressions
 	/// <summary>
 	/// A truncate expression which removes any decimals from a number, leaving only the integer part.
 	/// </summary>
-	public class TruncateExpression : ReducableUnaryExpressionBase
+	public class TruncateExpression : ReducibleUnaryExpressionBase
 	{
 		private static readonly MethodInfo MathCeilingDoubleMethod;
 		private static readonly MethodInfo MathCeilingDecimalMethod;

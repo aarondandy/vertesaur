@@ -10,7 +10,7 @@ namespace Vertesaur.Generation.Expressions
 	/// <summary>
 	/// A minimum value expression which determines the minimum of two values.
 	/// </summary>
-	public class MinExpression : ReducableBinaryExpressionBase
+	public class MinExpression : ReducibleBinaryExpressionBase
 	{
 
 		/// <summary>
@@ -52,7 +52,7 @@ namespace Vertesaur.Generation.Expressions
 			Contract.Assume(null != right);
 			Contract.Assume(left.IsMemoryLocationOrConstant());
 			Contract.Assume(right.IsMemoryLocationOrConstant());
-			return Expression.Condition(
+			return Condition(
 				ReductionExpressionGenerator.Generate("LESSEQUAL", left, right),
 				left,
 				right

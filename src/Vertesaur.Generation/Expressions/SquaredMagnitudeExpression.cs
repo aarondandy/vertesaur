@@ -11,7 +11,7 @@ namespace Vertesaur.Generation.Expressions
 	/// <summary>
 	/// An expression representing the squared magnitude of a set of expressions representing coordinates.
 	/// </summary>
-	public class SquaredMagnitudeExpression : ReducableExpressionBase
+	public class SquaredMagnitudeExpression : ReducibleExpressionBase
 	{
 
 		/// <summary>
@@ -44,39 +44,27 @@ namespace Vertesaur.Generation.Expressions
 		}
 
 		/// <inheritdoc/>
-		public override Expression Reduce() {
-			// make sure everything going into the expression can be evaluated multiple times
-			var squareInputs = new List<Expression>(Components.Count);
-			var blockBuilder = new BlockExpressionBuilder();
-			foreach (var component in Components) {
-				if (component.IsMemoryLocationOrConstant()) {
-					squareInputs.Add(component);
-				}
-				else {
-					var local = blockBuilder.LocalManager.GetVariable(component.Type);
-					blockBuilder.Add(Expression.Assign(local, component));
-					squareInputs.Add(local);
-				}
-			}
+		public override Expression Reduce(){
+			if (Components.All(x => x.IsMemoryLocationOrConstant()))
+				return CreateExpression(Components);
 
-			// build the equation
-			var result = ReductionExpressionGenerator.Generate("Square", squareInputs[0]);
-			for (int i = 1; i < squareInputs.Count; i++) {
-				var squaredComponentExpression = ReductionExpressionGenerator.Generate(
-					"Square", squareInputs[i]);
-				result = ReductionExpressionGenerator.Generate(
-					"Add", result, squaredComponentExpression);
-			}
-
-			// return the block if it is needed
-			if (blockBuilder.Count > 0) {
-				blockBuilder.Add(result);
-				return blockBuilder.GetExpression();
-			}
-			else {
-				return result;
-			}
+			return new BlockExpressionBuilder().AddUsingMemoryLocationsOrConstants(
+				x => new[]{CreateExpression(x)},
+				Components.ToArray()
+			).GetExpression();
 		}
+
+		private Expression CreateExpression(IList<Expression> inputs){
+			Contract.Assume(null != inputs);
+			Contract.Assume(inputs.Count > 0);
+			var gen = ReductionExpressionGenerator;
+			// build the equation
+			var result = gen.Generate("Square", inputs[0]);
+			for (int i = 1; i < inputs.Count; i++) {
+				result = gen.Generate("Add", result, gen.Generate("Square", inputs[i]));
+			}
+			return result;
+		} 
 
 	}
 }

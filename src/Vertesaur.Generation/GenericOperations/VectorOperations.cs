@@ -18,7 +18,7 @@ namespace Vertesaur.Generation.GenericOperations
 		}
 
 		/// <summary>
-		/// The default vector operation inplementation.
+		/// The default vector operation implementation.
 		/// </summary>
 		public static VectorOperations<TValue> Default { get; private set; }
 

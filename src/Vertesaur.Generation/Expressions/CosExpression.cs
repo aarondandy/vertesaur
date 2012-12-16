@@ -9,7 +9,7 @@ namespace Vertesaur.Generation.Expressions
 	/// <summary>
 	/// A cosine expression.
 	/// </summary>
-	public class CosExpression : ReducableUnaryExpressionBase
+	public class CosExpression : ReducibleUnaryExpressionBase
 	{
 		private static readonly MethodInfo MathCosMethod;
 

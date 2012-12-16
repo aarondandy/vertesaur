@@ -8,16 +8,16 @@ namespace Vertesaur.Generation.Expressions
 	/// <summary>
 	/// An expression that can be reduced to a compilable expression.
 	/// </summary>
-	public abstract class ReducableExpressionBase : Expression
+	public abstract class ReducibleExpressionBase : Expression
 	{
 
 		private readonly IExpressionGenerator _reductionExpressionGenerator;
 
 		/// <summary>
-		/// A basic reducable expression.
+		/// A basic reducible expression.
 		/// </summary>
 		/// <param name="reductionExpressionGenerator">The optional expression generator to be used in reduction.</param>
-		protected ReducableExpressionBase(IExpressionGenerator reductionExpressionGenerator = null) {
+		protected ReducibleExpressionBase(IExpressionGenerator reductionExpressionGenerator = null) {
 			_reductionExpressionGenerator = reductionExpressionGenerator;
 		}
 

@@ -10,7 +10,7 @@ namespace Vertesaur.Generation.Expressions
 	/// <summary>
 	/// An expression to calculate the distance between two points.
 	/// </summary>
-	public class DistanceExpression : ReducableExpressionBase
+	public class DistanceExpression : ReducibleExpressionBase
 	{
 
 		/// <summary>

@@ -7,7 +7,7 @@ namespace Vertesaur.Generation.Expressions
 	/// <summary>
 	/// An expression representing the square of another expression. SquareExpression(expression) = expression * expression.
 	/// </summary>
-	public class SquareExpression : ReducableUnaryExpressionBase
+	public class SquareExpression : ReducibleUnaryExpressionBase
 	{
 
 		/// <summary>
@@ -24,8 +24,9 @@ namespace Vertesaur.Generation.Expressions
 
 		/// <inheritdoc/>
 		public override Expression Reduce() {
-			if (UnaryParameter is SquareRootExpression)
-				return ((SquareRootExpression)UnaryParameter).UnaryParameter;
+			var squareRootExpression = UnaryParameter as SquareRootExpression;
+			if (squareRootExpression != null)
+				return squareRootExpression.UnaryParameter;
 			if (UnaryParameter.IsMemoryLocationOrConstant())
 				return ReductionExpressionGenerator.Generate("MULTIPLY", UnaryParameter, UnaryParameter);
 

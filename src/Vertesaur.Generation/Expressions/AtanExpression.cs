@@ -9,7 +9,7 @@ namespace Vertesaur.Generation.Expressions
 	/// <summary>
 	/// An arc-tangent expression.
 	/// </summary>
-	public class AtanExpression : ReducableUnaryExpressionBase
+	public class AtanExpression : ReducibleUnaryExpressionBase
 	{
 		private static readonly MethodInfo MathAtanMethod;
 

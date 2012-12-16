@@ -9,7 +9,7 @@ namespace Vertesaur.Generation.Expressions
 	/// <summary>
 	/// A hyperbolic cosine expression.
 	/// </summary>
-	public class CoshExpression : ReducableUnaryExpressionBase
+	public class CoshExpression : ReducibleUnaryExpressionBase
 	{
 
 		private static readonly MethodInfo MathCoshMethod;

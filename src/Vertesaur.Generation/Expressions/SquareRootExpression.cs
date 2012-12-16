@@ -9,7 +9,7 @@ namespace Vertesaur.Generation.Expressions
 	/// <summary>
 	/// An expression representing the square-root of another expression. SquareRootExpression(expression) = (expression)^(1/2).
 	/// </summary>
-	public class SquareRootExpression : ReducableUnaryExpressionBase
+	public class SquareRootExpression : ReducibleUnaryExpressionBase
 	{
 
 		private static readonly MethodInfo MathSqrtMethod;
@@ -37,8 +37,9 @@ namespace Vertesaur.Generation.Expressions
 
 		/// <inheritdoc/>
 		public override Expression Reduce() {
-			if (UnaryParameter is SquareExpression)
-				return ((SquareExpression)UnaryParameter).UnaryParameter;
+			var squareExpression = UnaryParameter as SquareExpression;
+			if (squareExpression != null)
+				return squareExpression.UnaryParameter;
 			return typeof(double) == Type
 				? (Expression)Call(MathSqrtMethod, UnaryParameter)
 				: Convert(Call(MathSqrtMethod, Convert(UnaryParameter, typeof(double))), Type);

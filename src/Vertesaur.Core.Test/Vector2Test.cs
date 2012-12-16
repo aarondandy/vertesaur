@@ -142,7 +142,9 @@ namespace Vertesaur.Core.Test {
 			Assert.IsFalse(c.Equals((ICoordinatePair<double>)a));
 			Assert.IsTrue(c.Equals((ICoordinatePair<double>)b));
 // ReSharper disable ConditionIsAlwaysTrueOrFalse
+// ReSharper disable ExpressionIsAlwaysNull
 			Assert.IsFalse(a.Equals(nil));
+// ReSharper restore ExpressionIsAlwaysNull
 // ReSharper restore ConditionIsAlwaysTrueOrFalse
 		}
 

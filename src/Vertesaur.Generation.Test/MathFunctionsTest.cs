@@ -69,6 +69,21 @@ namespace Vertesaur.Generation.Test
 		}
 
 		[Test]
+		public void AsinhExpression(){
+			Assert.AreEqual(0.95034693, BasicOperations<double>.Default.Asinh(1.1), 0.000001);
+		}
+
+		[Test]
+		public void AcoshExpression(){
+			Assert.AreEqual(0.443568254, BasicOperations<double>.Default.Acosh(1.1), 0.000001);
+		}
+
+		[Test]
+		public void AtanhExpression(){
+			Assert.AreEqual(0.549306144, BasicOperations<double>.Default.Atanh(0.5), 0.000001);
+		}
+
+		[Test]
 		public void LogExpression() {
 			Assert.AreEqual(Math.Log(0.4), BasicOperations<double>.Default.Log(0.4));
 		}

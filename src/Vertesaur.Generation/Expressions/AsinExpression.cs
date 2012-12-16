@@ -9,7 +9,7 @@ namespace Vertesaur.Generation.Expressions
 	/// <summary>
 	/// An arc-sine expression.
 	/// </summary>
-	public class AsinExpression : ReducableUnaryExpressionBase
+	public class AsinExpression : ReducibleUnaryExpressionBase
 	{
 		private static readonly MethodInfo MathAsinMethod;
 

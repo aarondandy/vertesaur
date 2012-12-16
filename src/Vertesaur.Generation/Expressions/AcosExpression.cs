@@ -9,7 +9,7 @@ namespace Vertesaur.Generation.Expressions
 	/// <summary>
 	/// An arc-cosine expression.
 	/// </summary>
-	public class AcosExpression : ReducableUnaryExpressionBase
+	public class AcosExpression : ReducibleUnaryExpressionBase
 	{
 		private static readonly MethodInfo MathAcosMethod;
 

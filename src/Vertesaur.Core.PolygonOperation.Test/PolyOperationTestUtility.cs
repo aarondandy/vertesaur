@@ -206,12 +206,12 @@ namespace Vertesaur.PolygonOperation.Test {
 		}
 
 		private static PolyPairTestData GenerateSixTriangleLData(string name, bool aHole, bool bHole) {
-			var a = new Polygon2(){
+			var a = new Polygon2{
 				new Ring2(new[]{new Point2(0,0),new Point2(1,0),new Point2(1,1)}, false),
 				new Ring2(new[]{new Point2(0,0),new Point2(0,1),new Point2(-1,1)}, false),
 				new Ring2(new[]{new Point2(0,0),new Point2(-1,0),new Point2(-1,-1)}, false),
 			};
-			var b = new Polygon2(){
+			var b = new Polygon2{
 				new Ring2(new[]{new Point2(0,0),new Point2(1,1),new Point2(0,1)}, false),
 				new Ring2(new[]{new Point2(0,0),new Point2(-1,1),new Point2(-1,0)}, false),
 				new Ring2(new[]{new Point2(0,0),new Point2(-1,-1),new Point2(0,-1)}, false),
@@ -1173,7 +1173,6 @@ namespace Vertesaur.PolygonOperation.Test {
 				yield break;
 			}
 			Console.WriteLine(data.Name + " - not supported");
-			yield break;
 		}
 
 		internal static PolyPairTestDataKeyedCollection GeneratePolyPairDifferenceTestDataCollection() {

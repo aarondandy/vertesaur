@@ -41,10 +41,10 @@ namespace Vertesaur.Core.Test {
 		[SetUp]
 		public void SetUp() {
 			_lineStrings = new[] {
-			    new[]{new Point2(0,2),new Point2(0,1),new Point2(1,0),new Point2(6,0)},
-			    new[]{new Point2(2,5),new Point2(2,2),new Point2(4,2),new Point2(4,-1)},
-			    new[]{new Point2(4,2),new Point2(6,2),new Point2(3,-1)},
-		    }
+				new[]{new Point2(0,2),new Point2(0,1),new Point2(1,0),new Point2(6,0)},
+				new[]{new Point2(2,5),new Point2(2,2),new Point2(4,2),new Point2(4,-1)},
+				new[]{new Point2(4,2),new Point2(6,2),new Point2(3,-1)}
+			}
 			.Select(points => new LineString2(points))
 			.ToList();
 		}

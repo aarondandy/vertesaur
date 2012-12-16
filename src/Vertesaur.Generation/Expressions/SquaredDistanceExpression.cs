@@ -11,7 +11,7 @@ namespace Vertesaur.Generation.Expressions
 	/// <summary>
 	/// An expression representing the squared distance between two points.
 	/// </summary>
-	public class SquaredDistanceExpression : ReducableExpressionBase
+	public class SquaredDistanceExpression : ReducibleExpressionBase
 	{
 
 		/// <summary>

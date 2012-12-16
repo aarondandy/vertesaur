@@ -126,7 +126,7 @@ namespace Vertesaur.PolygonOperation {
 		/// Determines the crossing type given the vectors the define the crossing.
 		/// </summary>
 		/// <param name="vectorANext">The vector on path A leaving the point of intersection.</param>
-		/// <param name="vectorAPrior">The negated vector on path A entering the point of itersection.</param>
+		/// <param name="vectorAPrior">The negated vector on path A entering the point of intersection.</param>
 		/// <param name="vectorBNext">The vector on path B leaving the point of intersection.</param>
 		/// <param name="vectorBPrior">The negated vector on path B entering the point of intersection.</param>
 		/// <returns>A crossing type classification.</returns>
@@ -260,7 +260,7 @@ namespace Vertesaur.PolygonOperation {
 		public CrossingType CrossType { get; set; }
 
 		/// <summary>
-		/// Creates a new polygon crossing deffined by a point on the respective location on each polygon boundary.
+		/// Creates a new polygon crossing defined by a point on the respective location on each polygon boundary.
 		/// </summary>
 		/// <param name="p">The calculated point of intersection.</param>
 		/// <param name="locationA">The location on the first polygon boundary.</param>

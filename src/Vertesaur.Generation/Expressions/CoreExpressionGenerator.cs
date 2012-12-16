@@ -174,7 +174,10 @@ namespace Vertesaur.Generation.Expressions
 				{"LOG", (g,i) => new LogExpression(i,g.TopLevelGenerator)},
 				{"LOG10", (g,i) => new Log10Expression(i,g.TopLevelGenerator)},
 				{"EXP", (g,i) => new ExpExpression(i,g.TopLevelGenerator)},
-				{"ABS", (g,i) => new AbsExpression(i,g.TopLevelGenerator)}
+				{"ABS", (g,i) => new AbsExpression(i,g.TopLevelGenerator)},
+				{"ASINH", (g,i) => new AsinhExpression(i,g.TopLevelGenerator)},
+				{"ACOSH", (g,i) => new AcoshExpression(i,g.TopLevelGenerator)},
+				{"ATANH", (g,i) => new AtanhExpression(i,g.TopLevelGenerator)}
 			};
 			_standardBinaryExpressionGeneratorLookup = new Dictionary<string, Func<IExpressionGenerationRequest, Expression, Expression, Expression>>(StringComparer.OrdinalIgnoreCase){
 				{"ADD", GenerateArithmetic},
@@ -251,19 +254,34 @@ namespace Vertesaur.Generation.Expressions
 			);
 		}
 
+		private Expression GenerateArithmetic(IExpressionGenerationRequest request, IList<Expression> inputs){
+			Contract.Requires(null != request);
+			Contract.Requires(null != inputs);
+			Contract.Requires(inputs.Count >= 2);
+			var result = GenerateArithmetic(request, inputs[0], inputs[1]);
+			if (null == result)
+				return null;
+			for (int i = 2; i < inputs.Count; i++) {
+				result = GenerateArithmetic(request, result, inputs[i]);
+				if (null == result)
+					return null;
+			}
+			return result;
+		}
+
 		private Expression GenerateArithmetic(IExpressionGenerationRequest request, Expression left, Expression right) {
 			Contract.Requires(null != request);
 			Contract.Requires(null != left);
 			Contract.Requires(null != right);
-			if ((left.Type == right.Type) && (left.Type == typeof(byte) || left.Type == typeof(char) || left.Type == typeof(sbyte))) {
-				return Expression.Call(
-					typeof(SpecializedOperations).GetMethod(
-						ToTitleCase(request.ExpressionName) + (Checked ? "Checked" : "Unchecked"),
-						BindingFlags.Static | BindingFlags.Public,
-						null, new[] { left.Type, left.Type }, null
-					),
-					left, right
+			if ((left.Type == right.Type) && (left.Type == typeof(byte) || left.Type == typeof(char) || left.Type == typeof(sbyte))){
+				var method = typeof (SpecializedOperations).GetMethod(
+					ToTitleCase(request.ExpressionName) + (Checked ? "Checked" : "Unchecked"),
+					BindingFlags.Static | BindingFlags.Public,
+					null, new[]{left.Type, left.Type}, null
 				);
+				if (null != method){
+					return Expression.Call(method, left, right);
+				}
 			}
 
 			if(StringComparer.OrdinalIgnoreCase.Equals(request.ExpressionName, "Add"))
@@ -295,7 +313,7 @@ namespace Vertesaur.Generation.Expressions
 							BindingFlags.Public | BindingFlags.Instance,
 							null, new[] { right.Type }, null
 						),
-						right
+						new[]{right}
 					) as Expression
 					: Expression.Condition(
 						eq,
@@ -411,6 +429,12 @@ namespace Vertesaur.Generation.Expressions
 				if (_standardBinaryExpressionGeneratorLookup.TryGetValue(expressionName, out binaryGenerator))
 					return binaryGenerator(expressionRequest, parameters[0], parameters[1]);
 			}
+			if (parameters.Count > 2){
+				var result = GenerateArithmetic(expressionRequest, parameters);
+				if (null != result)
+					return result;
+			}
+
 			return null;
 		}
 

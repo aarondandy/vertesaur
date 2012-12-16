@@ -108,6 +108,18 @@ namespace Vertesaur.Generation.GenericOperations
 		/// </summary>
 		public readonly UnaryFunc Tanh;
 		/// <summary>
+		/// A run-time inverse hyperbolic sine generic function.
+		/// </summary>
+		public readonly UnaryFunc Asinh;
+		/// <summary>
+		/// A run-time inverse hyperbolic cosine generic function.
+		/// </summary>
+		public readonly UnaryFunc Acosh;
+		/// <summary>
+		/// A run-time inverse hyperbolic tangent generic function.
+		/// </summary>
+		public readonly UnaryFunc Atanh;
+		/// <summary>
 		/// A run-time ceiling generic function.
 		/// </summary>
 		public readonly UnaryFunc Ceiling;
@@ -157,7 +169,7 @@ namespace Vertesaur.Generation.GenericOperations
 		/// </summary>
 		public readonly Func<TValue, double> ToDouble;
 		/// <summary>
-		/// Convertes a double typed value to the generic type.
+		/// Converts a double typed value to the generic type.
 		/// </summary>
 		public readonly Func<double, TValue> FromDouble;
 
@@ -185,6 +197,9 @@ namespace Vertesaur.Generation.GenericOperations
 			Sinh = BuildUnaryFunc("Sinh");
 			Cosh = BuildUnaryFunc("Cosh");
 			Tanh = BuildUnaryFunc("Tanh");
+			Asinh = BuildUnaryFunc("Asinh");
+			Acosh = BuildUnaryFunc("Acosh");
+			Atanh = BuildUnaryFunc("Atanh");
 			Log = BuildUnaryFunc("Log");
 			Log10 = BuildUnaryFunc("Log10");
 			Exp = BuildUnaryFunc("Exp");

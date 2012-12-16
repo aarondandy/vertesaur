@@ -8,15 +8,15 @@ namespace Vertesaur.Generation.Expressions
 	/// <summary>
 	/// An expression that can be reduced to a compilable expression and which also takes two expressions as input.
 	/// </summary>
-	public abstract class ReducableBinaryExpressionBase : ReducableExpressionBase
+	public abstract class ReducibleBinaryExpressionBase : ReducibleExpressionBase
 	{
 		/// <summary>
-		/// Creates a new reducable expression with the given left and right parameters.
+		/// Creates a new reducible expression with the given left and right parameters.
 		/// </summary>
 		/// <param name="leftParameter">The first or left parameter.</param>
 		/// <param name="rightParameter">The second or right parameter.</param>
 		/// <param name="reductionExpressionGenerator">The optional expression generator used for reduction.</param>
-		protected ReducableBinaryExpressionBase(
+		protected ReducibleBinaryExpressionBase(
 			Expression leftParameter,
 			Expression rightParameter,
 			IExpressionGenerator reductionExpressionGenerator = null

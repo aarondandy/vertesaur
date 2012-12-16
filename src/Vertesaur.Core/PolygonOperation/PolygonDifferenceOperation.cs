@@ -58,7 +58,7 @@ namespace Vertesaur.PolygonOperation
 		/// <summary>
 		/// Calculates the resulting difference of polygon <paramref name="b"/> subtracted from polygon <paramref name="a"/>.
 		/// </summary>
-		/// <param name="a">The polygon to be subracted from.</param>
+		/// <param name="a">The polygon to be subtracted from.</param>
 		/// <param name="b">The polygon used to subtract from a.</param>
 		/// <returns>The difference resulting from subtracting <paramref name="b"/> from <paramref name="a"/>.</returns>
 		public IPlanarGeometry Difference(Polygon2 a, Polygon2 b) {

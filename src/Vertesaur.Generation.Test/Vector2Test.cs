@@ -58,13 +58,13 @@ namespace Vertesaur.Generation.Test
 			return typeof(Vector2<>).MakeGenericType(new[] {elementType});
 		}
 
-		private ConstructorInfo GetConsutrctor(Type elementType) {
+		private ConstructorInfo GetConstructor(Type elementType) {
 			var vectorType = GetGenericVectorType(elementType);
 			return vectorType.GetConstructor(new[] { elementType, elementType });
 		}
 
 		private object CreateVector(Type elementType, object x, object y) {
-			var constructor = GetConsutrctor(elementType);
+			var constructor = GetConstructor(elementType);
 			return constructor.Invoke(new[] {
 				Convert.ChangeType(x, elementType),
 				Convert.ChangeType(y, elementType)

@@ -481,13 +481,10 @@ namespace Vertesaur {
 			// ReSharper disable CompareOfFloatsByEqualityOperator
 			var yMagnitude = Y.GetMagnitude();
 			if (0 == X.GetMagnitude()) {
-				if (0 == yMagnitude) {
+				if (0 == yMagnitude)
 					return false;
-				}
-				else {
-					if (other.X.GetMagnitude() != 0 || other.Y.GetMagnitude() == 0)
-						return false;
-				}
+				if (other.X.GetMagnitude() != 0 || other.Y.GetMagnitude() == 0)
+					return false;
 			}
 			else {
 				if (0 == yMagnitude) {

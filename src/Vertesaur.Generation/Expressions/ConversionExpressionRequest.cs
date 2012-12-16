@@ -29,7 +29,7 @@ namespace Vertesaur.Generation.Expressions
 		}
 
 		/// <summary>
-		/// The expresion to be converted.
+		/// The expression to be converted.
 		/// </summary>
 		public Expression InputExpression { get; private set; }
 
