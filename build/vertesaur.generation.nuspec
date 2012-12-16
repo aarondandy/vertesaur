@@ -7,13 +7,20 @@
 		<authors>aarondandy</authors>
 		<description>A computational geometry and math library for the CLR with potential medical, gaming, and GIS uses.</description>
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
-		<tags>Geometry</tags>
+		<tags>geometry expressions expression-trees</tags>
 		<projectUrl>http://mediocresoft.com/vertesaur/</projectUrl>
 		<dependencies>
 			<dependency id="Vertesaur.Core" version="$version$"/>
 		</dependencies>
+    <references>
+      <reference file="Vertesaur.Generation.dll" />
+    </references>
 	</metadata>
 	<files>
 		<file src="..\bin\$configuration$\net40-client\Vertesaur.Generation.dll" target="lib\net40-client" />
-	</files>
+    <file src="..\bin\$configuration$\net40-client\Vertesaur.Generation.pdb" target="lib\net40-client" />
+    <file src="..\bin\$configuration$\net40-client\Vertesaur.Generation.XML" target="lib\net40-client" />
+    <file src="..\bin\$configuration$\net40-client\CodeContracts\Vertesaur.Generation.Contracts.dll" target="lib\net40-client\CodeContracts" />
+    <file src="..\src\Vertesaur.Generation\**.cs" target="src" />
+  </files>
 </package>

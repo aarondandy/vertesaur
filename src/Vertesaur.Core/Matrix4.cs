@@ -837,7 +837,7 @@ namespace Vertesaur {
 		/// Multiplies this left matrix by the given <paramref name="right"/> matrix and overwrites this matrix with the product.
 		/// </summary>
 		/// <param name="right">The right matrix to multiply by.</param>
-		public void MultiplyAssignment(Matrix4 right) {
+		public void MultiplyAssign(Matrix4 right) {
 			if (null == right) throw new ArgumentNullException("right");
 			Contract.EndContractBlock();
 			SetElements(
@@ -893,7 +893,7 @@ namespace Vertesaur {
 		/// Adds this left matrix by the given <paramref name="right"/> matrix and overwrites this matrix with the sum.
 		/// </summary>
 		/// <param name="right">The right matrix to add.</param>
-		public void AddAssignment(Matrix4 right) {
+		public void AddAssign(Matrix4 right) {
 			if (null == right) throw new ArgumentNullException("right");
 			Contract.EndContractBlock();
 			E00 += right.E00;

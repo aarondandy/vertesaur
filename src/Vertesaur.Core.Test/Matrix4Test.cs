@@ -360,7 +360,7 @@ namespace Vertesaur.Core.Test {
 		[Test]
 		public void MultiplyAssignmentTest() {
 			var d = new Matrix4(_a);
-			d.MultiplyAssignment(_b);
+			d.MultiplyAssign(_b);
 			Assert.AreEqual(_product, d);
 		}
 
@@ -384,7 +384,7 @@ namespace Vertesaur.Core.Test {
 		[Test]
 		public void AddAssignTest() {
 			var c = new Matrix4(_a);
-			c.AddAssignment(_b);
+			c.AddAssign(_b);
 			Assert.AreEqual(_sum, c);
 
 		}

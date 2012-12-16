@@ -30,11 +30,11 @@ exec :make_nupkg_core do |cmd|
 	asmVersion3 = extract_assembly_version "./src/VertesaurAssemblyInfo.cs"
 	puts "Version: #{asmVersion3}"
 	cmd.command = "./.nuget/nuget.exe"
-	cmd.parameters = "pack build/vertesaur.nuspec -Verbosity detailed -Version #{asmVersion3} -OutputDirectory ./build/packed/ -Properties Configuration=Release"
+	cmd.parameters = "pack build/vertesaur.nuspec -Verbosity detailed -Version #{asmVersion3} -Symbols -OutputDirectory ./build/packed/ -Properties Configuration=Release"
 end
 
 exec :make_nupkg_generation do |cmd|
 	asmVersion3 = extract_assembly_version "./src/VertesaurAssemblyInfo.cs"
 	cmd.command = "./.nuget/nuget.exe"
-	cmd.parameters = "pack build/vertesaur.generation.nuspec -Verbosity detailed -Version #{asmVersion3} -OutputDirectory ./build/packed/ -Properties Configuration=Release"
+	cmd.parameters = "pack build/vertesaur.generation.nuspec -Verbosity detailed -Version #{asmVersion3} -Symbols -OutputDirectory ./build/packed/ -Properties Configuration=Release"
 end

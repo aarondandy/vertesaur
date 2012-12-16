@@ -388,7 +388,7 @@ namespace Vertesaur {
 		/// <param name="right">The right matrix to add.</param>
 		/// <returns>The result.</returns>
 		public Matrix2 Add(Matrix2 right) {
-			Contract.Requires(right != null);
+			if(null == right) throw new ArgumentNullException("right");
 			Contract.Ensures(Contract.Result<Matrix2>() != null);
 			Contract.EndContractBlock();
 			return new Matrix2(
@@ -403,8 +403,8 @@ namespace Vertesaur {
 		/// Adds this left matrix by the given <paramref name="right"/> matrix and overwrites this matrix with the sum.
 		/// </summary>
 		/// <param name="right">The right matrix to add.</param>
-		public void AddAssignment(Matrix2 right) {
-			Contract.Requires(right != null);
+		public void AddAssign(Matrix2 right) {
+			if (null == right) throw new ArgumentNullException("right");
 			Contract.EndContractBlock();
 			E00 += right.E00;
 			E01 += right.E01;
@@ -418,7 +418,7 @@ namespace Vertesaur {
 		/// <param name="right">The right matrix to subtract.</param>
 		/// <returns>The result.</returns>
 		public Matrix2 Subtract(Matrix2 right) {
-			Contract.Requires(right != null);
+			if (null == right) throw new ArgumentNullException("right");
 			Contract.Ensures(Contract.Result<Matrix2>() != null);
 			Contract.EndContractBlock();
 			return new Matrix2(
@@ -433,8 +433,8 @@ namespace Vertesaur {
 		/// Subtracts the elements of the <paramref name="right"/> matrix from this matrix and assigns the results back to this matrix.
 		/// </summary>
 		/// <param name="right">The right matrix use to subtract from this matrix.</param>
-		public void SubtractAssignment(Matrix2 right) {
-			Contract.Requires(right != null);
+		public void SubtractAssign(Matrix2 right) {
+			if (null == right) throw new ArgumentNullException("right");
 			Contract.EndContractBlock();
 			E00 -= right.E00;
 			E01 -= right.E01;
@@ -474,7 +474,7 @@ namespace Vertesaur {
 		/// <param name="right">The right matrix.</param>
 		/// <returns>The result of multiplying this matrix by the right matrix (<c>this * <paramref name="right"/></c>).</returns>
 		public Matrix2 Multiply(Matrix2 right) {
-			Contract.Requires(right != null);
+			if (null == right) throw new ArgumentNullException("right");
 			Contract.Ensures(Contract.Result<Matrix2>() != null);
 			Contract.EndContractBlock();
 			return new Matrix2(
@@ -489,8 +489,8 @@ namespace Vertesaur {
 		/// Multiplies this matrix by another and stores the result in this matrix (<c>this*=<paramref name="right"/></c>).
 		/// </summary>
 		/// <param name="right">The right matrix.</param>
-		public void MultiplyAssignment(Matrix2 right) {
-			Contract.Requires(right != null);
+		public void MultiplyAssign(Matrix2 right) {
+			if (null == right) throw new ArgumentNullException("right");
 			Contract.EndContractBlock();
 			var t00 = E00;
 			E00 = (t00 * right.E00) + (E01 * right.E10);
