@@ -472,7 +472,7 @@ namespace Vertesaur {
 		/// Multiplies this matrix by another.
 		/// </summary>
 		/// <param name="right">The right matrix.</param>
-		/// <returns>The result of multiplying this matrix by the right matrix (<c>this * <paramref name="right"/></c>).</returns>
+		/// <returns>The result of multiplying this matrix by the <paramref name="right"/> matrix.</returns>
 		public Matrix2 Multiply(Matrix2 right) {
 			if (null == right) throw new ArgumentNullException("right");
 			Contract.Ensures(Contract.Result<Matrix2>() != null);
@@ -486,7 +486,7 @@ namespace Vertesaur {
 		}
 
 		/// <summary>
-		/// Multiplies this matrix by another and stores the result in this matrix (<c>this*=<paramref name="right"/></c>).
+		/// Multiplies this matrix by another and stores the result in this matrix.
 		/// </summary>
 		/// <param name="right">The right matrix.</param>
 		public void MultiplyAssign(Matrix2 right) {
