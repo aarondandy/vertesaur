@@ -23,6 +23,7 @@
 // ===============================================================================
 
 using System;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using Vertesaur.Contracts;
 
@@ -618,6 +619,7 @@ namespace Vertesaur {
 		}
 
 		[ContractInvariantMethod]
+		[Conditional("CONTRACTS_FULL")]
 		private void CodeContractInvariant() {
 		}
 

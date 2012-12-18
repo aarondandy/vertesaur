@@ -1,3 +1,4 @@
+#if !HAS_CC_EXTENSIONS
 //
 //  Include this file in your project if your project uses
 //  ContractArgumentValidator or ContractAbbreviator methods
@@ -8,6 +9,7 @@
 // ReSharper disable UnusedParameter.Local
 namespace System.Diagnostics.Contracts
 {
+
 	/// <summary>
 	/// Enables factoring legacy if-then-throw into separate methods for reuse and full control over
 	/// thrown exception and arguments
@@ -43,4 +45,6 @@ namespace System.Diagnostics.Contracts
 		[System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "value", Justification = "Build-time only attribute")]
 		public ContractOptionAttribute(string category, string setting, string value) { }
 	}
+
 }
+#endif

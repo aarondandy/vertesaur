@@ -35,5 +35,6 @@
 
 		<file src="..\bin\$configuration$\net40-client\CodeContracts\Vertesaur.Generation.Contracts.dll" target="lib\net40-client\CodeContracts" />
     <file src="..\src\Vertesaur.Generation\**.cs" target="src" />
+    <file src="..\ports\feature-replacements\**.cs" target="src\feature-replacements" />
   </files>
 </package>

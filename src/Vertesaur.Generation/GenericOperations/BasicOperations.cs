@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
 using Vertesaur.Generation.Contracts;
@@ -279,7 +280,8 @@ namespace Vertesaur.Generation.GenericOperations
 		public TValue ZeroValue { get { return _zeroValueGenerator(); } }
 
 		[ContractInvariantMethod]
-		private void CodeContractInvariants(){
+		[Conditional("CONTRACTS_FULL")]
+		private void CodeContractInvariant(){
 			Contract.Invariant(null != ExpressionGenerator);
 		}
 

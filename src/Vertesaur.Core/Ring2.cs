@@ -25,6 +25,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text;
@@ -871,6 +872,7 @@ namespace Vertesaur {
 		}
 
 		[ContractInvariantMethod]
+		[Conditional("CONTRACTS_FULL")]
 		private void CodeContractInvariant() {
 			Contract.Invariant(SegmentCount <= Count);
 			Contract.Invariant(SegmentCount >= 0);

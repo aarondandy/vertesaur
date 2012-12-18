@@ -24,6 +24,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using Vertesaur.Contracts;
@@ -96,6 +97,7 @@ namespace Vertesaur.PolygonOperation {
 			}
 
 			[ContractInvariantMethod]
+			[Conditional("CONTRACTS_FULL")]
 			private void CodeContractInvariant() {
 				//Contract.Invariant(RingCrossingsA != null);
 				//Contract.Invariant(Contract.ForAll(RingCrossingsA, x => x.Value != null && x.Key >= 0));
@@ -932,6 +934,7 @@ namespace Vertesaur.PolygonOperation {
 		}
 
 		[ContractInvariantMethod]
+		[Conditional("CONTRACTS_FULL")]
 		private void CodeContractInvariant() {
 			Contract.Invariant(_options != null);
 		}

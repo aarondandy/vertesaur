@@ -1013,6 +1013,7 @@ namespace Vertesaur {
 		}
 
 		[ContractInvariantMethod]
+		[Conditional("CONTRACTS_FULL")]
 		private void CodeContractInvariant() {
 			//Contract.Invariant(4 == RowCount);
 			//Contract.Invariant(4 == ColumnCount);

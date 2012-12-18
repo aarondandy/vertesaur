@@ -25,6 +25,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using Vertesaur.Contracts;
@@ -400,12 +401,6 @@ namespace Vertesaur {
 			return String.Concat("Polygon, ", Count, " Rings");
 		}
 
-		[ContractInvariantMethod]
-		private void CodeContractInvariant() {
-			Contract.Invariant(Contract.ForAll(this, x => x != null));
-			Contract.Invariant(Contract.ForAll(0, Count, i => this[i] != null));
-		}
-
 		/// <inheritdoc/>
 		public IPlanarGeometry Intersection(Point2 other) {
 			return Intersects(other) ? (IPlanarGeometry)other : null;
@@ -423,6 +418,13 @@ namespace Vertesaur {
 			if (Count == 0 || ReferenceEquals(null, other) || other.Count == 0)
 				return null;
 			return MultiPoint2.FixToProperPlanerGeometryResult(new MultiPoint2(other.Where(Intersects)));
+		}
+
+		[ContractInvariantMethod]
+		[Conditional("CONTRACTS_FULL")]
+		private void CodeContractInvariant() {
+			Contract.Invariant(Contract.ForAll(this, x => x != null));
+			Contract.Invariant(Contract.ForAll(0, Count, i => this[i] != null));
 		}
 	}
 }

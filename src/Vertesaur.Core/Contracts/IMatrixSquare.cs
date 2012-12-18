@@ -22,6 +22,7 @@
 //
 // ===============================================================================
 
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 
 namespace Vertesaur.Contracts {
@@ -79,6 +80,7 @@ namespace Vertesaur.Contracts {
 
 
 		[ContractInvariantMethod]
+		[Conditional("CONTRACTS_FULL")]
 		private void CodeContractInvariant() {
 			Contract.Invariant(RowCount == ColumnCount);
 			Contract.Invariant(Order == RowCount);

@@ -39,6 +39,9 @@ namespace Vertesaur.Generation.Expressions
 	public class CombinedExpressionGenerator : IExpressionGenerator {
 
 #if NO_MEF
+		/// <summary>
+		/// Replaces the MEF expression generator for frameworks that do not have MEF.
+		/// </summary>
 		public static CombinedExpressionGenerator GenerateDefaultMefReplacement() {
 			return new CombinedExpressionGenerator(new IExpressionGenerator[] {
 				new CoreExpressionGenerator(),

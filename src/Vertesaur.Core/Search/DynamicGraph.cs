@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
 
@@ -370,6 +371,7 @@ namespace Vertesaur.Search
 		}
 
 		[ContractInvariantMethod]
+		[Conditional("CONTRACTS_FULL")]
 		private void CodeContractInvariant() {
 			Contract.Invariant(CostComparer != null);
 			Contract.Invariant(NodeComparer != null);

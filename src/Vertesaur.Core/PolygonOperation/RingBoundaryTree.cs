@@ -25,6 +25,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using Vertesaur.Utility;
@@ -199,6 +200,7 @@ namespace Vertesaur.PolygonOperation
 			public bool Hole { get { return Ring.Hole.HasValue && Ring.Hole.Value; } }
 
 			[ContractInvariantMethod]
+			[Conditional("CONTRACTS_FULL")]
 			private void CodeContractInvariant() {
 				Contract.Invariant(Ring != null);
 			}
@@ -332,6 +334,7 @@ namespace Vertesaur.PolygonOperation
 		public NodeCollection Roots { get; private set; }
 
 		[ContractInvariantMethod]
+		[Conditional("CONTRACTS_FULL")]
 		private void CodeContractInvariant() {
 			Contract.Invariant(null != Roots);
 		}

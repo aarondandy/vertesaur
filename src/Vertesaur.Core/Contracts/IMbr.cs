@@ -22,6 +22,7 @@
 //
 // ===============================================================================
 
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Collections;
 
@@ -93,6 +94,7 @@ namespace Vertesaur.Contracts {
 		}
 
 		[ContractInvariantMethod]
+		[Conditional("CONTRACTS_FULL")]
 		private void CodeContractInvariant() {
 			Contract.Invariant(Comparer.Default.Compare(XMin, XMax) <= 0);
 			Contract.Invariant(Comparer.Default.Compare(YMin, YMax) <= 0);

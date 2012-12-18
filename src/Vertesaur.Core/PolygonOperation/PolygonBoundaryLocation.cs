@@ -23,6 +23,7 @@
 // ===============================================================================
 
 using System;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 
 namespace Vertesaur.PolygonOperation {
@@ -159,6 +160,7 @@ namespace Vertesaur.PolygonOperation {
 		}
 
 		[ContractInvariantMethod]
+		[Conditional("CONTRACTS_FULL")]
 		private void CodeContractInvariant() {
 			Contract.Invariant(RingIndex >= 0);
 			Contract.Invariant(SegmentIndex >= 0);

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using Vertesaur.CodeContracts;
@@ -44,14 +45,12 @@ namespace Vertesaur.PolygonOperation
 			_sortedRingSegmentIndices = new Dictionary<Ring2, int[]>();
 		}
 
-		[Obsolete]
+		[Obsolete("Not thread safe")]
 		private int[] GetSortedRingSegmentIndices(Ring2 ring) {
-#warning This method is not thread safe.
-			// TODO: make thread safe? only if used in a parallel way...
 			int[] result;
 			if(!_sortedRingSegmentIndices.TryGetValue(ring, out result)) {
 				result = GenerateSortedRingSegmentIndices(ring);
-				_sortedRingSegmentIndices[ring] = result;
+				_sortedRingSegmentIndices.Add(ring,result);
 			}
 			return result;
 		}
@@ -177,6 +176,7 @@ namespace Vertesaur.PolygonOperation
 			public int RingIndexB { get; private set; }
 
 			[ContractInvariantMethod]
+			[Conditional("CONTRACTS_FULL")]
 			private void CodeContractInvariant() {
 				Contract.Invariant(RingA != null);
 				Contract.Invariant(RingA.Count > 0);

@@ -25,6 +25,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using Vertesaur.Contracts;
 using System.Collections;
@@ -131,6 +132,7 @@ namespace Vertesaur.Transformation
 		}
 
 		[ContractInvariantMethod]
+		[Conditional("CONTRACTS_FULL")]
 		private void CodeContractInvariant() {
 			Contract.Invariant(null != Transformations);
 		}
@@ -206,6 +208,7 @@ namespace Vertesaur.Transformation
 		}
 
 		[ContractInvariantMethod]
+		[Conditional("CONTRACTS_FULL")]
 		private void CodeContractInvariant() {
 			Contract.Invariant(null != TransformationPath);
 			Contract.Invariant(Contract.ForAll(TransformationPath, x => null != x));
