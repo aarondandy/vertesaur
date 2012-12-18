@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if !NO_MEF
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
@@ -77,3 +79,5 @@ namespace Vertesaur.Generation.Expressions
 		}
 	}
 }
+
+#endif

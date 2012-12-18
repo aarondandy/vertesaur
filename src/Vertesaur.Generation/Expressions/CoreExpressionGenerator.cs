@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Diagnostics.Contracts;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 using Vertesaur.Generation.Contracts;
+using Vertesaur.Utility;
 
 namespace Vertesaur.Generation.Expressions
 {
@@ -13,7 +11,9 @@ namespace Vertesaur.Generation.Expressions
 	/// <summary>
 	/// The core expression generator for basic arithmetic and comparisons.
 	/// </summary>
-	[Export(typeof(IExpressionGenerator))]
+#if !NO_MEF
+	[System.ComponentModel.Composition.Export(typeof(IExpressionGenerator))]
+#endif
 	public class CoreExpressionGenerator : IExpressionGenerator
 	{
 
@@ -274,10 +274,9 @@ namespace Vertesaur.Generation.Expressions
 			Contract.Requires(null != left);
 			Contract.Requires(null != right);
 			if ((left.Type == right.Type) && (left.Type == typeof(byte) || left.Type == typeof(char) || left.Type == typeof(sbyte))){
-				var method = typeof (SpecializedOperations).GetMethod(
+				var method = typeof(SpecializedOperations).GetPublicStaticInvokableMethod(
 					ToTitleCase(request.ExpressionName) + (Checked ? "Checked" : "Unchecked"),
-					BindingFlags.Static | BindingFlags.Public,
-					null, new[]{left.Type, left.Type}, null
+					new[]{left.Type, left.Type}
 				);
 				if (null != method){
 					return Expression.Call(method, left, right);
@@ -305,14 +304,12 @@ namespace Vertesaur.Generation.Expressions
 				var less = request.TopLevelGenerator.Generate("LESS", left, right);
 				Contract.Assume(null != less);
 				var comparableType = typeof(IComparable<>).MakeGenericType(new[] { right.Type });
-				return left.Type.GetInterfaces().Contains(comparableType)
+				return left.Type.ImplementsInterface(comparableType)
 					? Expression.Call(
 						left,
-						comparableType.GetMethod(
+						comparableType.GetPublicInstanceInvokableMethod(
 							"CompareTo",
-							BindingFlags.Public | BindingFlags.Instance,
-							null, new[] { right.Type }, null
-						),
+							new[] { right.Type }),
 						new[]{right}
 					) as Expression
 					: Expression.Condition(

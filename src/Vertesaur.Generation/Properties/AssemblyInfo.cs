@@ -29,8 +29,8 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Vertesaur.Generic")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyTitle("Vertesaur.Generation")]
+[assembly: AssemblyDescription("Vertesaur Generation assembly")]
 [assembly: AssemblyConfiguration("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 

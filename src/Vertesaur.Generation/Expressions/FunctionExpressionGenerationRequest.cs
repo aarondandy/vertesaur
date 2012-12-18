@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
 using Vertesaur.Generation.Contracts;
+using Vertesaur.Utility;
 
 namespace Vertesaur.Generation.Expressions
 {
@@ -26,7 +27,7 @@ namespace Vertesaur.Generation.Expressions
 			Contract.EndContractBlock();
 			TopLevelGenerator = generator;
 			ExpressionName = expressionName;
-			InputExpressions = Array.AsReadOnly(inputs);
+			InputExpressions = inputs.AsReadOnly();
 		}
 
 		/// <inheritdoc/>

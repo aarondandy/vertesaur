@@ -1,4 +1,6 @@
-namespace System.Collections
+using System;
+
+namespace Vertesaur
 {
 
 	public class Comparer

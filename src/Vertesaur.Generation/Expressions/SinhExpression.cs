@@ -3,6 +3,7 @@ using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
 using System.Reflection;
 using Vertesaur.Generation.Contracts;
+using Vertesaur.Utility;
 
 namespace Vertesaur.Generation.Expressions
 {
@@ -15,10 +16,7 @@ namespace Vertesaur.Generation.Expressions
 		private static readonly MethodInfo MathSinhMethod;
 
 		static SinhExpression() {
-			MathSinhMethod = typeof(Math).GetMethod(
-				"Sinh",
-				BindingFlags.Public | BindingFlags.Static,
-				null, new[] { typeof(double) }, null);
+			MathSinhMethod = typeof(Math).GetPublicStaticInvokableMethod("Sinh",typeof(double));
 		}
 
 		/// <summary>

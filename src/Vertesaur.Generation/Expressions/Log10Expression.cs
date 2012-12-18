@@ -3,6 +3,7 @@ using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
 using System.Reflection;
 using Vertesaur.Generation.Contracts;
+using Vertesaur.Utility;
 
 namespace Vertesaur.Generation.Expressions
 {
@@ -14,10 +15,7 @@ namespace Vertesaur.Generation.Expressions
 		private static readonly MethodInfo MathLog10Method;
 
 		static Log10Expression() {
-			MathLog10Method = typeof(Math).GetMethod(
-				"Log10",
-				BindingFlags.Public | BindingFlags.Static,
-				null, new[] { typeof(double) }, null);
+			MathLog10Method = typeof(Math).GetPublicStaticInvokableMethod("Log10",typeof(double));
 		}
 
 		/// <summary>

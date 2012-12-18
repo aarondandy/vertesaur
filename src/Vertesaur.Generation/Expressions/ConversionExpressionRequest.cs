@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
 using Vertesaur.Generation.Contracts;
+using Vertesaur.Utility;
 
 namespace Vertesaur.Generation.Expressions
 {
@@ -43,7 +44,7 @@ namespace Vertesaur.Generation.Expressions
 		public ReadOnlyCollection<Expression> InputExpressions {
 			get {
 				Contract.Ensures(Contract.Result<ReadOnlyCollection<Expression>>() != null);
-				return Array.AsReadOnly(new[]{InputExpression});
+				return new[] { InputExpression }.AsReadOnly();
 			}
 		}
 

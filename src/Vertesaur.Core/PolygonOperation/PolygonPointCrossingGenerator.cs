@@ -51,7 +51,7 @@ namespace Vertesaur.PolygonOperation
 			int[] result;
 			if(!_sortedRingSegmentIndices.TryGetValue(ring, out result)) {
 				result = GenerateSortedRingSegmentIndices(ring);
-				_sortedRingSegmentIndices.Add(ring, result);
+				_sortedRingSegmentIndices[ring] = result;
 			}
 			return result;
 		}
@@ -92,7 +92,7 @@ namespace Vertesaur.PolygonOperation
 			var indices = new int[ring.Count];
 			for (int i = 0; i < indices.Length; i++)
 				indices[i] = i;
-			Array.Sort(indices, (a, b) => Compare(a, b, ring));
+			indices.Sort((a, b) => Compare(a, b, ring));
 			return indices;
 		}
 

@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
 using Vertesaur.Generation.Contracts;
+using Vertesaur.Utility;
 
 namespace Vertesaur.Generation.Expressions
 {
@@ -12,7 +13,7 @@ namespace Vertesaur.Generation.Expressions
 	public class ConstantExpressionGenerationRequest : IExpressionGenerationRequest
 	{
 
-		private static readonly ReadOnlyCollection<Expression> EmptyExpressionList = Array.AsReadOnly(new Expression[0]);
+		private static readonly ReadOnlyCollection<Expression> EmptyExpressionList = new Expression[0].AsReadOnly();
 
 		/// <summary>
 		/// Creates a new function expression generation request. This request is for a function that accepts one or more expressions as input.

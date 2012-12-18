@@ -5,6 +5,7 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Linq.Expressions;
 using Vertesaur.Generation.Contracts;
+using Vertesaur.Utility;
 
 namespace Vertesaur.Generation.Expressions
 {
@@ -31,7 +32,7 @@ namespace Vertesaur.Generation.Expressions
 			Contract.EndContractBlock();
 
 			if (components.Any(x => null == x)) throw new ArgumentException("All components expressions must be non null.", "components");
-			Components = Array.AsReadOnly(components.ToArray());
+			Components = components.ToArray().AsReadOnly();
 		}
 
 		/// <summary>

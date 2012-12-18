@@ -3,6 +3,7 @@ using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
 using System.Reflection;
 using Vertesaur.Generation.Contracts;
+using Vertesaur.Utility;
 
 namespace Vertesaur.Generation.Expressions
 {
@@ -28,10 +29,7 @@ namespace Vertesaur.Generation.Expressions
 
 		/// <inheritdoc/>
 		public override Expression Reduce() {
-			var method = typeof(Math).GetMethod(
-				"Max",
-				BindingFlags.Public | BindingFlags.Static,
-				null, new[] { LeftParameter.Type,RightParameter.Type }, null);
+			var method = typeof(Math).GetPublicStaticInvokableMethod("Max",LeftParameter.Type,RightParameter.Type);
 			if (null != method)
 				return Call(method, LeftParameter, RightParameter);
 

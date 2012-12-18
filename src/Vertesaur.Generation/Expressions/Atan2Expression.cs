@@ -3,6 +3,7 @@ using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
 using System.Reflection;
 using Vertesaur.Generation.Contracts;
+using Vertesaur.Utility;
 
 namespace Vertesaur.Generation.Expressions
 {
@@ -14,10 +15,7 @@ namespace Vertesaur.Generation.Expressions
 		private static readonly MethodInfo MathAtan2DoubleMethod;
 
 		static Atan2Expression() {
-			MathAtan2DoubleMethod = typeof(Math).GetMethod(
-				"Atan2",
-				BindingFlags.Public | BindingFlags.Static,
-				null, new[] { typeof(double),typeof(double) }, null);
+			MathAtan2DoubleMethod = typeof(Math).GetPublicStaticInvokableMethod("Atan2",typeof(double),typeof(double));
 		}
 
 		/// <summary>

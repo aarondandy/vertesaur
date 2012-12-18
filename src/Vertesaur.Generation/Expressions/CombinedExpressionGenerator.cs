@@ -38,6 +38,15 @@ namespace Vertesaur.Generation.Expressions
 	/// </summary>
 	public class CombinedExpressionGenerator : IExpressionGenerator {
 
+#if NO_MEF
+		public static CombinedExpressionGenerator GenerateDefaultMefReplacement() {
+			return new CombinedExpressionGenerator(new IExpressionGenerator[] {
+				new CoreExpressionGenerator(),
+				new VectorExpressionGenerator()
+			});
+		}
+#endif
+
 		private readonly IExpressionGenerator[] _expressionGenerators;
 
 		/// <summary>

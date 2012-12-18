@@ -29,6 +29,7 @@ using System.Linq;
 using Vertesaur.Contracts;
 using System.Collections;
 using System.Diagnostics.Contracts;
+using Vertesaur.Utility;
 
 namespace Vertesaur.Transformation
 {
@@ -53,7 +54,7 @@ namespace Vertesaur.Transformation
 				if (txArray[i] == null)
 					throw new ArgumentException("null transformations are not valid.");
 
-			Transformations = Array.AsReadOnly(txArray);
+			Transformations = txArray.AsReadOnly();
 				
 		}
 
@@ -67,7 +68,7 @@ namespace Vertesaur.Transformation
 		private ConcatenatedTransformation(ITransformation[] transformations) {
 			Contract.Requires(transformations != null);
 			Contract.Requires(Contract.ForAll(transformations, x => null != x));
-			Transformations = Array.AsReadOnly(transformations);
+			Transformations = transformations.AsReadOnly();
 		}
 
 		/// <summary>
@@ -152,7 +153,7 @@ namespace Vertesaur.Transformation
 			var path = TransformationCastNode.FindCastPath(Transformations, typeof(TFrom), typeof(TTo));
 			if(null == path)
 				throw new InvalidOperationException("A concatenated transformation casting path could not be found.");
-			TransformationPath = Array.AsReadOnly(path);
+			TransformationPath = path.AsReadOnly();
 		}
 
 		/// <summary>

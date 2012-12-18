@@ -3,6 +3,7 @@ using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
 using System.Reflection;
 using Vertesaur.Generation.Contracts;
+using Vertesaur.Utility;
 
 namespace Vertesaur.Generation.Expressions
 {
@@ -14,10 +15,7 @@ namespace Vertesaur.Generation.Expressions
 		private static readonly MethodInfo MathAcosMethod;
 
 		static AcosExpression() {
-			MathAcosMethod = typeof(Math).GetMethod(
-				"Acos",
-				BindingFlags.Public | BindingFlags.Static,
-				null, new[] { typeof(double) }, null);
+			MathAcosMethod = typeof(Math).GetPublicStaticInvokableMethod("Acos",typeof(double));
 		}
 
 		/// <summary>

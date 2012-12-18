@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.Composition;
 using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
 using Vertesaur.Generation.Contracts;
@@ -9,7 +8,9 @@ namespace Vertesaur.Generation.Expressions
 	/// <summary>
 	/// Generates vector related expressions.
 	/// </summary>
-	[Export(typeof(IExpressionGenerator))]
+#if !NO_MEF
+	[System.ComponentModel.Composition.Export(typeof(IExpressionGenerator))]
+#endif
 	public class VectorExpressionGenerator : IExpressionGenerator
 	{
 		/// <summary>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
+using Vertesaur.Utility;
 
 namespace Vertesaur.Generation.Expressions
 {
@@ -87,7 +88,7 @@ namespace Vertesaur.Generation.Expressions
 			if(null == types) throw new ArgumentNullException("types");
 			Contract.Ensures(Contract.Result<BlockExpressionBuilder>() == this);
 			Contract.EndContractBlock();
-			var locals = Array.ConvertAll(types, t => LocalManager.GetVariable(t));
+			var locals = types.ConvertAll(t => LocalManager.GetVariable(t));
 			try {
 				var expressions = generator(locals);
 				if(null == expressions)
@@ -167,7 +168,7 @@ namespace Vertesaur.Generation.Expressions
 			if (null == expressionsToCapture) throw new ArgumentNullException("expressionsToCapture");
 			Contract.Ensures(Contract.Result<BlockExpressionBuilder>() == this);
 			Contract.EndContractBlock();
-			var locals = Array.ConvertAll(expressionsToCapture, e => LocalManager.GetVariable(e.Type));
+			var locals = expressionsToCapture.ConvertAll(e => LocalManager.GetVariable(e.Type));
 			try {
 				for (int i = 0; i < locals.Length; i++) {
 					Add(Expression.Assign(locals[i], expressionsToCapture[i]));
@@ -194,7 +195,7 @@ namespace Vertesaur.Generation.Expressions
 			if (null == expressionsToCapture) throw new ArgumentNullException("expressionsToCapture");
 			Contract.Ensures(Contract.Result<BlockExpressionBuilder>() == this);
 			Contract.EndContractBlock();
-			var usages = Array.ConvertAll(expressionsToCapture, e => e.IsMemoryLocationOrConstant() ? null : LocalManager.Use(e.Type));
+			var usages = expressionsToCapture.ConvertAll(e => e.IsMemoryLocationOrConstant() ? null : LocalManager.Use(e.Type));
 			try {
 				var capturedExpressions = new Expression[expressionsToCapture.Length];
 				for (int i = 0; i < capturedExpressions.Length; i++) {

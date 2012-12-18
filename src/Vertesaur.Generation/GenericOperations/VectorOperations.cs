@@ -14,7 +14,13 @@ namespace Vertesaur.Generation.GenericOperations
 	{
 
 		static VectorOperations(){
-			Default = new VectorOperations<TValue>(new MefCombinedExpressionGenerator());
+			Default = new VectorOperations<TValue>(
+#if !NO_MEF
+				new MefCombinedExpressionGenerator()
+#else
+				CombinedExpressionGenerator.GenerateDefaultMefReplacement()
+#endif
+			);
 		}
 
 		/// <summary>

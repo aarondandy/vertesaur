@@ -1,7 +1,7 @@
 // replaces a missing ICloneable interface
 
 
-namespace System
+namespace Vertesaur.Contracts
 {
 
 	/// <summary>

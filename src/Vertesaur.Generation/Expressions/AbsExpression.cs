@@ -3,6 +3,7 @@ using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
 using System.Reflection;
 using Vertesaur.Generation.Contracts;
+using Vertesaur.Utility;
 
 namespace Vertesaur.Generation.Expressions
 {
@@ -24,10 +25,7 @@ namespace Vertesaur.Generation.Expressions
 
 		/// <inheritdoc/>
 		public override Expression Reduce() {
-			var method = typeof(Math).GetMethod(
-				"Abs",
-				BindingFlags.Public | BindingFlags.Static,
-				null, new[] { Type }, null);
+			var method = typeof(Math).GetPublicStaticInvokableMethod("Abs",Type);
 			if (null != method)
 				return Call(method, UnaryParameter);
 

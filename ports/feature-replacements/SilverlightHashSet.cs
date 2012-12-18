@@ -20,6 +20,10 @@ namespace Vertesaur
 			}
 		}
 
+		public HashSet(IEqualityComparer<T> comparer) : this() {
+			_core = new Dictionary<T, T>(comparer);
+		}
+
 		public int Count { get { return _core.Count; } }
 
 		public bool Remove(T item) {

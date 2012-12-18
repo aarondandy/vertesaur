@@ -3,6 +3,7 @@ using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
 using System.Reflection;
 using Vertesaur.Generation.Contracts;
+using Vertesaur.Utility;
 
 namespace Vertesaur.Generation.Expressions
 {
@@ -17,14 +18,8 @@ namespace Vertesaur.Generation.Expressions
 		private static readonly MethodInfo MathFloorDecimalMethod;
 
 		static FloorExpression() {
-			MathFloorDoubleMethod = typeof(Math).GetMethod(
-				"Floor",
-				BindingFlags.Public | BindingFlags.Static,
-				null, new[] { typeof(double) }, null);
-			MathFloorDecimalMethod = typeof(Math).GetMethod(
-				"Floor",
-				BindingFlags.Public | BindingFlags.Static,
-				null, new[] { typeof(decimal) }, null);
+			MathFloorDoubleMethod = typeof(Math).GetPublicStaticInvokableMethod("Floor",typeof(double));
+			MathFloorDecimalMethod = typeof(Math).GetPublicStaticInvokableMethod("Floor",typeof(decimal));
 		}
 
 		/// <summary>

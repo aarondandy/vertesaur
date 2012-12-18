@@ -144,9 +144,6 @@
     <Compile Include="..\feature-replacements\Comparer.cs">
       <Link>feature-replacements\Comparer.cs</Link>
     </Compile>
-    <Compile Include="..\feature-replacements\Array.AsReadOnly.cs">
-      <Link>feature-replacements\Array.AsReadOnly.cs</Link>
-    </Compile>
     <Compile Include="..\..\src\Vertesaur.Core\**\*.cs" Exclude="..\..\src\Vertesaur.Core\**\*AssemblyInfo.cs">
       <Link>Code\</Link>
     </Compile>

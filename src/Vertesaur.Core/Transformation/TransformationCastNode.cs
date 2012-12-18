@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using Vertesaur.Contracts;
 using Vertesaur.Search;
+using Vertesaur.Utility;
 
 namespace Vertesaur.Transformation
 {
@@ -105,9 +106,7 @@ namespace Vertesaur.Transformation
 			Contract.Ensures(Contract.ForAll(Contract.Result<IEnumerable<TransformationCastNode>>(), x => null != x));
 			Contract.EndContractBlock();
 
-			return core.GetType()
-				.GetInterfaces()
-				.Where(t => t.IsGenericType && t.GetGenericTypeDefinition() == TxGenericType)
+			return core.GetType().GetInterfacesByGenericTypeDefinition(TxGenericType)
 				.Select(t => {
 					var arguments = t.GetGenericArguments();
 					return new TransformationCastNode(core, arguments[0], arguments[1]);
@@ -186,7 +185,7 @@ namespace Vertesaur.Transformation
 
 			return Core
 				.GetType()
-				.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod)
+				.GetPublicInstanceInvokableMethods()
 				.Concat(MakeGenericTransformationType().GetMethods());
 		}
 

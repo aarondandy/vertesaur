@@ -244,7 +244,10 @@
     <Compile Include="Transformation\ConcatenatedTransformation.cs" />
     <Compile Include="NoInverseException.cs" />
     <Compile Include="Transformation\TransformationCastNode.cs" />
+    <Compile Include="Utility\ArrayUtility.cs" />
     <Compile Include="Utility\IterationUtils.cs" />
+    <Compile Include="Utility\ListUtility.cs" />
+    <Compile Include="Utility\ReflectionUtils.cs" />
     <Compile Include="Vector2.cs" />
     <Compile Include="Vector3.cs" />
   </ItemGroup>

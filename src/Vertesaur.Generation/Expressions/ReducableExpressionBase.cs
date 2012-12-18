@@ -37,7 +37,13 @@ namespace Vertesaur.Generation.Expressions
 			get{
 				Contract.Ensures(Contract.Result<IExpressionGenerator>() != null);
 				Contract.EndContractBlock();
-				var result = _reductionExpressionGenerator ?? MefCombinedExpressionGenerator.Default;
+				var result = _reductionExpressionGenerator ??
+#if !NO_MEF
+					MefCombinedExpressionGenerator.Default
+#else
+					CombinedExpressionGenerator.GenerateDefaultMefReplacement()
+#endif
+					;
 				Contract.Assume(null != result);
 				return result;
 			}

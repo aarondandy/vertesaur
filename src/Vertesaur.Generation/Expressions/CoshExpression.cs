@@ -3,6 +3,7 @@ using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
 using System.Reflection;
 using Vertesaur.Generation.Contracts;
+using Vertesaur.Utility;
 
 namespace Vertesaur.Generation.Expressions
 {
@@ -15,10 +16,7 @@ namespace Vertesaur.Generation.Expressions
 		private static readonly MethodInfo MathCoshMethod;
 
 		static CoshExpression() {
-			MathCoshMethod = typeof(Math).GetMethod(
-				"Cosh",
-				BindingFlags.Public | BindingFlags.Static,
-				null, new[] { typeof(double) }, null);
+			MathCoshMethod = typeof(Math).GetPublicStaticInvokableMethod("Cosh", typeof(double) );
 		}
 
 		/// <summary>

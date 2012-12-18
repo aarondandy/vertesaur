@@ -3,6 +3,7 @@ using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
 using System.Reflection;
 using Vertesaur.Generation.Contracts;
+using Vertesaur.Utility;
 
 namespace Vertesaur.Generation.Expressions
 {
@@ -15,12 +16,7 @@ namespace Vertesaur.Generation.Expressions
 		private static readonly MethodInfo MathSqrtMethod;
 
 		static SquareRootExpression() {
-			MathSqrtMethod = typeof(Math).GetMethod(
-				"Sqrt",
-				BindingFlags.Public | BindingFlags.Static,
-				null,
-				new[] { typeof(double) },
-				null);
+			MathSqrtMethod = typeof(Math).GetPublicStaticInvokableMethod("Sqrt",typeof(double));
 		}
 
 		/// <summary>

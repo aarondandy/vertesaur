@@ -3,6 +3,7 @@ using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
 using System.Reflection;
 using Vertesaur.Generation.Contracts;
+using Vertesaur.Utility;
 
 namespace Vertesaur.Generation.Expressions
 {
@@ -15,14 +16,8 @@ namespace Vertesaur.Generation.Expressions
 		private static readonly MethodInfo MathCeilingDecimalMethod;
 
 		static CeilingExpression() {
-			MathCeilingDoubleMethod = typeof(Math).GetMethod(
-				"Ceiling",
-				BindingFlags.Public | BindingFlags.Static,
-				null, new[] { typeof(double) }, null);
-			MathCeilingDecimalMethod = typeof(Math).GetMethod(
-				"Ceiling",
-				BindingFlags.Public | BindingFlags.Static,
-				null, new[] { typeof(decimal) }, null);
+			MathCeilingDoubleMethod = typeof(Math).GetPublicStaticInvokableMethod("Ceiling",typeof(double));
+			MathCeilingDecimalMethod = typeof(Math).GetPublicStaticInvokableMethod("Ceiling",typeof(decimal));
 		}
 
 		/// <summary>

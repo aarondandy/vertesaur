@@ -20,7 +20,20 @@
 		<file src="..\bin\$configuration$\net40-client\Vertesaur.Generation.dll" target="lib\net40-client" />
     <file src="..\bin\$configuration$\net40-client\Vertesaur.Generation.pdb" target="lib\net40-client" />
     <file src="..\bin\$configuration$\net40-client\Vertesaur.Generation.XML" target="lib\net40-client" />
-    <file src="..\bin\$configuration$\net40-client\CodeContracts\Vertesaur.Generation.Contracts.dll" target="lib\net40-client\CodeContracts" />
+
+		<file src="..\bin\$configuration$\windows8\Vertesaur.Generation.dll" target="lib\windows8" />
+		<file src="..\bin\$configuration$\windows8\Vertesaur.Generation.pdb" target="lib\windows8" />
+		<file src="..\bin\$configuration$\windows8\Vertesaur.Generation.XML" target="lib\windows8" />
+
+		<file src="..\bin\$configuration$\windowsphone8\Vertesaur.Generation.dll" target="lib\windowsphone8" />
+		<file src="..\bin\$configuration$\windowsphone8\Vertesaur.Generation.pdb" target="lib\windowsphone8" />
+		<file src="..\bin\$configuration$\windowsphone8\Vertesaur.Generation.XML" target="lib\windowsphone8" />
+
+		<file src="..\bin\$configuration$\sl5\Vertesaur.Generation.dll" target="lib\sl5" />
+		<file src="..\bin\$configuration$\sl5\Vertesaur.Generation.pdb" target="lib\sl5" />
+		<file src="..\bin\$configuration$\sl5\Vertesaur.Generation.XML" target="lib\sl5" />
+
+		<file src="..\bin\$configuration$\net40-client\CodeContracts\Vertesaur.Generation.Contracts.dll" target="lib\net40-client\CodeContracts" />
     <file src="..\src\Vertesaur.Generation\**.cs" target="src" />
   </files>
 </package>
