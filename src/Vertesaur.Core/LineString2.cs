@@ -148,8 +148,8 @@ namespace Vertesaur {
 		/// <summary>
 		/// The number of line segments the line string is composed of.
 		/// </summary>
-		[Pure] public int SegmentCount {
-			get {
+		public int SegmentCount {
+			[Pure] get {
 				var c = Count;
 				return c == 0 ? 0 : c - 1;
 			}

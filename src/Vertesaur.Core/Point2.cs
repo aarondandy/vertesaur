@@ -294,8 +294,8 @@ namespace Vertesaur {
 		/// <summary>
 		/// Determines if the point is valid.
 		/// </summary>
-		[Pure] public bool IsValid {
-			get { return !Double.IsNaN(X) && !Double.IsNaN(Y); }
+		public bool IsValid {
+			[Pure] get { return !Double.IsNaN(X) && !Double.IsNaN(Y); }
 		}
 
 		/// <inheritdoc/>
