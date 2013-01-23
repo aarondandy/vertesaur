@@ -44,10 +44,8 @@ namespace Vertesaur.Periodic
 		/// <param name="periodLength">The length of the range.</param>
 		public PeriodicOperations(double periodStart, double periodLength) {
 			// ReSharper disable CompareOfFloatsByEqualityOperator
-			if(periodLength == 0)
-				throw new ArgumentException("The period length must be a non-zero value.", "periodLength");
-			if (periodLength <= 0)
-				throw new NotSupportedException("Only periods with a positive length are supported.");
+			if (periodLength == 0) throw new ArgumentException("The period length must be a non-zero value.", "periodLength");
+			if (periodLength < 0) throw new NotSupportedException("Only periods with a positive length are supported.");
 			Contract.EndContractBlock();
 
 			_periodStart = periodStart;

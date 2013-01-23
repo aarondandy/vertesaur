@@ -237,7 +237,8 @@ namespace Vertesaur {
 		/// </summary>
 		/// <param name="points">Points to be added.</param>
 		public void AddRange(IEnumerable<Point2> points) {
-			Contract.Requires(null != points);
+			if(null == points) throw new ArgumentNullException("points");
+			Contract.Ensures(Count >= Contract.OldValue(this).Count);
 			_pointList.AddRange(points);
 			ResetAllCache();
 		}
