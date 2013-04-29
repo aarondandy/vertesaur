@@ -475,7 +475,7 @@ namespace Vertesaur {
 		/// <c>true</c> if the current range is equal to the <paramref name="other"/> value; otherwise, <c>false</c>.
 		/// </returns>
 		/// <param name="other">A value.</param>
-		public bool Equals(double other) {
+		[Pure] public bool Equals(double other) {
 			return Low == other && High == other;
 		}
 
@@ -487,7 +487,7 @@ namespace Vertesaur {
 		/// </returns>
 		/// <param name="obj">Another object to compare to.</param>
 		/// <filterpriority>2</filterpriority>
-		public override bool Equals(object obj) {
+		[Pure] public override bool Equals(object obj) {
 			return null != obj && (
 				(obj is Range) ? Equals((Range)obj)
 				:
@@ -514,7 +514,8 @@ namespace Vertesaur {
 		/// <returns>
 		/// A <see cref="System.String"/> that represents this instance.
 		/// </returns>
-		public override string ToString() {
+		[Pure] public override string ToString() {
+			Contract.Ensures(Contract.Result<string>() != null);
 			return String.Concat(Low, ':', High);
 		}
 
