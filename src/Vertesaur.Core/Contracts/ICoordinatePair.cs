@@ -22,20 +22,21 @@
 //
 // ===============================================================================
 
-namespace Vertesaur.Contracts {
-	/// <summary>
-	/// An ordered tuple with two components; X and Y.
-	/// </summary>
-	/// <typeparam name="TValue">The element type.</typeparam>
-	public interface ICoordinatePair<out TValue>
-	{
-		/// <summary>
-		/// The x component of this point.
-		/// </summary>
-		TValue X { get; }
-		/// <summary>
-		/// The y component of this point.
-		/// </summary>
-		TValue Y { get; }
-	}
+namespace Vertesaur.Contracts
+{
+    /// <summary>
+    /// An ordered tuple with two components; X and Y.
+    /// </summary>
+    /// <typeparam name="TValue">The element type.</typeparam>
+    public interface ICoordinatePair<out TValue>
+    {
+        /// <summary>
+        /// The x component of this point.
+        /// </summary>
+        TValue X { get; }
+        /// <summary>
+        /// The y component of this point.
+        /// </summary>
+        TValue Y { get; }
+    }
 }

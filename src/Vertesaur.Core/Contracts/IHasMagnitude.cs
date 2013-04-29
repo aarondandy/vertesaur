@@ -22,31 +22,32 @@
 //
 // ===============================================================================
 
-namespace Vertesaur.Contracts {
+namespace Vertesaur.Contracts
+{
 
-	/// <summary>
-	/// Defines operations to calculate the magnitude of an object.
-	/// </summary>
-	/// <typeparam name="TValue">The type of the resulting magnitude.</typeparam>
-	/// <remarks>
-	/// Squared magnitude is also provided to possibly reduce error resulting
-	/// from too many operations as well as to possibly increase performance
-	/// when a caller uses the appropriate method.
-	/// </remarks>
-	public interface IHasMagnitude<out TValue>
-	{
+    /// <summary>
+    /// Defines operations to calculate the magnitude of an object.
+    /// </summary>
+    /// <typeparam name="TValue">The type of the resulting magnitude.</typeparam>
+    /// <remarks>
+    /// Squared magnitude is also provided to possibly reduce error resulting
+    /// from too many operations as well as to possibly increase performance
+    /// when a caller uses the appropriate method.
+    /// </remarks>
+    public interface IHasMagnitude<out TValue>
+    {
 
-		/// <summary>
-		/// Calculates the magnitude of an instance.
-		/// </summary>
-		/// <returns>The magnitude.</returns>
-		TValue GetMagnitude();
-		/// <summary>
-		/// Calculates the squared magnitude of an instance.
-		/// </summary>
-		/// <returns>The squared magnitude.</returns>
-		TValue GetMagnitudeSquared();
+        /// <summary>
+        /// Calculates the magnitude of an instance.
+        /// </summary>
+        /// <returns>The magnitude.</returns>
+        TValue GetMagnitude();
+        /// <summary>
+        /// Calculates the squared magnitude of an instance.
+        /// </summary>
+        /// <returns>The squared magnitude.</returns>
+        TValue GetMagnitudeSquared();
 
-	}
+    }
 
 }

@@ -40,31 +40,43 @@ namespace Vertesaur {
 	/// <list type="bullet">
 	/// <item><term>Point Winding and the <see cref="Vertesaur.Ring2.Hole"/> Property</term>
 	/// <description>
+	/// <para>
 	/// It is good practice to set the <see cref="Vertesaur.Ring2.Hole"/> property
 	/// to <c>true</c> or <c>false</c> for interoperability purposes.
 	/// Winding must be taken into account when operating on these rings and should
 	/// either be explicitly set before use of the ring or the <see cref="Vertesaur.Ring2.Hole"/> property
 	/// should be set and used.
+	/// </para>
+	/// <para>
 	/// <see cref="Vertesaur.Ring2.ForceFillWinding"/> can be used to enforce a specific winding
 	/// for your needs after setting the <see cref="Vertesaur.Ring2.Hole"/> property of the ring.
+	/// </para>
 	/// </description>
 	/// </item>
 	/// <item><term>Redundant End Points</term>
 	/// <description>
+	/// <para>
 	/// This ring class does not require the storage of matching start and end points and
 	/// some algorithms may remove or disregard the end point or may need to compensate for
 	/// a missing redundant end point.
+	/// </para>
+	/// <para>
 	/// It is preferred that a ring does not have a redundant start and end point.
 	/// This means that a triangle may be defined by 3 unique points instead of 4 points
 	/// where the start and end are equivalent.
 	/// This also means that a triangle may be defined by 4 points where the start and end
 	/// are equivalent.
+	/// </para>
+	/// <para>
 	/// The final segment of the ring will stretch from the last point to the first point.
 	/// Even when the first and last point are equal there will be a final segment of magnitude 0.
 	/// When matching start and end points are required for interoperability, the redundant end
 	/// point becomes the responsibility of that functionality.
+	/// </para>
+	/// <para>
 	/// You may use <see cref="Vertesaur.Ring2.HasRedundantEndPoint"/> to determine if the ring
 	/// contains a redundant end point. When possible please, avoid the use of redundant endpoints.
+	/// </para>
 	/// </description>
 	/// </item>
 	/// </list>

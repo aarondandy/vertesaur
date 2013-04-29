@@ -35,225 +35,227 @@ using Vertesaur.Utility;
 namespace Vertesaur.Transformation
 {
 
-	/// <summary>
-	/// A transformation that is composed of a sequence of composite transformations.
-	/// </summary>
-	public class ConcatenatedTransformation : ITransformation
-	{
+    /// <summary>
+    /// A transformation that is composed of a sequence of composite transformations.
+    /// </summary>
+    public class ConcatenatedTransformation : ITransformation
+    {
 
-		/// <summary>
-		/// Creates a new concatenated transformation composed of a sequence of transformations.
-		/// </summary>
-		/// <param name="transformations">A sequence of transformations.</param>
-		/// <exception cref="System.ArgumentException">Thrown if a transformation is <c>null</c>.</exception>
-		public ConcatenatedTransformation(IEnumerable<ITransformation> transformations) {
-			if (null == transformations) throw new ArgumentNullException("transformations");
-			Contract.EndContractBlock();
+        /// <summary>
+        /// Creates a new concatenated transformation composed of a sequence of transformations.
+        /// </summary>
+        /// <param name="transformations">A sequence of transformations.</param>
+        /// <exception cref="System.ArgumentException">Thrown if a transformation is <c>null</c>.</exception>
+        public ConcatenatedTransformation(IEnumerable<ITransformation> transformations) {
+            if (null == transformations) throw new ArgumentNullException("transformations");
+            Contract.EndContractBlock();
 
-			var txArray = transformations.ToArray();
-			for (int i = 0; i < txArray.Length; i++)
-				if (txArray[i] == null)
-					throw new ArgumentException("null transformations are not valid.");
+            var txArray = transformations.ToArray();
+            for (int i = 0; i < txArray.Length; i++)
+                if (txArray[i] == null)
+                    throw new ArgumentException("null transformations are not valid.");
 
-			Transformations = txArray.AsReadOnly();
-				
-		}
+            Transformations = txArray.AsReadOnly();
 
-		/// <summary>
-		/// Creates a new concatenated transformation composed of a sequence of transformations.
-		/// </summary>
-		/// <param name="transformations">A sequence of transformations.</param>
-		/// <remarks>
-		/// The parameter is used as is so make sure to clone before passing it in.
-		/// </remarks>
-		private ConcatenatedTransformation(ITransformation[] transformations) {
-			Contract.Requires(transformations != null);
-			Contract.Requires(Contract.ForAll(transformations, x => null != x));
-			Transformations = transformations.AsReadOnly();
-		}
+        }
 
-		/// <summary>
-		/// Generates an inverse set of transformation operations that represent the inverse of this transformations..
-		/// </summary>
-		/// <returns></returns>
-		protected ITransformation[] CreateInverseOperations() {
-			if(!HasInverse) throw new NoInverseException();
-			Contract.Ensures(Contract.Result<ITransformation[]>() != null);
-			Contract.EndContractBlock();
+        /// <summary>
+        /// Creates a new concatenated transformation composed of a sequence of transformations.
+        /// </summary>
+        /// <param name="transformations">A sequence of transformations.</param>
+        /// <remarks>
+        /// The parameter is used as is so make sure to clone before passing it in.
+        /// </remarks>
+        private ConcatenatedTransformation(ITransformation[] transformations) {
+            Contract.Requires(transformations != null);
+            Contract.Requires(Contract.ForAll(transformations, x => null != x));
+            Transformations = transformations.AsReadOnly();
+        }
 
-			var inverseTransformations = new ITransformation[Transformations.Count];
-			for(int i = 0; i < inverseTransformations.Length; i++) {
-				var tx = Transformations[Transformations.Count - 1 - i];
-				var ix = tx.GetInverse();
-				inverseTransformations[i] = ix;
-			}
-			return inverseTransformations;
-		}
+        [ContractInvariantMethod]
+        [Conditional("CONTRACTS_FULL")]
+        private void CodeContractInvariant() {
+            Contract.Invariant(Transformations != null);
+        }
 
-		/// <summary>
-		/// Creates a new concatenated transformation that is the inverse of this transformation.
-		/// </summary>
-		/// <returns>The inverse transformation.</returns>
-		protected virtual ConcatenatedTransformation CreateInverseConcatenatedOperation() {
-			Contract.Requires(HasInverse);
-			Contract.Ensures(Contract.Result<ConcatenatedTransformation>() != null);
-			return new ConcatenatedTransformation(CreateInverseOperations());
-		}
+        /// <summary>
+        /// Generates an inverse set of transformation operations that represent the inverse of this transformations..
+        /// </summary>
+        /// <returns></returns>
+        protected ITransformation[] CreateInverseOperations() {
+            if (!HasInverse) throw new NoInverseException();
+            Contract.Ensures(Contract.Result<ITransformation[]>() != null);
+            Contract.EndContractBlock();
 
-		/// <summary>
-		/// Gets the transformations that make up this concatenated transformation.
-		/// </summary>
-		public ReadOnlyCollection<ITransformation> Transformations { get; private set; }
+            var inverseTransformations = new ITransformation[Transformations.Count];
+            for (int i = 0; i < inverseTransformations.Length; i++) {
+                var tx = Transformations[Transformations.Count - 1 - i];
+                var ix = tx.GetInverse();
+                inverseTransformations[i] = ix;
+            }
+            return inverseTransformations;
+        }
 
-		/// <summary>
-		/// Creates a new concatenated transformation that is the inverse of this transformation.
-		/// </summary>
-		/// <returns>The inverse transformation.</returns>
-		public ConcatenatedTransformation GetInverse() {
-			Contract.Requires(HasInverse);
-			Contract.Ensures(Contract.Result<ConcatenatedTransformation>() != null);
-			return CreateInverseConcatenatedOperation();
-		}
+        /// <summary>
+        /// Creates a new concatenated transformation that is the inverse of this transformation.
+        /// </summary>
+        /// <returns>The inverse transformation.</returns>
+        protected virtual ConcatenatedTransformation CreateInverseConcatenatedOperation() {
+            Contract.Requires(HasInverse);
+            Contract.Ensures(Contract.Result<ConcatenatedTransformation>() != null);
+            return new ConcatenatedTransformation(CreateInverseOperations());
+        }
 
-		ITransformation ITransformation.GetInverse() {
-			return GetInverse();
-		}
+        /// <summary>
+        /// Gets the transformations that make up this concatenated transformation.
+        /// </summary>
+        public ReadOnlyCollection<ITransformation> Transformations { get; private set; }
 
-		/// <inheritdoc/>
-		public bool HasInverse {
-			get {
-				if(Transformations.Count == 0)
-					return true;
-				for (int i = 0; i < Transformations.Count; i++)
-					if (!Transformations[i].HasInverse)
-						return false;
-				return true;
-			}
-		}
+        /// <summary>
+        /// Creates a new concatenated transformation that is the inverse of this transformation.
+        /// </summary>
+        /// <returns>The inverse transformation.</returns>
+        public ConcatenatedTransformation GetInverse() {
+            Contract.Requires(HasInverse);
+            Contract.Ensures(Contract.Result<ConcatenatedTransformation>() != null);
+            return CreateInverseConcatenatedOperation();
+        }
 
-		[ContractInvariantMethod]
-		[Conditional("CONTRACTS_FULL")]
-		private void CodeContractInvariant() {
-			Contract.Invariant(null != Transformations);
-		}
-	}
+        ITransformation ITransformation.GetInverse() {
+            return GetInverse();
+        }
 
-	/// <summary>
-	/// A transformation that is composed of a sequence of transformations as a chained expression.
-	/// </summary>
-	public class ConcatenatedTransformation<TFrom, TTo> : ConcatenatedTransformation, ITransformation<TFrom, TTo>
-	{
+        /// <inheritdoc/>
+        public bool HasInverse {
+            get {
+                if (Transformations.Count == 0)
+                    return true;
+                for (int i = 0; i < Transformations.Count; i++)
+                    if (!Transformations[i].HasInverse)
+                        return false;
+                return true;
+            }
+        }
 
-		/// <summary>
-		/// Creates a new concatenated transformation composed of a sequence of transformations.
-		/// </summary>
-		/// <param name="transformations">A sequence of transformations.</param>
-		/// <exception cref="System.InvalidOperationException">Thrown when a valid casting path can not be determined.</exception>
-		public ConcatenatedTransformation(IEnumerable<ITransformation> transformations) : base(transformations) {
-			Contract.Requires(transformations != null);
+    }
 
-			var path = TransformationCastNode.FindCastPath(Transformations, typeof(TFrom), typeof(TTo));
-			if(null == path)
-				throw new InvalidOperationException("A concatenated transformation casting path could not be found.");
-			TransformationPath = path.AsReadOnly();
-		}
+    /// <summary>
+    /// A transformation that is composed of a sequence of transformations as a chained expression.
+    /// </summary>
+    public class ConcatenatedTransformation<TFrom, TTo> : ConcatenatedTransformation, ITransformation<TFrom, TTo>
+    {
 
-		/// <summary>
-		/// The chosen transformation cast path used when compiling the concatenated transformation.
-		/// </summary>
-		public ReadOnlyCollection<TransformationCastNode> TransformationPath { get; private set; }
+        /// <summary>
+        /// Creates a new concatenated transformation composed of a sequence of transformations.
+        /// </summary>
+        /// <param name="transformations">A sequence of transformations.</param>
+        /// <exception cref="System.InvalidOperationException">Thrown when a valid casting path can not be determined.</exception>
+        public ConcatenatedTransformation(IEnumerable<ITransformation> transformations)
+            : base(transformations) {
+            Contract.Requires(transformations != null);
 
-		/// <inheritdoc/>
-		public virtual TTo TransformValue(TFrom value) {
-			if(TransformationPath.Count == 1)
-				return ((ITransformation<TFrom, TTo>)(TransformationPath[0].Core)).TransformValue(value);
+            var path = TransformationCastNode.FindCastPath(Transformations, typeof(TFrom), typeof(TTo));
+            if (null == path)
+                throw new InvalidOperationException("A concatenated transformation casting path could not be found.");
+            TransformationPath = path.AsReadOnly();
+        }
 
-			object tempValue = value;
-			for (int i = 0; i < TransformationPath.Count; i++) {
-				tempValue = TransformationPath[i].TransformValue(tempValue);
-			}
-			return (TTo)tempValue;
-		}
+        /// <summary>
+        /// The chosen transformation cast path used when compiling the concatenated transformation.
+        /// </summary>
+        public ReadOnlyCollection<TransformationCastNode> TransformationPath { get; private set; }
 
-		/// <inheritdoc/>
-		public virtual IEnumerable<TTo> TransformValues(IEnumerable<TFrom> values) {
-			Contract.Ensures(Contract.Result<IEnumerable<TTo>>() != null);
+        /// <inheritdoc/>
+        public virtual TTo TransformValue(TFrom value) {
+            if (TransformationPath.Count == 1)
+                return ((ITransformation<TFrom, TTo>)(TransformationPath[0].Core)).TransformValue(value);
 
-			if(Transformations.Count == 1)
-				return ((ITransformation<TFrom, TTo>)(TransformationPath[0].Core)).TransformValues(values);
+            object tempValue = value;
+            for (int i = 0; i < TransformationPath.Count; i++) {
+                tempValue = TransformationPath[i].TransformValue(tempValue);
+            }
+            return (TTo)tempValue;
+        }
 
-			IEnumerable tempValues = values;
-			for (int i = 0; i < TransformationPath.Count; i++) {
-				tempValues = TransformationPath[i].TransformValues(tempValues);
-			}
-			return (IEnumerable<TTo>)tempValues;
-		}
+        /// <inheritdoc/>
+        public virtual IEnumerable<TTo> TransformValues(IEnumerable<TFrom> values) {
+            Contract.Ensures(Contract.Result<IEnumerable<TTo>>() != null);
 
-		/// <inheritdoc/>
-		public new ConcatenatedTransformation<TTo, TFrom> GetInverse(){
-			if(!HasInverse) throw new NoInverseException();
-			Contract.Ensures(Contract.Result<ConcatenatedTransformation<TTo, TFrom>>() != null);
-			return (ConcatenatedTransformation<TTo,TFrom>)CreateInverseConcatenatedOperation();
-		}
+            if (Transformations.Count == 1)
+                return ((ITransformation<TFrom, TTo>)(TransformationPath[0].Core)).TransformValues(values);
 
-		/// <inheritdoc/>
-		ITransformation<TTo, TFrom> ITransformation<TFrom, TTo>.GetInverse() {
-			Contract.Ensures(Contract.Result<ITransformation<TTo, TFrom>>() != null);
-			return GetInverse();
-		}
+            IEnumerable tempValues = values;
+            for (int i = 0; i < TransformationPath.Count; i++) {
+                tempValues = TransformationPath[i].TransformValues(tempValues);
+            }
+            return (IEnumerable<TTo>)tempValues;
+        }
 
-		/// <inheritdoc/>
-		protected override ConcatenatedTransformation CreateInverseConcatenatedOperation() {
-			return new ConcatenatedTransformation<TTo, TFrom>(CreateInverseOperations());
-		}
+        /// <inheritdoc/>
+        public new ConcatenatedTransformation<TTo, TFrom> GetInverse() {
+            if (!HasInverse) throw new NoInverseException();
+            Contract.Ensures(Contract.Result<ConcatenatedTransformation<TTo, TFrom>>() != null);
+            return (ConcatenatedTransformation<TTo, TFrom>)CreateInverseConcatenatedOperation();
+        }
 
-		[ContractInvariantMethod]
-		[Conditional("CONTRACTS_FULL")]
-		private void CodeContractInvariant() {
-			Contract.Invariant(null != TransformationPath);
-			Contract.Invariant(Contract.ForAll(TransformationPath, x => null != x));
-		}
-	}
+        /// <inheritdoc/>
+        ITransformation<TTo, TFrom> ITransformation<TFrom, TTo>.GetInverse() {
+            Contract.Ensures(Contract.Result<ITransformation<TTo, TFrom>>() != null);
+            return GetInverse();
+        }
 
-	/// <summary>
-	/// A transformation that is composed of a sequence of transformations as a chained expression.
-	/// </summary>
-	public class ConcatenatedTransformation<TValue> : ConcatenatedTransformation<TValue, TValue>, ITransformation<TValue>
-	{
-		/// <summary>
-		/// Creates a new concatenated transformation composed of the given transformations.
-		/// </summary>
-		/// <param name="transformations"></param>
-		public ConcatenatedTransformation(IEnumerable<ITransformation> transformations)
-			: base(transformations)
-		{
-			Contract.Requires(transformations != null);
-			Contract.EndContractBlock();
-		}
+        /// <inheritdoc/>
+        protected override ConcatenatedTransformation CreateInverseConcatenatedOperation() {
+            return new ConcatenatedTransformation<TTo, TFrom>(CreateInverseOperations());
+        }
 
-		/// <inheritdoc/>
-		public virtual void TransformValues(TValue[] values){
-			for(int i = 0; i < values.Length; i++)
-				values[i] = TransformValue(values[i]);
-		}
+        [ContractInvariantMethod]
+        [Conditional("CONTRACTS_FULL")]
+        private void CodeContractInvariant() {
+            Contract.Invariant(null != TransformationPath);
+            Contract.Invariant(Contract.ForAll(TransformationPath, x => null != x));
+        }
+    }
 
-		/// <inheritdoc/>
-		public new ConcatenatedTransformation<TValue> GetInverse(){
-			if(!HasInverse) throw new NoInverseException();
-			Contract.Ensures(Contract.Result<ConcatenatedTransformation<TValue>>() != null);
-			return (ConcatenatedTransformation<TValue>)CreateInverseConcatenatedOperation();
-		}
+    /// <summary>
+    /// A transformation that is composed of a sequence of transformations as a chained expression.
+    /// </summary>
+    public class ConcatenatedTransformation<TValue> : ConcatenatedTransformation<TValue, TValue>, ITransformation<TValue>
+    {
+        /// <summary>
+        /// Creates a new concatenated transformation composed of the given transformations.
+        /// </summary>
+        /// <param name="transformations"></param>
+        public ConcatenatedTransformation(IEnumerable<ITransformation> transformations)
+            : base(transformations) {
+            Contract.Requires(transformations != null);
+            Contract.EndContractBlock();
+        }
 
-		/// <inheritdoc/>
-		ITransformation<TValue> ITransformation<TValue>.GetInverse(){
-			return GetInverse();
-		}
+        /// <inheritdoc/>
+        public virtual void TransformValues(TValue[] values) {
+            for (int i = 0; i < values.Length; i++)
+                values[i] = TransformValue(values[i]);
+        }
 
-		/// <inheritdoc/>
-		protected override ConcatenatedTransformation CreateInverseConcatenatedOperation() {
-			return new ConcatenatedTransformation<TValue>(CreateInverseOperations());
-		}
+        /// <inheritdoc/>
+        public new ConcatenatedTransformation<TValue> GetInverse() {
+            if (!HasInverse) throw new NoInverseException();
+            Contract.Ensures(Contract.Result<ConcatenatedTransformation<TValue>>() != null);
+            return (ConcatenatedTransformation<TValue>)CreateInverseConcatenatedOperation();
+        }
 
-	}
+        /// <inheritdoc/>
+        ITransformation<TValue> ITransformation<TValue>.GetInverse() {
+            return GetInverse();
+        }
+
+        /// <inheritdoc/>
+        protected override ConcatenatedTransformation CreateInverseConcatenatedOperation() {
+            Contract.Ensures(Contract.Result<ConcatenatedTransformation>() != null);
+            return new ConcatenatedTransformation<TValue>(CreateInverseOperations());
+        }
+
+    }
 
 }

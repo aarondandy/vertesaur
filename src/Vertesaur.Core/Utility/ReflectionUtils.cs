@@ -7,47 +7,51 @@ using System.Text;
 
 namespace Vertesaur.Utility
 {
-	internal static class ReflectionUtils
-	{
+    internal static class ReflectionUtils
+    {
 
-		public static IEnumerable<Type> GetInterfacesByGenericTypeDefinition(this Type targetType, Type genericTypeDefinition) {
-			Contract.Requires(null != targetType);
-			Contract.Requires(null != genericTypeDefinition);
+        public static IEnumerable<Type> GetInterfacesByGenericTypeDefinition(this Type targetType, Type genericTypeDefinition) {
+            Contract.Requires(null != targetType);
+            Contract.Requires(null != genericTypeDefinition);
+            Contract.Ensures(Contract.Result<IEnumerable<Type>>() != null);
 #if NETFX_CORE
-			return targetType.GetTypeInfo()
-				.ImplementedInterfaces
-				.Select(t => t.GetTypeInfo())
-				.Where(ti => ti.IsGenericParameter &&  ti.GetGenericTypeDefinition() == genericTypeDefinition)
-				.Select(ti => ti.AsType());
+            return targetType.GetTypeInfo()
+                .ImplementedInterfaces
+                .Select(t => t.GetTypeInfo())
+                .Where(ti => ti.IsGenericParameter &&  ti.GetGenericTypeDefinition() == genericTypeDefinition)
+                .Select(ti => ti.AsType());
 #else
-			return targetType
-				.GetInterfaces()
-				.Where(t => t.IsGenericType && t.GetGenericTypeDefinition() == genericTypeDefinition);
+            return targetType
+                .GetInterfaces()
+                .Where(t => t.IsGenericType && t.GetGenericTypeDefinition() == genericTypeDefinition);
 #endif
 
-		}
+        }
 
-		public static IEnumerable<MethodInfo> GetPublicInstanceInvokableMethods(this Type targetType) {
-			Contract.Requires(null != targetType);
+        public static IEnumerable<MethodInfo> GetPublicInstanceInvokableMethods(this Type targetType) {
+            Contract.Requires(null != targetType);
+            Contract.Ensures(Contract.Result<IEnumerable<MethodInfo>>() != null);
 #if NETFX_CORE
-			return targetType.GetTypeInfo().DeclaredMethods.Where(m => m.IsPublic && !m.IsStatic);
+            return targetType.GetTypeInfo().DeclaredMethods.Where(m => m.IsPublic && !m.IsStatic);
 #else
-			return targetType.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod);
+            return targetType.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod);
 #endif
-		}
+        }
 
 
 #if NETFX_CORE
-		public static IEnumerable<MethodInfo> GetMethods(this Type targetType) {
-			Contract.Requires(null != targetType);
-			return targetType.GetTypeInfo().DeclaredMethods;
-		} 
+        public static IEnumerable<MethodInfo> GetMethods(this Type targetType) {
+            Contract.Requires(null != targetType);
+            Contract.Ensures(Contract.Result<IEnumerable<MethodInfo>>() != null);
+            return targetType.GetTypeInfo().DeclaredMethods;
+        } 
 
-		public static Type[] GetGenericArguments(this Type targetType) {
-			Contract.Requires(null != targetType);
-			return targetType.GetTypeInfo().GenericTypeArguments;
-		}
+        public static Type[] GetGenericArguments(this Type targetType) {
+            Contract.Requires(targetType != null);
+            Contract.Ensures(Contract.Result<Type[]>() != null)
+            return targetType.GetTypeInfo().GenericTypeArguments;
+        }
 #endif
 
-	}
+    }
 }

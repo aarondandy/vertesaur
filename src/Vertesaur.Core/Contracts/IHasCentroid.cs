@@ -22,18 +22,19 @@
 //
 // ===============================================================================
 
-namespace Vertesaur.Contracts {
-	/// <summary>
-	/// An object having a centroid.
-	/// </summary>
-	/// <typeparam name="TPoint">The point type.</typeparam>
-	public interface IHasCentroid<out TPoint>
-	{
-		/// <summary>
-		/// Calculates the centroid.
-		/// </summary>
-		/// <returns>A centroid.</returns>
-		TPoint GetCentroid();
+namespace Vertesaur.Contracts
+{
+    /// <summary>
+    /// An object having a centroid.
+    /// </summary>
+    /// <typeparam name="TPoint">The point type.</typeparam>
+    public interface IHasCentroid<out TPoint>
+    {
+        /// <summary>
+        /// Calculates the centroid.
+        /// </summary>
+        /// <returns>A centroid.</returns>
+        TPoint GetCentroid();
 
-	}
+    }
 }

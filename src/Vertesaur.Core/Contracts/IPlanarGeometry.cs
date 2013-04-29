@@ -22,11 +22,12 @@
 //
 // ===============================================================================
 
-namespace Vertesaur.Contracts {
-	/// <summary>
-	/// Marks a class as being a planar geometry.
-	/// </summary>
-	public interface IPlanarGeometry
-	{
-	}
+namespace Vertesaur.Contracts
+{
+    /// <summary>
+    /// Marks a class as being a planar geometry.
+    /// </summary>
+    public interface IPlanarGeometry
+    {
+    }
 }

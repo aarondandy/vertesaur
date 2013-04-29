@@ -22,19 +22,20 @@
 //
 // ===============================================================================
 
-namespace Vertesaur.Contracts {
+namespace Vertesaur.Contracts
+{
 
-	/// <summary>
-	/// Defines functionality for an object to calculate its area.
-	/// </summary>
-	/// <typeparam name="TValue">The element type.</typeparam>
-	public interface IHasArea<out TValue>
-	{
-		/// <summary>
-		/// Calculates the area or surface area of this instance.
-		/// </summary>
-		/// <returns>Area result value.</returns>
-		TValue GetArea();
-	}
+    /// <summary>
+    /// Defines functionality for an object to calculate its area.
+    /// </summary>
+    /// <typeparam name="TValue">The element type.</typeparam>
+    public interface IHasArea<out TValue>
+    {
+        /// <summary>
+        /// Calculates the area or surface area of this instance.
+        /// </summary>
+        /// <returns>Area result value.</returns>
+        TValue GetArea();
+    }
 
 }

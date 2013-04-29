@@ -25,117 +25,107 @@
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 
-namespace Vertesaur.Contracts {
-	/// <summary>
-	/// A square matrix which has the same number of rows as columns.
-	/// </summary>
-	/// <typeparam name="TValue">The element type of the matrix.</typeparam>
-	/// <remarks>
-	/// All matrix types which implement this interface must have the same number of rows as columns.
-	/// </remarks>
-	[ContractClass(typeof(CodeContractIMatrixSquare<>))]
-	public interface IMatrixSquare<out TValue> :
-		IMatrix<TValue>
-	{
-		/// <summary>
-		/// Gets the order of the square matrix.
-		/// </summary>
-		/// <remarks>
-		/// The order should be equal to the rows and columns of this matrix.
-		/// </remarks>
-		int Order { get; }
-		/// <summary>
-		/// Calculates the determinant value of this matrix.
-		/// </summary>
-		/// <returns>The determinant value.</returns>
-		TValue CalculateDeterminant();
-		/// <summary>
-		/// Determines if this matrix is a diagonal matrix.
-		/// </summary>
-		bool IsDiagonal { get; }
-		/// <summary>
-		/// True if this matrix is a scalar matrix.
-		/// </summary>
-		bool IsScalar { get; }
-		/// <summary>
-		/// True if this matrix is equivalent to the identity matrix.
-		/// </summary>
-		bool IsIdentity { get; }
-		/// <summary>
-		/// True if this matrix is an upper triangular matrix where all elements below and left of the diagonal are 0.
-		/// </summary>
-		bool IsUpperTriangular { get; }
-		/// <summary>
-		/// True if this matrix is a lower triangular matrix where all elements above and right of the diagonal are 0.
-		/// </summary>
-		bool IsLowerTriangular { get; }
+namespace Vertesaur.Contracts
+{
+    /// <summary>
+    /// A square matrix which has the same number of rows as columns.
+    /// </summary>
+    /// <typeparam name="TValue">The element type of the matrix.</typeparam>
+    /// <remarks>
+    /// All matrix types which implement this interface must have the same number of rows as columns.
+    /// </remarks>
+    [ContractClass(typeof(CodeContractIMatrixSquare<>))]
+    public interface IMatrixSquare<out TValue> :
+        IMatrix<TValue>
+    {
+        /// <summary>
+        /// Gets the order of the square matrix.
+        /// </summary>
+        /// <remarks>
+        /// The order should be equal to the rows and columns of this matrix.
+        /// </remarks>
+        int Order { get; }
+        /// <summary>
+        /// Calculates the determinant value of this matrix.
+        /// </summary>
+        /// <returns>The determinant value.</returns>
+        TValue CalculateDeterminant();
+        /// <summary>
+        /// Determines if this matrix is a diagonal matrix.
+        /// </summary>
+        bool IsDiagonal { get; }
+        /// <summary>
+        /// True if this matrix is a scalar matrix.
+        /// </summary>
+        bool IsScalar { get; }
+        /// <summary>
+        /// True if this matrix is equivalent to the identity matrix.
+        /// </summary>
+        bool IsIdentity { get; }
+        /// <summary>
+        /// True if this matrix is an upper triangular matrix where all elements below and left of the diagonal are 0.
+        /// </summary>
+        bool IsUpperTriangular { get; }
+        /// <summary>
+        /// True if this matrix is a lower triangular matrix where all elements above and right of the diagonal are 0.
+        /// </summary>
+        bool IsLowerTriangular { get; }
 
-	}
+    }
 
-	[ContractClassFor(typeof(IMatrixSquare<>))]
-	internal abstract class CodeContractIMatrixSquare<TValue> : IMatrixSquare<TValue>
-	{
+    [ContractClassFor(typeof(IMatrixSquare<>))]
+    internal abstract class CodeContractIMatrixSquare<TValue> : IMatrixSquare<TValue>
+    {
 
-		private CodeContractIMatrixSquare() { }
+        private CodeContractIMatrixSquare() { }
 
+        [ContractInvariantMethod]
+        [Conditional("CONTRACTS_FULL")]
+        private void CodeContractInvariant() {
+            Contract.Invariant(RowCount == ColumnCount);
+            Contract.Invariant(Order == RowCount);
+            Contract.Invariant(Order == ColumnCount);
+        }
 
-		[ContractInvariantMethod]
-		[Conditional("CONTRACTS_FULL")]
-		private void CodeContractInvariant() {
-			Contract.Invariant(RowCount == ColumnCount);
-			Contract.Invariant(Order == RowCount);
-			Contract.Invariant(Order == ColumnCount);
-		}
+        public int Order {
+            get {
+                Contract.Ensures(Contract.Result<int>() == RowCount);
+                Contract.Ensures(Contract.Result<int>() == ColumnCount);
+                Contract.EndContractBlock();
+                throw new System.NotImplementedException();
+            }
+        }
 
-		public int Order {
-			get {
-				Contract.Ensures(Contract.Result<int>() == RowCount);
-				Contract.Ensures(Contract.Result<int>() == ColumnCount);
-				Contract.EndContractBlock();
-				throw new System.NotImplementedException();
-			}
-		}
+        public abstract TValue CalculateDeterminant();
 
-		public TValue CalculateDeterminant() {
-			throw new System.NotImplementedException();
-		}
+        public abstract bool IsDiagonal { get; }
 
-		public bool IsDiagonal {
-			get { throw new System.NotImplementedException(); }
-		}
+        public abstract bool IsScalar { get; }
 
-		public bool IsScalar {
-			get { throw new System.NotImplementedException(); }
-		}
+        public abstract bool IsIdentity { get; }
 
-		public bool IsIdentity {
-			get { throw new System.NotImplementedException(); }
-		}
+        public abstract bool IsUpperTriangular { get; }
 
-		public bool IsUpperTriangular {
-			get { throw new System.NotImplementedException(); }
-		}
+        public abstract bool IsLowerTriangular { get; }
 
-		public bool IsLowerTriangular {
-			get { throw new System.NotImplementedException(); }
-		}
+        public int RowCount {
+            get{
+                Contract.Ensures(Contract.Result<int>() == ColumnCount);
+                throw new System.NotImplementedException();
+            }
+        }
 
-		public int RowCount {
-			get { throw new System.NotImplementedException(); }
-		}
+        public int ColumnCount {
+            get{
+                Contract.Ensures(Contract.Result<int>() == RowCount);
+                throw new System.NotImplementedException();
+            }
+        }
 
-		public int ColumnCount {
-			get { throw new System.NotImplementedException(); }
-		}
+        public abstract int ElementCount { get; }
 
-		public int ElementCount {
-			get { throw new System.NotImplementedException(); }
-		}
+        public abstract TValue Get(int r, int c);
 
-		public TValue Get(int r, int c) {
-			throw new System.NotImplementedException();
-		}
-
-	}
+    }
 
 }

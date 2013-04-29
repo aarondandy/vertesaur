@@ -22,12 +22,12 @@
 //
 // ===============================================================================
 
-namespace Vertesaur.Contracts {
-
-	/// <summary>
-	/// Flags a class as representing a geometric object that exists within a 3D space.
-	/// </summary>
-	public interface I3DGeometry
-	{
-	}
+namespace Vertesaur.Contracts
+{
+    /// <summary>
+    /// Flags a class as representing a geometric object that exists within a 3D space.
+    /// </summary>
+    public interface I3DGeometry
+    {
+    }
 }

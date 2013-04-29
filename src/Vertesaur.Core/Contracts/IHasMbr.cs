@@ -23,19 +23,20 @@
 // ===============================================================================
 
 
-namespace Vertesaur.Contracts {
-	/// <summary>
-	/// An object that has a minimum bounding rectangle, sometimes known as an envelope.
-	/// </summary>
-	/// <typeparam name="TValue">The element type.</typeparam>
-	/// <typeparam name="TMbr">The MBR type.</typeparam>
-	public interface IHasMbr<out TMbr, out TValue>
-		where TMbr : IMbr<TValue>
-	{
-		/// <summary>
-		/// Calculates a minimum bounding rectangle for this instance.
-		/// </summary>
-		/// <returns>A minimum bounding rectangle.</returns>
-		TMbr GetMbr();
-	}
+namespace Vertesaur.Contracts
+{
+    /// <summary>
+    /// An object that has a minimum bounding rectangle, sometimes known as an envelope.
+    /// </summary>
+    /// <typeparam name="TValue">The element type.</typeparam>
+    /// <typeparam name="TMbr">The MBR type.</typeparam>
+    public interface IHasMbr<out TMbr, out TValue>
+        where TMbr : IMbr<TValue>
+    {
+        /// <summary>
+        /// Calculates a minimum bounding rectangle for this instance.
+        /// </summary>
+        /// <returns>A minimum bounding rectangle.</returns>
+        TMbr GetMbr();
+    }
 }

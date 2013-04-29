@@ -9,134 +9,127 @@ using Vertesaur.Utility;
 
 namespace Vertesaur.PolygonOperation
 {
-	internal struct PolygonPointCrossingGenerator
-	{
+    internal struct PolygonPointCrossingGenerator
+    {
 
-		private struct Segment2Data
-		{
-			public Segment2Data(Segment2 segment, int segmentIndex, int ringIndex) {
-				Contract.Requires(segment != null);
-				Contract.Requires(segmentIndex >= 0);
-				Contract.Requires(ringIndex >= 0);
+        private struct Segment2Data
+        {
+            public Segment2Data(Segment2 segment, int segmentIndex, int ringIndex) {
+                Contract.Requires(segment != null);
+                Contract.Requires(segmentIndex >= 0);
+                Contract.Requires(ringIndex >= 0);
 
-				Segment = segment;
-				SegmentIndex = segmentIndex;
-				RingIndex = ringIndex;
-			}
+                Segment = segment;
+                SegmentIndex = segmentIndex;
+                RingIndex = ringIndex;
+            }
 
-			public readonly Segment2 Segment;
-			public readonly int SegmentIndex;
-			public readonly int RingIndex;
-		}
+            public readonly Segment2 Segment;
+            public readonly int SegmentIndex;
+            public readonly int RingIndex;
+        }
 
-		private readonly Polygon2 _a;
-		private readonly Polygon2 _b;
+        private readonly Polygon2 _a;
+        private readonly Polygon2 _b;
 
 #if (SILVERLIGHT)
-		private readonly Dictionary<Ring2, int[]> _sortedRingSegmentIndices;
+        private readonly Dictionary<Ring2, int[]> _sortedRingSegmentIndices;
 
-		public PolygonPointCrossingGenerator(Polygon2 a, Polygon2 b) {
-			if(null == a) throw new ArgumentNullException("a");
-			if(null == b) throw new ArgumentNullException("b");
-			Contract.EndContractBlock();
+        public PolygonPointCrossingGenerator(Polygon2 a, Polygon2 b) {
+            if(null == a) throw new ArgumentNullException("a");
+            if(null == b) throw new ArgumentNullException("b");
+            Contract.EndContractBlock();
 
-			_a = a;
-			_b = b;
-			_sortedRingSegmentIndices = new Dictionary<Ring2, int[]>();
-		}
+            _a = a;
+            _b = b;
+            _sortedRingSegmentIndices = new Dictionary<Ring2, int[]>();
+        }
 
-		[Obsolete("Not thread safe")]
-		private int[] GetSortedRingSegmentIndices(Ring2 ring) {
-			int[] result;
-			if(!_sortedRingSegmentIndices.TryGetValue(ring, out result)) {
-				result = GenerateSortedRingSegmentIndices(ring);
-				_sortedRingSegmentIndices.Add(ring,result);
-			}
-			return result;
-		}
+        [Obsolete("Not thread safe")]
+        private int[] GetSortedRingSegmentIndices(Ring2 ring) {
+            int[] result;
+            if(!_sortedRingSegmentIndices.TryGetValue(ring, out result)) {
+                result = GenerateSortedRingSegmentIndices(ring);
+                _sortedRingSegmentIndices.Add(ring,result);
+            }
+            return result;
+        }
 #else
-		private readonly System.Collections.Concurrent.ConcurrentDictionary<Ring2, int[]> _sortedRingSegmentIndices;
+        private readonly System.Collections.Concurrent.ConcurrentDictionary<Ring2, int[]> _sortedRingSegmentIndices;
 
-		public PolygonPointCrossingGenerator(Polygon2 a, Polygon2 b) {
-			if(null == a) throw new ArgumentNullException("a");
-			if(null == b) throw new ArgumentNullException("b");
-			Contract.EndContractBlock();
+        public PolygonPointCrossingGenerator(Polygon2 a, Polygon2 b) {
+            if (null == a) throw new ArgumentNullException("a");
+            if (null == b) throw new ArgumentNullException("b");
+            Contract.EndContractBlock();
 
-			_a = a;
-			_b = b;
-			_sortedRingSegmentIndices = new System.Collections.Concurrent.ConcurrentDictionary<Ring2, int[]>();
-		}
+            _a = a;
+            _b = b;
+            _sortedRingSegmentIndices = new System.Collections.Concurrent.ConcurrentDictionary<Ring2, int[]>();
+        }
 
-		private int[] GetSortedRingSegmentIndices(Ring2 ring) {
-			Contract.Requires(null != ring);
-			return _sortedRingSegmentIndices.GetOrAdd(ring, GenerateSortedRingSegmentIndices);
-		}
+        private int[] GetSortedRingSegmentIndices(Ring2 ring) {
+            Contract.Requires(null != ring);
+            return _sortedRingSegmentIndices.GetOrAdd(ring, GenerateSortedRingSegmentIndices);
+        }
 #endif
 
-		public List<PolygonCrossing> GenerateCrossings() {
-			Contract.Ensures(Contract.Result<List<PolygonCrossing>>() != null);
-			Contract.EndContractBlock();
+        public List<PolygonCrossing> GenerateCrossings() {
+            Contract.Ensures(Contract.Result<List<PolygonCrossing>>() != null);
 
-			return GenerateCrossingsSerial();
-			/*return A.Count > 8 || B.Count > 8
-				? GenerateCrossingsParallel()
-				: GenerateCrossingsSerial();*/
-		}
+            return GenerateCrossingsSerial();
+        }
 
-		private static int[] GenerateSortedRingSegmentIndices(Ring2 ring) {
-			Contract.Requires(ring != null);
-			Contract.Ensures(Contract.Result<int[]>() != null);
-			Contract.EndContractBlock();
+        private static int[] GenerateSortedRingSegmentIndices(Ring2 ring) {
+            Contract.Requires(ring != null);
+            Contract.Ensures(Contract.Result<int[]>() != null);
 
-			var indices = new int[ring.Count];
-			for (int i = 0; i < indices.Length; i++)
-				indices[i] = i;
-			indices.Sort((a, b) => Compare(a, b, ring));
-			return indices;
-		}
+            var indices = new int[ring.Count];
+            for (int i = 0; i < indices.Length; i++)
+                indices[i] = i;
+            indices.Sort((a, b) => Compare(a, b, ring));
+            return indices;
+        }
 
-		private static int Compare(int indexAStart, int indexBStart, Ring2 ring) {
-			Contract.Requires(ring != null);
-			Contract.Requires(indexAStart >= 0);
-			Contract.Requires(indexAStart < ring.Count);
-			Contract.Requires(indexBStart >= 0);
-			Contract.Requires(indexBStart < ring.Count);
-			Contract.EndContractBlock();
+        private static int Compare(int indexAStart, int indexBStart, Ring2 ring) {
+            Contract.Requires(ring != null);
+            Contract.Requires(indexAStart >= 0);
+            Contract.Requires(indexAStart < ring.Count);
+            Contract.Requires(indexBStart >= 0);
+            Contract.Requires(indexBStart < ring.Count);
 
-			var a = ring[indexAStart].X;
-			var b = ring[IterationUtils.AdvanceLoopingIndex(indexAStart, ring.Count)].X;
-			var c = ring[indexBStart].X;
-			var d = ring[IterationUtils.AdvanceLoopingIndex(indexBStart, ring.Count)].X;
-			int compareResult;
-			if (d < c) {
-				compareResult = Math.Min(a,b).CompareTo(d);
-				return compareResult != 0 ? compareResult : Math.Max(a,b).CompareTo(c);
-			}
-			compareResult = Math.Min(a, b).CompareTo(c);
-			return compareResult != 0 ? compareResult : Math.Max(a, b).CompareTo(d);
-		}
+            var a = ring[indexAStart].X;
+            var b = ring[IterationUtils.AdvanceLoopingIndex(indexAStart, ring.Count)].X;
+            var c = ring[indexBStart].X;
+            var d = ring[IterationUtils.AdvanceLoopingIndex(indexBStart, ring.Count)].X;
+            int compareResult;
+            if (d < c) {
+                compareResult = Math.Min(a, b).CompareTo(d);
+                return compareResult != 0 ? compareResult : Math.Max(a, b).CompareTo(c);
+            }
+            compareResult = Math.Min(a, b).CompareTo(c);
+            return compareResult != 0 ? compareResult : Math.Max(a, b).CompareTo(d);
+        }
 
-		private List<PolygonCrossing> GenerateCrossingsSerial() {
-			Contract.Ensures(Contract.Result<List<PolygonCrossing>>() != null);
-			Contract.EndContractBlock();
+        private List<PolygonCrossing> GenerateCrossingsSerial() {
+            Contract.Ensures(Contract.Result<List<PolygonCrossing>>() != null);
 
-			var result = new List<PolygonCrossing>();
-			for (int ringIndexA = 0; ringIndexA < _a.Count; ringIndexA++) {
-				var ringA = _a[ringIndexA];
-				if (ringA.Count == 0)
-					continue;
+            var result = new List<PolygonCrossing>();
+            for (int ringIndexA = 0; ringIndexA < _a.Count; ringIndexA++) {
+                var ringA = _a[ringIndexA];
+                if (ringA.Count == 0)
+                    continue;
 
-				var ringAMbr = ringA.GetMbr();
-				for (int ringIndexB = 0; ringIndexB < _b.Count; ringIndexB++) {
-					var ringB = _b[ringIndexB];
-					if (ringAMbr.Intersects(ringB.GetMbr()) && ringB.Count > 0) {
-						Contract.Assume(ringA.Count > 0);
-						result.AddRange(GenerateRingCrossings(ringA, ringB, ringIndexA, ringIndexB));
-					}
-				}
-			}
-			return result;
-		}
+                var ringAMbr = ringA.GetMbr();
+                for (int ringIndexB = 0; ringIndexB < _b.Count; ringIndexB++) {
+                    var ringB = _b[ringIndexB];
+                    if (ringAMbr.Intersects(ringB.GetMbr()) && ringB.Count > 0) {
+                        Contract.Assume(ringA.Count > 0);
+                        result.AddRange(GenerateRingCrossings(ringA, ringB, ringIndexA, ringIndexB));
+                    }
+                }
+            }
+            return result;
+        }
 
 #if (SILVERLIGHT)
 		private List<PolygonCrossing> GenerateCrossingsParallel() {
@@ -146,267 +139,253 @@ namespace Vertesaur.PolygonOperation
 			throw new NotImplementedException();
 		}
 #else
-		private List<PolygonCrossing> GenerateCrossingsParallel() {
-			Contract.Ensures(Contract.Result<List<PolygonCrossing>>() != null);
-			Contract.EndContractBlock();
+        private List<PolygonCrossing> GenerateCrossingsParallel() {
+            Contract.Ensures(Contract.Result<List<PolygonCrossing>>() != null);
 
-			return GenerateRingCrossingGenerationTasks()
-				.AsParallel().AsOrdered()
-				.WithMergeOptions(ParallelMergeOptions.FullyBuffered)
-				.SelectMany(Process).ToList();
-		}
+            return GenerateRingCrossingGenerationTasks()
+                .AsParallel().AsOrdered()
+                .WithMergeOptions(ParallelMergeOptions.FullyBuffered)
+                .SelectMany(Process).ToList();
+        }
 #endif
 
-		private sealed class RingCrossingGenerationTask
-		{
-			public RingCrossingGenerationTask(Ring2 ringA, Ring2 ringB, int ringIndexA, int ringIndexB) {
-				CodeContractHelper.RequiresListIndexValid(ringA, ringIndexA);
-				CodeContractHelper.RequiresListIndexValid(ringB, ringIndexB);
-				Contract.EndContractBlock();
+        private sealed class RingCrossingGenerationTask
+        {
+            public RingCrossingGenerationTask(Ring2 ringA, Ring2 ringB, int ringIndexA, int ringIndexB) {
+                CodeContractHelper.RequiresListIndexValid(ringA, ringIndexA);
+                CodeContractHelper.RequiresListIndexValid(ringB, ringIndexB);
 
-				RingA = ringA;
-				RingB = ringB;
-				RingIndexA = ringIndexA;
-				RingIndexB = ringIndexB;
-			}
+                RingA = ringA;
+                RingB = ringB;
+                RingIndexA = ringIndexA;
+                RingIndexB = ringIndexB;
+            }
 
-			public Ring2 RingA { get; private set; }
-			public Ring2 RingB { get; private set; }
-			public int RingIndexA { get; private set; }
-			public int RingIndexB { get; private set; }
+            public Ring2 RingA { get; private set; }
+            public Ring2 RingB { get; private set; }
+            public int RingIndexA { get; private set; }
+            public int RingIndexB { get; private set; }
 
-			[ContractInvariantMethod]
-			[Conditional("CONTRACTS_FULL")]
-			private void CodeContractInvariant() {
-				Contract.Invariant(RingA != null);
-				Contract.Invariant(RingA.Count > 0);
-				Contract.Invariant(RingIndexA >= 0);
-				Contract.Invariant(RingIndexA < RingA.Count);
-				Contract.Invariant(RingB != null);
-				Contract.Invariant(RingB.Count > 0);
-				Contract.Invariant(RingIndexB >= 0);
-				Contract.Invariant(RingIndexB < RingB.Count);
-			}
-		}
+            [ContractInvariantMethod]
+            [Conditional("CONTRACTS_FULL")]
+            private void CodeContractInvariant() {
+                Contract.Invariant(RingA != null);
+                Contract.Invariant(RingA.Count > 0);
+                Contract.Invariant(RingIndexA >= 0);
+                Contract.Invariant(RingIndexA < RingA.Count);
+                Contract.Invariant(RingB != null);
+                Contract.Invariant(RingB.Count > 0);
+                Contract.Invariant(RingIndexB >= 0);
+                Contract.Invariant(RingIndexB < RingB.Count);
+            }
+        }
 
-		private List<PolygonCrossing> Process(RingCrossingGenerationTask task) {
-			Contract.Requires(task != null);
-			Contract.Ensures(Contract.Result<List<PolygonCrossing>>() != null);
-			Contract.EndContractBlock();
+        private List<PolygonCrossing> Process(RingCrossingGenerationTask task) {
+            Contract.Requires(task != null);
+            Contract.Ensures(Contract.Result<List<PolygonCrossing>>() != null);
+            return GenerateRingCrossings(task.RingA, task.RingB, task.RingIndexA, task.RingIndexB);
+        }
 
-			return GenerateRingCrossings(task.RingA, task.RingB, task.RingIndexA, task.RingIndexB);
-		}
+        private IEnumerable<RingCrossingGenerationTask> GenerateRingCrossingGenerationTasks() {
+            Contract.Ensures(Contract.Result<IEnumerable<RingCrossingGenerationTask>>() != null);
 
-		private IEnumerable<RingCrossingGenerationTask> GenerateRingCrossingGenerationTasks() {
-			Contract.Ensures(Contract.Result<IEnumerable<RingCrossingGenerationTask>>() != null);
-			Contract.EndContractBlock();
+            for (int ringIndexA = 0; ringIndexA < _a.Count; ringIndexA++) {
+                var ringA = _a[ringIndexA];
+                var ringAMbr = ringA.GetMbr();
+                for (int ringIndexB = 0; ringIndexB < _b.Count; ringIndexB++) {
+                    var ringB = _b[ringIndexB];
+                    if (ringAMbr.Intersects(ringB.GetMbr()))
+                        yield return new RingCrossingGenerationTask(
+                            ringA,
+                            ringB,
+                            ringIndexA,
+                            ringIndexB
+                        );
+                }
+            }
+        }
 
-			for (int ringIndexA = 0; ringIndexA < _a.Count; ringIndexA++) {
-				var ringA = _a[ringIndexA];
-				var ringAMbr = ringA.GetMbr();
-				for (int ringIndexB = 0; ringIndexB < _b.Count; ringIndexB++) {
-					var ringB = _b[ringIndexB];
-					if (ringAMbr.Intersects(ringB.GetMbr()))
-						yield return new RingCrossingGenerationTask(
-							ringA,
-							ringB,
-							ringIndexA,
-							ringIndexB
-						);
-				}
-			}
-		}
+        private List<PolygonCrossing> GenerateRingCrossings(Ring2 ringA, Ring2 ringB, int ringIndexA, int ringIndexB) {
+            CodeContractHelper.RequiresNotNullOrEmpty(ringA);
+            CodeContractHelper.RequiresNotNullOrEmpty(ringB);
+            Contract.Requires(ringIndexA >= 0);
+            Contract.Requires(ringIndexB >= 0);
+            Contract.Ensures(Contract.Result<List<PolygonCrossing>>() != null);
+            return GenerateRingCrossingsBruteForce(ringA, ringB, ringIndexA, ringIndexB);
+        }
 
-		private List<PolygonCrossing> GenerateRingCrossings(Ring2 ringA, Ring2 ringB, int ringIndexA, int ringIndexB) {
-			CodeContractHelper.RequiresNotNullOrEmpty(ringA);
-			CodeContractHelper.RequiresNotNullOrEmpty(ringB);
-			Contract.Requires(ringIndexA >= 0);
-			Contract.Requires(ringIndexB >= 0);
-			Contract.Ensures(Contract.Result<List<PolygonCrossing>>() != null);
-			Contract.EndContractBlock();
+        /// <summary>
+        /// Determines the points that would need to be inserted into the resulting
+        /// intersection geometry between the two given rings, at the location where
+        /// their boundaries cross.
+        /// </summary>
+        /// <param name="ringA">The first ring to test.</param>
+        /// <param name="ringB">The second ring to test.</param>
+        /// <param name="ringIndexA">The ring index on polygon a.</param>
+        /// <param name="ringIndexB">The ring index on polygon b.</param>
+        private List<PolygonCrossing> GenerateRingCrossingsSorted(Ring2 ringA, Ring2 ringB, int ringIndexA, int ringIndexB) {
+            CodeContractHelper.RequiresListIndexValid(ringA, ringIndexA);
+            CodeContractHelper.RequiresListIndexValid(ringB, ringIndexB);
+            Contract.Ensures(Contract.Result<List<PolygonCrossing>>() != null);
 
-			return GenerateRingCrossingsBruteForce(ringA, ringB, ringIndexA, ringIndexB);
-			/*return ringA.Count > 32 && ringB.Count > 32
-				? GenerateRingCrossingsSorted(ringA, ringB, ringIndexA, ringIndexB)
-				: GenerateRingCrossingsBruteForce(ringA, ringB, ringIndexA, ringIndexB);*/
-		}
+            int minSegmentSearchIndicesB = 0;
+            var segmentSearchIndicesA = GetSortedRingSegmentIndices(ringA);
+            var segmentSearchIndicesB = GetSortedRingSegmentIndices(ringB);
+            var countA = ringA.Count;
+            var countB = ringB.Count;
+            var crossings = new List<PolygonCrossing>();
+            for (var segmentSearchIndexA = 0; segmentSearchIndexA < segmentSearchIndicesA.Length; segmentSearchIndexA++) {
+                double temp;
+                var segmentStartIndexA = segmentSearchIndicesA[segmentSearchIndexA];
+                Contract.Assume(segmentStartIndexA >= 0);
+                Contract.Assume(segmentStartIndexA < ringA.Count);
+                var a = ringA[segmentStartIndexA];
+                var smallestXValueOnA = a.X;
+                var b = ringA[IterationUtils.AdvanceLoopingIndex(segmentStartIndexA, countA)];
+                var largestXValueOnA = b.X;
+                if (largestXValueOnA < smallestXValueOnA) {
+                    temp = largestXValueOnA;
+                    largestXValueOnA = smallestXValueOnA;
+                    smallestXValueOnA = temp;
+                }
+                var segmentDataA = new Segment2Data(
+                    new Segment2(a, b),
+                    segmentStartIndexA,
+                    ringIndexA
+                );
+                var segmentAMbr = segmentDataA.Segment.GetMbr();
+                for (int segmentSearchIndexB = minSegmentSearchIndicesB; segmentSearchIndexB < segmentSearchIndicesB.Length; segmentSearchIndexB++) {
+                    int segmentStartIndexB = segmentSearchIndicesB[segmentSearchIndexB];
+                    Contract.Assume(segmentStartIndexB >= 0);
+                    Contract.Assume(segmentStartIndexB < ringB.Count);
+                    var c = ringB[segmentStartIndexB];
+                    var smallestXValueOnC = c.X;
+                    var d = ringB[IterationUtils.AdvanceLoopingIndex(segmentStartIndexB, countB)];
+                    var largestXValueOnD = d.X;
+                    if (largestXValueOnD < smallestXValueOnC) {
+                        temp = largestXValueOnD;
+                        largestXValueOnD = smallestXValueOnC;
+                        smallestXValueOnC = temp;
+                    }
+                    if (largestXValueOnD < smallestXValueOnA) {
+                        minSegmentSearchIndicesB = segmentSearchIndexB + 1;
+                        continue;
+                    }
+                    if (smallestXValueOnC > largestXValueOnA)
+                        break;
 
-		/// <summary>
-		/// Determines the points that would need to be inserted into the resulting
-		/// intersection geometry between the two given rings, at the location where
-		/// their boundaries cross.
-		/// </summary>
-		/// <param name="ringA">The first ring to test.</param>
-		/// <param name="ringB">The second ring to test.</param>
-		/// <param name="ringIndexA">The ring index on polygon a.</param>
-		/// <param name="ringIndexB">The ring index on polygon b.</param>
-		private List<PolygonCrossing> GenerateRingCrossingsSorted(Ring2 ringA, Ring2 ringB, int ringIndexA, int ringIndexB) {
-			CodeContractHelper.RequiresListIndexValid(ringA, ringIndexA);
-			CodeContractHelper.RequiresListIndexValid(ringB, ringIndexB);
-			Contract.Ensures(Contract.Result<List<PolygonCrossing>>() != null);
-			Contract.EndContractBlock();
+                    if (!segmentAMbr.Intersects(c, d))
+                        continue;
 
-			int minSegmentSearchIndicesB = 0;
-			var segmentSearchIndicesA = GetSortedRingSegmentIndices(ringA);
-			var segmentSearchIndicesB = GetSortedRingSegmentIndices(ringB);
-			var countA = ringA.Count;
-			var countB = ringB.Count;
-			var crossings = new List<PolygonCrossing>();
-			for (var segmentSearchIndexA = 0; segmentSearchIndexA < segmentSearchIndicesA.Length; segmentSearchIndexA++) {
-				double temp;
-				var segmentStartIndexA = segmentSearchIndicesA[segmentSearchIndexA];
-				Contract.Assume(segmentStartIndexA >= 0);
-				Contract.Assume(segmentStartIndexA < ringA.Count);
-				var a = ringA[segmentStartIndexA];
-				var smallestXValueOnA = a.X;
-				var b = ringA[IterationUtils.AdvanceLoopingIndex(segmentStartIndexA, countA)];
-				var largestXValueOnA = b.X;
-				if (largestXValueOnA < smallestXValueOnA) {
-					temp = largestXValueOnA;
-					largestXValueOnA = smallestXValueOnA;
-					smallestXValueOnA = temp;
-				}
-				var segmentDataA = new Segment2Data(
-					new Segment2(a, b),
-					segmentStartIndexA,
-					ringIndexA
-				);
-				var segmentAMbr = segmentDataA.Segment.GetMbr();
-				for (int segmentSearchIndexB = minSegmentSearchIndicesB; segmentSearchIndexB < segmentSearchIndicesB.Length; segmentSearchIndexB++) {
-					int segmentStartIndexB = segmentSearchIndicesB[segmentSearchIndexB];
-					Contract.Assume(segmentStartIndexB >= 0);
-					Contract.Assume(segmentStartIndexB < ringB.Count);
-					var c = ringB[segmentStartIndexB];
-					var smallestXValueOnC = c.X;
-					var d = ringB[IterationUtils.AdvanceLoopingIndex(segmentStartIndexB, countB)];
-					var largestXValueOnD = d.X;
-					if (largestXValueOnD < smallestXValueOnC) {
-						temp = largestXValueOnD;
-						largestXValueOnD = smallestXValueOnC;
-						smallestXValueOnC = temp;
-					}
-					if (largestXValueOnD < smallestXValueOnA) {
-						minSegmentSearchIndicesB = segmentSearchIndexB + 1;
-						continue;
-					}
-					if (smallestXValueOnC > largestXValueOnA)
-						break;
+                    AddPointCrossings(
+                        crossings,
+                        segmentDataA,
+                        new Segment2Data(
+                            new Segment2(c, d),
+                            segmentStartIndexB,
+                            ringIndexB
+                        )
+                    );
+                }
 
-					if (!segmentAMbr.Intersects(c, d))
-						continue;
+                if (minSegmentSearchIndicesB >= segmentSearchIndicesB.Length)
+                    break; // wont do anything else
+            }
 
-					AddPointCrossings(
-						crossings,
-						segmentDataA,
-						new Segment2Data(
-							new Segment2(c, d),
-							segmentStartIndexB,
-							ringIndexB
-						)
-					);
-				}
+            return crossings;
+        }
 
-				if (minSegmentSearchIndicesB >= segmentSearchIndicesB.Length)
-					break; // wont do anything else
-			}
+        private static List<PolygonCrossing> GenerateRingCrossingsBruteForce(Ring2 ringA, Ring2 ringB, int ringIndexA, int ringIndexB) {
+            CodeContractHelper.RequiresNotNullOrEmpty(ringA);
+            CodeContractHelper.RequiresNotNullOrEmpty(ringB);
+            Contract.Requires(ringIndexA >= 0);
+            Contract.Requires(ringIndexB >= 0);
+            Contract.Ensures(Contract.Result<List<PolygonCrossing>>() != null);
 
-			return crossings;
-		}
+            var ringACount = ringA.Count;
+            var ringBCount = ringB.Count;
+            var segmentStartIndexA = ringACount - 1;
+            var b = ringA[segmentStartIndexA];
+            var crossings = new List<PolygonCrossing>();
+            for (int segmentEndIndexA = 0; segmentEndIndexA < ringACount; segmentStartIndexA = segmentEndIndexA++) {
+                var a = b;
+                b = ringA[segmentEndIndexA];
+                var segmentDataA = new Segment2Data(
+                    new Segment2(a, b),
+                    segmentStartIndexA,
+                    ringIndexA
+                );
+                var segmentMbrA = segmentDataA.Segment.GetMbr();
+                var segmentStartIndexB = ringBCount - 1;
+                var d = ringB[segmentStartIndexB];
+                for (int segmentEndIndexB = 0; segmentEndIndexB < ringBCount; segmentStartIndexB = segmentEndIndexB++) {
+                    var c = d;
+                    d = ringB[segmentEndIndexB];
+                    if (!segmentMbrA.Intersects(c, d))
+                        continue;
 
-		private static List<PolygonCrossing> GenerateRingCrossingsBruteForce(Ring2 ringA, Ring2 ringB, int ringIndexA, int ringIndexB) {
-			CodeContractHelper.RequiresNotNullOrEmpty(ringA);
-			CodeContractHelper.RequiresNotNullOrEmpty(ringB);
-			Contract.Requires(ringIndexA >= 0);
-			Contract.Requires(ringIndexB >= 0);
-			Contract.Ensures(Contract.Result<List<PolygonCrossing>>() != null);
-			Contract.EndContractBlock();
+                    AddPointCrossings(
+                        crossings,
+                        segmentDataA,
+                        new Segment2Data(
+                            new Segment2(c, d),
+                            segmentStartIndexB,
+                            ringIndexB
+                        )
+                    );
+                }
+            }
+            return crossings;
+        }
 
-			var ringACount = ringA.Count;
-			var ringBCount = ringB.Count;
-			var segmentStartIndexA = ringACount - 1;
-			var b = ringA[segmentStartIndexA];
-			var crossings = new List<PolygonCrossing>();
-			for (int segmentEndIndexA = 0; segmentEndIndexA < ringACount; segmentStartIndexA = segmentEndIndexA++) {
-				var a = b;
-				b = ringA[segmentEndIndexA];
-				var segmentDataA = new Segment2Data(
-					new Segment2(a, b),
-					segmentStartIndexA,
-					ringIndexA
-				);
-				var segmentMbrA = segmentDataA.Segment.GetMbr();
-				var segmentStartIndexB = ringBCount - 1;
-				var d = ringB[segmentStartIndexB];
-				for (int segmentEndIndexB = 0; segmentEndIndexB < ringBCount; segmentStartIndexB = segmentEndIndexB++) {
-					var c = d;
-					d = ringB[segmentEndIndexB];
-					if (!segmentMbrA.Intersects(c, d))
-						continue;
+        private static void AddPointCrossings(List<PolygonCrossing> results, Segment2Data segmentDataA, Segment2Data segmentDataB) {
+            Contract.Requires(results != null);
+            Contract.Ensures(results.Count >= Contract.OldValue(results).Count);
 
-					AddPointCrossings(
-						crossings,
-						segmentDataA,
-						new Segment2Data(
-							new Segment2(c, d),
-							segmentStartIndexB,
-							ringIndexB
-						)
-					);
-				}
-			}
-			return crossings;
-		}
+            Contract.Assume(null != segmentDataA.Segment);
+            Contract.Assume(null != segmentDataB.Segment);
 
-		private static void AddPointCrossings(List<PolygonCrossing> results, Segment2Data segmentDataA, Segment2Data segmentDataB) {
-			Contract.Requires(results != null);
-			Contract.Ensures(results.Count >= Contract.OldValue(results).Count);
-			Contract.EndContractBlock();
+            var intersectionDetails = SegmentIntersectionOperation.IntersectionDetails(segmentDataA.Segment, segmentDataB.Segment);
+            if (intersectionDetails is SegmentIntersectionOperation.PointResult) {
+                var pointResult = (SegmentIntersectionOperation.PointResult)intersectionDetails;
+                if (IsNotHead(pointResult))
+                    results.Add(CreatePolygonCrossing(pointResult, segmentDataA, segmentDataB));
+            }
+            else if (intersectionDetails is SegmentIntersectionOperation.SegmentResult) {
+                var segmentResult = intersectionDetails as SegmentIntersectionOperation.SegmentResult;
+                var bIsNotHead = IsNotHead(segmentResult.B);
+                if (IsNotHead(segmentResult.A)) {
+                    var resultA = CreatePolygonCrossing(segmentResult.A, segmentDataA, segmentDataB);
+                    if (bIsNotHead)
+                        results.AddRange(new[] { resultA, CreatePolygonCrossing(segmentResult.B, segmentDataA, segmentDataB) });
+                    else
+                        results.Add(resultA);
+                }
+                else if (bIsNotHead)
+                    results.Add(CreatePolygonCrossing(segmentResult.B, segmentDataA, segmentDataB));
+            }
+        }
 
-			Contract.Assume(null != segmentDataA.Segment);
-			Contract.Assume(null != segmentDataB.Segment);
+        private static PolygonCrossing CreatePolygonCrossing(
+            SegmentIntersectionOperation.PointResult pointResult,
+            Segment2Data segmentDataA, Segment2Data segmentDataB
+        ) {
+            Contract.Ensures(Contract.Result<PolygonCrossing>() != null);
 
-			var intersectionDetails = SegmentIntersectionOperation.IntersectionDetails(segmentDataA.Segment, segmentDataB.Segment);
-			if (intersectionDetails is SegmentIntersectionOperation.PointResult) {
-				var pointResult = (SegmentIntersectionOperation.PointResult)intersectionDetails;
-				if (IsNotHead(pointResult))
-					results.Add(CreatePolygonCrossing(pointResult, segmentDataA, segmentDataB));
-			}
-			else if (intersectionDetails is SegmentIntersectionOperation.SegmentResult) {
-				var segmentResult = intersectionDetails as SegmentIntersectionOperation.SegmentResult;
-				var bIsNotHead = IsNotHead(segmentResult.B);
-				if (IsNotHead(segmentResult.A)) {
-					var resultA = CreatePolygonCrossing(segmentResult.A, segmentDataA, segmentDataB);
-					if (bIsNotHead)
-						results.AddRange(new[] { resultA, CreatePolygonCrossing(segmentResult.B, segmentDataA, segmentDataB) });
-					else
-						results.Add(resultA);
-				}
-				else if (bIsNotHead)
-					results.Add(CreatePolygonCrossing(segmentResult.B, segmentDataA, segmentDataB));
-			}
-		}
+            Contract.Assume(segmentDataA.RingIndex >= 0);
+            Contract.Assume(segmentDataA.SegmentIndex >= 0);
+            Contract.Assume(segmentDataB.RingIndex >= 0);
+            Contract.Assume(segmentDataB.SegmentIndex >= 0);
 
-		private static PolygonCrossing CreatePolygonCrossing(
-			SegmentIntersectionOperation.PointResult pointResult,
-			Segment2Data segmentDataA, Segment2Data segmentDataB
-		) {
-			Contract.Ensures(Contract.Result<PolygonCrossing>() != null);
-			Contract.EndContractBlock();
+            return new PolygonCrossing(
+                pointResult.P,
+                new PolygonBoundaryLocation(segmentDataA.RingIndex, segmentDataA.SegmentIndex, pointResult.S),
+                new PolygonBoundaryLocation(segmentDataB.RingIndex, segmentDataB.SegmentIndex, pointResult.T)
+            );
+        }
 
-			Contract.Assume(segmentDataA.RingIndex >= 0);
-			Contract.Assume(segmentDataA.SegmentIndex >= 0);
-			Contract.Assume(segmentDataB.RingIndex >= 0);
-			Contract.Assume(segmentDataB.SegmentIndex >= 0);
-
-			return new PolygonCrossing(
-				pointResult.P,
-				new PolygonBoundaryLocation(segmentDataA.RingIndex, segmentDataA.SegmentIndex, pointResult.S),
-				new PolygonBoundaryLocation(segmentDataB.RingIndex, segmentDataB.SegmentIndex, pointResult.T)
-			);
-		}
-
-		private static bool IsNotHead(SegmentIntersectionOperation.PointResult pointResult) {
-			return 0 == ((pointResult.TypeA | pointResult.TypeB) & SegmentIntersectionOperation.SegmentIntersectionType.Head);
-		}
-	}
+        private static bool IsNotHead(SegmentIntersectionOperation.PointResult pointResult) {
+            return 0 == ((pointResult.TypeA | pointResult.TypeB) & SegmentIntersectionOperation.SegmentIntersectionType.Head);
+        }
+    }
 }

@@ -22,19 +22,20 @@
 //
 // ===============================================================================
 
-namespace Vertesaur.Contracts {
-	/// <summary>
-	/// Allows this object to have its intersection computed with another object.
-	/// </summary>
-	/// <typeparam name="TObject">The other object type.</typeparam>
-	/// <typeparam name="TResult">the result type.</typeparam>
-	public interface IHasIntersectionOperation<in TObject, out TResult>
-	{
-		/// <summary>
-		/// Finds the intersection between this instance and the given <paramref name="other"/>.
-		/// </summary>
-		/// <param name="other">The other object to calculate the intersection from.</param>
-		/// <returns>The intersection result.</returns>
-		TResult Intersection(TObject other);
-	}
+namespace Vertesaur.Contracts
+{
+    /// <summary>
+    /// Allows this object to have its intersection computed with another object.
+    /// </summary>
+    /// <typeparam name="TObject">The other object type.</typeparam>
+    /// <typeparam name="TResult">the result type.</typeparam>
+    public interface IHasIntersectionOperation<in TObject, out TResult>
+    {
+        /// <summary>
+        /// Finds the intersection between this instance and the given <paramref name="other"/>.
+        /// </summary>
+        /// <param name="other">The other object to calculate the intersection from.</param>
+        /// <returns>The intersection result.</returns>
+        TResult Intersection(TObject other);
+    }
 }

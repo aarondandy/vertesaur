@@ -22,13 +22,14 @@
 //
 // ===============================================================================
 
-namespace Vertesaur.Contracts {
-	/// <summary>
-	/// A point in 3D space.
-	/// </summary>
-	/// <typeparam name="TValue">The element type.</typeparam>
-	public interface IPoint3<out TValue> :
-		I3DGeometry,
-		ICoordinateTriple<TValue>
-	{ }
+namespace Vertesaur.Contracts
+{
+    /// <summary>
+    /// A point in 3D space.
+    /// </summary>
+    /// <typeparam name="TValue">The element type.</typeparam>
+    public interface IPoint3<out TValue> :
+        I3DGeometry,
+        ICoordinateTriple<TValue>
+    { }
 }

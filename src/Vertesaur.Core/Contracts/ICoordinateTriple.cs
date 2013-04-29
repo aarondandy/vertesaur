@@ -22,24 +22,25 @@
 //
 // ===============================================================================
 
-namespace Vertesaur.Contracts {
-	/// <summary>
-	/// An ordered tuple with three components; X, Y, and Z.
-	/// </summary>
-	/// <typeparam name="TValue">The element type.</typeparam>
-	public interface ICoordinateTriple<out TValue>
-	{
-		/// <summary>
-		/// The x coordinate of this point.
-		/// </summary>
-		TValue X { get; }
-		/// <summary>
-		/// The y coordinate of this point.
-		/// </summary>
-		TValue Y { get; }
-		/// <summary>
-		/// The z coordinate of this point.
-		/// </summary>
-		TValue Z { get; }
-	}
+namespace Vertesaur.Contracts
+{
+    /// <summary>
+    /// An ordered tuple with three components; X, Y, and Z.
+    /// </summary>
+    /// <typeparam name="TValue">The element type.</typeparam>
+    public interface ICoordinateTriple<out TValue>
+    {
+        /// <summary>
+        /// The x coordinate of this point.
+        /// </summary>
+        TValue X { get; }
+        /// <summary>
+        /// The y coordinate of this point.
+        /// </summary>
+        TValue Y { get; }
+        /// <summary>
+        /// The z coordinate of this point.
+        /// </summary>
+        TValue Z { get; }
+    }
 }

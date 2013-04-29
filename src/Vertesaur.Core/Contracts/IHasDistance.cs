@@ -22,30 +22,31 @@
 //
 // ===============================================================================
 
-namespace Vertesaur.Contracts {
-	/// <summary>
-	/// Defines operations to calculate the distance between two objects.
-	/// </summary>
-	/// <typeparam name="TValue">The type for a distance result.</typeparam>
-	/// <typeparam name="TObject">The type to find the distance to.</typeparam>
-	/// <remarks>
-	/// Squared distance is also provided to possibly reduce error resulting
-	/// from too many operations as well as to possibly increase performance
-	/// when a caller uses the appropriate method.
-	/// </remarks>
-	public interface IHasDistance<in TObject, out TValue>
-	{
-		/// <summary>
-		/// Calculates the distance between this instance and another.
-		/// </summary>
-		/// <param name="o">The object to calculate distance to.</param>
-		/// <returns>The distance value.</returns>
-		TValue Distance(TObject o);
-		/// <summary>
-		/// Calculates the squared distance between this instance and another.
-		/// </summary>
-		/// <param name="o">The object to calculate squared distance to.</param>
-		/// <returns>The squared distance value.</returns>
-		TValue DistanceSquared(TObject o);
-	}
+namespace Vertesaur.Contracts
+{
+    /// <summary>
+    /// Defines operations to calculate the distance between two objects.
+    /// </summary>
+    /// <typeparam name="TValue">The type for a distance result.</typeparam>
+    /// <typeparam name="TObject">The type to find the distance to.</typeparam>
+    /// <remarks>
+    /// Squared distance is also provided to possibly reduce error resulting
+    /// from too many operations as well as to possibly increase performance
+    /// when a caller uses the appropriate method.
+    /// </remarks>
+    public interface IHasDistance<in TObject, out TValue>
+    {
+        /// <summary>
+        /// Calculates the distance between this instance and another.
+        /// </summary>
+        /// <param name="o">The object to calculate distance to.</param>
+        /// <returns>The distance value.</returns>
+        TValue Distance(TObject o);
+        /// <summary>
+        /// Calculates the squared distance between this instance and another.
+        /// </summary>
+        /// <param name="o">The object to calculate squared distance to.</param>
+        /// <returns>The squared distance value.</returns>
+        TValue DistanceSquared(TObject o);
+    }
 }

@@ -22,13 +22,14 @@
 //
 // ===============================================================================
 
-namespace Vertesaur.Contracts {
-	/// <summary>
-	/// A point in 2D space.
-	/// </summary>
-	/// <typeparam name="TValue">The element type.</typeparam>
-	public interface IPoint2<out TValue> :
-		IPlanarGeometry,
-		ICoordinatePair<TValue>
-	{ }
+namespace Vertesaur.Contracts
+{
+    /// <summary>
+    /// A point in 2D space.
+    /// </summary>
+    /// <typeparam name="TValue">The element type.</typeparam>
+    public interface IPoint2<out TValue> :
+        IPlanarGeometry,
+        ICoordinatePair<TValue>
+    { }
 }
