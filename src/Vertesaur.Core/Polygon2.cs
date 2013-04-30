@@ -30,401 +30,404 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using Vertesaur.Contracts;
 
-namespace Vertesaur {
+namespace Vertesaur
+{
 
-	/// <summary>
-	/// A polygon geometry having multiple rings which define multiple fill areas and holes.
-	/// </summary>
-	/// <remarks>
-	/// Multiple fill rings and multiple hole rings are allowed in a polygon.
-	/// </remarks>
-	/// <seealso cref="Vertesaur.Ring2"/>
-	/// <seealso cref="Vertesaur.Segment2"/>
-	/// <seealso cref="Vertesaur.PointWinding"/>
-	public class Polygon2 :
-		Collection<Ring2>,
-		IPlanarGeometry,
-		IHasMagnitude<double>,
-		IHasArea<double>,
-		IEquatable<Polygon2>,
-		IRelatableIntersects<Point2>,
-		IHasIntersectionOperation<Point2,IPlanarGeometry>,
-		IRelatableIntersects<MultiPoint2>,
-		IHasIntersectionOperation<MultiPoint2,IPlanarGeometry>,
-		IHasDistance<Point2, double>,
-		IHasCentroid<Point2>,
-		ISpatiallyEquatable<Polygon2>,
-		ICloneable
-	{
+    /// <summary>
+    /// A polygon geometry having multiple rings which define multiple fill areas and holes.
+    /// </summary>
+    /// <remarks>
+    /// Multiple fill rings and multiple hole rings are allowed in a polygon.
+    /// </remarks>
+    /// <seealso cref="Vertesaur.Ring2"/>
+    /// <seealso cref="Vertesaur.Segment2"/>
+    /// <seealso cref="Vertesaur.PointWinding"/>
+    public class Polygon2 :
+        Collection<Ring2>,
+        IPlanarGeometry,
+        IHasMagnitude<double>,
+        IHasArea<double>,
+        IEquatable<Polygon2>,
+        IRelatableIntersects<Point2>,
+        IHasIntersectionOperation<Point2, IPlanarGeometry>,
+        IRelatableIntersects<MultiPoint2>,
+        IHasIntersectionOperation<MultiPoint2, IPlanarGeometry>,
+        IHasDistance<Point2, double>,
+        IHasCentroid<Point2>,
+        ISpatiallyEquatable<Polygon2>,
+        ICloneable
+    {
 
-		private static List<Ring2> BuildListForSingleRing(Ring2 ring) {
-			if(null == ring) throw new ArgumentNullException("ring");
-			Contract.Requires(ring != null);
-			Contract.Ensures(Contract.Result<List<Ring2>>() != null);
-			return new List<Ring2>(1){ring};
-		}
+        /// <summary>
+        /// Constructs a new polygon geometry containing rings.
+        /// </summary>
+        public Polygon2()
+            : this((List<Ring2>)null) { }
+        /// <summary>
+        /// Constructs a new polygon geometry with no rings but prepared to store the specified number of rings.
+        /// </summary>
+        /// <param name="expectedCapacity">The expected number of rings the polygon will contain.</param>
+        public Polygon2(int expectedCapacity)
+            : this(new List<Ring2>(expectedCapacity)) { }
+        /// <summary>
+        /// Constructs a new polygon geometry composed of the given rings.
+        /// </summary>
+        /// <param name="rings">The rings the polygon will be composed of.</param>
+        /// <remarks>The <paramref name="rings"/> are referenced instead of copied.</remarks>
+        public Polygon2(IEnumerable<Ring2> rings)
+            : this(null == rings ? null : new List<Ring2>(rings)) { }
+        /// <summary>
+        /// Constructs a new polygon geometry composed of the given ring.
+        /// </summary>
+        /// <param name="ring">The ring the polygon will be composed of.</param>
+        /// <remarks>The <paramref name="ring"/> is referenced instead of copied.</remarks>
+        /// <exception cref="System.ArgumentNullException">Thrown if <paramref name="ring"/> is null.</exception>
+        public Polygon2(Ring2 ring)
+            : this(ring == null ? null : new List<Ring2>(1){ring}) { }
 
-		/// <summary>
-		/// Constructs a new polygon geometry containing rings.
-		/// </summary>
-		public Polygon2()
-			: this((List<Ring2>)null) { }
-		/// <summary>
-		/// Constructs a new polygon geometry with no rings but prepared to store the specified number of rings.
-		/// </summary>
-		/// <param name="expectedCapacity">The expected number of rings the polygon will contain.</param>
-		public Polygon2(int expectedCapacity)
-			: this(new List<Ring2>(expectedCapacity)) { }
-		/// <summary>
-		/// Constructs a new polygon geometry composed of the given rings.
-		/// </summary>
-		/// <param name="rings">The rings the polygon will be composed of.</param>
-		/// <remarks>The <paramref name="rings"/> are referenced instead of copied.</remarks>
-		public Polygon2(IEnumerable<Ring2> rings)
-			: this(null == rings ? null : new List<Ring2>(rings)) { }
-		/// <summary>
-		/// Constructs a new polygon geometry composed of the given ring.
-		/// </summary>
-		/// <param name="ring">The ring the polygon will be composed of.</param>
-		/// <remarks>The <paramref name="ring"/> is referenced instead of copied.</remarks>
-		/// <exception cref="System.ArgumentNullException">Thrown if <paramref name="ring"/> is null.</exception>
-		public Polygon2(Ring2 ring)
-			: this(BuildListForSingleRing(ring))
-		{
-			Contract.Requires(ring != null);
-		}
+        /// <summary>
+        /// Constructs a new polygon geometry composed of the given points which form a ring.
+        /// </summary>
+        /// <param name="points">The points that will form the ring.</param>
+        public Polygon2(IEnumerable<Point2> points)
+            : this(new Ring2(points)) { }
 
-		/// <summary>
-		/// Constructs a new polygon geometry composed of the given points which form a ring.
-		/// </summary>
-		/// <param name="points">The points that will form the ring.</param>
-		public Polygon2(IEnumerable<Point2> points)
-			: this(new Ring2(points)) { }
+        /// <summary>
+        /// Constructs a new polygon geometry composed of the given points which form a ring.
+        /// </summary>
+        /// <param name="points">The points that will form the ring.</param>
+        /// <param name="hole">True to indicate the polygon represents a hole region.</param>
+        public Polygon2(IEnumerable<Point2> points, bool hole)
+            : this(new Ring2(points, hole)) { }
 
-		/// <summary>
-		/// Constructs a new polygon geometry composed of the given points which form a ring.
-		/// </summary>
-		/// <param name="points">The points that will form the ring.</param>
-		/// <param name="hole">True to indicate the polygon represents a hole region.</param>
-		public Polygon2(IEnumerable<Point2> points, bool hole)
-			: this(new Ring2(points, hole)) { }
+        /// <summary>
+        /// This private constructor is used to initialize the collection with a new list.
+        /// All constructors must eventually call this constructor.
+        /// </summary>
+        /// <param name="rings">The list that will store the rings. This list MUST be owned by this class.</param>
+        /// <remarks>
+        /// All public access to the rings must be through the Collection wrapper around the rings list.
+        /// </remarks>
+        private Polygon2(List<Ring2> rings)
+            : base(rings ?? new List<Ring2>()) { }
 
-		/// <summary>
-		/// This private constructor is used to initialize the collection with a new list.
-		/// All constructors must eventually call this constructor.
-		/// </summary>
-		/// <param name="rings">The list that will store the rings. This list MUST be owned by this class.</param>
-		/// <remarks>
-		/// All public access to the rings must be through the Collection wrapper around the rings list.
-		/// </remarks>
-		private Polygon2(List<Ring2> rings)
-			: base(rings ?? new List<Ring2>()) { }
+        [ContractInvariantMethod]
+        [Conditional("CONTRACTS_FULL")]
+        private void CodeContractInvariant() {
+            Contract.Invariant(Contract.ForAll(this, x => x != null));
+            Contract.Invariant(Contract.ForAll(0, Count, i => this[i] != null));
+        }
 
-		/// <summary>
-		/// Adds multiple rings to this polygon.
-		/// </summary>
-		/// <param name="rings">The rings to add.</param>
-		/// <exception cref="System.ArgumentException">Thrown if any of the <paramref name="rings"/> is null.</exception>
-		public void AddRange(IEnumerable<Ring2> rings) {
-			if(null == rings) throw new ArgumentNullException("rings");
-			Contract.Requires(Contract.ForAll(rings, x => x != null));
+        /// <summary>
+        /// Adds multiple rings to this polygon.
+        /// </summary>
+        /// <param name="rings">The rings to add.</param>
+        /// <exception cref="System.ArgumentException">Thrown if any of the <paramref name="rings"/> is null.</exception>
+        public void AddRange(IEnumerable<Ring2> rings) {
+            if (null == rings) throw new ArgumentNullException("rings");
+            Contract.Requires(Contract.ForAll(rings, x => x != null));
 
-			foreach (var ring in rings) {
-				if(null == ring)
-					throw new ArgumentException("Null rings are not valid.", "rings");
-				Add(ring);
-			}
-		}
+            foreach (var ring in rings) {
+                if (null == ring)
+                    throw new ArgumentException("Null rings are not valid.", "rings");
+                Add(ring);
+            }
+        }
 
-		/// <inheritdoc/>
-		protected override void SetItem(int index, Ring2 item) {
-			if(null == item) throw new ArgumentNullException("item", "Null rings are not valid.");
-			Contract.EndContractBlock();
-			base.SetItem(index, item);
-		}
+        /// <inheritdoc/>
+        protected override void SetItem(int index, Ring2 item) {
+            if (null == item) throw new ArgumentNullException("item", "Null rings are not valid.");
+            Contract.EndContractBlock();
+            base.SetItem(index, item);
+        }
 
-		/// <inheritdoc/>
-		protected override void InsertItem(int index, Ring2 item) {
-			if (null == item) throw new ArgumentNullException("item", "Null rings are not valid.");
-			Contract.EndContractBlock();
-			base.InsertItem(index, item);
-		}
+        /// <inheritdoc/>
+        protected override void InsertItem(int index, Ring2 item) {
+            if (null == item) throw new ArgumentNullException("item", "Null rings are not valid.");
+            Contract.EndContractBlock();
+            base.InsertItem(index, item);
+        }
 
-		/// <summary>
-		/// Forces the fill winding of the points within all contained rings to be uniform.
-		/// </summary>
-		/// <param name="desiredWinding">The desired winding order that defines a fill ring.</param>
-		/// <seealso cref="Vertesaur.Ring2.ForceFillWinding"/>
-		public void ForceFillWinding(PointWinding desiredWinding) {
-			if (PointWinding.Unknown == desiredWinding) throw new ArgumentException("desiredWinding may not be Unknown", "desiredWinding");
-			Contract.EndContractBlock();
-			foreach (var ring in this) {
-				ring.ForceFillWinding(desiredWinding);
-			}
-		}
+        /// <summary>
+        /// Forces the fill winding of the points within all contained rings to be uniform.
+        /// </summary>
+        /// <param name="desiredWinding">The desired winding order that defines a fill ring.</param>
+        /// <seealso cref="Vertesaur.Ring2.ForceFillWinding"/>
+        public void ForceFillWinding(PointWinding desiredWinding) {
+            if (PointWinding.Unknown == desiredWinding) throw new ArgumentException("desiredWinding may not be Unknown", "desiredWinding");
+            Contract.EndContractBlock();
+            foreach (var ring in this) {
+                ring.ForceFillWinding(desiredWinding);
+            }
+        }
 
-		/// <summary>
-		/// Calculates the centroid.
-		/// </summary>
-		/// <returns>A centroid.</returns>
-		public Point2 GetCentroid() {
-			// ReSharper disable CompareOfFloatsByEqualityOperator
-			if (Count > 0) {
-				if (Count == 1)
-					return this[0].GetCentroid();
-				
-				var aSum = 0.0;
-				var xSum = 0.0;
-				var ySum = 0.0;
-				foreach (var ring in this) {
-					var a = ring.GetArea();
-					var p = ring.GetCentroid();
-					xSum += p.X * a;
-					ySum += p.Y * a;
-					aSum += a;
-				}
-				if (0 != aSum)
-					return new Point2(xSum / aSum, ySum / aSum);
-			}
-			return Point2.Invalid;
-			// ReSharper restore CompareOfFloatsByEqualityOperator
-		}
+        /// <summary>
+        /// Calculates the centroid.
+        /// </summary>
+        /// <returns>A centroid.</returns>
+        public Point2 GetCentroid() {
+            // ReSharper disable CompareOfFloatsByEqualityOperator
+            if (Count > 0) {
+                if (Count == 1)
+                    return this[0].GetCentroid();
 
-		/// <summary>
-		/// Calculates a minimum bounding rectangle for this polygon.
-		/// </summary>
-		/// <returns>A minimum bounding rectangle.</returns>
-		public Mbr GetMbr() {
-			if (Count <= 0)
-				return null;
+                var aSum = 0.0;
+                var xSum = 0.0;
+                var ySum = 0.0;
+                foreach (var ring in this) {
+                    var a = ring.GetArea();
+                    var p = ring.GetCentroid();
+                    xSum += p.X * a;
+                    ySum += p.Y * a;
+                    aSum += a;
+                }
+                if (0 != aSum)
+                    return new Point2(xSum / aSum, ySum / aSum);
+            }
+            return Point2.Invalid;
+            // ReSharper restore CompareOfFloatsByEqualityOperator
+        }
 
-			var mbr = this[0].GetMbr();
-			for (var i = 1; i < Count; i++) {
-				mbr = mbr.Encompass(this[i].GetMbr());
-			}
-			return mbr;
-		}
+        /// <summary>
+        /// Calculates a minimum bounding rectangle for this polygon.
+        /// </summary>
+        /// <returns>A minimum bounding rectangle.</returns>
+        public Mbr GetMbr() {
+            if (Count <= 0)
+                return null;
 
-		/// <summary>
-		/// Determines if another point intersects this polygon.
-		/// </summary>
-		/// <param name="p">A point to test intersection with.</param>
-		/// <returns>True when a point intersects this object.</returns>
-		public bool Intersects(Point2 p) {
-			var crossCount = 0;
-			var hasUnconstrainedHoles = false;
-			var fillRings = new List<Ring2>();
-// ReSharper disable LoopCanBeConvertedToQuery
-// ReSharper disable ForCanBeConvertedToForeach
-			foreach (var ring in this) {
-				if (ring.Hole.HasValue && ring.Hole.Value)
-					continue;
+            var mbr = this[0].GetMbr();
+            for (var i = 1; i < Count; i++) {
+                mbr = mbr.Encompass(this[i].GetMbr());
+            }
+            return mbr;
+        }
 
-				fillRings.Add(ring);
-			}
-			foreach (var r in this) {
-				if (r.Count == 0)
-					continue;
+        /// <summary>
+        /// Determines if another point intersects this polygon.
+        /// </summary>
+        /// <param name="p">A point to test intersection with.</param>
+        /// <returns>True when a point intersects this object.</returns>
+        public bool Intersects(Point2 p) {
+            var crossCount = 0;
+            var hasUnconstrainedHoles = false;
+            var fillRings = new List<Ring2>();
+            // ReSharper disable LoopCanBeConvertedToQuery
+            // ReSharper disable ForCanBeConvertedToForeach
+            foreach (var ring in this) {
+                if (ring.Hole.HasValue && ring.Hole.Value)
+                    continue;
 
-				var intersectionCount = r.IntersectionPositiveXRayCount(p);
-				crossCount += intersectionCount;
-				var isHole = r.Hole.HasValue && r.Hole.Value;
-				if (!isHole || hasUnconstrainedHoles)
-					continue;
-				
-				var contained = false;
-				Contract.Assume(0 < r.Count);
-				var hp = r[0];
-				for (var i = 0; i < fillRings.Count; i++) {
-					if (fillRings[i].Intersects(hp)) {
-						contained = true;
-						break;
-					}
-				}
+                fillRings.Add(ring);
+            }
+            foreach (var r in this) {
+                if (r.Count == 0)
+                    continue;
 
-				if (!contained)
-					hasUnconstrainedHoles = true;
-			}
-			return (hasUnconstrainedHoles ? 0 : 1) == (crossCount % 2);
-// ReSharper restore ForCanBeConvertedToForeach
-// ReSharper restore LoopCanBeConvertedToQuery
-		}
+                var intersectionCount = r.IntersectionPositiveXRayCount(p);
+                crossCount += intersectionCount;
+                var isHole = r.Hole.HasValue && r.Hole.Value;
+                if (!isHole || hasUnconstrainedHoles)
+                    continue;
 
-		/// <summary>
-		/// Calculates the distance between this polygon and a point, <paramref name="p"/>. 
-		/// </summary>
-		/// <param name="p">The point to calculate distance to.</param>
-		/// <returns>The distance between this polygon and <paramref name="p"/>.</returns>
-		public double Distance(Point2 p) {
-			return Math.Sqrt(DistanceSquared(p));
-		}
+                var contained = false;
+                Contract.Assume(0 < r.Count);
+                var hp = r[0];
+                for (var i = 0; i < fillRings.Count; i++) {
+                    if (fillRings[i].Intersects(hp)) {
+                        contained = true;
+                        break;
+                    }
+                }
 
-		/// <summary>
-		/// Calculates the squared distance between this polygon and a point, <paramref name="p"/>. 
-		/// </summary>
-		/// <param name="p">The point to calculate squared distance to.</param>
-		/// <returns>The squared distance between this polygon and <paramref name="p"/>.</returns>
-		public double DistanceSquared(Point2 p) {
-			if (Count == 0)
-				return Double.NaN;
+                if (!contained)
+                    hasUnconstrainedHoles = true;
+            }
+            return (hasUnconstrainedHoles ? 0 : 1) == (crossCount % 2);
+            // ReSharper restore ForCanBeConvertedToForeach
+            // ReSharper restore LoopCanBeConvertedToQuery
+        }
 
-			var minDist = this[0].DistanceSquared(p);
-			for (var i = 1; i < Count; i++) {
-				var localDist = this[i].DistanceSquared(p);
-				if (localDist < minDist)
-					minDist = localDist;
-			}
-			return minDist;
-		}
+        /// <summary>
+        /// Calculates the distance between this polygon and a point, <paramref name="p"/>. 
+        /// </summary>
+        /// <param name="p">The point to calculate distance to.</param>
+        /// <returns>The distance between this polygon and <paramref name="p"/>.</returns>
+        public double Distance(Point2 p) {
+            Contract.Ensures(Contract.Result<double>() >= 0 || Double.IsNaN(Contract.Result<double>()));
+            return Math.Sqrt(DistanceSquared(p));
+        }
 
-		/// <summary>
-		/// Determines the perimeter of this polygon.
-		/// </summary>
-		/// <returns>The perimeter of this polygon.</returns>
-		public double GetMagnitude() {
-			var sum = 0.0;
-			// ReSharper disable LoopCanBeConvertedToQuery
-			// ReSharper disable ForCanBeConvertedToForeach
-			for (var i = 0; i < Count; i++) {
-				sum += this[i].GetMagnitude();
-			}
-			return sum;
-			// ReSharper restore ForCanBeConvertedToForeach
-			// ReSharper restore LoopCanBeConvertedToQuery
-		}
+        /// <summary>
+        /// Calculates the squared distance between this polygon and a point, <paramref name="p"/>. 
+        /// </summary>
+        /// <param name="p">The point to calculate squared distance to.</param>
+        /// <returns>The squared distance between this polygon and <paramref name="p"/>.</returns>
+        public double DistanceSquared(Point2 p) {
+            Contract.Ensures(Contract.Result<double>() >= 0 || Double.IsNaN(Contract.Result<double>()));
+            if (Count == 0)
+                return Double.NaN;
 
-		/// <inheritdoc/>
-		double IHasMagnitude<double>.GetMagnitudeSquared() {
-			var m = GetMagnitude();
-			return m * m;
-		}
+            var minDist = this[0].DistanceSquared(p);
+            for (var i = 1; i < Count; i++) {
+                var localDist = this[i].DistanceSquared(p);
+                if (localDist < minDist)
+                    minDist = localDist;
+            }
+            return minDist;
+        }
 
-		/// <summary>
-		/// Calculates the area of this polygon.
-		/// </summary>
-		/// <returns>The area.</returns>
-		public double GetArea() {
-			var sum = 0.0;
-			// ReSharper disable LoopCanBeConvertedToQuery
-			// ReSharper disable ForCanBeConvertedToForeach
-			for (var i = 0; i < Count; i++) {
-				sum += this[i].GetArea();
-			}
-			return sum;
-			// ReSharper restore ForCanBeConvertedToForeach
-			// ReSharper restore LoopCanBeConvertedToQuery
-		}
+        /// <summary>
+        /// Determines the perimeter of this polygon.
+        /// </summary>
+        /// <returns>The perimeter of this polygon.</returns>
+        public double GetMagnitude() {
+            Contract.Ensures(Contract.Result<double>() >= 0 || Double.IsNaN(Contract.Result<double>()));
+            if (Count == 0)
+                return Double.NaN;
 
-		/// <summary>
-		/// Indicates whether the current object is equal to another object of the same type.
-		/// </summary>
-		/// <returns>
-		/// <c>true</c> if the current object is equal to the <paramref name="other"/> parameter; otherwise, <c>false</c>.
-		/// </returns>
-		/// <param name="other">An object to compare with this object.</param>
-		public bool Equals(Polygon2 other) {
-			if (ReferenceEquals(null, other))
-				return false;
-			if (ReferenceEquals(this, other))
-				return true;
-			if (Count != other.Count)
-				return false;
+            var sum = 0.0;
+            // ReSharper disable LoopCanBeConvertedToQuery
+            // ReSharper disable ForCanBeConvertedToForeach
+            for (var i = 0; i < Count; i++) {
+                sum += this[i].GetMagnitude();
+            }
+            return sum;
+            // ReSharper restore ForCanBeConvertedToForeach
+            // ReSharper restore LoopCanBeConvertedToQuery
+        }
 
-			for (var i = 0; i < Count; i++) {
-				if (!this[i].Equals(other[i])) {
-					return false;
-				}
-			}
-			return true;
-		}
+        /// <inheritdoc/>
+        public double GetMagnitudeSquared() {
+            Contract.Ensures(Contract.Result<double>() >= 0 || Double.IsNaN(Contract.Result<double>()));
+            var m = GetMagnitude();
+            return m * m;
+        }
 
-		/// <summary>
-		/// Determines if this polygon occupies the same area as the <paramref name="other"/> polygon.
-		/// </summary>
-		/// <param name="other">The polygon to compare.</param>
-		/// <returns>True when the polygons are spatially equal.</returns>
-		public bool SpatiallyEqual(Polygon2 other) {
-			if (ReferenceEquals(null, other))
-				return false;
-			if (Equals(other))
-				return true;
-			if (Count != other.Count)
-				return false;
-			if (GetMbr() != other.GetMbr())
-				return false;
+        /// <summary>
+        /// Calculates the area of this polygon.
+        /// </summary>
+        /// <returns>The area.</returns>
+        public double GetArea() {
+            Contract.Ensures(Contract.Result<double>() >= 0 || Double.IsNaN(Contract.Result<double>()));
+            if (Count == 0)
+                return Double.NaN;
 
-			var ringsToCheck = new LinkedList<Ring2>(other);
-			foreach(var ringA in this) {
-				if (ringsToCheck.Count == 0)
-					return false; // no rings left to check
+            var sum = 0.0;
+            // ReSharper disable LoopCanBeConvertedToQuery
+            // ReSharper disable ForCanBeConvertedToForeach
+            for (var i = 0; i < Count; i++) {
+                sum += this[i].GetArea();
+            }
+            return sum;
+            // ReSharper restore ForCanBeConvertedToForeach
+            // ReSharper restore LoopCanBeConvertedToQuery
+        }
 
-				var selected = ringsToCheck.FirstOrDefault(r => r.SpatiallyEqual(ringA));
-				if (null == selected)
-					return false; // no match for this ring in A
+        /// <summary>
+        /// Indicates whether the current object is equal to another object of the same type.
+        /// </summary>
+        /// <returns>
+        /// <c>true</c> if the current object is equal to the <paramref name="other"/> parameter; otherwise, <c>false</c>.
+        /// </returns>
+        /// <param name="other">An object to compare with this object.</param>
+        public bool Equals(Polygon2 other) {
+            if (ReferenceEquals(null, other))
+                return false;
+            if (ReferenceEquals(this, other))
+                return true;
+            if (Count != other.Count)
+                return false;
 
-				ringsToCheck.Remove(selected);
-			}
+            for (var i = 0; i < Count; i++) {
+                if (!this[i].Equals(other[i])) {
+                    return false;
+                }
+            }
+            return true;
+        }
 
-			return true;
-		}
+        /// <summary>
+        /// Determines if this polygon occupies the same area as the <paramref name="other"/> polygon.
+        /// </summary>
+        /// <param name="other">The polygon to compare.</param>
+        /// <returns>True when the polygons are spatially equal.</returns>
+        public bool SpatiallyEqual(Polygon2 other) {
+            if (ReferenceEquals(null, other))
+                return false;
+            if (Equals(other))
+                return true;
+            if (Count != other.Count)
+                return false;
+            if (GetMbr() != other.GetMbr())
+                return false;
 
-		/// <summary>
-		/// Creates an identical polygon.
-		/// </summary>
-		/// <returns>A polygon.</returns>
-		/// <remarks>Functions as a deep clone.</remarks>
-		public Polygon2 Clone() {
-			Contract.Ensures(Contract.Result<Polygon2>() != null);
-			var p = new Polygon2(Count);
-			foreach (var r in this) {
-				p.Add(r.Clone());
-			}
-			return p;
-		}
-		
-		object ICloneable.Clone() {
-			return Clone();
-		}
+            var ringsToCheck = new LinkedList<Ring2>(other);
+            foreach (var ringA in this) {
+                if (ringsToCheck.Count == 0)
+                    return false; // no rings left to check
 
-		/// <inheritdoc/>
-		public override bool Equals(object obj) {
-			return Equals(obj as Polygon2);
-		}
+                var selected = ringsToCheck.FirstOrDefault(r => r.SpatiallyEqual(ringA));
+                if (null == selected)
+                    return false; // no match for this ring in A
 
-		/// <inheritdoc/>
-		public override int GetHashCode() {
-			return GetMbr().GetHashCode() ^ -1111034994;
-		}
+                ringsToCheck.Remove(selected);
+            }
 
-		/// <inheritdoc/>
-		public override string ToString() {
-			return String.Concat("Polygon, ", Count, " Rings");
-		}
+            return true;
+        }
 
-		/// <inheritdoc/>
-		public IPlanarGeometry Intersection(Point2 other) {
-			return Intersects(other) ? (IPlanarGeometry)other : null;
-		}
+        /// <summary>
+        /// Creates an identical polygon.
+        /// </summary>
+        /// <returns>A polygon.</returns>
+        /// <remarks>Functions as a deep clone.</remarks>
+        public Polygon2 Clone() {
+            Contract.Ensures(Contract.Result<Polygon2>() != null);
+            var p = new Polygon2(Count);
+            foreach (var r in this) {
+                p.Add(r.Clone());
+            }
+            return p;
+        }
 
-		/// <inheritdoc/>
-		public bool Intersects(MultiPoint2 other) {
-			if (Count == 0 || ReferenceEquals(null, other) || other.Count == 0)
-				return false;
-			return other.Any(Intersects);
-		}
+        object ICloneable.Clone() {
+            return Clone();
+        }
 
-		/// <inheritdoc/>
-		public IPlanarGeometry Intersection(MultiPoint2 other) {
-			if (Count == 0 || ReferenceEquals(null, other) || other.Count == 0)
-				return null;
-			return MultiPoint2.FixToProperPlanerGeometryResult(new MultiPoint2(other.Where(Intersects)));
-		}
+        /// <inheritdoc/>
+        public override bool Equals(object obj) {
+            return Equals(obj as Polygon2);
+        }
 
-		[ContractInvariantMethod]
-		[Conditional("CONTRACTS_FULL")]
-		private void CodeContractInvariant() {
-			Contract.Invariant(Contract.ForAll(this, x => x != null));
-			Contract.Invariant(Contract.ForAll(0, Count, i => this[i] != null));
-		}
-	}
+        /// <inheritdoc/>
+        public override int GetHashCode() {
+            return GetMbr().GetHashCode() ^ -1111034994;
+        }
+
+        /// <inheritdoc/>
+        public override string ToString() {
+            return String.Concat("Polygon, ", Count, " Rings");
+        }
+
+        /// <inheritdoc/>
+        public IPlanarGeometry Intersection(Point2 other) {
+            return Intersects(other) ? (IPlanarGeometry)other : null;
+        }
+
+        /// <inheritdoc/>
+        public bool Intersects(MultiPoint2 other) {
+            if (Count == 0 || ReferenceEquals(null, other) || other.Count == 0)
+                return false;
+            return other.Any(Intersects);
+        }
+
+        /// <inheritdoc/>
+        public IPlanarGeometry Intersection(MultiPoint2 other) {
+            if (Count == 0 || ReferenceEquals(null, other) || other.Count == 0)
+                return null;
+            return MultiPoint2.FixToProperPlanerGeometryResult(new MultiPoint2(other.Where(Intersects)));
+        }
+
+    }
 }

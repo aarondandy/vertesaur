@@ -7,29 +7,34 @@ using Vertesaur.Utility;
 
 namespace Vertesaur.Generation.Expressions
 {
-	/// <summary>
-	/// An arc-sine expression.
-	/// </summary>
-	public class AsinExpression : ReducibleUnaryExpressionBase
-	{
-		private static readonly MethodInfo MathAsinMethod;
+    /// <summary>
+    /// An arc-sine expression.
+    /// </summary>
+    public class AsinExpression : ReducibleUnaryExpressionBase
+    {
+        private static readonly MethodInfo MathAsinMethod;
 
-		static AsinExpression() {
-			MathAsinMethod = typeof(Math).GetPublicStaticInvokableMethod("Asin",typeof(double));
-		}
+        static AsinExpression() {
+            MathAsinMethod = typeof(Math).GetPublicStaticInvokableMethod("Asin", typeof(double));
+        }
 
-		/// <summary>
-		/// Creates a new arc-sine expression.
-		/// </summary>
-		/// <param name="input">The expression to calculate the arc-sine of.</param>
-		/// <param name="generator">The optional expression generator used during reduction.</param>
-		public AsinExpression(Expression input, IExpressionGenerator generator = null)
-			: base(input, generator) { Contract.Requires(null != input); }
-		/// <inheritdoc/>
-		public override Expression Reduce() {
-			return typeof(double) == Type
-				? (Expression)Call(MathAsinMethod, UnaryParameter)
-				: Convert(Call(MathAsinMethod, Convert(UnaryParameter, typeof(double))), Type);
-		}
-	}
+        /// <summary>
+        /// Creates a new arc-sine expression.
+        /// </summary>
+        /// <param name="input">The expression to calculate the arc-sine of.</param>
+        /// <param name="generator">The optional expression generator used during reduction.</param>
+        public AsinExpression(Expression input, IExpressionGenerator generator = null)
+            : base(input, generator) {
+            Contract.Requires(null != input);
+        }
+
+        /// <inheritdoc/>
+        public override Expression Reduce() {
+            Contract.Ensures(Contract.Result<Expression>() != null);
+            Contract.Assume(MathAsinMethod != null);
+            return typeof(double) == Type
+                ? (Expression)Call(MathAsinMethod, UnaryParameter)
+                : Convert(Call(MathAsinMethod, Convert(UnaryParameter, typeof(double))), Type);
+        }
+    }
 }

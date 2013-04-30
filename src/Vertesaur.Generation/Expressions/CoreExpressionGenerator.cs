@@ -8,472 +8,477 @@ using Vertesaur.Utility;
 namespace Vertesaur.Generation.Expressions
 {
 
-	/// <summary>
-	/// The core expression generator for basic arithmetic and comparisons.
-	/// </summary>
+    /// <summary>
+    /// The core expression generator for basic arithmetic and comparisons.
+    /// </summary>
 #if !NO_MEF
-	[System.ComponentModel.Composition.Export(typeof(IExpressionGenerator))]
+    [System.ComponentModel.Composition.Export(typeof(IExpressionGenerator))]
 #endif
-	public class CoreExpressionGenerator : IExpressionGenerator
-	{
+    public class CoreExpressionGenerator : IExpressionGenerator
+    {
 
-		/// <summary>
-		/// These methods are used through reflection.
-		/// </summary>
-		private static class SpecializedOperations
-		{
+        /// <summary>
+        /// These methods are used through reflection.
+        /// </summary>
+        private static class SpecializedOperations
+        {
 
-			// ReSharper disable UnusedMember.Local
-			public static byte AddChecked(byte leftHandSide, byte rightHandSide) {
-				return checked((byte)(leftHandSide + rightHandSide));
-			}
+            // ReSharper disable UnusedMember.Local
+            public static byte AddChecked(byte leftHandSide, byte rightHandSide) {
+                return checked((byte)(leftHandSide + rightHandSide));
+            }
 
-			public static byte AddUnchecked(byte leftHandSide, byte rightHandSide) {
-				return unchecked((byte)(leftHandSide + rightHandSide));
-			}
+            public static byte AddUnchecked(byte leftHandSide, byte rightHandSide) {
+                return unchecked((byte)(leftHandSide + rightHandSide));
+            }
 
-			public static sbyte AddChecked(sbyte leftHandSide, sbyte rightHandSide) {
-				return checked((sbyte)(leftHandSide + rightHandSide));
-			}
+            public static sbyte AddChecked(sbyte leftHandSide, sbyte rightHandSide) {
+                return checked((sbyte)(leftHandSide + rightHandSide));
+            }
 
-			public static sbyte AddUnchecked(sbyte leftHandSide, sbyte rightHandSide) {
-				return unchecked((sbyte)(leftHandSide + rightHandSide));
-			}
+            public static sbyte AddUnchecked(sbyte leftHandSide, sbyte rightHandSide) {
+                return unchecked((sbyte)(leftHandSide + rightHandSide));
+            }
 
-			public static char AddChecked(char leftHandSide, char rightHandSide) {
-				return checked((char)(leftHandSide + rightHandSide));
-			}
+            public static char AddChecked(char leftHandSide, char rightHandSide) {
+                return checked((char)(leftHandSide + rightHandSide));
+            }
 
-			public static char AddUnchecked(char leftHandSide, char rightHandSide) {
-				return unchecked((char)(leftHandSide + rightHandSide));
-			}
+            public static char AddUnchecked(char leftHandSide, char rightHandSide) {
+                return unchecked((char)(leftHandSide + rightHandSide));
+            }
 
-			public static byte SubtractChecked(byte leftHandSide, byte rightHandSide) {
-				return checked((byte)(leftHandSide - rightHandSide));
-			}
+            public static byte SubtractChecked(byte leftHandSide, byte rightHandSide) {
+                return checked((byte)(leftHandSide - rightHandSide));
+            }
 
-			public static byte SubtractUnchecked(byte leftHandSide, byte rightHandSide) {
-				return unchecked((byte)(leftHandSide - rightHandSide));
-			}
+            public static byte SubtractUnchecked(byte leftHandSide, byte rightHandSide) {
+                return unchecked((byte)(leftHandSide - rightHandSide));
+            }
 
-			public static sbyte SubtractChecked(sbyte leftHandSide, sbyte rightHandSide) {
-				return checked((sbyte)(leftHandSide - rightHandSide));
-			}
+            public static sbyte SubtractChecked(sbyte leftHandSide, sbyte rightHandSide) {
+                return checked((sbyte)(leftHandSide - rightHandSide));
+            }
 
-			public static sbyte SubtractUnchecked(sbyte leftHandSide, sbyte rightHandSide) {
-				return unchecked((sbyte)(leftHandSide - rightHandSide));
-			}
+            public static sbyte SubtractUnchecked(sbyte leftHandSide, sbyte rightHandSide) {
+                return unchecked((sbyte)(leftHandSide - rightHandSide));
+            }
 
-			public static char SubtractChecked(char leftHandSide, char rightHandSide) {
-				return checked((char)(leftHandSide - rightHandSide));
-			}
+            public static char SubtractChecked(char leftHandSide, char rightHandSide) {
+                return checked((char)(leftHandSide - rightHandSide));
+            }
 
-			public static char SubtractUnchecked(char leftHandSide, char rightHandSide) {
-				return unchecked((char)(leftHandSide - rightHandSide));
-			}
+            public static char SubtractUnchecked(char leftHandSide, char rightHandSide) {
+                return unchecked((char)(leftHandSide - rightHandSide));
+            }
 
-			public static byte MultiplyChecked(byte leftHandSide, byte rightHandSide) {
-				return checked((byte)(leftHandSide * rightHandSide));
-			}
+            public static byte MultiplyChecked(byte leftHandSide, byte rightHandSide) {
+                return checked((byte)(leftHandSide * rightHandSide));
+            }
 
-			public static byte MultiplyUnchecked(byte leftHandSide, byte rightHandSide) {
-				return unchecked((byte)(leftHandSide * rightHandSide));
-			}
+            public static byte MultiplyUnchecked(byte leftHandSide, byte rightHandSide) {
+                return unchecked((byte)(leftHandSide * rightHandSide));
+            }
 
-			public static sbyte MultiplyChecked(sbyte leftHandSide, sbyte rightHandSide) {
-				return checked((sbyte)(leftHandSide * rightHandSide));
-			}
+            public static sbyte MultiplyChecked(sbyte leftHandSide, sbyte rightHandSide) {
+                return checked((sbyte)(leftHandSide * rightHandSide));
+            }
 
-			public static sbyte MultiplyUnchecked(sbyte leftHandSide, sbyte rightHandSide) {
-				return unchecked((sbyte)(leftHandSide * rightHandSide));
-			}
+            public static sbyte MultiplyUnchecked(sbyte leftHandSide, sbyte rightHandSide) {
+                return unchecked((sbyte)(leftHandSide * rightHandSide));
+            }
 
-			public static char MultiplyChecked(char leftHandSide, char rightHandSide) {
-				return checked((char)(leftHandSide * rightHandSide));
-			}
+            public static char MultiplyChecked(char leftHandSide, char rightHandSide) {
+                return checked((char)(leftHandSide * rightHandSide));
+            }
 
-			public static char MultiplyUnchecked(char leftHandSide, char rightHandSide) {
-				return unchecked((char)(leftHandSide * rightHandSide));
-			}
+            public static char MultiplyUnchecked(char leftHandSide, char rightHandSide) {
+                return unchecked((char)(leftHandSide * rightHandSide));
+            }
 
-			public static byte DivideChecked(byte leftHandSide, byte rightHandSide) {
-				return checked((byte)(leftHandSide / rightHandSide));
-			}
+            public static byte DivideChecked(byte leftHandSide, byte rightHandSide) {
+                return checked((byte)(leftHandSide / rightHandSide));
+            }
 
-			public static byte DivideUnchecked(byte leftHandSide, byte rightHandSide) {
-				return unchecked((byte)(leftHandSide / rightHandSide));
-			}
+            public static byte DivideUnchecked(byte leftHandSide, byte rightHandSide) {
+                return unchecked((byte)(leftHandSide / rightHandSide));
+            }
 
-			public static sbyte DivideChecked(sbyte leftHandSide, sbyte rightHandSide) {
-				return checked((sbyte)(leftHandSide / rightHandSide));
-			}
+            public static sbyte DivideChecked(sbyte leftHandSide, sbyte rightHandSide) {
+                return checked((sbyte)(leftHandSide / rightHandSide));
+            }
 
-			public static sbyte DivideUnchecked(sbyte leftHandSide, sbyte rightHandSide) {
-				return unchecked((sbyte)(leftHandSide / rightHandSide));
-			}
+            public static sbyte DivideUnchecked(sbyte leftHandSide, sbyte rightHandSide) {
+                return unchecked((sbyte)(leftHandSide / rightHandSide));
+            }
 
-			public static char DivideChecked(char leftHandSide, char rightHandSide) {
-				return checked((char)(leftHandSide / rightHandSide));
-			}
+            public static char DivideChecked(char leftHandSide, char rightHandSide) {
+                return checked((char)(leftHandSide / rightHandSide));
+            }
 
-			public static char DivideUnchecked(char leftHandSide, char rightHandSide) {
-				return unchecked((char)(leftHandSide / rightHandSide));
-			}
+            public static char DivideUnchecked(char leftHandSide, char rightHandSide) {
+                return unchecked((char)(leftHandSide / rightHandSide));
+            }
 
-			// ReSharper restore UnusedMember.Local
+            // ReSharper restore UnusedMember.Local
 
-		}
+        }
 
-		/// <summary>
-		/// The default unchecked expression generator.
-		/// </summary>
-		public static CoreExpressionGenerator Default { get; private set; }
-		/// <summary>
-		/// The default checked expression generator.
-		/// </summary>
-		public static CoreExpressionGenerator DefaultChecked { get; private set; }
+        /// <summary>
+        /// The default unchecked expression generator.
+        /// </summary>
+        public static CoreExpressionGenerator Default { get; private set; }
 
-		static CoreExpressionGenerator() {
-			Default = new CoreExpressionGenerator(false);
-			DefaultChecked = new CoreExpressionGenerator(true);
-		}
+        /// <summary>
+        /// The default checked expression generator.
+        /// </summary>
+        public static CoreExpressionGenerator DefaultChecked { get; private set; }
 
-		private readonly Dictionary<string, Func<IExpressionGenerationRequest, Expression, Expression>> _standardUnaryExpressionGeneratorLookup;
-		private readonly Dictionary<string, Func<IExpressionGenerationRequest, Expression, Expression, Expression>> _standardBinaryExpressionGeneratorLookup;
+        static CoreExpressionGenerator() {
+            Default = new CoreExpressionGenerator(false);
+            DefaultChecked = new CoreExpressionGenerator(true);
+        }
 
-		/// <summary>
-		/// Default constructor.
-		/// </summary>
-		/// <remarks>
-		/// Operations that can be, are non-checked operations by default.
-		/// </remarks>
-		public CoreExpressionGenerator() : this(false) { }
+        private readonly Dictionary<string, Func<IExpressionGenerationRequest, Expression, Expression>> _standardUnaryExpressionGeneratorLookup;
+        private readonly Dictionary<string, Func<IExpressionGenerationRequest, Expression, Expression, Expression>> _standardBinaryExpressionGeneratorLookup;
 
-		/// <summary>
-		/// Constructs a new expression generator.
-		/// </summary>
-		/// <param name="isChecked">Flag to determine if operations that can be, are checked operations.</param>
-		public CoreExpressionGenerator(bool isChecked) {
-			Checked = isChecked;
-			_standardUnaryExpressionGeneratorLookup = new Dictionary<string, Func<IExpressionGenerationRequest, Expression, Expression>>(StringComparer.OrdinalIgnoreCase){
-				{"SQUARE", GenerateSquare},
-				{"SQUAREROOT", GenerateSquareRoot},
-				{"NEGATE", GenerateNegation},
-				{"SIN", (g,i) => new SinExpression(i,g.TopLevelGenerator)},
-				{"COS", (g,i) => new CosExpression(i,g.TopLevelGenerator)},
-				{"TAN", (g,i) => new TanExpression(i,g.TopLevelGenerator)},
-				{"ASIN", (g,i) => new AsinExpression(i,g.TopLevelGenerator)},
-				{"ACOS", (g,i) => new AcosExpression(i,g.TopLevelGenerator)},
-				{"ATAN", (g,i) => new AtanExpression(i,g.TopLevelGenerator)},
-				{"CEILING", (g,i) => new CeilingExpression(i,g.TopLevelGenerator)},
-				{"FLOOR", (g,i) => new FloorExpression(i,g.TopLevelGenerator)},
-				{"TRUNCATE",(g,i) => new TruncateExpression(i,g.TopLevelGenerator)},
-				{"COSH", (g,i) => new CoshExpression(i,g.TopLevelGenerator)},
-				{"SINH", (g,i) => new SinhExpression(i,g.TopLevelGenerator)},
-				{"TANH", (g,i) => new TanhExpression(i,g.TopLevelGenerator)},
-				{"LOG", (g,i) => new LogExpression(i,g.TopLevelGenerator)},
-				{"LOG10", (g,i) => new Log10Expression(i,g.TopLevelGenerator)},
-				{"EXP", (g,i) => new ExpExpression(i,g.TopLevelGenerator)},
-				{"ABS", (g,i) => new AbsExpression(i,g.TopLevelGenerator)},
-				{"ASINH", (g,i) => new AsinhExpression(i,g.TopLevelGenerator)},
-				{"ACOSH", (g,i) => new AcoshExpression(i,g.TopLevelGenerator)},
-				{"ATANH", (g,i) => new AtanhExpression(i,g.TopLevelGenerator)}
-			};
-			_standardBinaryExpressionGeneratorLookup = new Dictionary<string, Func<IExpressionGenerationRequest, Expression, Expression, Expression>>(StringComparer.OrdinalIgnoreCase){
-				{"ADD", GenerateArithmetic},
-				{"SUBTRACT", GenerateArithmetic},
-				{"MULTIPLY", GenerateArithmetic},
-				{"DIVIDE", GenerateArithmetic},
-				{"EQUAL", (_,left,right) => Expression.Equal(left, right)},
-				{"NOTEQUAL",(_,left,right) => Expression.NotEqual(left, right)},
-				{"LESS", (_,left,right) => Expression.LessThan(left, right)},
-				{"LESSEQUAL", (_,left,right) => Expression.LessThanOrEqual(left, right)},
-				{"GREATER", (_,left,right) => Expression.GreaterThan(left, right)},
-				{"GREATEREQUAL", (_,left,right) => Expression.GreaterThanOrEqual(left, right)},
-				{"MIN", (g,left,right) => new MinExpression(left,right,g.TopLevelGenerator)},
-				{"MAX", (g,left,right) => new MaxExpression(left,right,g.TopLevelGenerator)},
-				{"COMPARETO", GenerateCompareTo},
-				{"ATAN2", (g,left,right) => new Atan2Expression(left,right,g.TopLevelGenerator)},
-				{"POW", CreatePow}
-			};
-		}
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
+        /// <remarks>
+        /// Operations that can be, are non-checked operations by default.
+        /// </remarks>
+        public CoreExpressionGenerator() : this(false) { }
 
-		private Expression CreatePow(IExpressionGenerationRequest request, Expression left, Expression right) {
-			Contract.Requires(null != request);
-			Contract.Requires(null != left);
-			Contract.Requires(null != right);
-			Contract.Ensures(Contract.Result<Expression>() != null);
+        /// <summary>
+        /// Constructs a new expression generator.
+        /// </summary>
+        /// <param name="isChecked">Flag to determine if operations that can be, are checked operations.</param>
+        public CoreExpressionGenerator(bool isChecked) {
+            Checked = isChecked;
+            _standardUnaryExpressionGeneratorLookup = new Dictionary<string, Func<IExpressionGenerationRequest, Expression, Expression>>(StringComparer.OrdinalIgnoreCase){
+                {"SQUARE", GenerateSquare},
+                {"SQUAREROOT", GenerateSquareRoot},
+                {"NEGATE", GenerateNegation},
+                {"SIN", (g,i) => new SinExpression(i,g.TopLevelGenerator)},
+                {"COS", (g,i) => new CosExpression(i,g.TopLevelGenerator)},
+                {"TAN", (g,i) => new TanExpression(i,g.TopLevelGenerator)},
+                {"ASIN", (g,i) => new AsinExpression(i,g.TopLevelGenerator)},
+                {"ACOS", (g,i) => new AcosExpression(i,g.TopLevelGenerator)},
+                {"ATAN", (g,i) => new AtanExpression(i,g.TopLevelGenerator)},
+                {"CEILING", (g,i) => new CeilingExpression(i,g.TopLevelGenerator)},
+                {"FLOOR", (g,i) => new FloorExpression(i,g.TopLevelGenerator)},
+                {"TRUNCATE",(g,i) => new TruncateExpression(i,g.TopLevelGenerator)},
+                {"COSH", (g,i) => new CoshExpression(i,g.TopLevelGenerator)},
+                {"SINH", (g,i) => new SinhExpression(i,g.TopLevelGenerator)},
+                {"TANH", (g,i) => new TanhExpression(i,g.TopLevelGenerator)},
+                {"LOG", (g,i) => new LogExpression(i,g.TopLevelGenerator)},
+                {"LOG10", (g,i) => new Log10Expression(i,g.TopLevelGenerator)},
+                {"EXP", (g,i) => new ExpExpression(i,g.TopLevelGenerator)},
+                {"ABS", (g,i) => new AbsExpression(i,g.TopLevelGenerator)},
+                {"ASINH", (g,i) => new AsinhExpression(i,g.TopLevelGenerator)},
+                {"ACOSH", (g,i) => new AcoshExpression(i,g.TopLevelGenerator)},
+                {"ATANH", (g,i) => new AtanhExpression(i,g.TopLevelGenerator)}
+            };
+            _standardBinaryExpressionGeneratorLookup = new Dictionary<string, Func<IExpressionGenerationRequest, Expression, Expression, Expression>>(StringComparer.OrdinalIgnoreCase){
+                {"ADD", GenerateArithmetic},
+                {"SUBTRACT", GenerateArithmetic},
+                {"MULTIPLY", GenerateArithmetic},
+                {"DIVIDE", GenerateArithmetic},
+                {"EQUAL", (_,left,right) => Expression.Equal(left, right)},
+                {"NOTEQUAL",(_,left,right) => Expression.NotEqual(left, right)},
+                {"LESS", (_,left,right) => Expression.LessThan(left, right)},
+                {"LESSEQUAL", (_,left,right) => Expression.LessThanOrEqual(left, right)},
+                {"GREATER", (_,left,right) => Expression.GreaterThan(left, right)},
+                {"GREATEREQUAL", (_,left,right) => Expression.GreaterThanOrEqual(left, right)},
+                {"MIN", (g,left,right) => new MinExpression(left,right,g.TopLevelGenerator)},
+                {"MAX", (g,left,right) => new MaxExpression(left,right,g.TopLevelGenerator)},
+                {"COMPARETO", GenerateCompareTo},
+                {"ATAN2", (g,left,right) => new Atan2Expression(left,right,g.TopLevelGenerator)},
+                {"POW", CreatePow}
+            };
+        }
 
-			if (left.Type == typeof(double) && right.Type == typeof(double))
-				return Expression.Power(left, right);
+        private Expression CreatePow(IExpressionGenerationRequest request, Expression left, Expression right) {
+            Contract.Requires(null != request);
+            Contract.Requires(null != left);
+            Contract.Requires(null != right);
+            Contract.Ensures(Contract.Result<Expression>() != null);
 
-			return request.TopLevelGenerator.GenerateConversionExpression(
-				left.Type,
-				Expression.Power(
-					request.TopLevelGenerator.GenerateConversionExpression(typeof(double), left),
-					request.TopLevelGenerator.GenerateConversionExpression(typeof(double), right)
-				)
-			);
-		}
+            if (left.Type == typeof(double) && right.Type == typeof(double))
+                return Expression.Power(left, right);
 
-		private Expression GenerateSquare(IExpressionGenerationRequest request, Expression parameter) {
-			Contract.Requires(null != request);
-			Contract.Requires(null != parameter);
-			Contract.Ensures(Contract.Result<Expression>() != null);
-			return new SquareExpression(parameter, request.TopLevelGenerator);
-		}
+            return request.TopLevelGenerator.GenerateConversionExpression(
+                left.Type,
+                Expression.Power(
+                    request.TopLevelGenerator.GenerateConversionExpression(typeof(double), left),
+                    request.TopLevelGenerator.GenerateConversionExpression(typeof(double), right)
+                )
+            );
+        }
 
-		private Expression GenerateSquareRoot(IExpressionGenerationRequest request, Expression parameter) {
-			Contract.Requires(null != request);
-			Contract.Requires(null != parameter);
-			Contract.Ensures(Contract.Result<Expression>() != null);
-			return new SquareRootExpression(parameter, request.TopLevelGenerator);
-		}
+        private Expression GenerateSquare(IExpressionGenerationRequest request, Expression parameter) {
+            Contract.Requires(null != request);
+            Contract.Requires(null != parameter);
+            Contract.Ensures(Contract.Result<Expression>() != null);
+            return new SquareExpression(parameter, request.TopLevelGenerator);
+        }
 
-		private Expression GenerateNegation(IExpressionGenerationRequest request, Expression parameter) {
-			Contract.Requires(null != request);
-			Contract.Requires(null != parameter);
-			var resultType = parameter.Type;
-			if (resultType == typeof(ulong) || resultType == typeof(uint) || resultType == typeof(ushort) || resultType == typeof(byte) || resultType == typeof(sbyte)) {
-				var zeroConstant = GenerateConstantExpression("0", resultType);
-				Contract.Assume(null != zeroConstant);
-				return request.TopLevelGenerator.Generate("Subtract", zeroConstant, parameter);
-			}
-			return Checked ? Expression.NegateChecked(parameter) : Expression.Negate(parameter);
-		}
+        private Expression GenerateSquareRoot(IExpressionGenerationRequest request, Expression parameter) {
+            Contract.Requires(null != request);
+            Contract.Requires(null != parameter);
+            Contract.Ensures(Contract.Result<Expression>() != null);
+            return new SquareRootExpression(parameter, request.TopLevelGenerator);
+        }
 
-		private static string ToTitleCase(string text){
-			Contract.Ensures(Contract.Result<string>() != null);
-			if (String.IsNullOrEmpty(text))
-				return String.Empty;
-			if (text.Length == 1)
-				return text.ToUpperInvariant();
-			return String.Concat(
-				Char.ToUpperInvariant(text[0]),
-				text.Substring(1).ToLowerInvariant()
-			);
-		}
+        private Expression GenerateNegation(IExpressionGenerationRequest request, Expression parameter) {
+            Contract.Requires(null != request);
+            Contract.Requires(null != parameter);
+            Contract.Ensures(Contract.Result<Expression>() != null);
+            var resultType = parameter.Type;
+            if (resultType == typeof(ulong) || resultType == typeof(uint) || resultType == typeof(ushort) || resultType == typeof(byte) || resultType == typeof(sbyte)) {
+                var zeroConstant = GenerateConstantExpression("0", resultType);
+                Contract.Assume(null != zeroConstant);
+                return request.TopLevelGenerator.Generate("Subtract", zeroConstant, parameter);
+            }
+            return Checked ? Expression.NegateChecked(parameter) : Expression.Negate(parameter);
+        }
 
-		private Expression GenerateArithmetic(IExpressionGenerationRequest request, IList<Expression> inputs){
-			Contract.Requires(null != request);
-			Contract.Requires(null != inputs);
-			Contract.Requires(inputs.Count >= 2);
-			var result = GenerateArithmetic(request, inputs[0], inputs[1]);
-			if (null == result)
-				return null;
-			for (int i = 2; i < inputs.Count; i++) {
-				result = GenerateArithmetic(request, result, inputs[i]);
-				if (null == result)
-					return null;
-			}
-			return result;
-		}
+        private static string ToTitleCase(string text) {
+            Contract.Ensures(Contract.Result<string>() != null);
+            if (String.IsNullOrEmpty(text))
+                return String.Empty;
+            if (text.Length == 1)
+                return text.ToUpperInvariant();
+            return String.Concat(
+                Char.ToUpperInvariant(text[0]),
+                text.Substring(1).ToLowerInvariant()
+            );
+        }
 
-		private Expression GenerateArithmetic(IExpressionGenerationRequest request, Expression left, Expression right) {
-			Contract.Requires(null != request);
-			Contract.Requires(null != left);
-			Contract.Requires(null != right);
-			if ((left.Type == right.Type) && (left.Type == typeof(byte) || left.Type == typeof(char) || left.Type == typeof(sbyte))){
-				var method = typeof(SpecializedOperations).GetPublicStaticInvokableMethod(
-					ToTitleCase(request.ExpressionName) + (Checked ? "Checked" : "Unchecked"),
-					new[]{left.Type, left.Type}
-				);
-				if (null != method){
-					return Expression.Call(method, left, right);
-				}
-			}
+        private Expression GenerateArithmetic(IExpressionGenerationRequest request, IList<Expression> inputs) {
+            Contract.Requires(request != null);
+            Contract.Requires(inputs != null);
+            Contract.Requires(inputs.Count >= 2);
+            Contract.Ensures(Contract.Result<Expression>() != null);
+            var result = GenerateArithmetic(request, inputs[0], inputs[1]);
+            if (null == result)
+                return null;
+            for (int i = 2; i < inputs.Count; i++) {
+                result = GenerateArithmetic(request, result, inputs[i]);
+                if (null == result)
+                    return null;
+            }
+            return result;
+        }
 
-			if(StringComparer.OrdinalIgnoreCase.Equals(request.ExpressionName, "Add"))
-				return Checked ? Expression.AddChecked(left, right) : Expression.Add(left, right);
-			if(StringComparer.OrdinalIgnoreCase.Equals(request.ExpressionName, "Subtract"))
-				return Checked ? Expression.SubtractChecked(left, right) : Expression.Subtract(left, right);
-			if(StringComparer.OrdinalIgnoreCase.Equals(request.ExpressionName, "Multiply"))
-				return Checked ? Expression.MultiplyChecked(left, right) : Expression.Multiply(left, right);
-			if (StringComparer.OrdinalIgnoreCase.Equals(request.ExpressionName, "Divide"))
-				return Expression.Divide(left, right);
-			return null;
-		}
+        private Expression GenerateArithmetic(IExpressionGenerationRequest request, Expression left, Expression right) {
+            Contract.Requires(null != request);
+            Contract.Requires(null != left);
+            Contract.Requires(null != right);
+            Contract.Ensures(Contract.Result<Expression>() != null);
+            if ((left.Type == right.Type) && (left.Type == typeof(byte) || left.Type == typeof(char) || left.Type == typeof(sbyte))) {
+                var method = typeof(SpecializedOperations).GetPublicStaticInvokableMethod(
+                    ToTitleCase(request.ExpressionName) + (Checked ? "Checked" : "Unchecked"),
+                    new[] { left.Type, left.Type }
+                );
+                if (null != method) {
+                    return Expression.Call(method, left, right);
+                }
+            }
 
-		private Expression GenerateCompareTo(IExpressionGenerationRequest request, Expression left, Expression right) {
-			Contract.Requires(null != request);
-			Contract.Requires(null != left);
-			Contract.Requires(null != right);
-			if (left.IsMemoryLocationOrConstant() && right.IsMemoryLocationOrConstant()) {
-				var eq = request.TopLevelGenerator.Generate("EQUAL", left, right);
-				Contract.Assume(null != eq);
-				var less = request.TopLevelGenerator.Generate("LESS", left, right);
-				Contract.Assume(null != less);
-				var comparableType = typeof(IComparable<>).MakeGenericType(new[] { right.Type });
-				return left.Type.ImplementsInterface(comparableType)
-					? Expression.Call(
-						left,
-						comparableType.GetPublicInstanceInvokableMethod(
-							"CompareTo",
-							new[] { right.Type }),
-						new[]{right}
-					) as Expression
-					: Expression.Condition(
-						eq,
-						Expression.Constant(0),
-						Expression.Condition(
-							less,
-							Expression.Constant(-1),
-							Expression.Constant(1)
-						)
-					);
-			}
+            if (StringComparer.OrdinalIgnoreCase.Equals(request.ExpressionName, "Add"))
+                return Checked ? Expression.AddChecked(left, right) : Expression.Add(left, right);
+            if (StringComparer.OrdinalIgnoreCase.Equals(request.ExpressionName, "Subtract"))
+                return Checked ? Expression.SubtractChecked(left, right) : Expression.Subtract(left, right);
+            if (StringComparer.OrdinalIgnoreCase.Equals(request.ExpressionName, "Multiply"))
+                return Checked ? Expression.MultiplyChecked(left, right) : Expression.Multiply(left, right);
+            if (StringComparer.OrdinalIgnoreCase.Equals(request.ExpressionName, "Divide"))
+                return Expression.Divide(left, right);
+            return null;
+        }
 
-			return new BlockExpressionBuilder().AddUsingMemoryLocationsOrConstants(locals => new[] {
-				GenerateCompareTo(request, locals[0], locals[1])
-			}, left, right).GetExpression();
-		}
+        private Expression GenerateCompareTo(IExpressionGenerationRequest request, Expression left, Expression right) {
+            Contract.Requires(null != request);
+            Contract.Requires(null != left);
+            Contract.Requires(null != right);
+            Contract.Ensures(Contract.Result<Expression>() != null);
+            if (left.IsMemoryLocationOrConstant() && right.IsMemoryLocationOrConstant()) {
+                var eq = request.TopLevelGenerator.Generate("EQUAL", left, right);
+                Contract.Assume(null != eq);
+                var less = request.TopLevelGenerator.Generate("LESS", left, right);
+                Contract.Assume(null != less);
+                var comparableType = typeof(IComparable<>).MakeGenericType(new[] { right.Type });
+                return left.Type.ImplementsInterface(comparableType)
+                    ? Expression.Call(
+                        left,
+                        comparableType.GetPublicInstanceInvokableMethod(
+                            "CompareTo",
+                            new[] { right.Type }),
+                        new[] { right }
+                    ) as Expression
+                    : Expression.Condition(
+                        eq,
+                        Expression.Constant(0),
+                        Expression.Condition(
+                            less,
+                            Expression.Constant(-1),
+                            Expression.Constant(1)
+                        )
+                    );
+            }
 
-		private bool TryGetDoubleConstantValue(string expressionName, out double constantValue) {
-			constantValue = 0;
-			if (String.IsNullOrEmpty(expressionName))
-				return false;
+            return new BlockExpressionBuilder().AddUsingMemoryLocationsOrConstants(locals => new[] {
+                GenerateCompareTo(request, locals[0], locals[1])
+            }, left, right).GetExpression();
+        }
 
-			if (expressionName.Equals("ONE", StringComparison.OrdinalIgnoreCase)) {
-				constantValue = 1;
-				return true;
-			}
-			if (expressionName.Equals("TWO", StringComparison.OrdinalIgnoreCase)) {
-				constantValue = 2;
-				return true;
-			}
-			if (expressionName.Equals("ZERO", StringComparison.OrdinalIgnoreCase)) {
-				constantValue = 0;
-				return true;
-			}
-			if (expressionName.Equals("PI", StringComparison.OrdinalIgnoreCase)) {
-				constantValue = Math.PI;
-				return true;
-			}
-			if (expressionName.Equals("HALFPI", StringComparison.OrdinalIgnoreCase)) {
-				constantValue = Math.PI / 2.0;
-				return true;
-			}
-			if (expressionName.Equals("QUARTERPI", StringComparison.OrdinalIgnoreCase)) {
-				constantValue = Math.PI / 4.0;
-				return true;
-			}
-			if (expressionName.Equals("E", StringComparison.OrdinalIgnoreCase)) {
-				constantValue = Math.E;
-				return true;
-			}
-			if (
-				expressionName.Equals("UNDEFINED", StringComparison.OrdinalIgnoreCase)
-				|| expressionName.Equals("INVALID", StringComparison.OrdinalIgnoreCase)
-			) {
-				constantValue = Double.NaN;
-				return true;
-			}
-			return Double.TryParse(expressionName, out constantValue);
-		}
+        private bool TryGetDoubleConstantValue(string expressionName, out double constantValue) {
+            constantValue = 0;
+            if (String.IsNullOrEmpty(expressionName))
+                return false;
 
+            if (expressionName.Equals("ONE", StringComparison.OrdinalIgnoreCase)) {
+                constantValue = 1;
+                return true;
+            }
+            if (expressionName.Equals("TWO", StringComparison.OrdinalIgnoreCase)) {
+                constantValue = 2;
+                return true;
+            }
+            if (expressionName.Equals("ZERO", StringComparison.OrdinalIgnoreCase)) {
+                constantValue = 0;
+                return true;
+            }
+            if (expressionName.Equals("PI", StringComparison.OrdinalIgnoreCase)) {
+                constantValue = Math.PI;
+                return true;
+            }
+            if (expressionName.Equals("HALFPI", StringComparison.OrdinalIgnoreCase)) {
+                constantValue = Math.PI / 2.0;
+                return true;
+            }
+            if (expressionName.Equals("QUARTERPI", StringComparison.OrdinalIgnoreCase)) {
+                constantValue = Math.PI / 4.0;
+                return true;
+            }
+            if (expressionName.Equals("E", StringComparison.OrdinalIgnoreCase)) {
+                constantValue = Math.E;
+                return true;
+            }
+            if (
+                expressionName.Equals("UNDEFINED", StringComparison.OrdinalIgnoreCase)
+                || expressionName.Equals("INVALID", StringComparison.OrdinalIgnoreCase)
+            ) {
+                constantValue = Double.NaN;
+                return true;
+            }
+            return Double.TryParse(expressionName, out constantValue);
+        }
 
-		/// <summary>
-		/// True when the expressions generated will use checked versions of operations when possible.
-		/// </summary>
-		public bool Checked { get; private set; }
+        /// <summary>
+        /// True when the expressions generated will use checked versions of operations when possible.
+        /// </summary>
+        public bool Checked { get; private set; }
 
-		private Expression GenerateConstantExpression(string expressionName, Type resultType) {
-			if (String.IsNullOrEmpty(expressionName)) throw new ArgumentException("expressionName is not valid", "expressionName");
-			if (null == resultType) throw new ArgumentNullException("resultType");
-			Contract.EndContractBlock();
+        private Expression GenerateConstantExpression(string expressionName, Type resultType) {
+            if (String.IsNullOrEmpty(expressionName)) throw new ArgumentException("expressionName is not valid", "expressionName");
+            if (null == resultType) throw new ArgumentNullException("resultType");
+            Contract.Ensures(Contract.Result<Expression>() != null);
 
-			double constantValue;
-			if (!TryGetDoubleConstantValue(expressionName, out constantValue))
-				return null;
+            double constantValue;
+            if (!TryGetDoubleConstantValue(expressionName, out constantValue))
+                return null;
 
-			if (resultType == typeof(double)) {
-				return Expression.Constant(constantValue);
-			}
-			if (resultType == typeof(float)) {
-				if (Double.IsNaN(constantValue))
-					return Expression.Constant(Single.NaN);
-				return Expression.Constant(unchecked((float)constantValue));
-			}
-			if (resultType == typeof(decimal)) {
-				if (Double.IsNaN(constantValue)) {
-					return null;
-				}
-				return Expression.Constant(unchecked((decimal)constantValue));
-			}
-			if (resultType == typeof(int)) {
-				if (Double.IsNaN(constantValue))
-					return Expression.Constant(0);
-				return Expression.Constant(unchecked((int)constantValue));
-			}
-			if (Double.IsNaN(constantValue))
-				return null;
-			return GenerateConversionExpression(Expression.Constant(constantValue), resultType);
-		}
+            if (resultType == typeof(double)) {
+                return Expression.Constant(constantValue);
+            }
+            if (resultType == typeof(float)) {
+                if (Double.IsNaN(constantValue))
+                    return Expression.Constant(Single.NaN);
+                return Expression.Constant(unchecked((float)constantValue));
+            }
+            if (resultType == typeof(decimal)) {
+                if (Double.IsNaN(constantValue)) {
+                    return null;
+                }
+                return Expression.Constant(unchecked((decimal)constantValue));
+            }
+            if (resultType == typeof(int)) {
+                if (Double.IsNaN(constantValue))
+                    return Expression.Constant(0);
+                return Expression.Constant(unchecked((int)constantValue));
+            }
+            if (Double.IsNaN(constantValue))
+                return null;
+            return GenerateConversionExpression(Expression.Constant(constantValue), resultType);
+        }
 
-		private Expression GenerateStandardExpression(IExpressionGenerationRequest expressionRequest) {
-			Contract.Requires(null != expressionRequest);
-			Contract.EndContractBlock();
-			var parameters = expressionRequest.InputExpressions;
-			var expressionName = expressionRequest.ExpressionName;
+        private Expression GenerateStandardExpression(IExpressionGenerationRequest expressionRequest) {
+            Contract.Requires(null != expressionRequest);
+            Contract.Ensures(Contract.Result<Expression>() != null);
 
-			if (parameters.Count == 1){
-				Func<IExpressionGenerationRequest, Expression, Expression> unaryGenerator;
-				if (_standardUnaryExpressionGeneratorLookup.TryGetValue(expressionName, out unaryGenerator))
-					return unaryGenerator(expressionRequest, parameters[0]);
-			}
-			if (parameters.Count == 2) {
-				Func<IExpressionGenerationRequest, Expression, Expression, Expression> binaryGenerator;
-				if (_standardBinaryExpressionGeneratorLookup.TryGetValue(expressionName, out binaryGenerator))
-					return binaryGenerator(expressionRequest, parameters[0], parameters[1]);
-			}
-			if (parameters.Count > 2){
-				var result = GenerateArithmetic(expressionRequest, parameters);
-				if (null != result)
-					return result;
-			}
+            var parameters = expressionRequest.InputExpressions;
+            var expressionName = expressionRequest.ExpressionName;
 
-			return null;
-		}
+            if (parameters.Count == 1) {
+                Func<IExpressionGenerationRequest, Expression, Expression> unaryGenerator;
+                if (_standardUnaryExpressionGeneratorLookup.TryGetValue(expressionName, out unaryGenerator))
+                    return unaryGenerator(expressionRequest, parameters[0]);
+            }
+            if (parameters.Count == 2) {
+                Func<IExpressionGenerationRequest, Expression, Expression, Expression> binaryGenerator;
+                if (_standardBinaryExpressionGeneratorLookup.TryGetValue(expressionName, out binaryGenerator))
+                    return binaryGenerator(expressionRequest, parameters[0], parameters[1]);
+            }
+            if (parameters.Count > 2) {
+                var result = GenerateArithmetic(expressionRequest, parameters);
+                if (null != result)
+                    return result;
+            }
 
-		private Expression GenerateConversionExpression(Expression expression, Type resultType){
-			Contract.Requires(null != expression);
-			Contract.Requires(null != resultType);
-			Contract.EndContractBlock();
+            return null;
+        }
 
-			if (expression.Type == resultType)
-				return expression;
-			return Checked
-				? Expression.ConvertChecked(expression, resultType)
-				: Expression.Convert(expression, resultType);
-		}
+        private Expression GenerateConversionExpression(Expression expression, Type resultType) {
+            Contract.Requires(null != expression);
+            Contract.Requires(null != resultType);
+            Contract.EndContractBlock();
 
-		/// <inheritdoc/>
-		public Expression Generate(IExpressionGenerationRequest request) {
-			if(null == request) throw new ArgumentNullException("request");
-			if(String.IsNullOrEmpty(request.ExpressionName)) throw new ArgumentException("Invalid request expression name.", "request");
-			Contract.EndContractBlock();
+            if (expression.Type == resultType)
+                return expression;
+            return Checked
+                ? Expression.ConvertChecked(expression, resultType)
+                : Expression.Convert(expression, resultType);
+        }
 
-			var expressionName = request.ExpressionName;
+        /// <inheritdoc/>
+        public Expression Generate(IExpressionGenerationRequest request) {
+            if (null == request) throw new ArgumentNullException("request");
+            if (String.IsNullOrEmpty(request.ExpressionName)) throw new ArgumentException("Invalid request expression name.", "request");
+            Contract.Ensures(Contract.Result<Expression>() != null);
 
-			if ("CONVERT".Equals(expressionName, StringComparison.OrdinalIgnoreCase)
-				&& request.InputExpressions != null
-				&& request.InputExpressions.Count == 1
-				&& null != request.DesiredResultType
-			){
-				return GenerateConversionExpression(request.InputExpressions[0], request.DesiredResultType);
-			}
+            var expressionName = request.ExpressionName;
 
-			if (
-				(request.InputExpressions == null || request.InputExpressions.Count == 0)
-				&& null != request.DesiredResultType
-				&& typeof (void) != request.DesiredResultType
-			){
-				return GenerateConstantExpression(expressionName, request.DesiredResultType);
-			}
+            if ("CONVERT".Equals(expressionName, StringComparison.OrdinalIgnoreCase)
+                && request.InputExpressions != null
+                && request.InputExpressions.Count == 1
+                && null != request.DesiredResultType
+            ) {
+                return GenerateConversionExpression(request.InputExpressions[0], request.DesiredResultType);
+            }
 
-			return GenerateStandardExpression(request);
-		}
+            if (
+                (request.InputExpressions == null || request.InputExpressions.Count == 0)
+                && null != request.DesiredResultType
+                && typeof(void) != request.DesiredResultType
+            ) {
+                return GenerateConstantExpression(expressionName, request.DesiredResultType);
+            }
 
-	}
+            return GenerateStandardExpression(request);
+        }
+
+    }
 
 }

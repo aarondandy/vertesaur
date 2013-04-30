@@ -1,7 +1,14 @@
-﻿namespace Vertesaur.Utility
+﻿// ReSharper disable RedundantUsingDirective
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.Contracts;
+// ReSharper restore RedundantUsingDirective
+
+namespace Vertesaur.Utility
 {
     internal static class ListUtility
     {
+
 #if NO_LIST_REMOVE_ALL
         public static int RemoveAll<T>(this List<T> list, Predicate<T> predicate) {
             Contract.Requires(null != list);

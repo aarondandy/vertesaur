@@ -48,7 +48,7 @@ namespace Vertesaur.Utility
 
         public static Type[] GetGenericArguments(this Type targetType) {
             Contract.Requires(targetType != null);
-            Contract.Ensures(Contract.Result<Type[]>() != null)
+            Contract.Ensures(Contract.Result<Type[]>() != null);
             return targetType.GetTypeInfo().GenericTypeArguments;
         }
 #endif

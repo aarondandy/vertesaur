@@ -32,45 +32,45 @@ using Vertesaur.Generation.Contracts;
 namespace Vertesaur.Generation.Expressions
 {
 
-	/// <summary>
-	/// Combines various generic operation providers together.
-	/// Provides a requested expression from the first provider to successfully build one.
-	/// </summary>
-	public class CombinedExpressionGenerator : IExpressionGenerator {
+    /// <summary>
+    /// Combines various generic operation providers together.
+    /// Provides a requested expression from the first provider to successfully build one.
+    /// </summary>
+    public class CombinedExpressionGenerator : IExpressionGenerator
+    {
 
 #if NO_MEF
-		/// <summary>
-		/// Replaces the MEF expression generator for frameworks that do not have MEF.
-		/// </summary>
-		public static CombinedExpressionGenerator GenerateDefaultMefReplacement() {
-			return new CombinedExpressionGenerator(new IExpressionGenerator[] {
-				new CoreExpressionGenerator(),
-				new VectorExpressionGenerator()
-			});
-		}
+        /// <summary>
+        /// Replaces the MEF expression generator for frameworks that do not have MEF.
+        /// </summary>
+        public static CombinedExpressionGenerator GenerateDefaultMefReplacement() {
+            return new CombinedExpressionGenerator(new IExpressionGenerator[] {
+                new CoreExpressionGenerator(),
+                new VectorExpressionGenerator()
+            });
+        }
 #endif
 
-		private readonly IExpressionGenerator[] _expressionGenerators;
+        private readonly IExpressionGenerator[] _expressionGenerators;
 
-		/// <summary>
-		/// Constructs a new combined expression generators from the given operation providers.
-		/// </summary>
-		/// <param name="expressionGenerators">The ordered list of generators to combine.</param>
-		public CombinedExpressionGenerator(IEnumerable<IExpressionGenerator> expressionGenerators) {
-			if (null == expressionGenerators) throw new ArgumentNullException("expressionGenerators");
-			Contract.Ensures(_expressionGenerators != null);
-			Contract.EndContractBlock();
-			_expressionGenerators = expressionGenerators.ToArray();
+        /// <summary>
+        /// Constructs a new combined expression generators from the given operation providers.
+        /// </summary>
+        /// <param name="expressionGenerators">The ordered list of generators to combine.</param>
+        public CombinedExpressionGenerator(IEnumerable<IExpressionGenerator> expressionGenerators) {
+            if (null == expressionGenerators) throw new ArgumentNullException("expressionGenerators");
+            Contract.EndContractBlock();
+            _expressionGenerators = expressionGenerators.ToArray();
 
-		}
+        }
 
-		/// <inheritdoc/>
-		public Expression Generate(IExpressionGenerationRequest request) {
-			if (null == request) throw new ArgumentNullException("request");
-			Contract.EndContractBlock();
-			return _expressionGenerators
-				.Select(x => x.Generate(request))
-				.FirstOrDefault(x => null != x);
-		}
-	}
+        /// <inheritdoc/>
+        public Expression Generate(IExpressionGenerationRequest request) {
+            if (null == request) throw new ArgumentNullException("request");
+            Contract.Ensures(Contract.Result<Expression>() != null);
+            return _expressionGenerators
+                .Select(x => x.Generate(request))
+                .FirstOrDefault(x => null != x);
+        }
+    }
 }
