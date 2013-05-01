@@ -108,19 +108,9 @@ namespace Vertesaur.Contracts
 
         public abstract bool IsLowerTriangular { get; }
 
-        public int RowCount {
-            get{
-                Contract.Ensures(Contract.Result<int>() == ColumnCount);
-                throw new System.NotImplementedException();
-            }
-        }
+        public abstract int RowCount { get; }
 
-        public int ColumnCount {
-            get{
-                Contract.Ensures(Contract.Result<int>() == RowCount);
-                throw new System.NotImplementedException();
-            }
-        }
+        public abstract int ColumnCount { get; }
 
         public abstract int ElementCount { get; }
 

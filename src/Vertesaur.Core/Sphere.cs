@@ -127,6 +127,7 @@ namespace Vertesaur
             // ReSharper restore CompareOfFloatsByEqualityOperator
         }
 
+        /// <inheritdoc/>
         public override string ToString() {
             Contract.Ensures(!String.IsNullOrEmpty(Contract.Result<string>()));
             return String.Format("r:" + Radius.ToString(CultureInfo.InvariantCulture));

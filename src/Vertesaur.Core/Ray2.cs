@@ -250,7 +250,7 @@ namespace Vertesaur
         /// <param name="p">The point to calculate distance to.</param>
         /// <returns>The distance.</returns>
         public double Distance(Point2 p) {
-            Contract.Ensures(Contract.Result<double>() >= 0 || Double.IsNaN(Contract.Result<double>()));
+            Contract.Ensures(!(Contract.Result<double>() < 0));
             var v0 = p - P;
             var aDot = Direction.Dot(v0);
             return (
@@ -266,7 +266,7 @@ namespace Vertesaur
         /// <param name="p">The point to calculate squared distance to.</param>
         /// <returns>The squared distance.</returns>
         public double DistanceSquared(Point2 p) {
-            Contract.Ensures(Contract.Result<double>() >= 0 || Double.IsNaN(Contract.Result<double>()));
+            Contract.Ensures(!(Contract.Result<double>() < 0));
             var v0 = p - P;
             var aDot = Direction.Dot(v0);
             return (

@@ -45,6 +45,9 @@ namespace Vertesaur.PolygonOperation
             DefaultInverseRightIntersectionOperation = new PolygonIntersectionOperation(DefaultInverseRightIntersectionOptions);
         }
 
+        /// <summary>
+        /// An operation used to invert the right argument.
+        /// </summary>
         protected PolygonIntersectionOperation RightInverseIntersectionOperation { get; private set; }
 
         /// <summary>

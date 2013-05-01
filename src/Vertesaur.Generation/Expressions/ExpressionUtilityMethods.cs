@@ -1,4 +1,7 @@
-﻿using System.Linq;
+﻿using System.Diagnostics.Contracts;
+// ReSharper disable RedundantUsingDirective
+using System.Linq;
+// ReSharper restore RedundantUsingDirective
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -15,7 +18,7 @@ namespace Vertesaur.Generation.Expressions
         /// </summary>
         /// <param name="expression">The expression to test.</param>
         /// <returns>True when the expression is a constant or value stored in memory.</returns>
-        public static bool IsMemoryLocationOrConstant(this Expression expression) {
+        [Pure] public static bool IsMemoryLocationOrConstant(this Expression expression) {
             if (null == expression)
                 return false;
             if (expression is ParameterExpression || expression is ConstantExpression)

@@ -510,7 +510,7 @@ namespace Vertesaur
         /// </summary>
         /// <returns>The perimeter of the ring.</returns>
         public double GetMagnitude() {
-            Contract.Ensures(Contract.Result<double>() >= 0 || Double.IsNaN(Contract.Result<double>()));
+            Contract.Ensures(!(Contract.Result<double>() < 0));
             var lastIndex = _pointList.Count - 1;
             if (lastIndex > 1) {
                 var sum = _pointList[lastIndex].Distance(_pointList[0]);
@@ -524,7 +524,7 @@ namespace Vertesaur
 
         /// <inheritdoc/>
         double IHasMagnitude<double>.GetMagnitudeSquared() {
-            Contract.Ensures(Contract.Result<double>() >= 0 || Double.IsNaN(Contract.Result<double>()));
+            Contract.Ensures(!(Contract.Result<double>() < 0));
             var m = GetMagnitude();
             return m * m;
         }
@@ -699,7 +699,7 @@ namespace Vertesaur
         /// The distance will be 0 when the ring is a fill and the point lies within the boundary, when the ring is a hole and the point lies outside of the boundary, or when the point lies on the boundary.
         /// </remarks>
         public double Distance(Point2 p) {
-            Contract.Ensures(Contract.Result<double>() >= 0 || Double.IsNaN(Contract.Result<double>()));
+            Contract.Ensures(!(Contract.Result<double>() < 0));
             return Math.Sqrt(DistanceSquared(p));
         }
 
@@ -712,7 +712,7 @@ namespace Vertesaur
         /// The squared distance will be 0 when the ring is a fill and the point lies within the boundary, when the ring is a hole and the point lies outside of the boundary, or when the point lies on the boundary.
         /// </remarks>
         public double DistanceSquared(Point2 p) {
-            Contract.Ensures(Contract.Result<double>() >= 0 || Double.IsNaN(Contract.Result<double>()));
+            Contract.Ensures(!(Contract.Result<double>() < 0));
             var lastIndex = _pointList.Count - 1;
             if (lastIndex > 1) {
                 if (Intersects(p, false)) {

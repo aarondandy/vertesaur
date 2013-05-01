@@ -205,7 +205,7 @@ namespace Vertesaur
         /// <inheritdoc/>
         [Pure]
         public double GetMagnitude() {
-            Contract.Ensures(Contract.Result<double>() >= 0 || Double.IsNaN(Contract.Result<double>()));
+            Contract.Ensures(!(Contract.Result<double>() < 0));
             return Math.Abs(Rho);
         }
 

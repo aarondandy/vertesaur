@@ -127,10 +127,12 @@ namespace Vertesaur
         /// <param name="v">A value.</param>
         private Range(Range r, double v) {
             if (v < r.Low) {
+                Contract.Assume(v < r.High);
                 Low = v;
                 High = r.High;
             }
             else {
+                Contract.Assume(r.Low <= v);
                 Low = r.Low;
                 High = v > r.High ? v : r.High;
             }
@@ -142,6 +144,8 @@ namespace Vertesaur
         /// <param name="a">A range.</param>
         /// <param name="b">A range.</param>
         private Range(Range a, Range b) {
+            Contract.Assume(a.Low <= a.High);
+            Contract.Assume(b.Low <= b.High);
             Low = a.Low < b.Low ? a.Low : b.Low;
             High = a.High > b.High ? a.High : b.High;
         }

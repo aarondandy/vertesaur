@@ -254,7 +254,7 @@ namespace Vertesaur
         /// <param name="p">The point to calculate distance to.</param>
         /// <returns>The distance between this polygon and <paramref name="p"/>.</returns>
         public double Distance(Point2 p) {
-            Contract.Ensures(Contract.Result<double>() >= 0 || Double.IsNaN(Contract.Result<double>()));
+            Contract.Ensures(!(Contract.Result<double>() < 0));
             return Math.Sqrt(DistanceSquared(p));
         }
 
@@ -264,7 +264,7 @@ namespace Vertesaur
         /// <param name="p">The point to calculate squared distance to.</param>
         /// <returns>The squared distance between this polygon and <paramref name="p"/>.</returns>
         public double DistanceSquared(Point2 p) {
-            Contract.Ensures(Contract.Result<double>() >= 0 || Double.IsNaN(Contract.Result<double>()));
+            Contract.Ensures(!(Contract.Result<double>() < 0));
             if (Count == 0)
                 return Double.NaN;
 
@@ -282,7 +282,7 @@ namespace Vertesaur
         /// </summary>
         /// <returns>The perimeter of this polygon.</returns>
         public double GetMagnitude() {
-            Contract.Ensures(Contract.Result<double>() >= 0 || Double.IsNaN(Contract.Result<double>()));
+            Contract.Ensures(!(Contract.Result<double>() < 0));
             if (Count == 0)
                 return Double.NaN;
 
@@ -299,7 +299,7 @@ namespace Vertesaur
 
         /// <inheritdoc/>
         public double GetMagnitudeSquared() {
-            Contract.Ensures(Contract.Result<double>() >= 0 || Double.IsNaN(Contract.Result<double>()));
+            Contract.Ensures(!(Contract.Result<double>() < 0));
             var m = GetMagnitude();
             return m * m;
         }
@@ -309,7 +309,6 @@ namespace Vertesaur
         /// </summary>
         /// <returns>The area.</returns>
         public double GetArea() {
-            Contract.Ensures(Contract.Result<double>() >= 0 || Double.IsNaN(Contract.Result<double>()));
             if (Count == 0)
                 return Double.NaN;
 

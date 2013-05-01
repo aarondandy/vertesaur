@@ -21,7 +21,7 @@ namespace Vertesaur.Generation.GenericOperations
 #else
                 CombinedExpressionGenerator.GenerateDefaultMefReplacement()
 #endif
-);
+            );
         }
 
         /// <summary>
@@ -51,6 +51,8 @@ namespace Vertesaur.Generation.GenericOperations
         /// <param name="x">The x-coordinate.</param>
         /// <returns>THe result of the operation.</returns>
         public delegate TValue ReverseCoordinates(TValue y, TValue x);
+
+        public delegate bool ComparisonTest(TValue left, TValue right);
 
         /// <summary>
         /// Defines a method that should return a constant value.
@@ -180,6 +182,14 @@ namespace Vertesaur.Generation.GenericOperations
         /// </summary>
         public readonly Func<double, TValue> FromDouble;
 
+        public readonly ComparisonTest Equal;
+        public readonly ComparisonTest NotEqual;
+        public readonly ComparisonTest Less;
+        public readonly ComparisonTest LessOrEqual;
+        public readonly ComparisonTest Greater;
+        public readonly ComparisonTest GreaterOrEqual;
+        public readonly Comparison<TValue> CompareTo;
+
         /// <summary>
         /// Creates a new basic generic operations implementation using the given expression generator.
         /// </summary>
@@ -217,6 +227,14 @@ namespace Vertesaur.Generation.GenericOperations
             Truncate = BuildUnaryFunc("Truncate");
             Min = BuildBinaryFunc("Min");
             Max = BuildBinaryFunc("Max");
+
+            Equal = BuildBinaryFunc<ComparisonTest>("Equal");
+            NotEqual = BuildBinaryFunc<ComparisonTest>("NotEqual");
+            Less = BuildBinaryFunc<ComparisonTest>("Less");
+            LessOrEqual = BuildBinaryFunc<ComparisonTest>("LessEqual");
+            Greater = BuildBinaryFunc<ComparisonTest>("Greater");
+            GreaterOrEqual = BuildBinaryFunc<ComparisonTest>("GreaterOrEqual");
+            CompareTo = BuildBinaryFunc<Comparison<TValue>>("CompareTo");
 
             ToDouble = BuildConversion<TValue, double>();
             FromDouble = BuildConversion<double, TValue>();

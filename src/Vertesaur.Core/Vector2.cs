@@ -223,7 +223,7 @@ namespace Vertesaur
         /// </summary>
         /// <returns>The magnitude.</returns>
         [Pure] public double GetMagnitude() {
-            Contract.Ensures(Contract.Result<double>() >= 0 || Double.IsNaN(Contract.Result<double>()));
+            Contract.Ensures(!(Contract.Result<double>() < 0));
             return Math.Sqrt((X * X) + (Y * Y));
         }
 
@@ -232,7 +232,7 @@ namespace Vertesaur
         /// </summary>
         /// <returns>The squared magnitude.</returns>
         [Pure] public double GetMagnitudeSquared() {
-            Contract.Ensures(Contract.Result<double>() >= 0 || Double.IsNaN(Contract.Result<double>()));
+            Contract.Ensures(!(Contract.Result<double>() < 0));
             return (X * X) + (Y * Y);
         }
 

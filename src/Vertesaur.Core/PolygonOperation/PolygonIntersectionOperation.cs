@@ -132,6 +132,9 @@ namespace Vertesaur.PolygonOperation
             return crossing.LocationB.RingIndex;
         }
 
+        /// <summary>
+        /// Options for this intersection operation.
+        /// </summary>
         protected PolygonBinaryOperationOptions Options { get; private set; }
 
         /// <summary>
@@ -647,6 +650,7 @@ namespace Vertesaur.PolygonOperation
                     ringCrossings = new List<PolygonCrossing>();
                     result.Add(ringIndexSelector(crossing), ringCrossings);
                 }
+                Contract.Assume(ringCrossings != null);
                 ringCrossings.Add(crossing);
             }
 
@@ -669,7 +673,7 @@ namespace Vertesaur.PolygonOperation
             Contract.Ensures(Contract.Result<PolygonCrossingsData>() != null);
 
             // TODO: maybe 0 should be an invalid value?
-            if (crossings.Count == 0)
+            if (crossings.Count == 0) {
                 return new PolygonCrossingsData {
                     EntranceHops = new Dictionary<PolygonCrossing, PolygonCrossing>(),
                     ExitHops = new Dictionary<PolygonCrossing, PolygonCrossing>(),
@@ -677,7 +681,7 @@ namespace Vertesaur.PolygonOperation
                     Exits = new HashSet<PolygonCrossing>(),
                     AllCrossings = crossings
                 };
-
+            }
             // TODO: test this with one crossing... somehow (is that even possible?)
 
             var ringCrossingsA = SortedRingLookUp(crossings, PolygonCrossing.LocationAComparer.Default.Compare, GetRingIndexA, a.Count);
@@ -762,7 +766,7 @@ namespace Vertesaur.PolygonOperation
             foreach (var entrance in entrances) {
                 var entranceLocationB = entrance.LocationB;
                 foreach (var exit in exits) {
-                    if (exit.LocationB == entranceLocationB) {
+                    if (entranceLocationB.Equals(exit.LocationB)) {
                         entranceHops.Add(entrance, exit);
                         break;
                     }
@@ -771,14 +775,14 @@ namespace Vertesaur.PolygonOperation
             foreach (var exit in exits) {
                 var exitLocationA = exit.LocationA;
                 foreach (var entrance in entrances) {
-                    if (entrance.LocationA == exitLocationA) {
+                    if (exitLocationA.Equals(entrance.LocationA)) {
                         exitHops.Add(exit, entrance);
                         break;
                     }
                 }
             }
 
-            var result = new PolygonCrossingsData {
+            return new PolygonCrossingsData {
                 AllCrossings = crossings,
                 EntranceHops = entranceHops,
                 ExitHops = exitHops,
@@ -787,8 +791,6 @@ namespace Vertesaur.PolygonOperation
                 RingCrossingsA = ringCrossingsA,
                 RingCrossingsB = ringCrossingsB
             };
-
-            return result;
         }
 
         private static PolygonCrossing FindNextCrossingNotEqual(

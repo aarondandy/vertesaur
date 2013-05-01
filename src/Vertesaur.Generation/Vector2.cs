@@ -97,11 +97,8 @@ namespace Vertesaur.Generation
         /// </summary>
         /// <returns>A zero constant value.</returns>
         public static Vector2<TValue> CreateZero() {
-            // ReSharper disable CompareNonConstrainedGenericWithNull
             var v = BasicOperations<TValue>.Default.ZeroValue;
-            Contract.Assume(null != v);
             return new Vector2<TValue>(v, v);
-            // ReSharper restore CompareNonConstrainedGenericWithNull
         }
 
         /// <summary>
@@ -139,15 +136,8 @@ namespace Vertesaur.Generation
         /// <param name="x">The x-coordinate.</param>
         /// <param name="y">The y-coordinate.</param>
         public Vector2(TValue x, TValue y) {
-            // ReSharper disable CompareNonConstrainedGenericWithNull
-            if (x == null) throw new ArgumentNullException("x");
-            if (y == null) throw new ArgumentNullException("y");
-            Contract.EndContractBlock();
             X = x;
             Y = y;
-            Contract.Assume(null != X);
-            Contract.Assume(null != Y);
-            // ReSharper restore CompareNonConstrainedGenericWithNull
         }
 
         /// <summary>
@@ -156,14 +146,9 @@ namespace Vertesaur.Generation
         /// <param name="v">The coordinate tuple to copy values from.</param>
         public Vector2(ICoordinatePair<TValue> v) {
             if (null == v) throw new ArgumentNullException("v");
-            // ReSharper disable CompareNonConstrainedGenericWithNull
-            if (v.X == null || v.Y == null) throw new ArgumentException("Null coordinate values are not allowed.", "v");
             Contract.EndContractBlock();
             X = v.X;
             Y = v.Y;
-            Contract.Assume(null != X);
-            Contract.Assume(null != Y);
-            // ReSharper restore CompareNonConstrainedGenericWithNull
         }
 
         /// <summary>
@@ -172,30 +157,21 @@ namespace Vertesaur.Generation
         /// <param name="v">The vector to convert and clone from.</param>
         /// <exception cref="System.ArgumentException">Coordinate type conversion fails.</exception>
         public Vector2(Vector2 v) {
-            // ReSharper disable CompareNonConstrainedGenericWithNull
             X = BasicOperations<TValue>.Default.FromDouble(v.X);
             Y = BasicOperations<TValue>.Default.FromDouble(v.Y);
-            if (null == X || null == Y) throw new ArgumentException("Converted to a null coordinate.", "v");
-            Contract.Assume(null != X);
-            Contract.Assume(null != Y);
-            // ReSharper restore CompareNonConstrainedGenericWithNull
         }
 
         /// <summary>
         /// The x-coordinate of this vector.
         /// </summary>
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        TValue ICoordinatePair<TValue>.X {
-            get { return X; }
-        }
+        TValue ICoordinatePair<TValue>.X { get { return X; } }
 
         /// <summary>
         /// The y-coordinate of this vector.
         /// </summary>
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        TValue ICoordinatePair<TValue>.Y {
-            get { return Y; }
-        }
+        TValue ICoordinatePair<TValue>.Y { get { return Y; } }
 
         /// <inheritdoc/>
         public override int GetHashCode() {
@@ -205,7 +181,6 @@ namespace Vertesaur.Generation
         /// <inheritdoc/>
         public bool Equals(Vector2<TValue> other) {
             return X.Equals(other.X) && Y.Equals(other.Y);
-            //return Operations<TValue>.Default.Equals(X, other.X) && Operations<TValue>.Default.Equals(Y, other.Y);
         }
 
         /// <inheritdoc/>
@@ -234,13 +209,9 @@ namespace Vertesaur.Generation
         /// <param name="rightHandSide">The vector to add.</param>
         /// <returns>A result of adding this vector with the given vector.</returns>
         public Vector2<TValue> Add(Vector2<TValue> rightHandSide) {
-            // ReSharper disable CompareNonConstrainedGenericWithNull
             var x = BasicOperations<TValue>.Default.Add(X, rightHandSide.X);
             var y = BasicOperations<TValue>.Default.Add(Y, rightHandSide.Y);
-            Contract.Assume(null != x);
-            Contract.Assume(null != y);
             return new Vector2<TValue>(x, y);
-            // ReSharper restore CompareNonConstrainedGenericWithNull
         }
 
         /// <summary>
@@ -249,13 +220,9 @@ namespace Vertesaur.Generation
         /// <param name="rightHandSide">The vector to add.</param>
         /// <returns>A result of adding this vector with the given vector.</returns>
         public Point2<TValue> Add(Point2<TValue> rightHandSide) {
-            // ReSharper disable CompareNonConstrainedGenericWithNull
             var x = BasicOperations<TValue>.Default.Add(X, rightHandSide.X);
             var y = BasicOperations<TValue>.Default.Add(Y, rightHandSide.Y);
-            Contract.Assume(null != x);
-            Contract.Assume(null != y);
             return new Point2<TValue>(x, y);
-            // ReSharper restore CompareNonConstrainedGenericWithNull
         }
 
         /// <summary>
@@ -264,13 +231,9 @@ namespace Vertesaur.Generation
         /// <param name="rightHandSide">The vector to subtract.</param>
         /// <returns>A result of subtracting the given vector from this vector.</returns>
         public Vector2<TValue> Difference(Vector2<TValue> rightHandSide) {
-            // ReSharper disable CompareNonConstrainedGenericWithNull
             var x = BasicOperations<TValue>.Default.Subtract(X, rightHandSide.X);
             var y = BasicOperations<TValue>.Default.Subtract(Y, rightHandSide.Y);
-            Contract.Assume(null != x);
-            Contract.Assume(null != y);
             return new Vector2<TValue>(x, y);
-            // ReSharper restore CompareNonConstrainedGenericWithNull
         }
 
         /// <summary>
@@ -279,13 +242,9 @@ namespace Vertesaur.Generation
         /// <param name="rightHandSide">The vector to subtract.</param>
         /// <returns>A result of subtracting the given vector from this vector.</returns>
         public Point2<TValue> Difference(Point2<TValue> rightHandSide) {
-            // ReSharper disable CompareNonConstrainedGenericWithNull
             var x = BasicOperations<TValue>.Default.Subtract(X, rightHandSide.X);
             var y = BasicOperations<TValue>.Default.Subtract(Y, rightHandSide.Y);
-            Contract.Assume(null != x);
-            Contract.Assume(null != y);
             return new Point2<TValue>(x, y);
-            // ReSharper restore CompareNonConstrainedGenericWithNull
         }
 
         /// <summary>
@@ -302,13 +261,9 @@ namespace Vertesaur.Generation
         /// </summary>
         /// <returns>A vector with the same component values but different signs.</returns>
         public Vector2<TValue> GetNegative() {
-            // ReSharper disable CompareNonConstrainedGenericWithNull
             var x = BasicOperations<TValue>.Default.Negate(X);
             var y = BasicOperations<TValue>.Default.Negate(Y);
-            Contract.Assume(null != x);
-            Contract.Assume(null != y);
             return new Vector2<TValue>(x, y);
-            // ReSharper restore CompareNonConstrainedGenericWithNull
         }
 
         /// <summary>
@@ -317,15 +272,11 @@ namespace Vertesaur.Generation
         /// <param name="factor">The scaling factor.</param>
         /// <returns>A scaled vector.</returns>
         public Vector2<TValue> GetScaled(TValue factor) {
-            // ReSharper disable CompareNonConstrainedGenericWithNull
             if (null == factor) throw new ArgumentNullException("factor");
             Contract.EndContractBlock();
             var x = BasicOperations<TValue>.Default.Multiply(X, factor);
             var y = BasicOperations<TValue>.Default.Multiply(Y, factor);
-            Contract.Assume(null != x);
-            Contract.Assume(null != y);
             return new Vector2<TValue>(x, y);
-            // ReSharper restore CompareNonConstrainedGenericWithNull
         }
 
         /// <summary>
@@ -344,12 +295,8 @@ namespace Vertesaur.Generation
         /// </summary>
         /// <returns>A vector.</returns>
         public Vector2<TValue> GetPerpendicularClockwise() {
-            // ReSharper disable CompareNonConstrainedGenericWithNull
             var x = BasicOperations<TValue>.Default.Negate(X);
-            Contract.Assume(null != Y);
-            Contract.Assume(null != x);
             return new Vector2<TValue>(Y, x);
-            // ReSharper restore CompareNonConstrainedGenericWithNull
         }
 
         /// <summary>
@@ -357,12 +304,8 @@ namespace Vertesaur.Generation
         /// </summary>
         /// <returns>A vector.</returns>
         public Vector2<TValue> GetPerpendicularCounterClockwise() {
-            // ReSharper disable CompareNonConstrainedGenericWithNull
             var y = BasicOperations<TValue>.Default.Negate(Y);
-            Contract.Assume(null != y);
-            Contract.Assume(null != X);
             return new Vector2<TValue>(y, X);
-            // ReSharper restore CompareNonConstrainedGenericWithNull
         }
 
         /// <summary>
@@ -370,17 +313,13 @@ namespace Vertesaur.Generation
         /// </summary>
         /// <returns>A unit length vector.</returns>
         public Vector2<TValue> GetNormalized() {
-            // ReSharper disable CompareNonConstrainedGenericWithNull
             var m = GetMagnitude();
             if (BasicOperations<TValue>.Default.ZeroValue.Equals(m))
                 return CreateZero();
 
             var x = BasicOperations<TValue>.Default.Divide(X, m);
             var y = BasicOperations<TValue>.Default.Divide(Y, m);
-            Contract.Assume(null != x);
-            Contract.Assume(null != y);
             return new Vector2<TValue>(x, y);
-            // ReSharper restore CompareNonConstrainedGenericWithNull
         }
 
     }

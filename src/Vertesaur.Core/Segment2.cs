@@ -61,9 +61,8 @@ namespace Vertesaur
         /// <param name="b">An end point of a segment.</param>
         /// <param name="p">A point.</param>
         /// <returns>Distance from a point to a line segment.</returns>
-        public static double Distance(Point2 a, Point2 b, Point2 p) {
-            Contract.Ensures(Contract.Result<double>() >= 0 || Double.IsNaN(Contract.Result<double>()));
-            Contract.Ensures(Contract.Result<double>() == Distance(b, a, p));
+        [Pure] public static double Distance(Point2 a, Point2 b, Point2 p) {
+            Contract.Ensures(!(Contract.Result<double>() < 0));
             Order(ref a, ref b);
             var d = b - a;
             var v = p - a;
@@ -87,9 +86,8 @@ namespace Vertesaur
         /// <param name="b">An end point of a segment.</param>
         /// <param name="p">A point.</param>
         /// <returns>Squared distance from a point to a line segment.</returns>
-        public static double DistanceSquared(Point2 a, Point2 b, Point2 p) {
-            Contract.Ensures(Contract.Result<double>() >= 0 || Double.IsNaN(Contract.Result<double>()));
-            Contract.Ensures(Contract.Result<double>() == Distance(b, a, p));
+        [Pure] public static double DistanceSquared(Point2 a, Point2 b, Point2 p) {
+            Contract.Ensures(!(Contract.Result<double>() < 0));
             Order(ref a, ref b);
             var d = b - a;
             var v = p - a;
@@ -113,8 +111,7 @@ namespace Vertesaur
         /// <param name="b">An end point of a segment.</param>
         /// <param name="p">A point.</param>
         /// <returns>True when a point intersects a line segment.</returns>
-        public static bool Intersects(Point2 a, Point2 b, Point2 p) {
-            Contract.Ensures(Contract.Result<bool>() == Intersects(b, a, p));
+        [Pure] public static bool Intersects(Point2 a, Point2 b, Point2 p) {
             // ReSharper disable CompareOfFloatsByEqualityOperator
             if (p.Equals(a) || p.Equals(b)) {
                 return true;

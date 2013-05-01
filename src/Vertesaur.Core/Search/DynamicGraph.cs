@@ -48,11 +48,6 @@ namespace Vertesaur.Search
             Edge = edge;
         }
 
-        [ContractInvariantMethod]
-        private void CodeContractInvariants(){
-            Contract.Invariant(Node != null);
-        }
-
         /// <summary>
         /// The node the data related to.
         /// </summary>

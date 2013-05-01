@@ -203,7 +203,6 @@ namespace Vertesaur.Generation.Expressions
             Contract.Requires(null != request);
             Contract.Requires(null != left);
             Contract.Requires(null != right);
-            Contract.Ensures(Contract.Result<Expression>() != null);
 
             if (left.Type == typeof(double) && right.Type == typeof(double))
                 return Expression.Power(left, right);
@@ -234,7 +233,6 @@ namespace Vertesaur.Generation.Expressions
         private Expression GenerateNegation(IExpressionGenerationRequest request, Expression parameter) {
             Contract.Requires(null != request);
             Contract.Requires(null != parameter);
-            Contract.Ensures(Contract.Result<Expression>() != null);
             var resultType = parameter.Type;
             if (resultType == typeof(ulong) || resultType == typeof(uint) || resultType == typeof(ushort) || resultType == typeof(byte) || resultType == typeof(sbyte)) {
                 var zeroConstant = GenerateConstantExpression("0", resultType);
@@ -260,7 +258,6 @@ namespace Vertesaur.Generation.Expressions
             Contract.Requires(request != null);
             Contract.Requires(inputs != null);
             Contract.Requires(inputs.Count >= 2);
-            Contract.Ensures(Contract.Result<Expression>() != null);
             var result = GenerateArithmetic(request, inputs[0], inputs[1]);
             if (null == result)
                 return null;
@@ -276,7 +273,6 @@ namespace Vertesaur.Generation.Expressions
             Contract.Requires(null != request);
             Contract.Requires(null != left);
             Contract.Requires(null != right);
-            Contract.Ensures(Contract.Result<Expression>() != null);
             if ((left.Type == right.Type) && (left.Type == typeof(byte) || left.Type == typeof(char) || left.Type == typeof(sbyte))) {
                 var method = typeof(SpecializedOperations).GetPublicStaticInvokableMethod(
                     ToTitleCase(request.ExpressionName) + (Checked ? "Checked" : "Unchecked"),
@@ -302,7 +298,6 @@ namespace Vertesaur.Generation.Expressions
             Contract.Requires(null != request);
             Contract.Requires(null != left);
             Contract.Requires(null != right);
-            Contract.Ensures(Contract.Result<Expression>() != null);
             if (left.IsMemoryLocationOrConstant() && right.IsMemoryLocationOrConstant()) {
                 var eq = request.TopLevelGenerator.Generate("EQUAL", left, right);
                 Contract.Assume(null != eq);
@@ -384,7 +379,7 @@ namespace Vertesaur.Generation.Expressions
         private Expression GenerateConstantExpression(string expressionName, Type resultType) {
             if (String.IsNullOrEmpty(expressionName)) throw new ArgumentException("expressionName is not valid", "expressionName");
             if (null == resultType) throw new ArgumentNullException("resultType");
-            Contract.Ensures(Contract.Result<Expression>() != null);
+            Contract.EndContractBlock();
 
             double constantValue;
             if (!TryGetDoubleConstantValue(expressionName, out constantValue))
@@ -416,7 +411,6 @@ namespace Vertesaur.Generation.Expressions
 
         private Expression GenerateStandardExpression(IExpressionGenerationRequest expressionRequest) {
             Contract.Requires(null != expressionRequest);
-            Contract.Ensures(Contract.Result<Expression>() != null);
 
             var parameters = expressionRequest.InputExpressions;
             var expressionName = expressionRequest.ExpressionName;
@@ -443,7 +437,7 @@ namespace Vertesaur.Generation.Expressions
         private Expression GenerateConversionExpression(Expression expression, Type resultType) {
             Contract.Requires(null != expression);
             Contract.Requires(null != resultType);
-            Contract.EndContractBlock();
+            Contract.Ensures(Contract.Result<Expression>() != null);
 
             if (expression.Type == resultType)
                 return expression;
@@ -456,7 +450,7 @@ namespace Vertesaur.Generation.Expressions
         public Expression Generate(IExpressionGenerationRequest request) {
             if (null == request) throw new ArgumentNullException("request");
             if (String.IsNullOrEmpty(request.ExpressionName)) throw new ArgumentException("Invalid request expression name.", "request");
-            Contract.Ensures(Contract.Result<Expression>() != null);
+            Contract.EndContractBlock();
 
             var expressionName = request.ExpressionName;
 

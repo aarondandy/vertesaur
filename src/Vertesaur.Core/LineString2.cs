@@ -177,7 +177,7 @@ namespace Vertesaur
         /// <param name="p">The point to calculate distance to.</param>
         /// <returns>The distance.</returns>
         public double Distance(Point2 p) {
-            Contract.Ensures(Contract.Result<double>() >= 0 || Double.IsNaN(Contract.Result<double>()));
+            Contract.Ensures(!(Contract.Result<double>() < 0));
             return Math.Sqrt(DistanceSquared(p));
         }
 
@@ -187,7 +187,7 @@ namespace Vertesaur
         /// <param name="p">The point to calculate squared distance to.</param>
         /// <returns>The squared distance.</returns>
         public double DistanceSquared(Point2 p) {
-            Contract.Ensures(Contract.Result<double>() >= 0 || Double.IsNaN(Contract.Result<double>()));
+            Contract.Ensures(!(Contract.Result<double>() < 0));
             var lastIndex = Count - 1;
             if (lastIndex < 1)
                 return 0 == lastIndex ? this[0].DistanceSquared(p) : Double.NaN;
@@ -257,7 +257,7 @@ namespace Vertesaur
         /// </summary>
         /// <returns>The magnitude.</returns>
         public double GetMagnitude() {
-            Contract.Ensures(Contract.Result<double>() >= 0 || Double.IsNaN(Contract.Result<double>()));
+            Contract.Ensures(!(Contract.Result<double>() < 0));
             var lastIndex = Count - 1;
             if (lastIndex == 0)
                 return 0;
@@ -276,7 +276,7 @@ namespace Vertesaur
         /// </summary>
         /// <returns>The magnitude.</returns>
         public double GetMagnitudeSquared() {
-            Contract.Ensures(Contract.Result<double>() >= 0 || Double.IsNaN(Contract.Result<double>()));
+            Contract.Ensures(!(Contract.Result<double>() < 0));
             var m = GetMagnitude();
             return m * m;
         }

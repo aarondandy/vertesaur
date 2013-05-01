@@ -60,6 +60,7 @@ namespace Vertesaur.Transformation
                                 edgeData = new List<TransformationCastNode>();
                                 edges.Add(priorNode, edgeData);
                             }
+                            Contract.Assume(edgeData != null);
                             edgeData.Add(curNode);
                         }
                     }

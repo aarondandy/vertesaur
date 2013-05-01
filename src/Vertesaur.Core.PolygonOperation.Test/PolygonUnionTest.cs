@@ -29,96 +29,96 @@ using NUnit.Framework;
 
 namespace Vertesaur.PolygonOperation.Test
 {
-	[TestFixture]
-	public class PolygonUnionTest
-	{
+    [TestFixture]
+    public class PolygonUnionTest
+    {
 
-		private PolygonUnionOperation _unionOperation;
-		private PolyPairTestDataKeyedCollection _polyPairData;
+        private PolygonUnionOperation _unionOperation;
+        private PolyPairTestDataKeyedCollection _polyPairData;
 
-		public PolygonUnionTest(){
-			_polyPairData = PolyOperationTestUtility.GeneratePolyPairUnionTestDataCollection();
-		}
+        public PolygonUnionTest() {
+            _polyPairData = PolyOperationTestUtility.GeneratePolyPairUnionTestDataCollection();
+        }
 
-		protected IEnumerable<object> GenerateTestPolyUnionParameters() {
-			return _polyPairData;
-		}
+        protected IEnumerable<object> GenerateTestPolyUnionParameters() {
+            return _polyPairData;
+        }
 
-		[TestFixtureSetUp]
-		public void FixtureSetUp() {
-			
-		}
+        [TestFixtureSetUp]
+        public void FixtureSetUp() {
 
-		[SetUp]
-		public void SetUp() {
-			_unionOperation = new PolygonUnionOperation();
-		}
+        }
 
-		public static bool PointsAlmostEqual(Point2 a, Point2 b) {
-			if (a == b)
-				return true;
-			var d = a.Difference(b);
-			return d.GetMagnitudeSquared() < 0.000000000000000001;
-		}
+        [SetUp]
+        public void SetUp() {
+            _unionOperation = new PolygonUnionOperation();
+        }
 
-		private static string PolygonToString(Polygon2 poly) {
-			var sb = new StringBuilder();
-			for (int index = 0; index < poly.Count; index++) {
-				var ring = poly[index];
-				sb.AppendFormat("Ring {0}:\n", index);
-				sb.AppendLine(RingToString(ring));
-			}
-			return sb.ToString();
-		}
+        public static bool PointsAlmostEqual(Point2 a, Point2 b) {
+            if (a == b)
+                return true;
+            var d = a.Difference(b);
+            return d.GetMagnitudeSquared() < 0.000000000000000001;
+        }
 
-		private static string RingToString(Ring2 ring) {
-			var sb = new StringBuilder();
-			foreach (var p in ring) {
-				sb.AppendFormat("({0},{1})\n", p.X, p.Y);
-			}
-			return sb.ToString();
-		}
+        private static string PolygonToString(Polygon2 poly) {
+            var sb = new StringBuilder();
+            for (int index = 0; index < poly.Count; index++) {
+                var ring = poly[index];
+                sb.AppendFormat("Ring {0}:\n", index);
+                sb.AppendLine(RingToString(ring));
+            }
+            return sb.ToString();
+        }
 
-		[Test]
-		public void TestPolyUnion([ValueSource("GenerateTestPolyUnionParameters")]PolyPairTestData testData) {
-			Console.WriteLine(testData.Name);
+        private static string RingToString(Ring2 ring) {
+            var sb = new StringBuilder();
+            foreach (var p in ring) {
+                sb.AppendFormat("({0},{1})\n", p.X, p.Y);
+            }
+            return sb.ToString();
+        }
 
-			if (testData.Name == "Nested: hole within a fill, not touching") {
-				Assert.Ignore("infinite spaaaaaaaace");
-			}
+        [Test]
+        public void TestPolyUnion([ValueSource("GenerateTestPolyUnionParameters")]PolyPairTestData testData) {
+            Console.WriteLine(testData.Name);
 
-			var result = _unionOperation.Union(testData.A, testData.B) as Polygon2;
-			if (null != testData.R) {
-				Assert.IsNotNull(result);
-				Assert.IsTrue(testData.R.SpatiallyEqual(result), "Forward case failed: {0} u {1} ≠ {2}", testData.A, testData.B, PolygonToString(result));
-			}
-			else {
-				Assert.IsNull(result);
-			}
+            if (testData.Name == "Nested: hole within a fill, not touching") {
+                Assert.Ignore("infinite spaaaaaaaace");
+            }
 
-			result = _unionOperation.Union(testData.B, testData.A) as Polygon2;
-			if (null != testData.R) {
-				Assert.IsNotNull(result);
-				Assert.IsTrue(testData.R.SpatiallyEqual(result), "Reverse case failed: {0} u {1} ≠ {2}", testData.B, testData.A, PolygonToString(result));
-			}
-			else {
-				Assert.IsNull(result);
-			}
-		}
+            var result = _unionOperation.Union(testData.A, testData.B) as Polygon2;
+            if (null != testData.R) {
+                Assert.IsNotNull(result);
+                Assert.IsTrue(testData.R.SpatiallyEqual(result), "Forward case failed: {0} u {1} ≠ {2}", testData.A, testData.B, PolygonToString(result));
+            }
+            else {
+                Assert.IsNull(result);
+            }
 
-		[Test]
-		public void ZigZagThing() {
-			var data = _polyPairData["Zig-zag Thing"];
-			var unionOperation = new PolygonUnionOperation();
-			
-			var result = unionOperation.Union(data.A, data.B) as Polygon2;
-			Assert.IsNotNull(result);
-			Assert.IsTrue(result.SpatiallyEqual(data.R));
+            result = _unionOperation.Union(testData.B, testData.A) as Polygon2;
+            if (null != testData.R) {
+                Assert.IsNotNull(result);
+                Assert.IsTrue(testData.R.SpatiallyEqual(result), "Reverse case failed: {0} u {1} ≠ {2}", testData.B, testData.A, PolygonToString(result));
+            }
+            else {
+                Assert.IsNull(result);
+            }
+        }
 
-			result = unionOperation.Union(data.B, data.A) as Polygon2;
-			Assert.IsNotNull(result);
-			Assert.IsTrue(result.SpatiallyEqual(data.R));
-		}
+        [Test]
+        public void ZigZagThing() {
+            var data = _polyPairData["Zig-zag Thing"];
+            var unionOperation = new PolygonUnionOperation();
 
-	}
+            var result = unionOperation.Union(data.A, data.B) as Polygon2;
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result.SpatiallyEqual(data.R));
+
+            result = unionOperation.Union(data.B, data.A) as Polygon2;
+            Assert.IsNotNull(result);
+            Assert.IsTrue(result.SpatiallyEqual(data.R));
+        }
+
+    }
 }

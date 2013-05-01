@@ -147,10 +147,11 @@ namespace Vertesaur.PolygonOperation
             /// </summary>
             /// <param name="index">The index to set.</param>
             /// <param name="item">The item to store at the index.</param>
+            /// <exception cref="System.ArgumentException">Item is not valid for this collection.</exception>
             protected sealed override void SetItem(int index, Node item) {
-                Contract.Requires(item != null);
                 Contract.EndContractBlock();
-                if (!IsNodeValid(item)) throw new ArgumentException("item is not valid for this collection.", "item");
+                if (!IsNodeValid(item))
+                    throw new ArgumentException("item is not valid for this collection.", "item");
 
                 base.SetItem(index, item);
             }
@@ -160,10 +161,11 @@ namespace Vertesaur.PolygonOperation
             /// </summary>
             /// <param name="index">The index to insert at.</param>
             /// <param name="item">The item to store at the index.</param>
+            /// <exception cref="System.ArgumentException">Item is not valid for this collection.</exception>
             protected sealed override void InsertItem(int index, Node item) {
-                Contract.Requires(item != null);
                 Contract.EndContractBlock();
-                if (!IsNodeValid(item)) throw new ArgumentException("item is not valid for this collection.", "item");
+                if (!IsNodeValid(item))
+                    throw new ArgumentException("item is not valid for this collection.", "item");
 
                 base.InsertItem(index, item);
             }

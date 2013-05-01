@@ -151,7 +151,6 @@ namespace Vertesaur
         /// </summary>
         /// <returns>A minimum bounding rectangle.</returns>
         public Mbr GetMbr() {
-            Contract.Ensures(!(Count > 0 && Contract.Result<Mbr>() == null));
             if (Count <= 0)
                 return null;
 
@@ -196,7 +195,7 @@ namespace Vertesaur
         /// </summary>
         /// <returns>The magnitude or length.</returns>
         public double GetMagnitude() {
-            Contract.Ensures(Contract.Result<double>() >= 0 || Double.IsNaN(Contract.Result<double>()));
+            Contract.Ensures(!(Contract.Result<double>() < 0));
             if (0 == Count)
                 return Double.NaN;
 
@@ -211,7 +210,7 @@ namespace Vertesaur
         /// </summary>
         /// <returns>The squared magnitude or squared length.</returns>
         public double GetMagnitudeSquared() {
-            Contract.Ensures(Contract.Result<double>() >= 0 || Double.IsNaN(Contract.Result<double>()));
+            Contract.Ensures(!(Contract.Result<double>() < 0));
             var m = GetMagnitude();
             return m * m;
         }
@@ -222,7 +221,7 @@ namespace Vertesaur
         /// <param name="p">The point to calculate distance to.</param>
         /// <returns>The distance.</returns>
         public double Distance(Point2 p) {
-            Contract.Ensures(Contract.Result<double>() >= 0 || Double.IsNaN(Contract.Result<double>()));
+            Contract.Ensures(!(Contract.Result<double>() < 0));
             return Math.Sqrt(DistanceSquared(p));
         }
 
@@ -232,7 +231,7 @@ namespace Vertesaur
         /// <param name="p">The point to calculate squared distance to.</param>
         /// <returns>The squared distance.</returns>
         public double DistanceSquared(Point2 p) {
-            Contract.Ensures(Contract.Result<double>() >= 0 || Double.IsNaN(Contract.Result<double>()));
+            Contract.Ensures(!(Contract.Result<double>() < 0));
             if (0 == Count)
                 return Double.NaN;
 

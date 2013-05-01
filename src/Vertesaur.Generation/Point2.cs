@@ -47,8 +47,8 @@ namespace Vertesaur.Generation
         /// <summary>
         /// Implements the operator ==.
         /// </summary>
-        /// <param name="a">A point.</param>
-        /// <param name="b">A point.</param>
+        /// <param name="a">A point from the left argument.</param>
+        /// <param name="b">A point from the right argument.</param>
         /// <returns>True if both points have the same component values.</returns>
         public static bool operator ==(Point2<TValue> a, Point2<TValue> b) {
             return a.Equals(b);
@@ -57,8 +57,8 @@ namespace Vertesaur.Generation
         /// <summary>
         /// Implements the operator !=.
         /// </summary>
-        /// <param name="a">A point.</param>
-        /// <param name="b">A point.</param>
+        /// <param name="a">A point from the left argument.</param>
+        /// <param name="b">A point from the right argument.</param>
         /// <returns>True if both points do not have the same component values.</returns>
         public static bool operator !=(Point2<TValue> a, Point2<TValue> b) {
             return !a.Equals(b);
@@ -67,8 +67,8 @@ namespace Vertesaur.Generation
         /// <summary>
         /// Implements the operator +.
         /// </summary>
-        /// <param name="leftHandSide">A vector.</param>
-        /// <param name="rightHandSide">A point.</param>
+        /// <param name="leftHandSide">A vector from the left argument.</param>
+        /// <param name="rightHandSide">A point from the right argument.</param>
         /// <returns>The result.</returns>
         public static Point2<TValue> operator +(Vector2<TValue> leftHandSide, Point2<TValue> rightHandSide) {
             return leftHandSide.Add(rightHandSide);
@@ -77,8 +77,8 @@ namespace Vertesaur.Generation
         /// <summary>
         /// Implements the operator +.
         /// </summary>
-        /// <param name="leftHandSide">A point.</param>
-        /// <param name="rightHandSide">A vector.</param>
+        /// <param name="leftHandSide">A point from the left argument.</param>
+        /// <param name="rightHandSide">A vector from the right argument.</param>
         /// <returns>The result.</returns>
         public static Point2<TValue> operator +(Point2<TValue> leftHandSide, Vector2<TValue> rightHandSide) {
             return leftHandSide.Add(rightHandSide);
@@ -87,8 +87,8 @@ namespace Vertesaur.Generation
         /// <summary>
         /// Implements the operator -.
         /// </summary>
-        /// <param name="leftHandSide">A vector.</param>
-        /// <param name="rightHandSide">A point.</param>
+        /// <param name="leftHandSide">A vector from the left argument.</param>
+        /// <param name="rightHandSide">A point from the right argument.</param>
         /// <returns>The result.</returns>
         public static Point2<TValue> operator -(Vector2<TValue> leftHandSide, Point2<TValue> rightHandSide) {
             return leftHandSide.Difference(rightHandSide);
@@ -97,8 +97,8 @@ namespace Vertesaur.Generation
         /// <summary>
         /// Implements the operator -.
         /// </summary>
-        /// <param name="leftHandSide">A point.</param>
-        /// <param name="rightHandSide">A vector.</param>
+        /// <param name="leftHandSide">A point from the left argument.</param>
+        /// <param name="rightHandSide">A vector from the right argument.</param>
         /// <returns>The result.</returns>
         public static Point2<TValue> operator -(Point2<TValue> leftHandSide, Vector2<TValue> rightHandSide) {
             return leftHandSide.Difference(rightHandSide);
@@ -107,8 +107,8 @@ namespace Vertesaur.Generation
         /// <summary>
         /// Implements the operator -.
         /// </summary>
-        /// <param name="leftHandSide">A point.</param>
-        /// <param name="rightHandSide">A point.</param>
+        /// <param name="leftHandSide">A point from the left argument.</param>
+        /// <param name="rightHandSide">A point from the right argument.</param>
         /// <returns>The vector difference between two points.</returns>
         public static Vector2<TValue> operator -(Point2<TValue> leftHandSide, Point2<TValue> rightHandSide) {
             return leftHandSide.Difference(rightHandSide);
@@ -146,18 +146,11 @@ namespace Vertesaur.Generation
         /// <summary>
         /// Creates a point with the given <paramref name="x"/> and <paramref name="y"/> coordinates.
         /// </summary>
-        /// <param name="x">A coordinate.</param>
-        /// <param name="y">A coordinate.</param>
+        /// <param name="x">The x-coordinate.</param>
+        /// <param name="y">The y-coordinate.</param>
         public Point2(TValue x, TValue y) {
-            // ReSharper disable CompareNonConstrainedGenericWithNull
-            if (x == null) throw new ArgumentNullException("x");
-            if (y == null) throw new ArgumentNullException("y");
-            Contract.EndContractBlock();
             X = x;
             Y = y;
-            Contract.Assume(null != X);
-            Contract.Assume(null != Y);
-            // ReSharper restore CompareNonConstrainedGenericWithNull
         }
 
         /// <summary>
@@ -165,16 +158,10 @@ namespace Vertesaur.Generation
         /// </summary>
         /// <param name="p">A coordinate pair.</param>
         public Point2(ICoordinatePair<TValue> p) {
-            if (null == p) throw new ArgumentNullException("p");
-            // ReSharper disable CompareNonConstrainedGenericWithNull
-            if (p.X == null || p.Y == null)
-                throw new ArgumentException("Null coordinate values are not allowed.", "p");
+            if (p == null) throw new ArgumentNullException("p");
             Contract.EndContractBlock();
             X = p.X;
             Y = p.Y;
-            Contract.Assume(null != X);
-            Contract.Assume(null != Y);
-            // ReSharper restore CompareNonConstrainedGenericWithNull
         }
 
         /// <summary>
@@ -183,24 +170,15 @@ namespace Vertesaur.Generation
         /// <param name="p">The point to convert and clone from.</param>
         /// <exception cref="System.ArgumentException">Coordinate type conversion fails.</exception>
         public Point2(Point2 p) {
-            // ReSharper disable CompareNonConstrainedGenericWithNull
             X = BasicOperations<TValue>.Default.FromDouble(p.X);
             Y = BasicOperations<TValue>.Default.FromDouble(p.Y);
-            if (null == X || null == Y) throw new ArgumentException("Converted to a null coordinate.", "p");
-            Contract.Assume(null != X);
-            Contract.Assume(null != Y);
-            // ReSharper restore CompareNonConstrainedGenericWithNull
         }
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        TValue ICoordinatePair<TValue>.X {
-            get { return X; }
-        }
+        TValue ICoordinatePair<TValue>.X { get { return X; } }
 
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
-        TValue ICoordinatePair<TValue>.Y {
-            get { return Y; }
-        }
+        TValue ICoordinatePair<TValue>.Y { get { return Y; } }
 
         /// <inheritdoc/>
         public override int GetHashCode() {
@@ -246,13 +224,9 @@ namespace Vertesaur.Generation
         /// <param name="delta">An offset vector.</param>
         /// <returns>An offset point.</returns>
         public Point2<TValue> Add(Vector2<TValue> delta) {
-            // ReSharper disable CompareNonConstrainedGenericWithNull
             var x = BasicOperations<TValue>.Default.Add(X, delta.X);
             var y = BasicOperations<TValue>.Default.Add(Y, delta.Y);
-            Contract.Assume(null != x);
-            Contract.Assume(null != y);
             return new Point2<TValue>(x, y);
-            // ReSharper restore CompareNonConstrainedGenericWithNull
         }
 
         /// <summary>
@@ -261,13 +235,9 @@ namespace Vertesaur.Generation
         /// <param name="b">The other point.</param>
         /// <returns>The vector difference.</returns>
         public Vector2<TValue> Difference(Point2<TValue> b) {
-            // ReSharper disable CompareNonConstrainedGenericWithNull
             var x = BasicOperations<TValue>.Default.Subtract(X, b.X);
             var y = BasicOperations<TValue>.Default.Subtract(Y, b.Y);
-            Contract.Assume(null != x);
-            Contract.Assume(null != y);
             return new Vector2<TValue>(x, y);
-            // ReSharper restore CompareNonConstrainedGenericWithNull
         }
 
         /// <summary>
@@ -276,13 +246,9 @@ namespace Vertesaur.Generation
         /// <param name="b">The vector.</param>
         /// <returns>The offset point.</returns>
         public Point2<TValue> Difference(Vector2<TValue> b) {
-            // ReSharper disable CompareNonConstrainedGenericWithNull
             var x = BasicOperations<TValue>.Default.Subtract(X, b.X);
             var y = BasicOperations<TValue>.Default.Subtract(Y, b.Y);
-            Contract.Assume(null != x);
-            Contract.Assume(null != y);
             return new Point2<TValue>(x, y);
-            // ReSharper restore CompareNonConstrainedGenericWithNull
         }
 
 

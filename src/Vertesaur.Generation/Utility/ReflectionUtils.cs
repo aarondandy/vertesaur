@@ -84,7 +84,7 @@ namespace Vertesaur.Utility
 #else
             return targetType.GetMethod(
                 methodName,
-                BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod,
+                BindingFlags.Public | BindingFlags.Instance | BindingFlags.InvokeMethod,
                 null, paramTypes, null
             );
 #endif
