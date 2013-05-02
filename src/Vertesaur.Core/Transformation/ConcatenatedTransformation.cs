@@ -174,6 +174,8 @@ namespace Vertesaur.Transformation
             for (int i = 0; i < TransformationPath.Count; i++) {
                 tempValue = TransformationPath[i].TransformValue(tempValue);
             }
+            if (tempValue == null)
+                return default(TTo);
             return (TTo)tempValue;
         }
 

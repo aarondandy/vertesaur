@@ -72,6 +72,11 @@ namespace Vertesaur.Transformation
             ).Compile();
         }
 
+        [ContractInvariantMethod]
+        private void CodeContractInvariants() {
+            Contract.Invariant(_singleTransform != null);
+        }
+
         /// <inheritdoc/>
         public override TTo TransformValue(TFrom value) {
             return _singleTransform(value);

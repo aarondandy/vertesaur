@@ -165,6 +165,11 @@ namespace Vertesaur.Search
             _generateNeighborInfo = generateNeighborInfo;
         }
 
+        [ContractInvariantMethod]
+        private void CodeContractInvariants() {
+            Contract.Invariant(_generateNeighborInfo != null);
+        }
+
         /// <inheritdoc/>
         protected override IEnumerable<DynamicGraphNodeData<TNode, TCost, TEdge>> GetNeighborInfo(TNode node, TCost currentCost) {
             Contract.Ensures(Contract.Result<IEnumerable<DynamicGraphNodeData<TNode, TCost, TEdge>>>() != null);

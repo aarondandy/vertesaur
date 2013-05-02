@@ -108,13 +108,8 @@ namespace Vertesaur
         /// <summary>
         /// This is a lazy evaluation for calculated data that should be cached.
         /// </summary>
-#if WINDOWS_PHONE
         private AllPointsCacheData _allPointsCacheData;
-#warning We removed the use of Lazy which may cause some threading issues.
-#else
-        [Obsolete("As the class is already not thread safe it may be best to use a simpler method of caching.")]
-        private Lazy<AllPointsCacheData> _allPointsCacheData;
-#endif
+
         /// <summary>
         /// Flags the ring as being a fill ring or a hole ring, <c>null</c> means it has not yet been defined.
         /// </summary>
@@ -205,23 +200,11 @@ namespace Vertesaur
         }
 
         private void ResetAllPointsCacheData() {
-#if WINDOWS_PHONE
             _allPointsCacheData = null;
-#else
-            if (null == _allPointsCacheData || _allPointsCacheData.IsValueCreated)
-                _allPointsCacheData = new Lazy<AllPointsCacheData>(
-                    CalculateAllPointsCacheData,
-                    LazyThreadSafetyMode.PublicationOnly);
-#endif
-            Contract.Assume(SegmentCount <= Count);
         }
 
         private AllPointsCacheData GetAllPointsCacheData() {
-#if WINDOWS_PHONE
             return _allPointsCacheData ?? (_allPointsCacheData = CalculateAllPointsCacheData());
-#else
-            return _allPointsCacheData.Value;
-#endif
         }
 
         private AllPointsCacheData CalculateAllPointsCacheData() {

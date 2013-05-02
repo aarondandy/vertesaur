@@ -45,15 +45,18 @@ namespace Vertesaur.Periodic
         /// <param name="periodStart">The start value of the period.</param>
         /// <param name="periodLength">The length of the range.</param>
         public PeriodicOperations(double periodStart, double periodLength) {
-            if (periodLength == 0)
-                throw new ArgumentException("The period length must be a non-zero value.", "periodLength");
-            if (periodLength <= 0)
-                throw new NotSupportedException("Only periods with a positive length are supported.");
+            if (periodLength == 0) throw new ArgumentException("The period length must be a non-zero value.", "periodLength");
+            if (periodLength <= 0) throw new NotSupportedException("Only periods with a positive length are supported.");
             Contract.EndContractBlock();
 
             _periodStart = periodStart;
             _periodLength = periodLength;
             _periodEnd = _periodStart + _periodLength;
+        }
+
+        [ContractInvariantMethod]
+        private void CodeContractInvariants() {
+            Contract.Invariant(_periodLength != 0);
         }
 
         /// <summary>

@@ -53,8 +53,14 @@ namespace Vertesaur.PolygonOperation
             /// </summary>
             /// <param name="nodes"></param>
             public NodeCollection(List<Node> nodes)
-                : base(nodes ?? new List<Node>()) {
+                : base(nodes ?? (nodes = new List<Node>())) {
                 _nodes = nodes;
+            }
+
+            [ContractInvariantMethod]
+            [Conditional("CONTRACTS_FULL")]
+            private void CodeContractInvariant() {
+                Contract.Invariant(_nodes != null);
             }
 
             /// <summary>
@@ -195,6 +201,12 @@ namespace Vertesaur.PolygonOperation
                     throw new ArgumentException("Fill/Hole mismatch.", "children");
             }
 
+            [ContractInvariantMethod]
+            [Conditional("CONTRACTS_FULL")]
+            private void CodeContractInvariant() {
+                Contract.Invariant(Ring != null);
+            }
+
             /// <summary>
             /// The ring the node represents.
             /// </summary>
@@ -204,12 +216,6 @@ namespace Vertesaur.PolygonOperation
             /// True when the ring is explicitly set to being a hole.
             /// </summary>
             public bool Hole { get { return Ring.Hole.HasValue && Ring.Hole.Value; } }
-
-            [ContractInvariantMethod]
-            [Conditional("CONTRACTS_FULL")]
-            private void CodeContractInvariant() {
-                Contract.Invariant(Ring != null);
-            }
 
         }
 

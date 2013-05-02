@@ -73,9 +73,15 @@ namespace Vertesaur.PolygonOperation
         }
 #endif
 
+        [ContractInvariantMethod]
+        private void CodeContractInvariants() {
+            Contract.Invariant(_a != null);
+            Contract.Invariant(_b != null);
+            Contract.Invariant(_sortedRingSegmentIndices != null);
+        }
+
         public List<PolygonCrossing> GenerateCrossings() {
             Contract.Ensures(Contract.Result<List<PolygonCrossing>>() != null);
-
             return GenerateCrossingsSerial();
         }
 

@@ -52,6 +52,12 @@ namespace Vertesaur.Generation.GenericOperations
         /// <returns>THe result of the operation.</returns>
         public delegate TValue ReverseCoordinates(TValue y, TValue x);
 
+        /// <summary>
+        /// A delegate for a comparison test between two values of the same type that returns in a boolean result.
+        /// </summary>
+        /// <param name="left">The left parameter.</param>
+        /// <param name="right">The right parameter.</param>
+        /// <returns>The result of invoking the test on the given parameters.</returns>
         public delegate bool ComparisonTest(TValue left, TValue right);
 
         /// <summary>
@@ -182,12 +188,33 @@ namespace Vertesaur.Generation.GenericOperations
         /// </summary>
         public readonly Func<double, TValue> FromDouble;
 
+        /// <summary>
+        /// A run-time generated generic equality comparison test.
+        /// </summary>
         public readonly ComparisonTest Equal;
+        /// <summary>
+        /// A run-time generated generic inequality comparison test.
+        /// </summary>
         public readonly ComparisonTest NotEqual;
+        /// <summary>
+        /// A run-time generated generic less-than comparison test.
+        /// </summary>
         public readonly ComparisonTest Less;
+        /// <summary>
+        /// A run-time generated generic less-than or equal comparison test.
+        /// </summary>
         public readonly ComparisonTest LessOrEqual;
+        /// <summary>
+        /// A run-time generated generic greater-than comparison test.
+        /// </summary>
         public readonly ComparisonTest Greater;
+        /// <summary>
+        /// A run-time generated generic greater-than or equal comparison test.
+        /// </summary>
         public readonly ComparisonTest GreaterOrEqual;
+        /// <summary>
+        /// A run-time generated generic comparison test, implemented as a standard <see cref="System.IComparable{T}.CompareTo(T)">CompareTo</see> comparison.
+        /// </summary>
         public readonly Comparison<TValue> CompareTo;
 
         /// <summary>
