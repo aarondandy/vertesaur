@@ -147,15 +147,15 @@ namespace Vertesaur.PolygonOperation
         /// <inheritdoc/>
         [Pure]
         public int CompareTo(PolygonBoundaryLocation other) {
-            if (ReferenceEquals(null, other))
-                return 1;
-            var compareResult = RingIndex.CompareTo(other.RingIndex);
-            if (0 != compareResult)
-                return compareResult;
-            compareResult = SegmentIndex.CompareTo(other.SegmentIndex);
-            return 0 != compareResult
-                ? compareResult
-                : SegmentRatio.CompareTo(other.SegmentRatio);
+            Contract.Requires(other != null);
+            int compareResult;
+            return (compareResult = RingIndex.CompareTo(other.RingIndex)) == 0
+                ? (
+                    (compareResult = SegmentIndex.CompareTo(other.SegmentIndex)) == 0
+                    ? SegmentRatio.CompareTo(other.SegmentRatio)
+                    : compareResult
+                )
+                : compareResult;
         }
 
         [ContractInvariantMethod]

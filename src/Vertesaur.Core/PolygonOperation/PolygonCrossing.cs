@@ -138,17 +138,17 @@ namespace Vertesaur.PolygonOperation
             var crossANextBPrior = vectorANext.PerpendicularDot(vectorBPrior);
             var crossAPriorBNext = vectorAPrior.PerpendicularDot(vectorBNext);
             var crossAPriorBPrior = vectorAPrior.PerpendicularDot(vectorBPrior);
-            var dotANextBNext = vectorANext.Dot(vectorBNext);
-            var dotANextBPrior = vectorANext.Dot(vectorBPrior);
-            var dotAPriorBNext = vectorAPrior.Dot(vectorBNext);
-            var dotAPriorBPrior = vectorAPrior.Dot(vectorBPrior);
+            //var dotANextBNext = vectorANext.Dot(vectorBNext);
+            //var dotANextBPrior = vectorANext.Dot(vectorBPrior);
+            //var dotAPriorBNext = vectorAPrior.Dot(vectorBNext);
+            //var dotAPriorBPrior = vectorAPrior.Dot(vectorBPrior);
 
             // get parallel out of the way, so we don’t have to worry about it
             // ReSharper disable CompareOfFloatsByEqualityOperator
-            var parallelANextBNext = vectorANext.Equals(vectorBNext) || (0 == crossANextBNext && dotANextBNext > 0);
-            var parallelAPriorBNext = vectorAPrior.Equals(vectorBNext) || (0 == crossAPriorBNext && dotAPriorBNext > 0);
-            var parallelANextBPrior = vectorANext.Equals(vectorBPrior) || (0 == crossANextBPrior && dotANextBPrior > 0);
-            var parallelAPriorBPrior = vectorAPrior.Equals(vectorBPrior) || (0 == crossAPriorBPrior && dotAPriorBPrior > 0);
+            var parallelANextBNext = vectorANext.Equals(vectorBNext) || (crossANextBNext == 0 && vectorANext.Dot(vectorBNext) > 0);
+            var parallelAPriorBNext = vectorAPrior.Equals(vectorBNext) || (crossAPriorBNext == 0 && vectorAPrior.Dot(vectorBNext) > 0);
+            var parallelANextBPrior = vectorANext.Equals(vectorBPrior) || (crossANextBPrior == 0 && vectorANext.Dot(vectorBPrior) > 0);
+            var parallelAPriorBPrior = vectorAPrior.Equals(vectorBPrior) || (crossAPriorBPrior == 0 && vectorAPrior.Dot(vectorBPrior) > 0);
             // ReSharper restore CompareOfFloatsByEqualityOperator
 
             // parallel cases
@@ -205,15 +205,16 @@ namespace Vertesaur.PolygonOperation
 
             [Pure]
             public int Compare(PolygonCrossing x, PolygonCrossing y) {
-                // TODO: force NotNull on x,y to improve performance
-                if (ReferenceEquals(null, x))
-                    return ReferenceEquals(null, y) ? 0 : -1;
-                if (ReferenceEquals(null, y))
-                    return 1;
-                var compareResult = x.LocationA.CompareTo(y.LocationA);
-                return 0 != compareResult
-                    ? compareResult
-                    : x.LocationB.CompareTo(y.LocationB);
+                Contract.Requires(x != null);
+                Contract.Requires(y != null);
+                int compareResult;
+                return ReferenceEquals(x, y)
+                    ? 0
+                    : (
+                        (compareResult = x.LocationA.CompareTo(y.LocationA)) == 0
+                        ? x.LocationB.CompareTo(y.LocationB)
+                        : compareResult
+                    );
             }
         }
 
@@ -224,15 +225,16 @@ namespace Vertesaur.PolygonOperation
 
             [Pure]
             public int Compare(PolygonCrossing x, PolygonCrossing y) {
-                // TODO: force NotNull on x,y to improve performance
-                if (ReferenceEquals(null, x))
-                    return ReferenceEquals(null, y) ? 0 : -1;
-                if (ReferenceEquals(null, y))
-                    return 1;
-                var compareResult = x.LocationB.CompareTo(y.LocationB);
-                return 0 != compareResult
-                    ? compareResult
-                    : x.LocationA.CompareTo(y.LocationA);
+                Contract.Requires(x != null);
+                Contract.Requires(y != null);
+                int compareResult;
+                return ReferenceEquals(x,y)
+                    ? 0
+                    : (
+                        (compareResult = x.LocationB.CompareTo(y.LocationB)) == 0
+                        ? x.LocationA.CompareTo(y.LocationA)
+                        : compareResult
+                    );
             }
         }
 

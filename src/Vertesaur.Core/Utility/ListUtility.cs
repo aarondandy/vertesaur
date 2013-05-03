@@ -24,6 +24,20 @@ namespace Vertesaur.Utility
             return c;
         }
 #endif
+#if NO_LIST_FIND_ALL
+        public static List<T> FindAll<T>(this List<T> list, Predicate<T> predicate){
+            Contract.Requires(list != null);
+            Contract.Requires(predicate != null);
+            Contract.Ensures(Contract.Result<List<T>>() != null);
+            Contract.Ensures(Contract.Result<List<T>>().Count < list.Count);
+            var result = new List<T>();
+            foreach(var item in list){
+                if(predicate(item))
+                    result.Add(item);
+            }
+            return result;
+        }
+#endif
     }
 
 }

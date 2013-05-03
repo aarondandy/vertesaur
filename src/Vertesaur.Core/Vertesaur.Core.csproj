@@ -217,6 +217,7 @@
     <Compile Include="NoInverseException.cs" />
     <Compile Include="Transformation\TransformationCastNode.cs" />
     <Compile Include="Utility\ArrayUtility.cs" />
+    <Compile Include="Utility\HashSetUtility.cs" />
     <Compile Include="Utility\IterationUtils.cs" />
     <Compile Include="Utility\ListUtility.cs" />
     <Compile Include="Utility\ReflectionUtils.cs" />

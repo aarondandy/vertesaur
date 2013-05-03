@@ -30,7 +30,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>..\..\bin\Debug\sl4\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;SILVERLIGHT;NO_LIST_REMOVE_ALL</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;SILVERLIGHT;NO_LIST_REMOVE_ALL;NO_LIST_FIND_ALL</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <NoConfig>true</NoConfig>
     <ErrorReport>prompt</ErrorReport>
@@ -73,7 +73,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\..\bin\Release\sl4\</OutputPath>
-    <DefineConstants>TRACE;SILVERLIGHT;NO_LIST_REMOVE_ALL</DefineConstants>
+    <DefineConstants>TRACE;SILVERLIGHT;NO_LIST_REMOVE_ALL;NO_LIST_FIND_ALL</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <NoConfig>true</NoConfig>
     <ErrorReport>prompt</ErrorReport>
@@ -140,9 +140,9 @@
     <Compile Include="..\feature-replacements\ICloneable.cs">
       <Link>feature-replacements\ICloneable.cs</Link>
     </Compile>
-		<Compile Include="..\feature-replacements\Comparer.cs">
-			<Link>feature-replacements\Comparer.cs</Link>
-		</Compile>
+    <Compile Include="..\feature-replacements\Comparer.cs">
+      <Link>feature-replacements\Comparer.cs</Link>
+    </Compile>
     <Compile Include="..\..\src\Vertesaur.Core\**\*.cs" Exclude="..\..\src\Vertesaur.Core\**\*AssemblyInfo.cs">
       <Link>Code\</Link>
     </Compile>

@@ -24,6 +24,13 @@ namespace Vertesaur.PolygonOperation
                 RingIndex = ringIndex;
             }
 
+            [ContractInvariantMethod]
+            private void CodeContractInvariants() {
+                Contract.Invariant(Segment != null);
+                Contract.Invariant(SegmentIndex >= 0);
+                Contract.Invariant(RingIndex >= 0);
+            }
+
             public readonly Segment2 Segment;
             public readonly int SegmentIndex;
             public readonly int RingIndex;
@@ -103,17 +110,17 @@ namespace Vertesaur.PolygonOperation
             Contract.Requires(indexBStart >= 0);
             Contract.Requires(indexBStart < ring.Count);
 
-            var a = ring[indexAStart].X;
-            var b = ring[IterationUtils.AdvanceLoopingIndex(indexAStart, ring.Count)].X;
-            var c = ring[indexBStart].X;
-            var d = ring[IterationUtils.AdvanceLoopingIndex(indexBStart, ring.Count)].X;
+            var ax = ring[indexAStart].X;
+            var bx = ring[IterationUtils.AdvanceLoopingIndex(indexAStart, ring.Count)].X;
+            var cx = ring[indexBStart].X;
+            var dx = ring[IterationUtils.AdvanceLoopingIndex(indexBStart, ring.Count)].X;
             int compareResult;
-            if (d < c) {
-                compareResult = Math.Min(a, b).CompareTo(d);
-                return compareResult != 0 ? compareResult : Math.Max(a, b).CompareTo(c);
+            if (dx < cx) {
+                compareResult = Math.Min(ax, bx).CompareTo(dx);
+                return compareResult != 0 ? compareResult : Math.Max(ax, bx).CompareTo(cx);
             }
-            compareResult = Math.Min(a, b).CompareTo(c);
-            return compareResult != 0 ? compareResult : Math.Max(a, b).CompareTo(d);
+            compareResult = Math.Min(ax, bx).CompareTo(cx);
+            return compareResult != 0 ? compareResult : Math.Max(ax, bx).CompareTo(dx);
         }
 
         private List<PolygonCrossing> GenerateCrossingsSerial() {
@@ -218,6 +225,7 @@ namespace Vertesaur.PolygonOperation
             Contract.Requires(ringIndexB >= 0);
             Contract.Ensures(Contract.Result<List<PolygonCrossing>>() != null);
             return GenerateRingCrossingsBruteForce(ringA, ringB, ringIndexA, ringIndexB);
+            //return GenerateRingCrossingsSorted(ringA, ringB, ringIndexA, ringIndexB);
         }
 
         /// <summary>
@@ -273,10 +281,11 @@ namespace Vertesaur.PolygonOperation
                         largestXValueOnD = smallestXValueOnC;
                         smallestXValueOnC = temp;
                     }
-                    if (largestXValueOnD < smallestXValueOnA) {
-                        minSegmentSearchIndicesB = segmentSearchIndexB + 1;
-                        continue;
-                    }
+
+                    //if (largestXValueOnD < smallestXValueOnA) {
+                    //    minSegmentSearchIndicesB = segmentSearchIndexB + 1;
+                    //    continue;
+                    //}
                     if (smallestXValueOnC > largestXValueOnA)
                         break;
 
