@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
-using Vertesaur.Generation.Contracts;
 using Vertesaur.Generation.Expressions;
 
 namespace Vertesaur.Generation.GenericOperations

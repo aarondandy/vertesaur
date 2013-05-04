@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
-using Vertesaur.Generation.Contracts;
 using Vertesaur.Utility;
 
 namespace Vertesaur.Generation.Expressions

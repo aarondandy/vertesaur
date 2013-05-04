@@ -36,14 +36,13 @@ namespace Vertesaur.PolygonOperation
         IComparable<PolygonBoundaryLocation>
     {
 
-        [Pure]
-        private static int Compare(PolygonBoundaryLocation a, PolygonBoundaryLocation b) {
-            if (ReferenceEquals(a, null)) {
-                if (ReferenceEquals(b, null)) {
-                    return 0;
-                }
+        [Pure] private static int Compare(PolygonBoundaryLocation a, PolygonBoundaryLocation b) {
+            if (ReferenceEquals(a, b))
+                return 0;
+            if (ReferenceEquals(a, null))
                 return -1;
-            }
+            if (ReferenceEquals(b, null))
+                return 1;
             return a.CompareTo(b);
         }
 
@@ -140,14 +139,14 @@ namespace Vertesaur.PolygonOperation
         /// <inheritdoc/>
         [Pure]
         public override string ToString() {
-            Contract.Ensures(!String.IsNullOrEmpty(Contract.Result<string>()));
             return String.Format("{0}:{1}:{2}", RingIndex, SegmentIndex, SegmentRatio);
         }
 
         /// <inheritdoc/>
         [Pure]
         public int CompareTo(PolygonBoundaryLocation other) {
-            Contract.Requires(other != null);
+            if (other == null)
+                return 1;
             int compareResult;
             return (compareResult = RingIndex.CompareTo(other.RingIndex)) == 0
                 ? (

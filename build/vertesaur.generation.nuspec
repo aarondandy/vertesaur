@@ -1,39 +1,39 @@
 <?xml version="1.0"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
-	<metadata>
-		<id>Vertesaur.Generation</id>
-		<version>$version$</version>
-		<title>Vertesaur: Generation</title>
-		<authors>aarondandy</authors>
-		<description>A computational geometry and math library for the CLR with potential medical, gaming, and GIS uses.</description>
-		<requireLicenseAcceptance>false</requireLicenseAcceptance>
-		<tags>geometry expressions expression-trees</tags>
-		<projectUrl>http://mediocresoft.com/vertesaur/</projectUrl>
-		<dependencies>
-			<dependency id="Vertesaur.Core" version="$version$"/>
-		</dependencies>
+  <metadata>
+    <id>Vertesaur.Generation</id>
+    <version>$version$</version>
+    <title>Vertesaur: Generation</title>
+    <authors>aarondandy</authors>
+    <description>A computational geometry and math library for the CLR with potential medical, gaming, and GIS uses.</description>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <tags>geometry expressions expression-trees</tags>
+    <projectUrl>http://mediocresoft.com/vertesaur/</projectUrl>
+    <dependencies>
+      <dependency id="Vertesaur.Core" version="$version$"/>
+    </dependencies>
     <references>
       <reference file="Vertesaur.Generation.dll" />
     </references>
-	</metadata>
-	<files>
-		<file src="..\bin\$configuration$\net40-client\Vertesaur.Generation.dll" target="lib\net40-client" />
+  </metadata>
+  <files>
+    <file src="..\bin\$configuration$\net40-client\Vertesaur.Generation.dll" target="lib\net40-client" />
     <file src="..\bin\$configuration$\net40-client\Vertesaur.Generation.pdb" target="lib\net40-client" />
     <file src="..\bin\$configuration$\net40-client\Vertesaur.Generation.XML" target="lib\net40-client" />
 
-		<file src="..\bin\$configuration$\windows8\Vertesaur.Generation.dll" target="lib\windows8" />
-		<file src="..\bin\$configuration$\windows8\Vertesaur.Generation.pdb" target="lib\windows8" />
-		<file src="..\bin\$configuration$\windows8\Vertesaur.Generation.XML" target="lib\windows8" />
+    <file src="..\bin\$configuration$\windows8\Vertesaur.Generation.dll" target="lib\windows8" />
+    <file src="..\bin\$configuration$\windows8\Vertesaur.Generation.pdb" target="lib\windows8" />
+    <file src="..\bin\$configuration$\windows8\Vertesaur.Generation.XML" target="lib\windows8" />
 
-		<file src="..\bin\$configuration$\windowsphone8\Vertesaur.Generation.dll" target="lib\windowsphone8" />
-		<file src="..\bin\$configuration$\windowsphone8\Vertesaur.Generation.pdb" target="lib\windowsphone8" />
-		<file src="..\bin\$configuration$\windowsphone8\Vertesaur.Generation.XML" target="lib\windowsphone8" />
+    <file src="..\bin\$configuration$\windowsphone8\Vertesaur.Generation.dll" target="lib\windowsphone8" />
+    <file src="..\bin\$configuration$\windowsphone8\Vertesaur.Generation.pdb" target="lib\windowsphone8" />
+    <file src="..\bin\$configuration$\windowsphone8\Vertesaur.Generation.XML" target="lib\windowsphone8" />
 
-		<file src="..\bin\$configuration$\sl5\Vertesaur.Generation.dll" target="lib\sl5" />
-		<file src="..\bin\$configuration$\sl5\Vertesaur.Generation.pdb" target="lib\sl5" />
-		<file src="..\bin\$configuration$\sl5\Vertesaur.Generation.XML" target="lib\sl5" />
+    <file src="..\bin\$configuration$\sl5\Vertesaur.Generation.dll" target="lib\sl5" />
+    <file src="..\bin\$configuration$\sl5\Vertesaur.Generation.pdb" target="lib\sl5" />
+    <file src="..\bin\$configuration$\sl5\Vertesaur.Generation.XML" target="lib\sl5" />
 
-		<file src="..\bin\$configuration$\net40-client\CodeContracts\Vertesaur.Generation.Contracts.dll" target="lib\net40-client\CodeContracts" />
+    <file src="..\bin\$configuration$\net40-client\CodeContracts\Vertesaur.Generation.Contracts.dll" target="lib\net40-client\CodeContracts" />
     <file src="..\src\Vertesaur.Generation\**.cs" target="src" />
     <file src="..\ports\feature-replacements\**.cs" target="src\feature-replacements" />
   </files>

@@ -136,8 +136,8 @@
     <Compile Include="..\VertesaurAssemblyInfo.cs">
       <Link>Properties\VertesaurAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Contracts\IExpressionGenerationRequest.cs" />
-    <Compile Include="Contracts\IExpressionGenerator.cs" />
+    <Compile Include="Expressions\IExpressionGenerationRequest.cs" />
+    <Compile Include="Expressions\IExpressionGenerator.cs" />
     <Compile Include="Expressions\AbsExpression.cs" />
     <Compile Include="Expressions\AcosExpression.cs" />
     <Compile Include="Expressions\AcoshExpression.cs" />

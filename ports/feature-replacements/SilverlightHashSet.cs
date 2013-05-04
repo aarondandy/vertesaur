@@ -52,8 +52,8 @@ namespace Vertesaur
         }
 
         public void CopyTo(T[] array) {
-            if(array == null) throw new ArgumentNullException("array");
-            if(array.Length < Count) throw new ArgumentException("Array too small.", "array");
+            if (array == null) throw new ArgumentNullException("array");
+            if (array.Length < Count) throw new ArgumentException("Array too small.", "array");
             int i = 0;
             foreach (var item in this) {
                 array[i++] = item;

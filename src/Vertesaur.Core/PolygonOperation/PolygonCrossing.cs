@@ -134,10 +134,10 @@ namespace Vertesaur.PolygonOperation
         /// <returns>A crossing type classification.</returns>
         [Pure]
         public static CrossingType DetermineCrossingType(Vector2 vectorANext, Vector2 vectorAPrior, Vector2 vectorBNext, Vector2 vectorBPrior) {
-            var crossANextBNext = vectorANext.PerpendicularDot(vectorBNext);
-            var crossANextBPrior = vectorANext.PerpendicularDot(vectorBPrior);
-            var crossAPriorBNext = vectorAPrior.PerpendicularDot(vectorBNext);
-            var crossAPriorBPrior = vectorAPrior.PerpendicularDot(vectorBPrior);
+            var crossANextBNext = vectorANext.PerpendicularDot(ref vectorBNext);
+            var crossANextBPrior = vectorANext.PerpendicularDot(ref vectorBPrior);
+            var crossAPriorBNext = vectorAPrior.PerpendicularDot(ref vectorBNext);
+            var crossAPriorBPrior = vectorAPrior.PerpendicularDot(ref vectorBPrior);
             //var dotANextBNext = vectorANext.Dot(vectorBNext);
             //var dotANextBPrior = vectorANext.Dot(vectorBPrior);
             //var dotAPriorBNext = vectorAPrior.Dot(vectorBNext);
@@ -205,17 +205,26 @@ namespace Vertesaur.PolygonOperation
 
             [Pure]
             public int Compare(PolygonCrossing x, PolygonCrossing y) {
+                if (ReferenceEquals(x, y))
+                    return 0;
+                int compareResult;
+                return (compareResult = x.LocationA.CompareTo(y.LocationA)) == 0
+                    ? x.LocationB.CompareTo(y.LocationB)
+                    : compareResult;
+            }
+
+            [Pure]
+            public static int CompareNonNull(PolygonCrossing x, PolygonCrossing y) {
                 Contract.Requires(x != null);
                 Contract.Requires(y != null);
+                if (ReferenceEquals(x, y))
+                    return 0;
                 int compareResult;
-                return ReferenceEquals(x, y)
-                    ? 0
-                    : (
-                        (compareResult = x.LocationA.CompareTo(y.LocationA)) == 0
-                        ? x.LocationB.CompareTo(y.LocationB)
-                        : compareResult
-                    );
+                return (compareResult = x.LocationA.CompareTo(y.LocationA)) == 0
+                    ? x.LocationB.CompareTo(y.LocationB)
+                    : compareResult;
             }
+
         }
 
         internal sealed class LocationBComparer : IComparer<PolygonCrossing>
@@ -225,16 +234,24 @@ namespace Vertesaur.PolygonOperation
 
             [Pure]
             public int Compare(PolygonCrossing x, PolygonCrossing y) {
+                if (ReferenceEquals(x, y))
+                    return 0;
+                int compareResult;
+                return (compareResult = x.LocationB.CompareTo(y.LocationB)) == 0
+                    ? x.LocationA.CompareTo(y.LocationA)
+                    : compareResult;
+            }
+
+            [Pure]
+            public static int CompareNonNull(PolygonCrossing x, PolygonCrossing y) {
                 Contract.Requires(x != null);
                 Contract.Requires(y != null);
+                if (ReferenceEquals(x, y))
+                    return 0;
                 int compareResult;
-                return ReferenceEquals(x,y)
-                    ? 0
-                    : (
-                        (compareResult = x.LocationB.CompareTo(y.LocationB)) == 0
-                        ? x.LocationA.CompareTo(y.LocationA)
-                        : compareResult
-                    );
+                return (compareResult = x.LocationB.CompareTo(y.LocationB)) == 0
+                    ? x.LocationA.CompareTo(y.LocationA)
+                    : compareResult;
             }
         }
 

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Linq.Expressions;
-using Vertesaur.Generation.Contracts;
 
 namespace Vertesaur.Generation.Expressions
 {

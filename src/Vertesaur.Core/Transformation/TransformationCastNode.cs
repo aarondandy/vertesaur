@@ -5,7 +5,6 @@ using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Reflection;
-using Vertesaur.Contracts;
 using Vertesaur.Search;
 using Vertesaur.Utility;
 

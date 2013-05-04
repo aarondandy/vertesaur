@@ -25,7 +25,6 @@
 using System;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
-using Vertesaur.Contracts;
 using Vertesaur.Generation.GenericOperations;
 
 namespace Vertesaur.Generation

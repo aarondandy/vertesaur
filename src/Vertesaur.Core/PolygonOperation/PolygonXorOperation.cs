@@ -22,8 +22,6 @@
 //
 // ===============================================================================
 
-using Vertesaur.Contracts;
-
 namespace Vertesaur.PolygonOperation
 {
     /// <summary>

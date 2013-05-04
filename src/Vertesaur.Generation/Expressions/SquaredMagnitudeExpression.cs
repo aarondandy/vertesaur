@@ -4,7 +4,6 @@ using System.Collections.ObjectModel;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Linq.Expressions;
-using Vertesaur.Generation.Contracts;
 using Vertesaur.Utility;
 
 namespace Vertesaur.Generation.Expressions

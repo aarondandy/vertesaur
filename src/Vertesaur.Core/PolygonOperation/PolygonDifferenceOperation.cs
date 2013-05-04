@@ -23,7 +23,6 @@
 // ===============================================================================
 
 using System.Diagnostics.Contracts;
-using Vertesaur.Contracts;
 
 namespace Vertesaur.PolygonOperation
 {
