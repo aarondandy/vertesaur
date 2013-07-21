@@ -76,16 +76,16 @@ namespace Vertesaur.PolygonOperation.Test
             Console.WriteLine("{0} crossing points", result.Count);
 
             PolyOperationTestUtility.AssertSame(
-                testData.CrossingPoints.OrderBy(x => x),
-                result.Select(r => r.Point).OrderBy(x => x),
+                testData.CrossingPoints.OrderBy(p => p),
+                result.Select(r => r.Point).OrderBy(p => p),
                 (x, y) => Assert.That(PointsAlmostEqual(x, y), "Points not equal."));
 
             result = _intersectionOperation.FindPointCrossings(testData.B, testData.A);
             Assert.IsNotNull(result);
 
             PolyOperationTestUtility.AssertSame(
-                testData.CrossingPoints.OrderBy(x => x),
-                result.Select(r => r.Point).OrderBy(x => x),
+                testData.CrossingPoints.OrderBy(p => p),
+                result.Select(r => r.Point).OrderBy(p => p),
                 (x, y) => Assert.That(PointsAlmostEqual(x, y), "Points not equal."));
         }
 

@@ -130,6 +130,7 @@ namespace Vertesaur
             // ReSharper restore CompareOfFloatsByEqualityOperator
         }
 
+        [Obsolete("Move to a helper class for sharing.")]
         private static void Order(ref Point2 a, ref Point2 b) {
             if (a.CompareTo(b) > 0) {
                 var t = a;
@@ -138,6 +139,7 @@ namespace Vertesaur
             }
         }
 
+        [Obsolete("Move to a helper class for sharing.")]
         private static void Order(ref Point2 a, ref Point2 b, ref Point2 c, ref Point2 d) {
             // first order the points in the segments
             Order(ref a, ref b);
@@ -462,29 +464,20 @@ namespace Vertesaur
             if (ReferenceEquals(null, line))
                 return false;
 
-            var c = line.P;
-
             // ReSharper disable CompareOfFloatsByEqualityOperator
             var d0 = Direction;
             var d1 = line.Direction;
-            var e = c - A;
+            var e = line.P - A;
             var cross = (d0.X * d1.Y) - (d1.X * d0.Y);
-            var dot = d0.Dot(d1);
-            var magnitudeSquared0 = d0.GetMagnitudeSquared();
-
-            if ((magnitudeSquared0 * d1.GetMagnitudeSquared()) - (dot * dot) != 0) {
-                // not parallel
-                var s = ((e.X * d1.Y) - (e.Y * d1.X)) / cross;
-                if (s < 0 || s > 1)
-                    return false; // not intersecting on this segment
-
-                return true; // it must intersect at a point
+            if (cross == 0.0) {
+                // parallel
+                return (e.X*d0.Y) == (e.Y*d0.X);
             }
 
-            // parallel
-            cross = (e.X * d0.Y) - (e.Y * d0.X);
-            dot = d0.Dot(e);
-            return !((magnitudeSquared0 * e.GetMagnitudeSquared()) - (dot * dot) != 0);
+            // not parallel
+            var s = ((e.X * d1.Y) - (e.Y * d1.X)) / cross;
+            return s >= 0.0 && s <= 1.0;
+
             // ReSharper restore CompareOfFloatsByEqualityOperator
         }
 
@@ -512,42 +505,49 @@ namespace Vertesaur
             var d1 = ray.Direction;
             var e = ray.P - A;
             var cross = (d0.X * d1.Y) - (d1.X * d0.Y);
-            var dot_d0d1 = d0.Dot(d1);
-            var magnitudeSquared0 = d0.GetMagnitudeSquared();
 
-            if ((magnitudeSquared0 * d1.GetMagnitudeSquared()) - (dot_d0d1 * dot_d0d1) != 0) {
-                // not parallel
-                var s = ((e.X * d1.Y) - (e.Y * d1.X)) / cross;
-                if (s < 0 || s > 1)
-                    return null; // not intersecting on this segment
-
-                var t = ((e.X * d0.Y) - (e.Y * d0.X)) / cross;
-                if (t < 0)
-                    return null; // not intersecting on the ray
-
-                if (0 == s)
-                    return A;
-                if (0 == t)
-                    return ray.P;
-                return A + d0.GetScaled(s); // it must intersect at a point, so find where
+            if (cross == 0.0) {
+                // parallel
+                return (e.X*d0.Y) == (e.Y*d0.X)
+                    ? IntersectionParallel(d0, d1, e, ray)
+                    : null;
             }
 
-            // parallel
-            cross = (e.X * d0.Y) - (e.Y * d0.X);
-            var dot_d0_e = d0.Dot(e);
-            if ((magnitudeSquared0 * e.GetMagnitudeSquared()) - (dot_d0_e * dot_d0_e) != 0)
-                return null; // no intersection
+            // not parallel
+            var s = ((e.X * d1.Y) - (e.Y * d1.X)) / cross;
+            if (s < 0.0 || s > 1.0)
+                return null; // not intersecting on this segment
 
-            var sa = dot_d0_e / magnitudeSquared0;
-            var sb = sa + (dot_d0d1 / magnitudeSquared0);
+            var t = ((e.X * d0.Y) - (e.Y * d0.X)) / cross;
+            if (t < 0.0)
+                return null; // not intersecting on the ray
+
+            // it must intersect at a point, so find where
+            if (0.0 == s)
+                return A;
+            if (0.0 == t)
+                return ray.P;
+            return A + d0.GetScaled(s);
+
+            // ReSharper restore CompareOfFloatsByEqualityOperator
+        }
+
+        /// <summary>
+        /// This method is extracted from Intersection(Ray2) as it is a rare case.
+        /// </summary>
+        private IPlanarGeometry IntersectionParallel(Vector2 d0, Vector2 d1, Vector2 e, Ray2 ray) {
+            var magnitudeSquared0 = d0.GetMagnitudeSquared();
+            var sa = d0.Dot(e) / magnitudeSquared0;
+            var sb = sa + (d0.Dot(d1) / magnitudeSquared0);
             var sd = sb - sa;
 
+            // ReSharper disable CompareOfFloatsByEqualityOperator
             if (sd < 0) {
-                if (sa >= 1.0) {
-                    return Clone(); // start point is past the segment but pointing back at it
-                }
                 if (sa < 0) {
                     return null; // start point is before the segment
+                }
+                if (sa >= 1.0) {
+                    return Clone(); // start point is past the segment but pointing back at it
                 }
                 if (sa == 0) {
                     return A; // start point is on the start of the segment
@@ -558,17 +558,19 @@ namespace Vertesaur
                 if (sa > 1.0) {
                     return null; // start point is past the segment and pointing away
                 }
-                if (sa == 1.0) {
-                    return B; // start point is on the segment end and pointing away
-                }
                 if (sa <= 0) {
                     return Clone(); // start point is before the segment and going through it
                 }
+                if (sa == 1.0) {
+                    return B; // start point is on the segment end and pointing away
+                }
                 return new Segment2(ray.P, B); // start point is in the segment and going through it to the end
             }
-            return null;
             // ReSharper restore CompareOfFloatsByEqualityOperator
+
+            return null;
         }
+
         /// <summary>
         /// Calculates the intersection geometry between this segment and a line.
         /// </summary>
@@ -578,38 +580,31 @@ namespace Vertesaur
             if (ReferenceEquals(null, line))
                 return null;
 
-            var c = line.P;
-
             // ReSharper disable CompareOfFloatsByEqualityOperator
             var d0 = Direction;
             var d1 = line.Direction;
-            var e = c - A;
+            var e = line.P - A;
             var cross = (d0.X * d1.Y) - (d1.X * d0.Y);
-            var dot = d0.Dot(d1);
-            var magnitudeSquared0 = d0.GetMagnitudeSquared();
 
-            if ((magnitudeSquared0 * d1.GetMagnitudeSquared()) - (dot * dot) != 0) {
-                // not parallel
-                var s = ((e.X * d1.Y) - (e.Y * d1.X)) / cross;
-                if (s < 0 || s > 1)
-                    return null; // not intersecting on this segment
-
-                var t = ((e.X * d0.Y) - (e.Y * d0.X)) / cross;
-
-                if (0 == s)
-                    return A;
-                if (0 == t)
-                    return c;
-                return A + d0.GetScaled(s); // it must intersect at a point, so find where
+            if (cross == 0.0) {
+                // parallel
+                return (e.X*d0.Y) == (e.Y*d0.X)
+                    ? Clone()
+                    : null;
             }
 
-            // parallel
-            cross = (e.X * d0.Y) - (e.Y * d0.X);
-            dot = d0.Dot(e);
-            if ((magnitudeSquared0 * e.GetMagnitudeSquared()) - (dot * dot) != 0)
-                return null; // no intersection
+            // not parallel
+            var s = ((e.X * d1.Y) - (e.Y * d1.X)) / cross;
+            if (s < 0.0 || s > 1.0)
+                return null; // not intersecting on this segment
+            if (s == 0.0)
+                return A;
 
-            return Clone();
+            //var t = ((e.X * d0.Y) - (e.Y * d0.X)) / cross;
+            if ((e.X * d0.Y) == (e.Y * d0.X))
+                return line.P;
+            return A + d0.GetScaled(s); // it must intersect at a point, so find where
+
             // ReSharper restore CompareOfFloatsByEqualityOperator
         }
 
@@ -618,12 +613,13 @@ namespace Vertesaur
         /// </summary>
         /// <param name="other">The other segment to compare.</param>
         /// <returns>A comparison value, see <see cref="IComparable.CompareTo"/>.</returns>
-        [Obsolete]
+        [Obsolete("This is garbage and will probably do more harm than good.")]
         public int CompareTo(Segment2 other) {
             if (ReferenceEquals(null, other))
                 return 1;
             return Compare(A, B, other.A, other.B);
         }
+
         /// <inheritdoc/>
         public IPlanarGeometry Intersection(Point2 other) {
             return Intersects(other) ? (IPlanarGeometry)other : null;

@@ -639,9 +639,9 @@ namespace Vertesaur.PolygonOperation.Test
 				}, false)
             ) {
                 CrossingPoints = new List<Point2> {
+                    new Point2(0.44492254733218589,0.46403737398573891),
 					new Point2(0.44492254733218589,0.42575854438160804),
 					new Point2(0.46406196213425133,0.44489795918367347),
-					new Point2(0.44492254733218589,0.46403737398573891)
 				}
             };
 

@@ -240,61 +240,46 @@ namespace Vertesaur.SegmentOperation
             var d0 = b - a;
             var d1 = d - c;
             var e = c - a;
+
             var cross = (d0.X * d1.Y) - (d1.X * d0.Y);
-            var dot = d0.Dot(d1);
-            var magnitudeSquared0 = d0.GetMagnitudeSquared();
-            var magnitudeSquared1 = d1.GetMagnitudeSquared();
-
-            var oldCheck = cross*cross > magnitudeSquared0*magnitudeSquared1*Double.Epsilon;
-            var newCheck = (magnitudeSquared0 * magnitudeSquared1) - (dot * dot) != 0;
-
-            if (newCheck && cross != 0) {
-
-                // not parallel
-                var s = ((e.X * d1.Y) - (e.Y * d1.X)) / cross;
-                if (s < 0 || s > 1.0)
-                    return DefaultNoIntersection; // not intersecting on this segment
-
-                var t = ((e.X * d0.Y) - (e.Y * d0.X)) / cross;
-                if (t < 0 || t > 1.0)
-                    return DefaultNoIntersection; // not intersecting on other segment
-
-                Point2 p;
-                if (0 == s)
-                    p = a;
-                else if (1 == s)
-                    p = b;
-                else if (0 == t)
-                    p = c;
-                else if (1 == t)
-                    p = d;
-                else
-                    p = a + d0.GetScaled(s); // it must intersect at a point, so find where
-                return new PointResult(p, s, t);
-
+            if (cross == 0.0) {
+                // parallel
+                return (e.X*d0.Y) == (e.Y*d0.X)
+                    ? IntersectionDetailsParallel(d0, d1, e, a, b, c, d)
+                    : DefaultNoIntersection;
             }
 
-            Contract.Assume(magnitudeSquared0 != 0);
-            Contract.Assume(magnitudeSquared1 != 0);
+            // not parallel
+            var s = ((e.X * d1.Y) - (e.Y * d1.X)) / cross;
+            if (s < 0 || s > 1.0)
+                return DefaultNoIntersection; // not intersecting on this segment
 
-            // parallel
-            cross = (e.X * d0.Y) - (e.Y * d0.X);
-            dot = d0.Dot(e);
-            if ((magnitudeSquared0 * e.GetMagnitudeSquared()) - (dot * dot) != 0)
-                return DefaultNoIntersection; // no intersection
-            return IntersectionDetailsParallel(d0, d1, e, magnitudeSquared0, magnitudeSquared1, a, b, c, d);
+            var t = ((e.X * d0.Y) - (e.Y * d0.X)) / cross;
+            if (t < 0 || t > 1.0)
+                return DefaultNoIntersection; // not intersecting on other segment
+
+            Point2 p;
+            if (s == 0.0)
+                p = a;
+            else if (s == 1.0)
+                p = b;
+            else if (t == 0.0)
+                p = c;
+            else if (t == 1.0)
+                p = d;
+            else
+                p = a + d0.GetScaled(s); // it must intersect at a point, so find where
+            return new PointResult(p, s, t);
             // ReSharper restore CompareOfFloatsByEqualityOperator
         }
 
-        private static IResult IntersectionDetailsParallel(Vector2 d0, Vector2 d1, Vector2 e, double squareMagnitude0, double squareMagnitude1, Point2 a, Point2 b, Point2 c, Point2 d) {
-            // ReSharper disable CompareOfFloatsByEqualityOperator
-            Contract.Requires(squareMagnitude0 != 0);
-            Contract.Requires(squareMagnitude1 != 0);
-            // ReSharper restore CompareOfFloatsByEqualityOperator
+        private static IResult IntersectionDetailsParallel(Vector2 d0, Vector2 d1, Vector2 e, Point2 a, Point2 b, Point2 c, Point2 d) {
             Contract.Ensures(Contract.Result<IResult>() != null);
 
+            var squareMagnitude0 = d0.GetMagnitudeSquared();
+            var d0DotD1 = d0.Dot(d1);
             var s1 = d0.Dot(e) / squareMagnitude0;
-            var s2 = s1 + (d0.Dot(d1) / squareMagnitude0);
+            var s2 = s1 + (d0DotD1 / squareMagnitude0);
             double sMin, sMax;
             if (s1 <= s2) {
                 sMin = s1;
@@ -308,26 +293,29 @@ namespace Vertesaur.SegmentOperation
             // ReSharper disable CompareOfFloatsByEqualityOperator
             if (sMax < 0 || sMin > 1.0)
                 return DefaultNoIntersection; // no intersection
-            if (sMax == 0)
-                return new PointResult(a, 0, a == c ? 0 : 1); // the start point
+            if (sMax == 0.0)
+                return new PointResult(a, 0.0, a == c ? 0.0 : 1.0); // the start point
             if (sMin == 1.0)
-                return new PointResult(b, 1, b == c ? 0 : 1); // the end point
+                return new PointResult(b, 1.0, b == c ? 0.0 : 1.0); // the end point
             // ReSharper restore CompareOfFloatsByEqualityOperator
 
             PointResult resultA;
             PointResult resultB;
-            if (sMin <= 0 && sMax >= 1.0) {
-                var t1 = d1.Dot(a - c) / squareMagnitude1;
-                resultA = new PointResult(a, 0, t1);
-                resultB = new PointResult(b, 1, t1 + (d1.Dot(d0) / squareMagnitude1));
+            double squareMagnitude1;
+            if (sMin <= 0.0 && sMax >= 1.0) {
+                squareMagnitude1 = d1.GetMagnitudeSquared();
+                var t1 = d1.Dot(e.GetNegative()) / squareMagnitude1;
+                resultA = new PointResult(a, 0.0, t1);
+                resultB = new PointResult(b, 1.0, t1 + (d0DotD1 / squareMagnitude1));
             }
-            else if (sMin >= 0 && sMax <= 1.0) {
+            else if (sMin >= 0.0 && sMax <= 1.0) {
                 // reuse s1 and s2 from above
-                resultA = new PointResult(c, s1, 0);
-                resultB = new PointResult(d, s2, 1);
+                resultA = new PointResult(c, s1, 0.0);
+                resultB = new PointResult(d, s2, 1.0);
             }
             else {
-                var p1 = (0 < sMin) ? a + (d0.GetScaled(sMin)) : a;
+                squareMagnitude1 = d1.GetMagnitudeSquared();
+                var p1 = (0.0 < sMin) ? a + (d0.GetScaled(sMin)) : a;
                 var p2 = a + (d0.GetScaled(sMax < 1.0 ? sMax : 1.0));
                 var pd = p2 - p1;
                 s1 = d0.Dot(p1 - a) / squareMagnitude0;

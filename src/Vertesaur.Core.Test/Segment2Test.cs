@@ -404,10 +404,12 @@ namespace Vertesaur.Core.Test
             var b = new Line2(new Point2(1, 1), new Vector2(1, 1));
             var c = new Line2(new Point2(1, 1), new Vector2(0, 1));
             var d = new Line2(new Point2(0, 0), new Vector2(0, 1));
+            var e = new Line2(new Point2(0, -2), new Vector2(1, 1));
 
             Assert.IsTrue(a.Intersects(b));
             Assert.IsFalse(a.Intersects(c));
             Assert.IsTrue(a.Intersects(d));
+            Assert.IsFalse(a.Intersects(e));
         }
 
         [Test]
