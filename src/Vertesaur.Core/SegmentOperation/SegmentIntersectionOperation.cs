@@ -248,7 +248,7 @@ namespace Vertesaur.SegmentOperation
             var oldCheck = cross*cross > magnitudeSquared0*magnitudeSquared1*Double.Epsilon;
             var newCheck = (magnitudeSquared0 * magnitudeSquared1) - (dot * dot) != 0;
 
-            if (oldCheck && newCheck) {
+            if (newCheck && cross != 0) {
 
                 // not parallel
                 var s = ((e.X * d1.Y) - (e.Y * d1.X)) / cross;
