@@ -68,7 +68,7 @@ namespace Vertesaur
         /// </remarks>
         public static Line2 SlopeIntercept(double m, double b) {
             Contract.Ensures(Contract.Result<Line2>() != null);
-            return new Line2(new Point2(0, b), new Vector2(1, m));
+            return new Line2(new Point2(0.0, b), new Vector2(1.0, m));
         }
 
         /// <summary>
@@ -102,15 +102,15 @@ namespace Vertesaur
             Point2 p;
             Vector2 v;
             // ReSharper disable CompareOfFloatsByEqualityOperator
-            if (0 == a) {
-                v = Vector2.XUnit;
-                p = 0 == b
+            if (a == 0.0) {
+                p = b == 0.0
                     ? Point2.Zero
-                    : new Point2(0, c / b);
+                    : new Point2(0.0, c / b);
+                v = Vector2.XUnit;
             }
             else {
-                p = new Point2(c / a, 0);
-                v = 0 == b
+                p = new Point2(c / a, 0.0);
+                v = b == 0.0
                     ? Vector2.YUnit
                     : new Vector2(-p.X, (c / b) - p.Y);
             }
@@ -161,7 +161,6 @@ namespace Vertesaur
             : this(new Point2(p), new Vector2(d)) {
             Contract.Requires(p != null);
             Contract.Requires(d != null);
-            Contract.EndContractBlock();
         }
 
         /// <summary>
@@ -213,28 +212,17 @@ namespace Vertesaur
             }
         }
 
-        /// <summary>
-        /// Indicates whether the current object is equal to another object of the same type.
-        /// </summary>
-        /// <returns>
-        /// <c>true</c> if the current object is equal to the <paramref name="other"/> parameter; otherwise, <c>false</c>.
-        /// </returns>
-        /// <param name="other">An object to compare with this object.</param>
+        /// <inheritdoc/>
         public bool Equals(Line2 other) {
-            return ReferenceEquals(this, other) || (
-                !ReferenceEquals(null, other)
-                && P.Equals(other.P)
-                && Direction.Equals(other.Direction)
-            );
+            if (ReferenceEquals(null, other))
+                return false;
+            if (ReferenceEquals(this, other))
+                return true;
+            return P.Equals(other.P)
+                && Direction.Equals(other.Direction);
         }
 
-        /// <summary>
-        /// Determines whether the specified <see cref="System.Object"/> is equal to this instance.
-        /// </summary>
-        /// <param name="obj">The <see cref="System.Object"/> to compare with this instance.</param>
-        /// <returns>
-        /// <c>true</c> if the specified <see cref="System.Object"/> is equal to this instance; otherwise, <c>false</c>.
-        /// </returns>
+        /// <inheritdoc/>
         public override bool Equals(object obj) {
             return Equals(obj as Line2);
         }
@@ -294,14 +282,14 @@ namespace Vertesaur
             Contract.Ensures(Contract.Result<Mbr>() != null);
             // ReSharper disable CompareOfFloatsByEqualityOperator
             return (
-                (0 == Direction.X)
+                (Direction.X == 0.0)
                 ? (
-                    (0 == Direction.Y)
+                    (Direction.Y == 0.0)
                     ? new Mbr(P)
                     : new Mbr(P.X, Double.NegativeInfinity, P.X, Double.PositiveInfinity)
                 )
                 : (
-                    (0 == Direction.Y)
+                    (Direction.Y == 0.0)
                     ? new Mbr(Double.NegativeInfinity, P.Y, Double.PositiveInfinity, P.Y)
                     : new Mbr(Double.NegativeInfinity, Double.NegativeInfinity, Double.PositiveInfinity, Double.PositiveInfinity)
                 )
@@ -312,14 +300,14 @@ namespace Vertesaur
         /// <summary>
         /// Calculates the distance between this line and <paramref name="p"/>
         /// </summary>
-        /// <param name="p">The point to calculate distance to.</param>
+        /// <param name="point">The point to calculate distance to.</param>
         /// <returns>The distance.</returns>
         [Pure]
-        public double Distance(Point2 p) {
-            var v0 = p - P;
+        public double Distance(Point2 point) {
+            var v0 = point - P;
             var m = Direction.GetMagnitudeSquared();
             // ReSharper disable CompareOfFloatsByEqualityOperator
-            if (0 != m) {
+            if (m != 0.0) {
                 var aDot = Direction.Dot(v0);
                 return Math.Sqrt(v0.GetMagnitudeSquared() - ((aDot * aDot) / m));
             }
@@ -330,14 +318,14 @@ namespace Vertesaur
         /// <summary>
         /// Calculates the squared distance between this line and <paramref name="p"/>
         /// </summary>
-        /// <param name="p">The point to calculate squared distance to.</param>
+        /// <param name="point">The point to calculate squared distance to.</param>
         /// <returns>The squared distance.</returns>
         [Pure]
-        public double DistanceSquared(Point2 p) {
-            var v0 = p - P;
+        public double DistanceSquared(Point2 point) {
+            var v0 = point - P;
             var m = Direction.GetMagnitudeSquared();
             // ReSharper disable CompareOfFloatsByEqualityOperator
-            if (0 != m) {
+            if (m != 0.0) {
                 var aDot = Direction.Dot(v0);
                 return (v0.GetMagnitudeSquared() - ((aDot * aDot) / m));
             }
@@ -355,11 +343,12 @@ namespace Vertesaur
             var v0 = p - P;
             var m = Direction.GetMagnitudeSquared();
             // ReSharper disable CompareOfFloatsByEqualityOperator
-            if (0 != m) {
+            if (m != 0.0) {
                 var aDot = Direction.Dot(v0);
-                return (m * v0.GetMagnitudeSquared()) == (aDot * aDot);
+                // NOTE: preserve the /m to be consistent with DistanceSquared
+                return v0.GetMagnitudeSquared() == ((aDot * aDot) / m);
             }
-            return 0 == v0.X && 0 == v0.Y;
+            return v0.X == 0.0 && v0.Y == 0.0;
             // ReSharper restore CompareOfFloatsByEqualityOperator
         }
 
@@ -382,34 +371,20 @@ namespace Vertesaur
             if (ReferenceEquals(null, ray))
                 return false;
 
-            Point2 a, c;
-            Vector2 d0, d1;
-            a = P;
-            c = ray.P;
-            d0 = Direction;
-            d1 = ray.Direction;
-            var e = c - a;
+            var d0 = Direction;
+            var d1 = ray.Direction;
+            var e = ray.P - P;
             var cross = (d0.X * d1.Y) - (d1.X * d0.Y);
-            var dot = d0.Dot(d1);
-            var magnitudeSquared0 = d0.GetMagnitudeSquared();
 
-            if ((magnitudeSquared0 * d1.GetMagnitudeSquared()) - (dot * dot) != 0) {
-                // not parallel
-                var s = ((e.X * d1.Y) - (e.Y * d1.X)) / cross;
-
-                var t = ((e.X * d0.Y) - (e.Y * d0.X)) / cross;
-                if (t < 0)
-                    return false; // not intersecting on other ray
-
-                return true; // it must intersect at a point
+            if (cross == 0.0) {
+                // parallel
+                return (e.X*d0.Y) == (e.Y*d0.X);
             }
 
-            // parallel
-            dot = e.Dot(d0);
-            if ((magnitudeSquared0 * e.GetMagnitudeSquared()) - (dot * dot) != 0)
-                return false; // no intersection
+            // not parallel
+            var t = ((e.X * d0.Y) - (e.Y * d0.X)) / cross;
+            return t >= 0.0; // it intersects at a point if on the positive side of the ray
 
-            return true;
             // ReSharper restore CompareOfFloatsByEqualityOperator
         }
 
@@ -441,19 +416,14 @@ namespace Vertesaur
                 d0 = Direction;
                 d1 = other.Direction;
             }
-            var e = c - a;
-            var dot = d0.Dot(d1);
-            var magnitudeSquared0 = d0.GetMagnitudeSquared();
+            
+            if ((d0.X * d1.Y) == (d1.X * d0.Y)) {
+                // parallel
+                var e = c - a;
+                return (e.X*d0.Y) == (e.Y*d0.X);
+            }
 
-            if((magnitudeSquared0 * d1.GetMagnitudeSquared()) - (dot * dot) != 0)
-                return true; // not parallel
-
-            // parallel
-            dot = e.Dot(d0);
-            if((magnitudeSquared0 * e.GetMagnitudeSquared()) - (dot * dot) != 0)
-                return false;
-
-            return true; // are same line
+            return true; // not parallel
             // ReSharper restore CompareOfFloatsByEqualityOperator
         }
 
@@ -463,6 +433,7 @@ namespace Vertesaur
                 ? null
                 : other.Intersection(this);
         }
+
         /// <inheritdoc/>
         public IPlanarGeometry Intersection(Line2 other) {
             // ReSharper disable CompareOfFloatsByEqualityOperator
@@ -489,16 +460,14 @@ namespace Vertesaur
             }
             var e = c - a;
             var cross = (d0.X * d1.Y) - (d1.X * d0.Y);
-            var magnitudeSquared0 = d0.GetMagnitudeSquared();
-            if (cross * cross > d1.GetMagnitudeSquared() * magnitudeSquared0 * Double.Epsilon)
+            if (cross != 0.0)
                 return a + d0.GetScaled(((e.X * d1.Y) - (e.Y * d1.X)) / cross); // not parallel
 
             // parallel
-            cross = (e.X * d0.Y) - (e.Y * d0.X);
-            if (cross * cross > e.GetMagnitudeSquared() * magnitudeSquared0 * Double.Epsilon)
-                return null; // no intersection
+            return (e.X * d0.Y) == (e.Y * d0.X)
+                ? new Line2(a, d0) // construct a new line from the a/d0 values to be consistent
+                : null;
 
-            return Clone(); // are same line
             // ReSharper restore CompareOfFloatsByEqualityOperator
         }
 
@@ -516,29 +485,26 @@ namespace Vertesaur
             d1 = ray.Direction;
             var e = c - a;
             var cross = (d0.X * d1.Y) - (d1.X * d0.Y);
-            var magnitudeSquared0 = d0.GetMagnitudeSquared();
 
-            if (cross * cross > d1.GetMagnitudeSquared() * magnitudeSquared0 * Double.Epsilon) {
-                // not parallel
-                var s = ((e.X * d1.Y) - (e.Y * d1.X)) / cross;
-
-                var t = ((e.X * d0.Y) - (e.Y * d0.X)) / cross;
-                if (t < 0)
-                    return null; // not intersecting on other ray
-
-                if (0 == s)
-                    return a;
-                if (0 == t)
-                    return c;
-                return a + d0.GetScaled(s); // it must intersect at a point, so find where
+            if (cross == 0.0) {
+                // parallel
+                return (e.X*d0.Y) == (e.Y*d0.X)
+                    ? ray.Clone()
+                    : null;
             }
 
-            // parallel
-            cross = (e.X * d0.Y) - (e.Y * d0.X);
-            if (cross * cross > e.GetMagnitudeSquared() * magnitudeSquared0 * Double.Epsilon)
-                return null; // no intersection
+            // not parallel
+            var t = ((e.X * d0.Y) - (e.Y * d0.X)) / cross;
+            if (t < 0.0)
+                return null; // not intersecting on other ray
+            if (t == 0.0)
+                return c; // clips the butt of the ray
 
-            return ray.Clone();
+            // it must intersect at a point, so find where
+            var s = ((e.X * d1.Y) - (e.Y * d1.X)) / cross;
+            if (s == 0.0)
+                return a;
+            return a + d0.GetScaled(s);
             // ReSharper restore CompareOfFloatsByEqualityOperator
         }
 

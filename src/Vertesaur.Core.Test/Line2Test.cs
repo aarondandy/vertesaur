@@ -155,7 +155,8 @@ namespace Vertesaur.Core.Test
             var d = new Line2(new Point2(2, 3), new Vector2(-1, -1));
 
             Assert.AreEqual(new Point2(0, 0), a.Intersection(b));
-            Assert.AreEqual(a, a.Intersection(c));
+            Assert.AreEqual(c, a.Intersection(c));
+            Assert.AreEqual(c, c.Intersection(a));
             Assert.AreEqual(null, a.Intersection(d));
         }
 
