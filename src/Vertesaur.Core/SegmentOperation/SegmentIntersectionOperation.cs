@@ -241,10 +241,14 @@ namespace Vertesaur.SegmentOperation
             var d1 = d - c;
             var e = c - a;
             var cross = (d0.X * d1.Y) - (d1.X * d0.Y);
+            var dot = d0.Dot(d1);
             var magnitudeSquared0 = d0.GetMagnitudeSquared();
             var magnitudeSquared1 = d1.GetMagnitudeSquared();
 
-            if (cross * cross > magnitudeSquared0 * magnitudeSquared1 * Double.Epsilon) {
+            var oldCheck = cross*cross > magnitudeSquared0*magnitudeSquared1*Double.Epsilon;
+            var newCheck = (magnitudeSquared0 * magnitudeSquared1) - (dot * dot) != 0;
+
+            if ((magnitudeSquared0 * magnitudeSquared1) - (dot * dot) != 0) {
                 // not parallel
                 var s = ((e.X * d1.Y) - (e.Y * d1.X)) / cross;
                 if (s < 0 || s > 1.0)
@@ -274,7 +278,8 @@ namespace Vertesaur.SegmentOperation
 
             // parallel
             cross = (e.X * d0.Y) - (e.Y * d0.X);
-            if (cross * cross > magnitudeSquared0 * e.GetMagnitudeSquared() * Double.Epsilon)
+            dot = d0.Dot(e);
+            if ((magnitudeSquared0 * e.GetMagnitudeSquared()) - (dot * dot) != 0)
                 return DefaultNoIntersection; // no intersection
             return IntersectionDetailsParallel(d0, d1, e, magnitudeSquared0, magnitudeSquared1, a, b, c, d);
             // ReSharper restore CompareOfFloatsByEqualityOperator

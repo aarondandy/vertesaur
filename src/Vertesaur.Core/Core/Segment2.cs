@@ -469,9 +469,10 @@ namespace Vertesaur
             var d1 = line.Direction;
             var e = c - A;
             var cross = (d0.X * d1.Y) - (d1.X * d0.Y);
+            var dot = d0.Dot(d1);
             var magnitudeSquared0 = d0.GetMagnitudeSquared();
 
-            if (cross * cross > d1.GetMagnitudeSquared() * magnitudeSquared0 * Double.Epsilon) {
+            if ((magnitudeSquared0 * d1.GetMagnitudeSquared()) - (dot * dot) != 0) {
                 // not parallel
                 var s = ((e.X * d1.Y) - (e.Y * d1.X)) / cross;
                 if (s < 0 || s > 1)
@@ -482,7 +483,8 @@ namespace Vertesaur
 
             // parallel
             cross = (e.X * d0.Y) - (e.Y * d0.X);
-            return !(cross * cross > e.GetMagnitudeSquared() * magnitudeSquared0 * Double.Epsilon);
+            dot = d0.Dot(e);
+            return !((magnitudeSquared0 * e.GetMagnitudeSquared()) - (dot * dot) != 0);
             // ReSharper restore CompareOfFloatsByEqualityOperator
         }
 
@@ -510,9 +512,10 @@ namespace Vertesaur
             var d1 = ray.Direction;
             var e = ray.P - A;
             var cross = (d0.X * d1.Y) - (d1.X * d0.Y);
+            var dot_d0d1 = d0.Dot(d1);
             var magnitudeSquared0 = d0.GetMagnitudeSquared();
 
-            if (cross * cross > d1.GetMagnitudeSquared() * magnitudeSquared0 * Double.Epsilon) {
+            if ((magnitudeSquared0 * d1.GetMagnitudeSquared()) - (dot_d0d1 * dot_d0d1) != 0) {
                 // not parallel
                 var s = ((e.X * d1.Y) - (e.Y * d1.X)) / cross;
                 if (s < 0 || s > 1)
@@ -531,11 +534,12 @@ namespace Vertesaur
 
             // parallel
             cross = (e.X * d0.Y) - (e.Y * d0.X);
-            if (cross * cross > e.GetMagnitudeSquared() * magnitudeSquared0 * Double.Epsilon)
+            var dot_d0_e = d0.Dot(e);
+            if ((magnitudeSquared0 * e.GetMagnitudeSquared()) - (dot_d0_e * dot_d0_e) != 0)
                 return null; // no intersection
 
-            var sa = d0.Dot(e) / magnitudeSquared0;
-            var sb = sa + (d0.Dot(d1) / magnitudeSquared0);
+            var sa = dot_d0_e / magnitudeSquared0;
+            var sb = sa + (dot_d0d1 / magnitudeSquared0);
             var sd = sb - sa;
 
             if (sd < 0) {
@@ -581,9 +585,10 @@ namespace Vertesaur
             var d1 = line.Direction;
             var e = c - A;
             var cross = (d0.X * d1.Y) - (d1.X * d0.Y);
+            var dot = d0.Dot(d1);
             var magnitudeSquared0 = d0.GetMagnitudeSquared();
 
-            if (cross * cross > d1.GetMagnitudeSquared() * magnitudeSquared0 * Double.Epsilon) {
+            if ((magnitudeSquared0 * d1.GetMagnitudeSquared()) - (dot * dot) != 0) {
                 // not parallel
                 var s = ((e.X * d1.Y) - (e.Y * d1.X)) / cross;
                 if (s < 0 || s > 1)
@@ -600,7 +605,8 @@ namespace Vertesaur
 
             // parallel
             cross = (e.X * d0.Y) - (e.Y * d0.X);
-            if (cross * cross > e.GetMagnitudeSquared() * magnitudeSquared0 * Double.Epsilon)
+            dot = d0.Dot(e);
+            if ((magnitudeSquared0 * e.GetMagnitudeSquared()) - (dot * dot) != 0)
                 return null; // no intersection
 
             return Clone();

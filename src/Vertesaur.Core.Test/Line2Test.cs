@@ -165,10 +165,15 @@ namespace Vertesaur.Core.Test
             var b = new Line2(new Point2(0, 1), new Vector2(0, 1));
             var c = new Line2(new Point2(2, 2), new Vector2(-1, -1));
             var d = new Line2(new Point2(2, 3), new Vector2(-1, -1));
+            var e = new Line2(new Point2(2, 3), new Vector2(-2, -2));
+            var f = new Line2(new Point2(2, 3), new Vector2(0.5, 0.5));
 
+            Assert.IsTrue(a.Intersects(a));
             Assert.IsTrue(a.Intersects(b));
             Assert.IsTrue(a.Intersects(c));
             Assert.IsFalse(a.Intersects(d));
+            Assert.IsFalse(a.Intersects(e));
+            Assert.IsFalse(a.Intersects(f));
         }
 
         [Test]
