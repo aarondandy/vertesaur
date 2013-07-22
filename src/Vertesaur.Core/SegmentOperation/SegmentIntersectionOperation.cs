@@ -291,7 +291,7 @@ namespace Vertesaur.SegmentOperation
             }
 
             // ReSharper disable CompareOfFloatsByEqualityOperator
-            if (sMax < 0 || sMin > 1.0)
+            if (sMax < 0.0 || sMin > 1.0)
                 return DefaultNoIntersection; // no intersection
             if (sMax == 0.0)
                 return new PointResult(a, 0.0, a == c ? 0.0 : 1.0); // the start point
