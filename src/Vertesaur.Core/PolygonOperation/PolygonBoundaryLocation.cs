@@ -89,11 +89,11 @@ namespace Vertesaur.PolygonOperation
         /// to be used for sorting.
         /// </summary>
         /// <remarks>
-        /// A segment ratio of exactly 0 indicates that the location is the start point of the segment.
+        /// A segment ratio of exactly 0.0 indicates that the location is the start point of the segment.
         /// A segment ratio of exactly 1.0 indicates that the location is the end point of the segment.
         /// If an intersection is created between the two points that has a ratio of 0 or 1,
         /// you may need to adjust it as these values have special meaning. Offset the value using
-        /// an epsilon delta.
+        /// a significantly small value if you must.
         /// Modification of this value may be OK as the location may need to be recalculated
         /// to account for the insertion of newly calculated intersection points.
         /// </remarks>
