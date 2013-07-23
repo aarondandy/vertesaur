@@ -1,0 +1,1 @@
+I don't really have contributing worked out just yet but hope to soon. If you are considering contributing please send me an e-mail and I will definitely get back to you. We will work something out.
