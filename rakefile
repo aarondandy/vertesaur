@@ -11,7 +11,7 @@ def extract_assembly_version(filePath)
 	nil
 end
 
-task :default => [:build,:sign_asm,:make_nupkg]
+task :default => [:build,:make_nupkg]
 
 task :make_nupkg => [:make_nupkg_core,:make_nupkg_generation]
 

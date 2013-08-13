@@ -39,6 +39,7 @@ namespace Vertesaur.Utility
             Contract.Requires(array != null);
             Contract.Requires(converter != null);
             Contract.Ensures(Contract.Result<TTo[]>() != null);
+            Contract.Ensures(Contract.Result<TTo[]>().Length == array.Length);
             return Array.ConvertAll(array, converter);
         }
 #endif

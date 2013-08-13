@@ -15,14 +15,14 @@ Release Notes
 * Code changes for portability across framework versions
 
 ## 0.8.1
-* Documentation Fixes
-* Ports for:
-** windows8
-** windowsphone8
-** sl4-windowsphone71
-** sl4
-** sl5
-* Code changes for portability across framework versions
+- Documentation Fixes
+- Ports for:
+	- windows8
+	- windowsphone8
+	- sl4-windowsphone71
+	- sl4
+	- sl5
+- Code changes for portability across framework versions
 
 ## 0.8.0
 * Distributing CodeContracts with the NuGet package

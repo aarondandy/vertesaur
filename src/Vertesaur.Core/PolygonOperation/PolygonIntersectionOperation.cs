@@ -127,11 +127,13 @@ namespace Vertesaur.PolygonOperation
                         list = new List<PolygonCrossing>();
                         ringCrossingsABuilder.Add(crossing.LocationA.RingIndex, list);
                     }
+                    Contract.Assume(list != null);
                     list.Add(crossing);
                     if (!ringCrossingsBBuilder.TryGetValue(crossing.LocationB.RingIndex, out list)) {
                         list = new List<PolygonCrossing>();
                         ringCrossingsBBuilder.Add(crossing.LocationB.RingIndex, list);
                     }
+                    Contract.Assume(list != null);
                     list.Add(crossing);
                 }
                 RingCrossingsA = PolygonRingCrossingLookup.Build(ringCrossingsABuilder, PolygonCrossing.LocationAComparer.CompareNonNull);
@@ -242,6 +244,7 @@ namespace Vertesaur.PolygonOperation
                     && next.LocationA != start.LocationA
                 ) {
                     result = next;
+                    Contract.Assume(current != null);
                     VisitEntrance(current);
                     VisitExit(next);
                     if (!ExitHops.TryGetValue(next, out current))
@@ -315,6 +318,7 @@ namespace Vertesaur.PolygonOperation
                 ) {
                     result = next;
                     VisitEntrance(next);
+                    Contract.Assume(current != null);
                     VisitExit(current);
                     if (!EntranceHops.TryGetValue(next, out current))
                         break;

@@ -298,7 +298,7 @@ namespace Vertesaur
         }
 
         /// <summary>
-        /// Calculates the distance between this line and <paramref name="p"/>
+        /// Calculates the distance between this line and the given <paramref name="point"/>
         /// </summary>
         /// <param name="point">The point to calculate distance to.</param>
         /// <returns>The distance.</returns>
@@ -316,7 +316,7 @@ namespace Vertesaur
         }
 
         /// <summary>
-        /// Calculates the squared distance between this line and <paramref name="p"/>
+        /// Calculates the squared distance between this line and the given <paramref name="point"/>
         /// </summary>
         /// <param name="point">The point to calculate squared distance to.</param>
         /// <returns>The squared distance.</returns>
