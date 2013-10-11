@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using NUnit.Framework;
 using Vertesaur.Transformation;
 
@@ -58,6 +59,21 @@ namespace Vertesaur.Core.Test
             ITransformation<Vector3, Vector2> ITransformation<Vector2, Vector3>.GetInverse() {
                 throw new NotImplementedException();
             }
+
+            public object TransformValue(object value) {
+                throw new NotImplementedException();
+            }
+
+            public IEnumerable<object> TransformValues(IEnumerable<object> values) {
+                throw new NotImplementedException();
+            }
+
+            public IEnumerable<KeyValuePair<Type, Type[]>> GetTypeMappings() {
+                return new[] {
+                    new KeyValuePair<Type, Type[]>(typeof(double), new[]{typeof(Vector2), typeof(Vector3)}),
+                    new KeyValuePair<Type, Type[]>(typeof(Vector2), new[]{typeof(Vector3)})
+                };
+            }
         }
 
         private class B :
@@ -107,6 +123,21 @@ namespace Vertesaur.Core.Test
 
             ITransformation<double, Vector3> ITransformation<Vector3, double>.GetInverse() {
                 throw new NotImplementedException();
+            }
+
+            public object TransformValue(object value) {
+                throw new NotImplementedException();
+            }
+
+            public IEnumerable<object> TransformValues(IEnumerable<object> values) {
+                throw new NotImplementedException();
+            }
+
+            public IEnumerable<KeyValuePair<Type, Type[]>> GetTypeMappings() {
+                return new[] {
+                    new KeyValuePair<Type, Type[]>(typeof(Vector2), new[]{typeof(Point2), typeof(Point3)}),
+                    new KeyValuePair<Type, Type[]>(typeof(Vector3), new[]{typeof(double)})
+                };
             }
         }
 

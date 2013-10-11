@@ -43,6 +43,24 @@ namespace Vertesaur.Transformation
         /// </summary>
         /// <returns>A transformation.</returns>
         ITransformation GetInverse();
+        /// <summary>
+        /// Transforms a compatible value.
+        /// </summary>
+        /// <param name="value">The value to transform from.</param>
+        /// <returns>The value after transformation.</returns>
+        object TransformValue(object value);
+        /// <summary>
+        /// Transforms a set if compatible values.
+        /// </summary>
+        /// <param name="values"></param>
+        /// <returns>A transformed set of values.</returns>
+        IEnumerable<object> TransformValues(IEnumerable<object> values);
+        /// <summary>
+        /// Gets the allowable type mappings for this conversion.
+        /// </summary>
+        /// <returns>The types that can be converted from and to.</returns>
+        IEnumerable<KeyValuePair<Type, Type[]>> GetTypeMappings();
+
     }
 
     /// <summary>
@@ -105,6 +123,19 @@ namespace Vertesaur.Transformation
             Contract.Ensures(Contract.Result<ITransformation>() != null);
             throw new NotImplementedException();
         }
+
+        public abstract object TransformValue(object value);
+
+        public virtual IEnumerable<object> TransformValues(IEnumerable<object> values) {
+            Contract.Requires(values != null);
+            Contract.Ensures(Contract.Result<IEnumerable<object>>() != null);
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<KeyValuePair<Type, Type[]>> GetTypeMappings() {
+            Contract.Ensures(Contract.Result<IEnumerable<Tuple<Type, Type[]>>>() != null);
+            throw new NotImplementedException();
+        }
     }
 
     [ContractClassFor(typeof(ITransformation<,>))]
@@ -130,6 +161,12 @@ namespace Vertesaur.Transformation
         ITransformation ITransformation.GetInverse() {
             throw new NotImplementedException();
         }
+
+        public abstract object TransformValue(object value);
+
+        public abstract IEnumerable<object> TransformValues(IEnumerable<object> values);
+
+        public abstract IEnumerable<KeyValuePair<Type, Type[]>> GetTypeMappings();
     }
 
     [ContractClassFor(typeof(ITransformation<>))]
@@ -160,6 +197,12 @@ namespace Vertesaur.Transformation
         ITransformation ITransformation.GetInverse() {
             throw new NotImplementedException();
         }
+
+        public abstract object TransformValue(object value);
+
+        public abstract IEnumerable<object> TransformValues(IEnumerable<object> values);
+
+        public abstract IEnumerable<KeyValuePair<Type, Type[]>> GetTypeMappings();
     }
 
 

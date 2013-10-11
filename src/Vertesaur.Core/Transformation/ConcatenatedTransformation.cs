@@ -40,6 +40,28 @@ namespace Vertesaur.Transformation
     public class ConcatenatedTransformation : ITransformation
     {
 
+        public static IEnumerable<KeyValuePair<Type, Type[]>> FindAllTypeMappings(IEnumerable<ITransformation> transformations) {
+            if(null == transformations) throw new ArgumentNullException("transformations");
+            Contract.Ensures(Contract.Result<IEnumerable<Tuple<Type, Type[]>>>() != null);
+            var txEnum = transformations.GetEnumerator();
+            if (!txEnum.MoveNext())
+                return Enumerable.Empty<KeyValuePair<Type, Type[]>>();
+
+            var mappings = txEnum.Current
+                .GetTypeMappings()
+                .ToList();
+
+            while (txEnum.MoveNext()) {
+                var currentPaths = txEnum.Current.GetTypeMappings();
+
+
+
+                throw new NotImplementedException();
+            }
+
+            throw new NotImplementedException();
+        }
+
         /// <summary>
         /// Creates a new concatenated transformation composed of a sequence of transformations.
         /// </summary>
@@ -136,6 +158,19 @@ namespace Vertesaur.Transformation
             }
         }
 
+        public object TransformValue(object value) {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<object> TransformValues(IEnumerable<object> values) {
+            if(values == null) throw new ArgumentNullException("values");
+            Contract.Ensures(Contract.Result<IEnumerable<object>>() != null);
+            return values.Select(TransformValue);
+        }
+
+        public IEnumerable<KeyValuePair<Type, Type[]>> GetTypeMappings() {
+            return FindAllTypeMappings(Transformations);
+        }
     }
 
     /// <summary>
