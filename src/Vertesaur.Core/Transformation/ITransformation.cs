@@ -56,10 +56,16 @@ namespace Vertesaur.Transformation
         /// <returns>A transformed set of values.</returns>
         IEnumerable<object> TransformValues(IEnumerable<object> values);
         /// <summary>
-        /// Gets the allowable type mappings for this conversion.
+        /// Lists the accepted input types for this transformation.
         /// </summary>
-        /// <returns>The types that can be converted from and to.</returns>
-        IEnumerable<KeyValuePair<Type, Type[]>> GetTypeMappings();
+        /// <returns>The input types that can be transformed.</returns>
+        Type[] GetInputTypes();
+        /// <summary>
+        /// Lists the possible output types for the given input type.
+        /// </summary>
+        /// <param name="inputType">The input type to find output types for.</param>
+        /// <returns>The possible output types for the given input type.</returns>
+        Type[] GetOutputTypes(Type inputType);
 
     }
 
@@ -132,8 +138,13 @@ namespace Vertesaur.Transformation
             throw new NotImplementedException();
         }
 
-        public IEnumerable<KeyValuePair<Type, Type[]>> GetTypeMappings() {
-            Contract.Ensures(Contract.Result<IEnumerable<Tuple<Type, Type[]>>>() != null);
+        public Type[] GetInputTypes() {
+            Contract.Ensures(Contract.Result<Type[]>() != null);
+            throw new NotImplementedException();
+        }
+
+        public Type[] GetOutputTypes(Type inputType) {
+            Contract.Ensures(Contract.Result<Type[]>() != null);
             throw new NotImplementedException();
         }
     }
@@ -166,7 +177,10 @@ namespace Vertesaur.Transformation
 
         public abstract IEnumerable<object> TransformValues(IEnumerable<object> values);
 
-        public abstract IEnumerable<KeyValuePair<Type, Type[]>> GetTypeMappings();
+        public abstract Type[] GetInputTypes();
+
+        public abstract Type[] GetOutputTypes(Type inputType);
+
     }
 
     [ContractClassFor(typeof(ITransformation<>))]
@@ -202,7 +216,10 @@ namespace Vertesaur.Transformation
 
         public abstract IEnumerable<object> TransformValues(IEnumerable<object> values);
 
-        public abstract IEnumerable<KeyValuePair<Type, Type[]>> GetTypeMappings();
+        public abstract Type[] GetInputTypes();
+
+        public abstract Type[] GetOutputTypes(Type inputType);
+
     }
 
 

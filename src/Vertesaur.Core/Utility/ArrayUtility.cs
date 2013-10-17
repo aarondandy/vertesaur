@@ -4,6 +4,12 @@ using System.Diagnostics.Contracts;
 
 namespace Vertesaur.Utility
 {
+
+    internal static class EmptyArray<T>
+    {
+        public static readonly T[] Value = new T[0];
+    }
+
     internal static class ArrayUtility
     {
 
