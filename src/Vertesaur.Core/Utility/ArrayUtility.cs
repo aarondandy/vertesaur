@@ -22,11 +22,7 @@ namespace Vertesaur.Utility
         public static ReadOnlyCollection<T> AsReadOnly<T>(this T[] array) {
             Contract.Requires(null != array);
             Contract.Ensures(Contract.Result<ReadOnlyCollection<T>>() != null);
-#if NETFX_CORE
             return new ReadOnlyCollection<T>(array);
-#else
-            return Array.AsReadOnly(array);
-#endif
         }
 
     }

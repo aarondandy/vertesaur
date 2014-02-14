@@ -68,11 +68,19 @@ namespace Vertesaur.Core.Test
                 throw new NotImplementedException();
             }
 
-            public IEnumerable<KeyValuePair<Type, Type[]>> GetTypeMappings() {
-                return new[] {
-                    new KeyValuePair<Type, Type[]>(typeof(double), new[]{typeof(Vector2), typeof(Vector3)}),
-                    new KeyValuePair<Type, Type[]>(typeof(Vector2), new[]{typeof(Vector3)})
+            public Type[] GetInputTypes() {
+                return new Type[] {
+                    typeof(double),
+                    typeof(Vector2)
                 };
+            }
+
+            public Type[] GetOutputTypes(Type inputType) {
+                if (inputType == typeof (double))
+                    return new[] {typeof (Vector2), typeof (Vector3)};
+                if (inputType == typeof (Vector2))
+                    return new[] {typeof(Vector3)};
+                return new Type[0];
             }
         }
 
@@ -133,11 +141,16 @@ namespace Vertesaur.Core.Test
                 throw new NotImplementedException();
             }
 
-            public IEnumerable<KeyValuePair<Type, Type[]>> GetTypeMappings() {
-                return new[] {
-                    new KeyValuePair<Type, Type[]>(typeof(Vector2), new[]{typeof(Point2), typeof(Point3)}),
-                    new KeyValuePair<Type, Type[]>(typeof(Vector3), new[]{typeof(double)})
-                };
+            public Type[] GetInputTypes() {
+                return new[] {typeof(Vector2), typeof(Vector3)};
+            }
+
+            public Type[] GetOutputTypes(Type inputType) {
+                if (inputType == typeof (Vector2))
+                    return new[] {typeof (Point2), typeof (Point3)};
+                if (inputType == typeof (Vector3))
+                    return new[] {typeof (double)};
+                return new Type[0];
             }
         }
 

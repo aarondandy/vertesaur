@@ -154,12 +154,16 @@ namespace Vertesaur.Transformation
         }
 
         public Type[] GetOutputTypes(Type inputType) {
-            var types = new List<Type> {inputType};
+            var types = new []{inputType};
             foreach (var tx in Transformations) {
-
-                throw new NotImplementedException();
+                if (types.Length == 0)
+                    break;
+                types = types
+                    .SelectMany(tx.GetOutputTypes)
+                    .Distinct()
+                    .ToArray();
             }
-            return types.ToArray();
+            return types;
         }
     }
 
