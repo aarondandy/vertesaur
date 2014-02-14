@@ -1,6 +1,6 @@
 ﻿// ===============================================================================
 //
-// Copyright (c) 2012 Aaron Dandy 
+// Copyright (c) 2014 Aaron Dandy 
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -29,11 +29,11 @@ using System.Reflection;
 // associated with an assembly.
 [assembly: AssemblyCompany("Aaron Dandy")]
 [assembly: AssemblyProduct("Vertesaur!")]
-[assembly: AssemblyCopyright("Copyright © Aaron Dandy 2012")]
+[assembly: AssemblyCopyright("Copyright © Aaron Dandy 2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
-[assembly: AssemblyVersion("0.9.0.*")]
+[assembly: AssemblyVersion("0.10.0.*")]
 #if DEBUG
 [assembly: AssemblyInformationalVersion("developer build")]
 #endif
