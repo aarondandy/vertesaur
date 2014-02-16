@@ -33,7 +33,7 @@ using System.Reflection;
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
-[assembly: AssemblyVersion("0.10.0.*")]
+[assembly: AssemblyVersion("0.10.1.*")]
 #if DEBUG
 [assembly: AssemblyInformationalVersion("developer build")]
 #endif

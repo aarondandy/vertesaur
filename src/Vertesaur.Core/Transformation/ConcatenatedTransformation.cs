@@ -138,7 +138,9 @@ namespace Vertesaur.Transformation
         }
 
         public object TransformValue(object value) {
-            throw new NotImplementedException();
+            foreach (var tx in Transformations)
+                value = tx.TransformValue(value);
+            return value;
         }
 
         public IEnumerable<object> TransformValues(IEnumerable<object> values) {

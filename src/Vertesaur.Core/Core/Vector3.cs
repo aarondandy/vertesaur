@@ -29,7 +29,7 @@ using System.Diagnostics.Contracts;
 namespace Vertesaur
 {
     /// <summary>
-    /// A vector in 2D space.
+    /// A vector in 3D space.
     /// </summary>
     public struct Vector3 :
         IVector3<double>,
