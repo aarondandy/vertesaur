@@ -40,8 +40,9 @@ namespace Vertesaur.Generation.Expressions
             Contract.Requires(parameter != null);
             Contract.Requires(parameter.IsMemoryLocationOrConstant());
             Contract.Ensures(Contract.Result<Expression>() != null);
+            var test = ReductionExpressionGenerator.Generate("GREATEREQUAL", parameter, ReductionExpressionGenerator.Generate("ZERO", Type));
             return Condition(
-                ReductionExpressionGenerator.Generate("GREATEREQUAL", parameter, ReductionExpressionGenerator.Generate("ZERO", Type)),
+                test,
                 parameter,
                 ReductionExpressionGenerator.Generate("NEGATE", parameter)
             );

@@ -76,6 +76,7 @@ namespace Vertesaur.Transformation
         [Conditional("CONTRACTS_FULL")]
         private void CodeContractInvariant() {
             Contract.Invariant(Transformations != null);
+            Contract.Invariant(Contract.ForAll(Transformations, x => null != x));
         }
 
         /// <summary>

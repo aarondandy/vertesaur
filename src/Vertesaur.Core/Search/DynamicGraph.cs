@@ -252,6 +252,7 @@ namespace Vertesaur.Search
             Contract.Requires(lookUp != null);
             Contract.Requires(lookUp.Count > 0);
             Contract.Requires(lookUp.Count >= keys.Count);
+            Contract.Requires(Contract.ForAll(lookUp.Values, x => x != null));
             // ReSharper disable CompareNonConstrainedGenericWithNull
             Contract.Requires(Contract.ForAll(keys, key => key != null && lookUp.ContainsKey(key)));
             Contract.Ensures(Contract.ValueAtReturn(out smallestNode) != null);
@@ -338,14 +339,19 @@ namespace Vertesaur.Search
                     if (ReferenceEquals(null, neighborInfo) || ReferenceEquals(null, neighborInfo.Node))
                         continue;
 
-                    if (!nodeDataCache.TryGetValue(neighborInfo.Node, out nodeData)) {
-                        nodeDataCache.Add(neighborInfo.Node, new DynamicGraphNodeData<TNode, TCost, TEdge>(currentNode, neighborInfo.Cost, neighborInfo.Edge));
-                        visitRequired.Add(neighborInfo.Node);
+                    if (nodeDataCache.TryGetValue(neighborInfo.Node, out nodeData)) {
+                        if (CostComparer.Compare(neighborInfo.Cost, nodeData.Cost) < 0) {
+                            Contract.Assume(nodeData != null);
+                            nodeData.Node = currentNode;
+                            nodeData.Cost = neighborInfo.Cost;
+                            nodeData.Edge = neighborInfo.Edge;
+                            visitRequired.Add(neighborInfo.Node);
+                        }
                     }
-                    else if (CostComparer.Compare(neighborInfo.Cost, nodeData.Cost) < 0) {
-                        nodeData.Node = currentNode;
-                        nodeData.Cost = neighborInfo.Cost;
-                        nodeData.Edge = neighborInfo.Edge;
+                    else {
+                        nodeDataCache.Add(
+                            neighborInfo.Node,
+                            new DynamicGraphNodeData<TNode, TCost, TEdge>(currentNode, neighborInfo.Cost, neighborInfo.Edge));
                         visitRequired.Add(neighborInfo.Node);
                     }
                 }
@@ -362,6 +368,7 @@ namespace Vertesaur.Search
                     return null;
                 // ReSharper restore CompareNonConstrainedGenericWithNull
                 while (nodeDataCache.TryGetValue(currentNode, out nodeData)) {
+                    Contract.Assume(nodeData != null);
                     pathResult.Add(new DynamicGraphNodeData<TNode, TCost, TEdge>(currentNode, nodeData.Cost, nodeData.Edge));
                     if (Equals(currentNode, start))
                         break;

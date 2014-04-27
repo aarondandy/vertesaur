@@ -25,6 +25,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
 
@@ -82,6 +83,13 @@ namespace Vertesaur
         private MultiLineString2(List<LineString2> lineStrings)
             : base(lineStrings ?? new List<LineString2>()) { }
 
+        [ContractInvariantMethod]
+        [Conditional("CONTRACTS_FULL")]
+        private void CodeContractInvariant() {
+            Contract.Invariant(Contract.ForAll(this, x => x != null));
+            Contract.Invariant(Contract.ForAll(0, Count, i => this[i] != null));
+        }
+
         /// <summary>
         /// Indicates whether the current object is equal to another object of the same type.
         /// </summary>
@@ -105,6 +113,18 @@ namespace Vertesaur
             return true;
         }
 
+        protected override void SetItem(int index, LineString2 item) {
+            if (null == item) throw new ArgumentNullException("item", "Null line strings are not allowed.");
+            Contract.EndContractBlock();
+            base.SetItem(index, item);
+        }
+
+        protected override void InsertItem(int index, LineString2 item) {
+            if (null == item) throw new ArgumentNullException("item", "Null line strings are not allowed.");
+            Contract.EndContractBlock();
+            base.InsertItem(index, item);
+        }
+
         /// <inheritdoc/>
         public override bool Equals(object obj) {
             return Equals(obj as MultiLineString2);
@@ -112,7 +132,11 @@ namespace Vertesaur
 
         /// <inheritdoc/>
         public override int GetHashCode() {
-            return GetMbr().GetHashCode() ^ -700084810;
+            var hash = -700084810 ^ unchecked(Count * 3);
+            var mbr = GetMbr();
+            if (mbr != null)
+                hash ^= mbr.GetHashCode();
+            return hash;
         }
 
 
@@ -136,6 +160,7 @@ namespace Vertesaur
             Contract.Ensures(Contract.Result<MultiLineString2>() != null);
             var lines = new List<LineString2>(Count);
             for (var i = 0; i < Count; i++) {
+                Contract.Assume(this[i] != null);
                 lines.Add(this[i].Clone());
             }
             return new MultiLineString2(lines);
@@ -150,12 +175,14 @@ namespace Vertesaur
         /// </summary>
         /// <returns>A minimum bounding rectangle.</returns>
         public Mbr GetMbr() {
-            if (Count <= 0)
-                return null;
-
-            var mbr = this[0].GetMbr();
-            for (var i = 1; i < Count; i++) {
-                mbr = mbr.Encompass(this[i].GetMbr());
+            Contract.Ensures(Count != 0 || Contract.Result<Mbr>() == null);
+            Mbr mbr = null;
+            for (var i = 0; i < Count; i++) {
+                Contract.Assume(this[i] != null);
+                var thisMbr = this[i].GetMbr();
+                mbr = mbr == null
+                    ? thisMbr
+                    : mbr.Encompass(thisMbr);
             }
             return mbr;
         }
@@ -185,6 +212,7 @@ namespace Vertesaur
                 if (0 != mSum)
                     return new Point2(xSum / mSum, ySum / mSum);
             }
+            Contract.Assume(this[0] != null);
             return lastIndex == 0 ? this[0].GetCentroid() : Point2.Invalid;
             // ReSharper restore CompareOfFloatsByEqualityOperator
         }
@@ -198,8 +226,10 @@ namespace Vertesaur
             if (0 == Count)
                 return Double.NaN;
 
+            Contract.Assume(this[0] != null);
             var sum = this[0].GetMagnitude();
             for (var i = 1; i < Count; i++) {
+                Contract.Assume(this[i] != null);
                 sum += this[i].GetMagnitude();
             }
             return sum;
@@ -234,10 +264,11 @@ namespace Vertesaur
             if (0 == Count)
                 return Double.NaN;
 
-            var minDist = this[0].DistanceSquared(p);
-            for (var i = 1; i < Count; i++) {
+            var minDist = Double.NaN;
+            for (var i = 0; i < Count; i++) {
+                Contract.Assume(this[i] != null);
                 var localDist = this[i].DistanceSquared(p);
-                if (localDist < minDist)
+                if (Double.IsNaN(minDist) || localDist < minDist)
                     minDist = localDist;
             }
             return minDist;
@@ -250,6 +281,7 @@ namespace Vertesaur
         /// <returns>True when a point intersects this multi-line string.</returns>
         public bool Intersects(Point2 p) {
             for (var i = 0; i < Count; i++) {
+                Contract.Assume(this[i] != null);
                 if (this[i].Intersects(p))
                     return true;
             }
@@ -262,6 +294,7 @@ namespace Vertesaur
         /// <inheritdoc/>
         public bool Intersects(MultiPoint2 other) {
             for (var i = 0; i < Count; i++) {
+                Contract.Assume(this[i] != null);
                 if (this[i].Intersects(other))
                     return true;
             }

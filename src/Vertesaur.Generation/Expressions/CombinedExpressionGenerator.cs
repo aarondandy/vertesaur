@@ -43,6 +43,7 @@ namespace Vertesaur.Generation.Expressions
         /// Replaces the MEF expression generator for frameworks that do not have MEF.
         /// </summary>
         public static CombinedExpressionGenerator GenerateDefaultMefReplacement() {
+            Contract.Ensures(Contract.Result<CombinedExpressionGenerator>() != null);
             return new CombinedExpressionGenerator(new IExpressionGenerator[] {
                 new CoreExpressionGenerator(),
                 new VectorExpressionGenerator()

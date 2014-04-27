@@ -53,6 +53,7 @@ namespace Vertesaur.Generation.Expressions
         /// <inheritdoc/>
         public override Expression Reduce() {
             Contract.Ensures(Contract.Result<Expression>() != null);
+
             if (Components.All(x => x.IsMemoryLocationOrConstant()))
                 return CreateExpression(Components);
 

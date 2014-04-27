@@ -96,6 +96,7 @@ namespace Vertesaur.Generation.Expressions
         private ParameterExpression RemoveFirstPending(Type type) {
             var node = _pending.First;
             while (null != node) {
+                Contract.Assert(node.Value != null);
                 if (node.Value.Type == type) {
                     _pending.Remove(node);
                     return node.Value;

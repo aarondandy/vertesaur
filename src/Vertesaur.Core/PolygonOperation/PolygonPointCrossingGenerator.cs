@@ -76,7 +76,10 @@ namespace Vertesaur.PolygonOperation
 
         private int[] GetSortedRingSegmentIndices(Ring2 ring) {
             Contract.Requires(null != ring);
-            return _sortedRingSegmentIndices.GetOrAdd(ring, GenerateSortedRingSegmentIndices);
+            Contract.Ensures(Contract.Result<int[]>() != null);
+            var result = _sortedRingSegmentIndices.GetOrAdd(ring, GenerateSortedRingSegmentIndices);
+            Contract.Assume(result != null);
+            return result;
         }
 #endif
 

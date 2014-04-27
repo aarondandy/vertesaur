@@ -464,21 +464,25 @@ namespace Vertesaur.PolygonOperation
 
         [Pure] private static PolygonBoundaryLocation GetLocationA(PolygonCrossing crossing) {
             Contract.Requires(crossing != null);
+            Contract.Ensures(Contract.Result<PolygonBoundaryLocation>() != null);
             return crossing.LocationA;
         }
 
         [Pure] private static PolygonBoundaryLocation GetLocationB(PolygonCrossing crossing) {
             Contract.Requires(crossing != null);
+            Contract.Ensures(Contract.Result<PolygonBoundaryLocation>() != null);
             return crossing.LocationB;
         }
 
         [Pure] private static int GetRingIndexA(PolygonCrossing crossing) {
             Contract.Requires(crossing != null);
+            Contract.Ensures(Contract.Result<int>() >= 0);
             return crossing.LocationA.RingIndex;
         }
 
         [Pure] private static int GetRingIndexB(PolygonCrossing crossing) {
             Contract.Requires(crossing != null);
+            Contract.Ensures(Contract.Result<int>() >= 0);
             return crossing.LocationB.RingIndex;
         }
 
@@ -813,6 +817,7 @@ namespace Vertesaur.PolygonOperation
                 return ring[nextSegmentIndex];
             }
             var nextCrossingLocation = getLocation(nextCrossing);
+            Contract.Assume(nextCrossingLocation != null);
             return currentLocation.SegmentIndex == nextCrossingLocation.SegmentIndex
                 && currentLocation.SegmentRatio < nextCrossingLocation.SegmentRatio
                 ? nextCrossing.Point
@@ -876,6 +881,7 @@ namespace Vertesaur.PolygonOperation
                 ];
             }
             var previousCrossingLocation = getLocation(previousCrossing);
+            Contract.Assume(previousCrossingLocation != null);
             if (currentLocation.SegmentRatio == 0) {
                 Contract.Assume(previousSegmentIndex < ring.Count);
                 return previousSegmentIndex == previousCrossingLocation.SegmentIndex

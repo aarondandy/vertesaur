@@ -807,11 +807,17 @@ namespace Vertesaur
         /// <param name="testContainer">The ring to test with.</param>
         /// <returns>true if this ring is within the other ring.</returns>
         internal bool NonIntersectingWithin(Ring2 testContainer) {
-            if (ReferenceEquals(null, testContainer))
+            Contract.Ensures(testContainer != null || !Contract.Result<bool>());
+
+            if (testContainer == null)
                 return false;
 
             var thisMbr = GetMbr();
+            if (thisMbr == null)
+                return false;
             var containerMbr = testContainer.GetMbr();
+            if (containerMbr == null)
+                return false;
 
             var notEqual = !thisMbr.Equals(containerMbr);
             var bestResultGuess = notEqual;

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
 
 namespace Vertesaur.Generation.Expressions
@@ -33,6 +34,12 @@ namespace Vertesaur.Generation.Expressions
         /// </summary>
         public IExpressionGenerator ReductionExpressionGenerator {
             get {
+                Contract.Ensures(Contract.Result<IExpressionGenerator>() != null);
+
+#if !NO_MEF
+                Contract.Assume(MefCombinedExpressionGenerator.Default != null);
+#endif
+
                 return _reductionExpressionGenerator ??
 #if !NO_MEF
                     MefCombinedExpressionGenerator.Default

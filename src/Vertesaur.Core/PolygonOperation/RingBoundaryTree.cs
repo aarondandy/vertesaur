@@ -286,7 +286,8 @@ namespace Vertesaur.PolygonOperation
             Contract.Requires(null != ring);
             Contract.Requires(null != container);
 
-            if (ring.GetMbr().Within(container.GetMbr())) {
+            var ringMbr = ring.GetMbr();
+            if (ringMbr != null && ringMbr.Within(container.GetMbr())) {
                 for (var i = 0; i < ring.Count; i++) {
                     var intersectionCount = container.IntersectionPositiveXRayCount(ring[i]);
                     if (intersectionCount > 0)

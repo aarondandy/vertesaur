@@ -271,6 +271,7 @@ namespace Vertesaur.Generation.GenericOperations
         [Conditional("CONTRACTS_FULL")]
         private void CodeContractInvariant() {
             Contract.Invariant(ExpressionGenerator != null);
+            Contract.Invariant(_zeroValueGenerator != null);
         }
 
         private Func<TFrom, TTo> BuildConversion<TFrom, TTo>() {
@@ -283,11 +284,14 @@ namespace Vertesaur.Generation.GenericOperations
 
         private CreateConstantFunc BuildConstant(string expressionName) {
             Contract.Requires(!String.IsNullOrEmpty(expressionName));
-            Contract.EndContractBlock();
+            Contract.Ensures(expressionName != "0" || Contract.Result<CreateConstantFunc>() != null);
             var expression = ExpressionGenerator.Generate(expressionName, typeof(TValue));
-            if (null == expression)
-                return null;
-            return Expression.Lambda<CreateConstantFunc>(expression).Compile();
+            if (expression == null && expressionName == "0")
+                expression = Expression.Default(typeof (TValue));
+
+            return expression == null
+                ? null
+                : Expression.Lambda<CreateConstantFunc>(expression).Compile();
         }
 
         private UnaryFunc BuildUnaryFunc(string expressionName) {

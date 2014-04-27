@@ -62,7 +62,6 @@ namespace Vertesaur.Generation.Expressions
         public IExpressionGenerator TopLevelGenerator {
             get {
                 Contract.Ensures(Contract.Result<IExpressionGenerator>() != null);
-                Contract.EndContractBlock();
                 throw new NotImplementedException();
             }
         }
@@ -70,7 +69,6 @@ namespace Vertesaur.Generation.Expressions
         public string ExpressionName {
             get {
                 Contract.Ensures(!String.IsNullOrEmpty(Contract.Result<string>()));
-                Contract.EndContractBlock();
                 throw new NotImplementedException();
             }
         }
@@ -78,14 +76,12 @@ namespace Vertesaur.Generation.Expressions
         public ReadOnlyCollection<Expression> InputExpressions {
             get {
                 Contract.Ensures(Contract.Result<ReadOnlyCollection<Expression>>() != null);
-                Contract.EndContractBlock();
+                Contract.Ensures(Contract.ForAll(Contract.Result<ReadOnlyCollection<Expression>>(), x => x != null));
                 throw new NotImplementedException();
             }
         }
 
-        public Type DesiredResultType {
-            get { throw new NotImplementedException(); }
-        }
+        public abstract Type DesiredResultType { get; }
     }
 
 }

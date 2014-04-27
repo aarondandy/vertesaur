@@ -113,7 +113,11 @@ namespace Vertesaur
 
         /// <inheritdoc/>
         public override int GetHashCode() {
-            return GetMbr().GetHashCode() ^ 1020930680;
+            var hash = 1020930680 ^ unchecked(Count * 7);
+            var mbr = GetMbr();
+            if (mbr != null)
+                hash ^= mbr.GetHashCode();
+            return hash;
         }
 
         /// <inheritdoc/>

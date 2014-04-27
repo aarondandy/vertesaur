@@ -106,7 +106,7 @@ namespace Vertesaur
         /// <returns>The MBR encompassing the given points.</returns>
         public static Mbr Create(List<Point2> points) {
             if (null == points) throw new ArgumentNullException("points");
-            Contract.EndContractBlock();
+            Contract.Ensures(points.Count > 0 ? Contract.Result<Mbr>() != null : Contract.Result<Mbr>() == null);
 
             if (points.Count == 0)
                 return null;

@@ -135,14 +135,14 @@ namespace Vertesaur
 
         /// <inheritdoc/>
         protected override void SetItem(int index, Ring2 item) {
-            if (null == item) throw new ArgumentNullException("item", "Null rings are not valid.");
+            if (null == item) throw new ArgumentNullException("item", "Null rings are not allowed.");
             Contract.EndContractBlock();
             base.SetItem(index, item);
         }
 
         /// <inheritdoc/>
         protected override void InsertItem(int index, Ring2 item) {
-            if (null == item) throw new ArgumentNullException("item", "Null rings are not valid.");
+            if (null == item) throw new ArgumentNullException("item", "Null rings are not allowed.");
             Contract.EndContractBlock();
             base.InsertItem(index, item);
         }
@@ -192,12 +192,13 @@ namespace Vertesaur
         /// </summary>
         /// <returns>A minimum bounding rectangle.</returns>
         public Mbr GetMbr() {
-            if (Count <= 0)
-                return null;
-
-            var mbr = this[0].GetMbr();
-            for (var i = 1; i < Count; i++) {
-                mbr = mbr.Encompass(this[i].GetMbr());
+            Contract.Ensures(Count != 0 || Contract.Result<Mbr>() == null);
+            Mbr mbr = null;
+            for (var i = 0; i < Count; i++) {
+                var thisMbr = this[i].GetMbr();
+                mbr = mbr == null
+                    ? thisMbr
+                    : mbr.Encompass(thisMbr);
             }
             return mbr;
         }
@@ -400,7 +401,11 @@ namespace Vertesaur
 
         /// <inheritdoc/>
         public override int GetHashCode() {
-            return GetMbr().GetHashCode() ^ -1111034994;
+            var hash = -1111034994 ^ unchecked(Count * 5);
+            var mbr = GetMbr();
+            if (mbr != null)
+                hash ^= mbr.GetHashCode();
+            return hash;
         }
 
         /// <inheritdoc/>

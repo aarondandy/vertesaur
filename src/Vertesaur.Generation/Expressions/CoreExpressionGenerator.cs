@@ -256,11 +256,15 @@ namespace Vertesaur.Generation.Expressions
         private Expression GenerateArithmetic(IExpressionGenerationRequest request, IList<Expression> inputs) {
             Contract.Requires(request != null);
             Contract.Requires(inputs != null);
-            Contract.Requires(inputs.Count >= 2);
-            var result = GenerateArithmetic(request, inputs[0], inputs[1]);
+            Contract.Requires(inputs.Count >= 1);
+            Contract.Requires(Contract.ForAll(inputs, x => x != null));
+            Contract.Requires(Contract.ForAll(0, inputs.Count, i => inputs[i] != null));
+            Contract.Assume(inputs[0] != null);
+            var result = inputs[0]; // GenerateArithmetic(request, inputs[0], inputs[1]);
             if (null == result)
                 return null;
-            for (int i = 2; i < inputs.Count; i++) {
+            for (int i = 1; i < inputs.Count; i++) {
+                Contract.Assume(inputs[i] != null);
                 result = GenerateArithmetic(request, result, inputs[i]);
                 if (null == result)
                     return null;
