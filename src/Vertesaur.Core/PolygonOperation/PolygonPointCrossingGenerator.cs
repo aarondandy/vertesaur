@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
-using Vertesaur.CodeContracts;
 using Vertesaur.SegmentOperation;
 using Vertesaur.Utility;
 
@@ -132,12 +131,17 @@ namespace Vertesaur.PolygonOperation
             var result = new List<PolygonCrossing>();
             for (int ringIndexA = 0; ringIndexA < _a.Count; ringIndexA++) {
                 var ringA = _a[ringIndexA];
+                Contract.Assume(ringA != null);
                 if (ringA.Count == 0)
                     continue;
 
                 var ringAMbr = ringA.GetMbr();
+                if(ringAMbr == null)
+                    continue;
+                
                 for (int ringIndexB = 0; ringIndexB < _b.Count; ringIndexB++) {
                     var ringB = _b[ringIndexB];
+                    Contract.Assume(ringB != null);
                     if (ringAMbr.Intersects(ringB.GetMbr()) && ringB.Count > 0) {
                         Contract.Assume(ringA.Count > 0);
                         result.AddRange(GenerateRingCrossings(ringA, ringB, ringIndexA, ringIndexB));
@@ -168,9 +172,14 @@ namespace Vertesaur.PolygonOperation
         private sealed class RingCrossingGenerationTask
         {
             public RingCrossingGenerationTask(Ring2 ringA, Ring2 ringB, int ringIndexA, int ringIndexB) {
-                CodeContractHelper.RequiresListIndexValid(ringA, ringIndexA);
-                CodeContractHelper.RequiresListIndexValid(ringB, ringIndexB);
-
+                Contract.Requires(ringA != null);
+                Contract.Requires(ringA.Count > 0);
+                Contract.Requires(ringIndexA >= 0);
+                Contract.Requires(ringIndexA < ringA.Count);
+                Contract.Requires(ringB != null);
+                Contract.Requires(ringB.Count > 0);
+                Contract.Requires(ringIndexB >= 0);
+                Contract.Requires(ringIndexB < ringB.Count);
                 RingA = ringA;
                 RingB = ringB;
                 RingIndexA = ringIndexA;
@@ -222,8 +231,10 @@ namespace Vertesaur.PolygonOperation
         }
 
         private List<PolygonCrossing> GenerateRingCrossings(Ring2 ringA, Ring2 ringB, int ringIndexA, int ringIndexB) {
-            CodeContractHelper.RequiresNotNullOrEmpty(ringA);
-            CodeContractHelper.RequiresNotNullOrEmpty(ringB);
+            Contract.Requires(ringA != null);
+            Contract.Requires(ringA.Count > 0);
+            Contract.Requires(ringB != null);
+            Contract.Requires(ringB.Count > 0);
             Contract.Requires(ringIndexA >= 0);
             Contract.Requires(ringIndexB >= 0);
             Contract.Ensures(Contract.Result<List<PolygonCrossing>>() != null);
@@ -241,8 +252,14 @@ namespace Vertesaur.PolygonOperation
         /// <param name="ringIndexA">The ring index on polygon a.</param>
         /// <param name="ringIndexB">The ring index on polygon b.</param>
         private List<PolygonCrossing> GenerateRingCrossingsSorted(Ring2 ringA, Ring2 ringB, int ringIndexA, int ringIndexB) {
-            CodeContractHelper.RequiresListIndexValid(ringA, ringIndexA);
-            CodeContractHelper.RequiresListIndexValid(ringB, ringIndexB);
+            Contract.Requires(ringA != null);
+            Contract.Requires(ringA.Count > 0);
+            Contract.Requires(ringIndexA >= 0);
+            Contract.Requires(ringIndexA < ringA.Count);
+            Contract.Requires(ringB != null);
+            Contract.Requires(ringB.Count > 0);
+            Contract.Requires(ringIndexB >= 0);
+            Contract.Requires(ringIndexB < ringB.Count);
             Contract.Ensures(Contract.Result<List<PolygonCrossing>>() != null);
 
             int minSegmentSearchIndicesB = 0;
@@ -314,8 +331,10 @@ namespace Vertesaur.PolygonOperation
         }
 
         private static List<PolygonCrossing> GenerateRingCrossingsBruteForce(Ring2 ringA, Ring2 ringB, int ringIndexA, int ringIndexB) {
-            CodeContractHelper.RequiresNotNullOrEmpty(ringA);
-            CodeContractHelper.RequiresNotNullOrEmpty(ringB);
+            Contract.Requires(ringA != null);
+            Contract.Requires(ringA.Count >= 0);
+            Contract.Requires(ringB != null);
+            Contract.Requires(ringB.Count > 0);
             Contract.Requires(ringIndexA >= 0);
             Contract.Requires(ringIndexB >= 0);
             Contract.Ensures(Contract.Result<List<PolygonCrossing>>() != null);

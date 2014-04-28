@@ -268,6 +268,7 @@ namespace Vertesaur.Search
                 //var smallest = new KeyValuePair<TNode, DynamicGraphNodeData<TNode, TCost, TEdge>>(currentNode, lookUp[currentNode]);
                 smallestNode = currentNode;
                 smallestEdge = lookUp[currentNode];
+                Contract.Assume(smallestEdge != null);
                 // ReSharper restore AssignNullToNotNullAttribute
 
                 while (enumerator.MoveNext()) {
@@ -275,6 +276,7 @@ namespace Vertesaur.Search
 
                     // ReSharper disable AssignNullToNotNullAttribute
                     var currentData = lookUp[currentNode];
+                    Contract.Assume(currentData != null);
                     // ReSharper restore AssignNullToNotNullAttribute
 
                     if (CostComparer.Compare(smallestEdge.Cost, currentData.Cost) > 0) {
@@ -340,8 +342,8 @@ namespace Vertesaur.Search
                         continue;
 
                     if (nodeDataCache.TryGetValue(neighborInfo.Node, out nodeData)) {
+                        Contract.Assume(nodeData != null);
                         if (CostComparer.Compare(neighborInfo.Cost, nodeData.Cost) < 0) {
-                            Contract.Assume(nodeData != null);
                             nodeData.Node = currentNode;
                             nodeData.Cost = neighborInfo.Cost;
                             nodeData.Edge = neighborInfo.Edge;

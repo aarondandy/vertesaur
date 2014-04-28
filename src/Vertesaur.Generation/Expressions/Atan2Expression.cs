@@ -34,14 +34,14 @@ namespace Vertesaur.Generation.Expressions
             Contract.Ensures(Contract.Result<Expression>() != null);
             if (typeof(double) == LeftParameter.Type && typeof(double) == RightParameter.Type)
                 return Call(MathAtan2DoubleMethod, LeftParameter, RightParameter);
-            if (typeof(float) == LeftParameter.Type && typeof(float) == RightParameter.Type)
-                return ReductionExpressionGenerator.GenerateConversionExpression(
-                    typeof(float),
-                    Call(MathAtan2DoubleMethod,
-                        ReductionExpressionGenerator.GenerateConversionExpression(typeof(double), LeftParameter),
-                        ReductionExpressionGenerator.GenerateConversionExpression(typeof(double), RightParameter)
-                    )
+            if (typeof (float) == LeftParameter.Type && typeof (float) == RightParameter.Type) {
+                var call = Call(MathAtan2DoubleMethod,
+                    ReductionExpressionGenerator.GenerateConversionExpression(typeof (double), LeftParameter),
+                    ReductionExpressionGenerator.GenerateConversionExpression(typeof (double), RightParameter)
                 );
+                Contract.Assume(call != null);
+                return ReductionExpressionGenerator.GenerateConversionExpression(typeof (float), call);
+            }
 
             if (LeftParameter.IsMemoryLocationOrConstant() && RightParameter.IsMemoryLocationOrConstant())
                 return GenerateAtan2Expressions(LeftParameter, RightParameter);

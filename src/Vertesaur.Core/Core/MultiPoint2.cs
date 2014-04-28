@@ -97,7 +97,10 @@ namespace Vertesaur
         /// <param name="p">The point to calculate distance to.</param>
         /// <returns>The distance.</returns>
         public double Distance(Point2 p) {
-            Contract.Ensures(!(Contract.Result<double>() < 0));
+            Contract.Ensures(
+                Contract.Result<double>() >= 0.0
+                || Double.IsNaN(Contract.Result<double>())
+                || Double.IsPositiveInfinity(Contract.Result<double>()));
             return Math.Sqrt(DistanceSquared(p));
         }
 
@@ -107,7 +110,10 @@ namespace Vertesaur
         /// <param name="p">The point to calculate squared distance to.</param>
         /// <returns>The squared distance.</returns>
         public double DistanceSquared(Point2 p) {
-            Contract.Ensures(!(Contract.Result<double>() < 0));
+            Contract.Ensures(
+                Contract.Result<double>() >= 0.0
+                || Double.IsNaN(Contract.Result<double>())
+                || Double.IsPositiveInfinity(Contract.Result<double>()));
             if (Count <= 0)
                 return Double.NaN;
 

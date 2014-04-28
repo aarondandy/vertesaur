@@ -129,7 +129,9 @@ namespace Vertesaur
         /// <inheritdoc/>
         public override string ToString() {
             Contract.Ensures(!String.IsNullOrEmpty(Contract.Result<string>()));
-            return String.Format("r:" + Radius.ToString(CultureInfo.InvariantCulture));
+            var result = String.Format("r:" + Radius.ToString(CultureInfo.InvariantCulture));
+            Contract.Assume(!String.IsNullOrEmpty(result));
+            return result;
         }
 
     }

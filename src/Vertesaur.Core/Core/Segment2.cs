@@ -61,7 +61,10 @@ namespace Vertesaur
         /// <param name="p">A point.</param>
         /// <returns>Distance from a point to a line segment.</returns>
         [Pure] public static double Distance(Point2 a, Point2 b, Point2 p) {
-            Contract.Ensures(!(Contract.Result<double>() < 0));
+            Contract.Ensures(
+                Contract.Result<double>() >= 0.0
+                || Double.IsNaN(Contract.Result<double>())
+                || Double.IsPositiveInfinity(Contract.Result<double>()));
             Order(ref a, ref b);
             var d = b - a;
             var v = p - a;
@@ -86,7 +89,10 @@ namespace Vertesaur
         /// <param name="p">A point.</param>
         /// <returns>Squared distance from a point to a line segment.</returns>
         [Pure] public static double DistanceSquared(Point2 a, Point2 b, Point2 p) {
-            Contract.Ensures(!(Contract.Result<double>() < 0));
+            Contract.Ensures(
+                Contract.Result<double>() >= 0.0
+                || Double.IsNaN(Contract.Result<double>())
+                || Double.IsPositiveInfinity(Contract.Result<double>()));
             Order(ref a, ref b);
             var d = b - a;
             var v = p - a;
@@ -325,7 +331,9 @@ namespace Vertesaur
         /// <inheritdoc/>
         public override string ToString() {
             Contract.Ensures(!String.IsNullOrEmpty(Contract.Result<string>()));
-            return String.Concat('(', A, ") (", B, ')');
+            var result = String.Concat('(', A, ") (", B, ')');
+            Contract.Assume(!String.IsNullOrEmpty(result));
+            return result;
         }
 
         /// <summary>
@@ -333,7 +341,10 @@ namespace Vertesaur
         /// </summary>
         /// <returns>The length.</returns>
         public double GetMagnitude() {
-            Contract.Ensures(Contract.Result<double>() >= 0 || Double.IsNaN(Contract.Result<double>()));
+            Contract.Ensures(
+                Contract.Result<double>() >= 0.0
+                || Double.IsNaN(Contract.Result<double>())
+                || Double.IsPositiveInfinity(Contract.Result<double>()));
             return A.Distance(B);
         }
 
@@ -342,7 +353,10 @@ namespace Vertesaur
         /// </summary>
         /// <returns>The squared length.</returns>
         public double GetMagnitudeSquared() {
-            Contract.Ensures(Contract.Result<double>() >= 0 || Double.IsNaN(Contract.Result<double>()));
+            Contract.Ensures(
+                Contract.Result<double>() >= 0.0
+                || Double.IsNaN(Contract.Result<double>())
+                || Double.IsPositiveInfinity(Contract.Result<double>()));
             return A.DistanceSquared(B);
         }
 
@@ -389,7 +403,10 @@ namespace Vertesaur
         /// <param name="p">The point to calculate distance to.</param>
         /// <returns>The distance.</returns>
         public double Distance(Point2 p) {
-            Contract.Ensures(Contract.Result<double>() >= 0 || Double.IsNaN(Contract.Result<double>()));
+            Contract.Ensures(
+                Contract.Result<double>() >= 0.0
+                || Double.IsNaN(Contract.Result<double>())
+                || Double.IsPositiveInfinity(Contract.Result<double>()));
             return Distance(A, B, p);
         }
 
@@ -399,7 +416,10 @@ namespace Vertesaur
         /// <param name="p">The point to calculate squared distance to.</param>
         /// <returns>The squared distance.</returns>
         public double DistanceSquared(Point2 p) {
-            Contract.Ensures(Contract.Result<double>() >= 0 || Double.IsNaN(Contract.Result<double>()));
+            Contract.Ensures(
+                Contract.Result<double>() >= 0.0
+                || Double.IsNaN(Contract.Result<double>())
+                || Double.IsPositiveInfinity(Contract.Result<double>()));
             return DistanceSquared(A, B, p);
         }
 
@@ -409,7 +429,10 @@ namespace Vertesaur
         /// <param name="other">The segment to calculate distance to.</param>
         /// <returns>The distance.</returns>
         public double Distance(Segment2 other) {
-            Contract.Ensures(Contract.Result<double>() >= 0 || Double.IsNaN(Contract.Result<double>()));
+            Contract.Ensures(
+                Contract.Result<double>() >= 0.0
+                || Double.IsNaN(Contract.Result<double>())
+                || Double.IsPositiveInfinity(Contract.Result<double>()));
             if (ReferenceEquals(null, other))
                 return Double.NaN;
             throw new NotImplementedException();
@@ -421,7 +444,10 @@ namespace Vertesaur
         /// <param name="other">The segment to calculate squared distance to.</param>
         /// <returns>The squared distance.</returns>
         public double DistanceSquared(Segment2 other) {
-            Contract.Ensures(Contract.Result<double>() >= 0 || Double.IsNaN(Contract.Result<double>()));
+            Contract.Ensures(
+                Contract.Result<double>() >= 0.0
+                || Double.IsNaN(Contract.Result<double>())
+                || Double.IsPositiveInfinity(Contract.Result<double>()));
             if (ReferenceEquals(null, other))
                 return Double.NaN;
             throw new NotImplementedException();

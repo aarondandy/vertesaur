@@ -59,10 +59,10 @@ namespace Vertesaur.Utility
         }
 
         private static bool TypesEqual(ParameterInfo[] parameterInfos, Type[] compareTypes) {
-            if (ReferenceEquals(parameterInfos, null))
-                return ReferenceEquals(compareTypes, null);
-            if (ReferenceEquals(compareTypes, null))
-                return false;
+            Contract.Requires(parameterInfos != null);
+            Contract.Requires(Contract.ForAll(parameterInfos, x => x != null));
+            Contract.Requires(compareTypes != null);
+
             if (parameterInfos.Length != compareTypes.Length)
                 return false;
             for (int i = 0; i < parameterInfos.Length; i++) {

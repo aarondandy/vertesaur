@@ -166,7 +166,9 @@ namespace Vertesaur
         /// <inheritdoc/>
         public override string ToString() {
             Contract.Ensures(!String.IsNullOrEmpty(Contract.Result<string>()));
-            return String.Concat('(', P, ") (", Direction, ')');
+            var result = String.Concat('(', P, ") (", Direction, ')');
+            Contract.Assume(!String.IsNullOrEmpty(result));
+            return result;
         }
 
         /// <summary>
@@ -175,7 +177,10 @@ namespace Vertesaur
         /// <returns>The length.</returns>
         public double GetMagnitude() {
             // ReSharper disable CompareOfFloatsByEqualityOperator
-            Contract.Ensures(Contract.Result<double>() == 0.0 || Contract.Result<double>() == Double.PositiveInfinity);
+            Contract.Ensures(
+                Contract.Result<double>() == 0.0
+                || Double.IsNaN(Contract.Result<double>())
+                || Contract.Result<double>() == Double.PositiveInfinity);
             // ReSharper restore CompareOfFloatsByEqualityOperator
             return Vector2.Zero.Equals(Direction) ? 0 : Double.PositiveInfinity;
         }
@@ -186,7 +191,10 @@ namespace Vertesaur
         /// <returns>The length.</returns>
         public double GetMagnitudeSquared() {
             // ReSharper disable CompareOfFloatsByEqualityOperator
-            Contract.Ensures(Contract.Result<double>() == 0.0 || Contract.Result<double>() == Double.PositiveInfinity);
+            Contract.Ensures(
+                Contract.Result<double>() == 0.0
+                || Double.IsNaN(Contract.Result<double>())
+                || Contract.Result<double>() == Double.PositiveInfinity);
             // ReSharper restore CompareOfFloatsByEqualityOperator
             return GetMagnitude();
         }
@@ -257,7 +265,10 @@ namespace Vertesaur
         /// <param name="point">The point to calculate distance to.</param>
         /// <returns>The distance.</returns>
         public double Distance(Point2 point) {
-            Contract.Ensures(!(Contract.Result<double>() < 0));
+            Contract.Ensures(
+                Contract.Result<double>() >= 0.0
+                || Double.IsNaN(Contract.Result<double>())
+                || Double.IsPositiveInfinity(Contract.Result<double>()));
             var v0 = point - P;
             var aDot = Direction.Dot(v0);
             return (
@@ -273,7 +284,10 @@ namespace Vertesaur
         /// <param name="point">The point to calculate squared distance to.</param>
         /// <returns>The squared distance.</returns>
         public double DistanceSquared(Point2 point) {
-            Contract.Ensures(!(Contract.Result<double>() < 0));
+            Contract.Ensures(
+                Contract.Result<double>() >= 0.0
+                || Double.IsNaN(Contract.Result<double>())
+                || Double.IsPositiveInfinity(Contract.Result<double>()));
             var v0 = point - P;
             var aDot = Direction.Dot(v0);
             return (

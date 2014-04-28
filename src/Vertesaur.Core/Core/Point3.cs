@@ -256,10 +256,16 @@ namespace Vertesaur
         /// <returns>The distance.</returns>
         [Pure]
         public double Distance(Point3 point) {
-            Contract.Ensures(!(Contract.Result<double>() < 0));
+            Contract.Ensures(
+                Contract.Result<double>() >= 0.0
+                || Double.IsNaN(Contract.Result<double>())
+                || Double.IsPositiveInfinity(Contract.Result<double>()));
             var dx = point.X - X;
+            Contract.Assume(!((dx * dx) < 0.0));
             var dy = point.Y - Y;
+            Contract.Assume(!((dy * dy) < 0.0));
             var dz = point.Z - Z;
+            Contract.Assume(!((dz * dz) < 0.0));
             return Math.Sqrt(
                 (dx * dx)
                 +
@@ -276,10 +282,16 @@ namespace Vertesaur
         /// <returns>The squared distance.</returns>
         [Pure]
         public double DistanceSquared(Point3 point) {
-            Contract.Ensures(!(Contract.Result<double>() < 0));
+            Contract.Ensures(
+                Contract.Result<double>() >= 0.0
+                || Double.IsNaN(Contract.Result<double>())
+                || Double.IsPositiveInfinity(Contract.Result<double>()));
             var dx = point.X - X;
+            Contract.Assume(!((dx * dx) < 0.0));
             var dy = point.Y - Y;
+            Contract.Assume(!((dy * dy) < 0.0));
             var dz = point.Z - Z;
+            Contract.Assume(!((dz * dz) < 0.0));
             return (
                 (dx * dx)
                 +

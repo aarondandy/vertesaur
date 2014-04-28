@@ -167,8 +167,10 @@ namespace Vertesaur
         public Point2 GetCentroid() {
             // ReSharper disable CompareOfFloatsByEqualityOperator
             if (Count > 0) {
-                if (Count == 1)
+                if (Count == 1) {
+                    Contract.Assume(this[0] != null);
                     return this[0].GetCentroid();
+                }
 
                 var aSum = 0.0;
                 var xSum = 0.0;
@@ -195,6 +197,7 @@ namespace Vertesaur
             Contract.Ensures(Count != 0 || Contract.Result<Mbr>() == null);
             Mbr mbr = null;
             for (var i = 0; i < Count; i++) {
+                Contract.Assume(this[i] != null);
                 var thisMbr = this[i].GetMbr();
                 mbr = mbr == null
                     ? thisMbr
@@ -220,19 +223,22 @@ namespace Vertesaur
 
                 fillRings.Add(ring);
             }
-            foreach (var r in this) {
-                if (r.Count == 0)
+
+            Contract.Assume(Contract.ForAll(fillRings, x => x != null));
+
+            foreach (var ring in this) {
+                if (ring.Count == 0)
                     continue;
 
-                var intersectionCount = r.IntersectionPositiveXRayCount(p);
+                var intersectionCount = ring.IntersectionPositiveXRayCount(p);
                 crossCount += intersectionCount;
-                var isHole = r.Hole.HasValue && r.Hole.Value;
+                var isHole = ring.Hole.HasValue && ring.Hole.Value;
                 if (!isHole || hasUnconstrainedHoles)
                     continue;
 
                 var contained = false;
-                Contract.Assume(0 < r.Count);
-                var hp = r[0];
+                Contract.Assume(0 < ring.Count);
+                var hp = ring[0];
                 for (var i = 0; i < fillRings.Count; i++) {
                     if (fillRings[i].Intersects(hp)) {
                         contained = true;
@@ -254,7 +260,10 @@ namespace Vertesaur
         /// <param name="p">The point to calculate distance to.</param>
         /// <returns>The distance between this polygon and <paramref name="p"/>.</returns>
         public double Distance(Point2 p) {
-            Contract.Ensures(!(Contract.Result<double>() < 0));
+            Contract.Ensures(
+                Contract.Result<double>() >= 0.0
+                || Double.IsNaN(Contract.Result<double>())
+                || Double.IsPositiveInfinity(Contract.Result<double>()));
             return Math.Sqrt(DistanceSquared(p));
         }
 
@@ -264,12 +273,17 @@ namespace Vertesaur
         /// <param name="p">The point to calculate squared distance to.</param>
         /// <returns>The squared distance between this polygon and <paramref name="p"/>.</returns>
         public double DistanceSquared(Point2 p) {
-            Contract.Ensures(!(Contract.Result<double>() < 0));
+            Contract.Ensures(
+                Contract.Result<double>() >= 0.0
+                || Double.IsNaN(Contract.Result<double>())
+                || Double.IsPositiveInfinity(Contract.Result<double>()));
             if (Count == 0)
                 return Double.NaN;
 
+            Contract.Assume(this[0] != null);
             var minDist = this[0].DistanceSquared(p);
             for (var i = 1; i < Count; i++) {
+                Contract.Assume(this[i] != null);
                 var localDist = this[i].DistanceSquared(p);
                 if (localDist < minDist)
                     minDist = localDist;
@@ -282,7 +296,10 @@ namespace Vertesaur
         /// </summary>
         /// <returns>The perimeter of this polygon.</returns>
         public double GetMagnitude() {
-            Contract.Ensures(!(Contract.Result<double>() < 0));
+            Contract.Ensures(
+                Contract.Result<double>() >= 0.0
+                || Double.IsNaN(Contract.Result<double>())
+                || Double.IsPositiveInfinity(Contract.Result<double>()));
             if (Count == 0)
                 return Double.NaN;
 
@@ -290,6 +307,7 @@ namespace Vertesaur
             // ReSharper disable LoopCanBeConvertedToQuery
             // ReSharper disable ForCanBeConvertedToForeach
             for (var i = 0; i < Count; i++) {
+                Contract.Assume(this[i] != null);
                 sum += this[i].GetMagnitude();
             }
             return sum;
@@ -299,7 +317,10 @@ namespace Vertesaur
 
         /// <inheritdoc/>
         public double GetMagnitudeSquared() {
-            Contract.Ensures(!(Contract.Result<double>() < 0));
+            Contract.Ensures(
+                Contract.Result<double>() >= 0.0
+                || Double.IsNaN(Contract.Result<double>())
+                || Double.IsPositiveInfinity(Contract.Result<double>()));
             var m = GetMagnitude();
             return m * m;
         }
@@ -316,6 +337,7 @@ namespace Vertesaur
             // ReSharper disable LoopCanBeConvertedToQuery
             // ReSharper disable ForCanBeConvertedToForeach
             for (var i = 0; i < Count; i++) {
+                Contract.Assume(this[i] != null);
                 sum += this[i].GetArea();
             }
             return sum;

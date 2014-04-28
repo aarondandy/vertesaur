@@ -222,7 +222,10 @@ namespace Vertesaur
         /// </summary>
         /// <returns>The magnitude.</returns>
         [Pure] public double GetMagnitude() {
-            Contract.Ensures(!(Contract.Result<double>() < 0));
+            Contract.Ensures(
+                Contract.Result<double>() >= 0.0
+                || Double.IsNaN(Contract.Result<double>())
+                || Double.IsPositiveInfinity(Contract.Result<double>()));
             return Math.Sqrt((X * X) + (Y * Y));
         }
 
@@ -231,7 +234,10 @@ namespace Vertesaur
         /// </summary>
         /// <returns>The squared magnitude.</returns>
         [Pure] public double GetMagnitudeSquared() {
-            Contract.Ensures(!(Contract.Result<double>() < 0));
+            Contract.Ensures(
+                Contract.Result<double>() >= 0.0
+                || Double.IsNaN(Contract.Result<double>())
+                || Double.IsPositiveInfinity(Contract.Result<double>()));
             return (X * X) + (Y * Y);
         }
 

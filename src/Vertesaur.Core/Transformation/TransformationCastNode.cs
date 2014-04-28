@@ -38,6 +38,7 @@ namespace Vertesaur.Transformation
             var startNodes = GenerateNodes(transformations[0])
                 .Where(x => x.FromType == startType)
                 .ToArray();
+            Contract.Assume(Contract.ForAll(startNodes, x => x != null));
 
             // if there is only one transformation, just use that
             if (transformations.Count == 1) {
@@ -51,6 +52,7 @@ namespace Vertesaur.Transformation
             for (int i = 1; i < transformations.Count; i++) {
                 Contract.Assume(transformations[i] != null);
                 var currentNodes = GenerateNodes(transformations[i]).ToArray();
+                Contract.Assume(Contract.ForAll(currentNodes, x => x != null));
                 foreach (var priorNode in previousNodes) {
                     foreach (var curNode in currentNodes) {
                         if (priorNode.ToType == curNode.FromType) {
@@ -105,8 +107,6 @@ namespace Vertesaur.Transformation
             if (null == core) throw new ArgumentNullException("core");
             Contract.Ensures(Contract.Result<IEnumerable<TransformationCastNode>>() != null);
             Contract.Ensures(Contract.ForAll(Contract.Result<IEnumerable<TransformationCastNode>>(), x => null != x));
-            Contract.EndContractBlock();
-
             return core.GetType().GetInterfacesByGenericTypeDefinition(TxGenericType)
                 .Select(t => {
                     var arguments = t.GetGenericArguments();
@@ -137,6 +137,8 @@ namespace Vertesaur.Transformation
             Contract.Invariant(Core != null);
             Contract.Invariant(FromType != null);
             Contract.Invariant(ToType != null);
+            Contract.Invariant(TxGenericType != null);
+            Contract.Invariant(EnumerableGenericType != null);
         }
 
         /// <summary>

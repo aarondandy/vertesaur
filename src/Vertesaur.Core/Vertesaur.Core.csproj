@@ -136,8 +136,6 @@
     <Compile Include="..\VertesaurAssemblyInfo.cs">
       <Link>Properties\VertesaurAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="CodeContracts\CodeContractHelper.cs" />
-    <Compile Include="CodeContracts\ContractExtensions.cs" />
     <Compile Include="Core\I3DGeometry.cs" />
     <Compile Include="Core\ICoordinatePair.cs" />
     <Compile Include="Core\ICoordinateTriple.cs" />

@@ -39,25 +39,6 @@ namespace Vertesaur.Transformation
     public class CompiledConcatenatedTransformation<TFrom, TTo> : ConcatenatedTransformation<TFrom, TTo>
     {
 
-        private Expression BuildSingleTransformExpression(Expression input) {
-            Contract.Requires(input != null);
-            Contract.Ensures(Contract.Result<Expression>() != null);
-
-            var fromType = typeof(TFrom);
-            var toType = typeof(TTo);
-            if (TransformationPath.Count == 0)
-                return (fromType == toType) ? input : Expression.Convert(input, toType);
-
-            var exp = input;
-            for (int i = 0; i < TransformationPath.Count; i++) {
-                var txInfo = TransformationPath[i];
-                exp = Expression.Call(Expression.Constant(txInfo.Core), txInfo.GetTransformValueMethod(), new[] { exp });
-            }
-            return exp;
-        }
-
-        private readonly Func<TFrom, TTo> _singleTransform; // TODO: lazy?
-
         /// <summary>
         /// Creates a new concatenated transformation that is JIT compiled into a single typed expression.
         /// </summary>
@@ -71,9 +52,29 @@ namespace Vertesaur.Transformation
             ).Compile();
         }
 
+        private readonly Func<TFrom, TTo> _singleTransform; // TODO: lazy?
+
         [ContractInvariantMethod]
         private void CodeContractInvariants() {
             Contract.Invariant(_singleTransform != null);
+        }
+
+        private Expression BuildSingleTransformExpression(Expression input) {
+            Contract.Requires(input != null);
+            Contract.Ensures(Contract.Result<Expression>() != null);
+
+            var fromType = typeof(TFrom);
+            var toType = typeof(TTo);
+            if (TransformationPath.Count == 0)
+                return (fromType == toType) ? input : Expression.Convert(input, toType);
+
+            var exp = input;
+            for (int i = 0; i < TransformationPath.Count; i++) {
+                var txInfo = TransformationPath[i];
+                Contract.Assume(txInfo != null);
+                exp = Expression.Call(Expression.Constant(txInfo.Core), txInfo.GetTransformValueMethod(), new[] { exp });
+            }
+            return exp;
         }
 
         /// <inheritdoc/>

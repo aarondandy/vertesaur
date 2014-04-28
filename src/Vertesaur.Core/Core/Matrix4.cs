@@ -579,35 +579,41 @@ namespace Vertesaur
         }
 
         private double SubDeterminantA() {
-            // TODO: inline
             return ((E00 * E12 * E23) + (E02 * E13 * E20) + (E03 * E10 * E22))
                 - ((E03 * E12 * E20) + (E00 * E13 * E22) + (E02 * E10 * E23));
         }
 
         private double SubDeterminantB() {
-            // TODO: inline
             return ((E01 * E12 * E23) + (E02 * E13 * E21) + (E03 * E11 * E22))
                 - ((E03 * E12 * E21) + (E01 * E13 * E22) + (E02 * E11 * E23));
         }
 
         private double SubDeterminantC() {
-            // TODO: inline
             return ((E00 * E11 * E23) + (E01 * E13 * E20) + (E03 * E10 * E21))
                 - ((E03 * E11 * E20) + (E00 * E13 * E21) + (E01 * E10 * E23));
         }
 
         private double SubDeterminantD() {
-            // TODO: inline
             return ((E00 * E11 * E22) + (E01 * E12 * E20) + (E02 * E10 * E21))
                 - ((E02 * E11 * E20) + (E00 * E12 * E21) + (E01 * E10 * E22));
         }
 
         private double SubDeterminant(int r0, int r1, int r2, int c0, int c1, int c2) {
-            // TODO: inline
-            CodeContractCheckRowColumnIndex(r0, c0);
-            CodeContractCheckRowColumnIndex(r1, c1);
-            CodeContractCheckRowColumnIndex(r2, c2);
-            Contract.EndContractBlock();
+            Contract.Requires(r0 >= 0);
+            Contract.Requires(r0 < RowCount);
+            Contract.Requires(c0 >= 0);
+            Contract.Requires(c0 < ColumnCount);
+
+            Contract.Requires(r1 >= 0);
+            Contract.Requires(r1 < RowCount);
+            Contract.Requires(c1 >= 0);
+            Contract.Requires(c1 < ColumnCount);
+
+            Contract.Requires(r2 >= 0);
+            Contract.Requires(r2 < RowCount);
+            Contract.Requires(c2 >= 0);
+            Contract.Requires(c2 < ColumnCount);
+            
             return (
                 (
                     (Get(r0, c0) * Get(r1, c1) * Get(r2, c2))
@@ -628,10 +634,14 @@ namespace Vertesaur
         }
 
         private double SubDeterminantShort(int ir, int ic) {
-            CodeContractCheckRowColumnIndex(ir, ic);
-            Contract.Ensures(Contract.OldValue(RowCount) == RowCount);
-            Contract.Ensures(Contract.OldValue(ColumnCount) == ColumnCount);
-            // TODO: inline
+            Contract.Requires(ir >= 0);
+            Contract.Requires(ir < RowCount);
+            Contract.Requires(ic >= 0);
+            Contract.Requires(ic < ColumnCount);
+
+            /*Contract.Ensures(Contract.OldValue(RowCount) == RowCount);
+            Contract.Ensures(Contract.OldValue(ColumnCount) == ColumnCount);*/
+
             return SubDeterminant(
                 (ir == 0) ? 1 : 0,
                 (ir < 2) ? 2 : 1,
@@ -1007,19 +1017,6 @@ namespace Vertesaur
         object ICloneable.Clone() {
             return Clone();
         }
-
-        // ReSharper disable UnusedParameter.Local
-        [ContractAbbreviator]
-        [Conditional("CONTRACTS_FULL")]
-        private void CodeContractCheckRowColumnIndex(int r, int c) {
-            Contract.Requires(r >= 0);
-            Contract.Requires(r < OrderValue);
-            Contract.Requires(r < RowCount);
-            Contract.Requires(c >= 0);
-            Contract.Requires(c < OrderValue);
-            Contract.Requires(c < ColumnCount);
-        }
-        // ReSharper restore UnusedParameter.Local
 
     }
 

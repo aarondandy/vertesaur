@@ -77,7 +77,7 @@ namespace Vertesaur.PolygonOperation
                 : Contract.Result<IPlanarGeometry>() != null
             );
             if (null == a)
-                return b;
+                return b == null ? null : b;
             if (null == b)
                 return a;
 

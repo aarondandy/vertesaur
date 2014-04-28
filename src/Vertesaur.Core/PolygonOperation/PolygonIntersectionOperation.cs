@@ -267,8 +267,8 @@ namespace Vertesaur.PolygonOperation
                 if (0 == buildingRing.Count || buildingRing[buildingRing.Count - 1] != fromCrossing.Point)
                     buildingRing.Add(fromCrossing.Point);
 
-                //var fromCrossingIndex = ringCrossings.BinarySearch(fromCrossing, PolygonCrossing.LocationAComparer.Default);
                 var fromCrossingIndex = Array.BinarySearch(ringCrossings, fromCrossing, PolygonCrossing.LocationAComparer.Default);
+                Contract.Assume(fromCrossingIndex >= 0);
                 foreach (var crossing in TraverseCrossings(fromCrossing, ringCrossings, fromCrossingIndex)) {
                     // hops should have already been taken care of
                     if (crossing.Point == fromCrossing.Point && EntranceHops.ContainsKey(crossing))
@@ -341,8 +341,8 @@ namespace Vertesaur.PolygonOperation
                 if (0 == buildingRing.Count || buildingRing[buildingRing.Count - 1] != fromCrossing.Point)
                     buildingRing.Add(fromCrossing.Point);
 
-                //var fromCrossingIndex = ringCrossings.BinarySearch(fromCrossing, PolygonCrossing.LocationBComparer.Default);
                 var fromCrossingIndex = Array.BinarySearch(ringCrossings, fromCrossing, PolygonCrossing.LocationBComparer.Default);
+                Contract.Assume(fromCrossingIndex >= 0);
                 foreach (var crossing in TraverseCrossings(fromCrossing, ringCrossings, fromCrossingIndex)) {
                     // hops should have already been taken care of
                     if (crossing.Point == fromCrossing.Point && ExitHops.ContainsKey(crossing))
@@ -774,6 +774,7 @@ namespace Vertesaur.PolygonOperation
         ) {
             Contract.Requires(currentCrossing != null);
             Contract.Requires(crossingsOnRing != null);
+            Contract.Requires(Contract.ForAll(crossingsOnRing, x => x != null));
             Contract.Requires(crossingComparer != null);
 
             var currentPoint = currentCrossing.Point;
@@ -831,6 +832,7 @@ namespace Vertesaur.PolygonOperation
         ) {
             Contract.Requires(currentCrossing != null);
             Contract.Requires(crossingsOnRing != null);
+            Contract.Requires(Contract.ForAll(crossingsOnRing, x => x != null));
             Contract.Requires(crossingComparer != null);
 
             var currentPoint = currentCrossing.Point;

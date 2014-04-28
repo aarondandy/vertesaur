@@ -241,14 +241,13 @@ namespace Vertesaur
         /// <returns>The distance.</returns>
         [Pure]
         public double Distance(Point2 point) {
-            Contract.Ensures(!(Contract.Result<double>() < 0));
+            Contract.Ensures(
+                Contract.Result<double>() >= 0.0
+                || Double.IsNaN(Contract.Result<double>())
+                || Double.IsPositiveInfinity(Contract.Result<double>()));
             var dx = point.X - X;
             var dy = point.Y - Y;
-            return Math.Sqrt(
-                (dx * dx)
-                +
-                (dy * dy)
-            );
+            return Math.Sqrt((dx * dx) + (dy * dy));
         }
 
         /// <summary>
@@ -258,14 +257,13 @@ namespace Vertesaur
         /// <returns>The squared distance.</returns>
         [Pure]
         public double DistanceSquared(Point2 point) {
-            Contract.Ensures(!(Contract.Result<double>() < 0));
+            Contract.Ensures(
+                Contract.Result<double>() >= 0.0
+                || Double.IsNaN(Contract.Result<double>())
+                || Double.IsPositiveInfinity(Contract.Result<double>()));
             var dx = point.X - X;
             var dy = point.Y - Y;
-            return (
-                (dx * dx)
-                +
-                (dy * dy)
-            );
+            return (dx * dx) + (dy * dy);
         }
 
         /// <summary>

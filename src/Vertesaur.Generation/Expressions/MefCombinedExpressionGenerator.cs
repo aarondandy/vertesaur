@@ -52,8 +52,9 @@ namespace Vertesaur.Generation.Expressions
 
         private void ComposeFromAssemblies(IList<Assembly> assemblies) {
             Contract.Requires(assemblies != null);
-            ComposablePartCatalog catalog;
+            Contract.Requires(Contract.ForAll(assemblies, x => x != null));
 
+            ComposablePartCatalog catalog;
             if (assemblies.Count == 1)
                 catalog = new AssemblyCatalog(assemblies[0]);
             else

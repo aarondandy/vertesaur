@@ -180,7 +180,7 @@ namespace Vertesaur
             : base(points = (points ?? new List<Point2>())) {
             _hole = hole;
             _pointList = points;
-            ResetAllPointsCacheData();
+            ResetAllCache();
             Contract.Assume(SegmentCount <= Count);
         }
 
@@ -191,22 +191,24 @@ namespace Vertesaur
             Contract.Invariant(SegmentCount >= 0);
             Contract.Invariant(Count >= 0);
             Contract.Invariant(_pointList != null);
+            Contract.Invariant(_pointList.Count >= 0);
         }
 
         private void ResetAllCache() {
-            ResetAllPointsCacheData();
-        }
-
-        private void ResetAllPointsCacheData() {
+            Contract.Ensures(SegmentCount == Contract.OldValue(SegmentCount));
+            Contract.Ensures(Count == Contract.OldValue(Count));
             _allPointsCacheData = null;
         }
 
         private AllPointsCacheData GetAllPointsCacheData() {
+            Contract.Ensures(SegmentCount == Contract.OldValue(SegmentCount));
+            Contract.Ensures(Count == Contract.OldValue(Count));
             return _allPointsCacheData ?? (_allPointsCacheData = CalculateAllPointsCacheData());
         }
 
         private AllPointsCacheData CalculateAllPointsCacheData() {
             Contract.Ensures(Contract.Result<AllPointsCacheData>() != null);
+            Contract.Ensures(_pointList.Count <= 0 || Contract.Result<AllPointsCacheData>().CalculatedMbr != null);
             return new AllPointsCacheData {
                 CalculatedMbr = Mbr.Create(_pointList),
                 AreaSumValue = CalculateAreaSumValue()
@@ -449,6 +451,7 @@ namespace Vertesaur
             if (_pointList.Count > maxDisplay)
                 sb.Append("...");
 
+            Contract.Assume(sb.ToString().Length > 0);
             return sb.ToString();
         }
 
@@ -491,7 +494,10 @@ namespace Vertesaur
         /// </summary>
         /// <returns>The perimeter of the ring.</returns>
         public double GetMagnitude() {
-            Contract.Ensures(!(Contract.Result<double>() < 0));
+            Contract.Ensures(
+                Contract.Result<double>() >= 0.0
+                || Double.IsNaN(Contract.Result<double>())
+                || Double.IsPositiveInfinity(Contract.Result<double>()));
             var lastIndex = _pointList.Count - 1;
             if (lastIndex > 1) {
                 var sum = _pointList[lastIndex].Distance(_pointList[0]);
@@ -505,7 +511,10 @@ namespace Vertesaur
 
         /// <inheritdoc/>
         double IHasMagnitude<double>.GetMagnitudeSquared() {
-            Contract.Ensures(!(Contract.Result<double>() < 0));
+            Contract.Ensures(
+                Contract.Result<double>() >= 0.0
+                || Double.IsNaN(Contract.Result<double>())
+                || Double.IsPositiveInfinity(Contract.Result<double>()));
             var m = GetMagnitude();
             return m * m;
         }
@@ -680,7 +689,10 @@ namespace Vertesaur
         /// The distance will be 0 when the ring is a fill and the point lies within the boundary, when the ring is a hole and the point lies outside of the boundary, or when the point lies on the boundary.
         /// </remarks>
         public double Distance(Point2 p) {
-            Contract.Ensures(!(Contract.Result<double>() < 0));
+            Contract.Ensures(
+                Contract.Result<double>() >= 0.0
+                || Double.IsNaN(Contract.Result<double>())
+                || Double.IsPositiveInfinity(Contract.Result<double>()));
             return Math.Sqrt(DistanceSquared(p));
         }
 
@@ -693,7 +705,10 @@ namespace Vertesaur
         /// The squared distance will be 0 when the ring is a fill and the point lies within the boundary, when the ring is a hole and the point lies outside of the boundary, or when the point lies on the boundary.
         /// </remarks>
         public double DistanceSquared(Point2 p) {
-            Contract.Ensures(!(Contract.Result<double>() < 0));
+            Contract.Ensures(
+                Contract.Result<double>() >= 0.0
+                || Double.IsNaN(Contract.Result<double>())
+                || Double.IsPositiveInfinity(Contract.Result<double>()));
             var lastIndex = _pointList.Count - 1;
             if (lastIndex > 1) {
                 if (Intersects(p, false)) {
@@ -876,8 +891,10 @@ namespace Vertesaur
         /// <param name="p"></param>
         /// <returns>0 for boundary, 1 for within, -1 for outside</returns>
         internal int AdvancedIntersectionTest(Point2 p) {
-            if (Count >= 2 && GetMbr().Intersects(p)) {
-                Contract.Assume(Count >= 2);
+            var mbr = GetMbr();
+            Contract.Assume(Count <= 0 || mbr != null);
+            if (Count >= 2 && mbr.Intersects(p)) {
+                Contract.Assume(Count - 1 >= 0);
                 var b = this[Count - 1];
                 for (var nextIndex = 0; nextIndex < Count; nextIndex++) {
                     var a = b;
