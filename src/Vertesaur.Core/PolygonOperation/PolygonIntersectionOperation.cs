@@ -804,6 +804,7 @@ namespace Vertesaur.PolygonOperation
         ) {
             Contract.Requires(currentCrossing != null);
             Contract.Requires(crossingsOnRing != null);
+            Contract.Requires(Contract.ForAll(crossingsOnRing, x => x != null));
             Contract.Requires(ring != null);
             Contract.Requires(getLocation != null);
             Contract.Requires(crossingComparer != null);
@@ -864,6 +865,7 @@ namespace Vertesaur.PolygonOperation
         ) {
             Contract.Requires(currentCrossing != null);
             Contract.Requires(crossingsOnRing != null);
+            Contract.Requires(Contract.ForAll(crossingsOnRing, x => x != null));
             Contract.Requires(ring != null);
             Contract.Requires(getLocation != null);
             Contract.Requires(crossingComparer != null);

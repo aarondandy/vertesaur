@@ -168,9 +168,13 @@ namespace Vertesaur.Transformation
             Contract.Requires(null != m);
             if (TransformValueMethodName.Equals(m.Name) && m.ReturnType == ToType) {
                 var parameters = m.GetParameters();
-                if (parameters.Length == 1 && parameters[0].ParameterType == FromType) {
-                    return true;
-                }
+                Contract.Assume(parameters != null);
+                if (parameters.Length == 1) {
+                    Contract.Assume(parameters[0] != null);
+                    if(parameters[0].ParameterType == FromType) {
+                        return true;
+                    }
+                } 
             }
             return false;
         }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics.Contracts;
+using System.Linq;
 using System.Linq.Expressions;
 using Vertesaur.Utility;
 
@@ -23,7 +24,11 @@ namespace Vertesaur.Generation.Expressions
             if (String.IsNullOrEmpty(expressionName)) throw new ArgumentException("Invalid expression name.", "expressionName");
             if (null == inputs) throw new ArgumentNullException("inputs");
             if (inputs.Length == 0) throw new ArgumentException("At least one input expression is required.", "inputs");
-            Contract.EndContractBlock();
+            Contract.Requires(Contract.ForAll(inputs, x => x != null));
+
+            if (inputs.Any(x => x == null))
+                throw new ArgumentException("No expressions may not be null", "inputs");
+
             TopLevelGenerator = generator;
             ExpressionName = expressionName;
             InputExpressions = inputs.AsReadOnly();
@@ -34,6 +39,7 @@ namespace Vertesaur.Generation.Expressions
             Contract.Invariant(TopLevelGenerator != null);
             Contract.Invariant(!String.IsNullOrEmpty(ExpressionName));
             Contract.Invariant(InputExpressions != null);
+            Contract.Invariant(Contract.ForAll(InputExpressions, x => x != null));
         }
 
         /// <inheritdoc/>

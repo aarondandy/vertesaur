@@ -185,11 +185,11 @@ namespace Vertesaur
         }
 
         [ContractInvariantMethod]
-        [Conditional("CONTRACTS_FULL")]
-        private void CodeContractInvariant() {
+        private void ObjectInvariants() {
             Contract.Invariant(SegmentCount <= Count);
             Contract.Invariant(SegmentCount >= 0);
             Contract.Invariant(Count >= 0);
+            Contract.Invariant(Contract.ForAll(0, Count, i => this[i] != null));
             Contract.Invariant(_pointList != null);
             Contract.Invariant(_pointList.Count >= 0);
         }
@@ -830,6 +830,8 @@ namespace Vertesaur
             var thisMbr = GetMbr();
             if (thisMbr == null)
                 return false;
+
+            Contract.Assume(thisMbr != null);
             var containerMbr = testContainer.GetMbr();
             if (containerMbr == null)
                 return false;

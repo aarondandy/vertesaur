@@ -21,6 +21,7 @@ namespace Vertesaur.Generation.Expressions
             Contract.Requires(!String.IsNullOrEmpty(expressionName));
             Contract.Requires(null != inputExpressions);
             Contract.Requires(inputExpressions.Length != 0);
+            Contract.Requires(Contract.ForAll(inputExpressions, x => x != null));
             Contract.Ensures(Contract.Result<IExpressionGenerationRequest>() != null);
             return new FunctionExpressionGenerationRequest(generator, expressionName, inputExpressions);
         }
@@ -67,6 +68,7 @@ namespace Vertesaur.Generation.Expressions
             Contract.Requires(!String.IsNullOrEmpty(expressionName));
             Contract.Requires(null != inputExpressions);
             Contract.Requires(inputExpressions.Length != 0);
+            Contract.Requires(Contract.ForAll(inputExpressions, x => x != null));
             var request = NewRequest(generator, expressionName, inputExpressions);
             return generator.Generate(request);
         }

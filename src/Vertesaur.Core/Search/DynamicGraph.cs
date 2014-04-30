@@ -361,6 +361,7 @@ namespace Vertesaur.Search
 
             // build the final result path
             if (nodeDataCache.TryGetValue(target, out nodeData)) {
+                Contract.Assume(nodeData != null);
                 var pathResult = new List<DynamicGraphNodeData<TNode, TCost, TEdge>> {
                     new DynamicGraphNodeData<TNode, TCost, TEdge>(target, nodeData.Cost, nodeData.Edge)
                 };

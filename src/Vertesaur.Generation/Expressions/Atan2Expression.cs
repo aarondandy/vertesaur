@@ -32,10 +32,15 @@ namespace Vertesaur.Generation.Expressions
         /// <inheritdoc/>
         public override Expression Reduce() {
             Contract.Ensures(Contract.Result<Expression>() != null);
-            if (typeof(double) == LeftParameter.Type && typeof(double) == RightParameter.Type)
+            if (typeof (double) == LeftParameter.Type && typeof (double) == RightParameter.Type) {
+                Contract.Assume(MathAtan2DoubleMethod != null);
                 return Call(MathAtan2DoubleMethod, LeftParameter, RightParameter);
+            }
+
             if (typeof (float) == LeftParameter.Type && typeof (float) == RightParameter.Type) {
-                var call = Call(MathAtan2DoubleMethod,
+                Contract.Assume(MathAtan2DoubleMethod != null);
+                var call = Call(
+                    MathAtan2DoubleMethod,
                     ReductionExpressionGenerator.GenerateConversionExpression(typeof (double), LeftParameter),
                     ReductionExpressionGenerator.GenerateConversionExpression(typeof (double), RightParameter)
                 );

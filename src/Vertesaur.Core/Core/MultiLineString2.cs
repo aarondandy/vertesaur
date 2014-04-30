@@ -113,12 +113,14 @@ namespace Vertesaur
             return true;
         }
 
+        /// <inheritdoc/>
         protected override void SetItem(int index, LineString2 item) {
             if (null == item) throw new ArgumentNullException("item", "Null line strings are not allowed.");
             Contract.EndContractBlock();
             base.SetItem(index, item);
         }
 
+        /// <inheritdoc/>
         protected override void InsertItem(int index, LineString2 item) {
             if (null == item) throw new ArgumentNullException("item", "Null line strings are not allowed.");
             Contract.EndContractBlock();

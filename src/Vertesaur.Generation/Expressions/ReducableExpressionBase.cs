@@ -7,6 +7,7 @@ namespace Vertesaur.Generation.Expressions
     /// <summary>
     /// An expression that can be reduced to a compilable expression.
     /// </summary>
+    [ContractClass(typeof(ReducibleExpressionBaseContracts))]
     public abstract class ReducibleExpressionBase : Expression
     {
 
@@ -24,7 +25,7 @@ namespace Vertesaur.Generation.Expressions
         public override bool CanReduce { get { return true; } }
 
         /// <inheritdoc/>
-        public override ExpressionType NodeType { get { return ExpressionType.Extension; } }
+        public sealed override ExpressionType NodeType { get { return ExpressionType.Extension; } }
 
         /// <inheritdoc/>
         public abstract override Type Type { get; }
@@ -35,18 +36,12 @@ namespace Vertesaur.Generation.Expressions
         public IExpressionGenerator ReductionExpressionGenerator {
             get {
                 Contract.Ensures(Contract.Result<IExpressionGenerator>() != null);
-
 #if !NO_MEF
                 Contract.Assume(MefCombinedExpressionGenerator.Default != null);
-#endif
-
-                return _reductionExpressionGenerator ??
-#if !NO_MEF
-                    MefCombinedExpressionGenerator.Default
+                return _reductionExpressionGenerator ?? MefCombinedExpressionGenerator.Default;
 #else
-                    CombinedExpressionGenerator.GenerateDefaultMefReplacement()
+                return _reductionExpressionGenerator ?? CombinedExpressionGenerator.GenerateDefaultMefReplacement();
 #endif
-                    ;
             }
         }
 
@@ -54,4 +49,22 @@ namespace Vertesaur.Generation.Expressions
         public abstract override Expression Reduce();
 
     }
+
+    [ContractClassFor(typeof(ReducibleExpressionBase))]
+    internal abstract class ReducibleExpressionBaseContracts : ReducibleExpressionBase
+    {
+
+        public override Type Type {
+            get {
+                Contract.Ensures(Contract.Result<Type>() != null);
+                throw new NotImplementedException();
+            }
+        }
+
+        public override Expression Reduce() {
+            Contract.Ensures(Contract.Result<Expression>() != null);
+            throw new NotImplementedException();
+        }
+    }
+
 }

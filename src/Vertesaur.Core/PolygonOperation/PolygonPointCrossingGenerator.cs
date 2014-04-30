@@ -332,7 +332,7 @@ namespace Vertesaur.PolygonOperation
 
         private static List<PolygonCrossing> GenerateRingCrossingsBruteForce(Ring2 ringA, Ring2 ringB, int ringIndexA, int ringIndexB) {
             Contract.Requires(ringA != null);
-            Contract.Requires(ringA.Count >= 0);
+            Contract.Requires(ringA.Count > 0);
             Contract.Requires(ringB != null);
             Contract.Requires(ringB.Count > 0);
             Contract.Requires(ringIndexA >= 0);

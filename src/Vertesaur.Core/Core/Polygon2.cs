@@ -240,6 +240,7 @@ namespace Vertesaur
                 Contract.Assume(0 < ring.Count);
                 var hp = ring[0];
                 for (var i = 0; i < fillRings.Count; i++) {
+                    Contract.Assume(fillRings[i] != null);
                     if (fillRings[i].Intersects(hp)) {
                         contained = true;
                         break;

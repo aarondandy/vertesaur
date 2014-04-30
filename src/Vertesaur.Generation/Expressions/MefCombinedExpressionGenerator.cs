@@ -50,15 +50,18 @@ namespace Vertesaur.Generation.Expressions
             ComposeFromAssemblies(assemblies);
         }
 
-        private void ComposeFromAssemblies(IList<Assembly> assemblies) {
+        private void ComposeFromAssemblies(Assembly[] assemblies) {
             Contract.Requires(assemblies != null);
             Contract.Requires(Contract.ForAll(assemblies, x => x != null));
 
             ComposablePartCatalog catalog;
-            if (assemblies.Count == 1)
+            if (assemblies.Length == 1) {
+                Contract.Assume(assemblies[0] != null);
                 catalog = new AssemblyCatalog(assemblies[0]);
-            else
-                catalog = new AggregateCatalog(assemblies.Select(x => new AssemblyCatalog(x)));
+            }
+            else {
+                catalog = new AggregateCatalog(Array.ConvertAll<Assembly, ComposablePartCatalog>(assemblies, x => new AssemblyCatalog(x)));
+            }
 
             Compose(catalog);
         }

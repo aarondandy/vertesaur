@@ -108,8 +108,7 @@ namespace Vertesaur.PolygonOperation
             private bool NonIntersectingFillsContains(Ring2 other) {
                 Contract.Requires(other != null);
 
-                for (int i = 0; i < _nodes.Count; i++) {
-                    var node = _nodes[i];
+                foreach(var node in _nodes){
                     if (other.NonIntersectingWithin(node.Ring))
                         return node.Count <= 0 || node.NonIntersectingContains(other);
                 }
@@ -287,11 +286,14 @@ namespace Vertesaur.PolygonOperation
             Contract.Requires(null != container);
 
             var ringMbr = ring.GetMbr();
-            if (ringMbr != null && ringMbr.Within(container.GetMbr())) {
-                for (var i = 0; i < ring.Count; i++) {
-                    var intersectionCount = container.IntersectionPositiveXRayCount(ring[i]);
-                    if (intersectionCount > 0)
-                        return 1 == (intersectionCount % 2);
+            if (ringMbr != null){
+                Contract.Assume(ringMbr != null);
+                if(ringMbr.Within(container.GetMbr())) {
+                    for (var i = 0; i < ring.Count; i++) {
+                        var intersectionCount = container.IntersectionPositiveXRayCount(ring[i]);
+                        if (intersectionCount > 0)
+                            return 1 == (intersectionCount % 2);
+                    }
                 }
             }
             return false;
