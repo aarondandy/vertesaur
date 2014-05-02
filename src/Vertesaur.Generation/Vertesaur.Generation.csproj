@@ -162,7 +162,7 @@
     <Compile Include="Expressions\FloorExpression.cs" />
     <Compile Include="Expressions\FunctionExpressionGenerationRequest.cs" />
     <Compile Include="Expressions\Log10Expression.cs" />
-    <Compile Include="Expressions\LogExpressioncs.cs" />
+    <Compile Include="Expressions\LogExpression.cs" />
     <Compile Include="Expressions\NaturalLogExpression.cs" />
     <Compile Include="Expressions\MaxExpression.cs" />
     <Compile Include="Expressions\MefCombinedExpressionGenerator.cs" />
