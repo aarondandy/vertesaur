@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Linq.Expressions;
+using Vertesaur.Generation.Utility;
 using Vertesaur.Utility;
 
 namespace Vertesaur.Generation.Expressions
@@ -23,10 +24,8 @@ namespace Vertesaur.Generation.Expressions
             : base(reductionExpressionGenerator) {
             if (null == components) throw new ArgumentNullException("components");
             if (components.Count == 0) throw new ArgumentException("Must have at least 1 component.", "components");
-            Contract.Requires(components.All(x => null != x));
-            Contract.Ensures(Components != null);
-            Contract.Ensures(Components.Count > 0);
-
+            Contract.Requires(Contract.ForAll(components, x => x != null));
+            
             if (components.Any(x => null == x))
                 throw new ArgumentException("All components expressions must be non null.", "components");
             Components = components.ToArray().AsReadOnly();
@@ -35,6 +34,8 @@ namespace Vertesaur.Generation.Expressions
         [ContractInvariantMethod]
         private void CodeContractInvariants() {
             Contract.Invariant(Components != null);
+            Contract.Invariant(Components.Count > 0);
+            Contract.Invariant(Contract.ForAll(Components, x => x != null));
         }
 
         /// <summary>
@@ -45,7 +46,7 @@ namespace Vertesaur.Generation.Expressions
         /// <inheritdoc/>
         public override Type Type {
             get {
-                Contract.Ensures(Contract.Result<Type>() != null);
+                Contract.Assume(Components[0] != null);
                 return Components[0].Type;
             }
         }
@@ -66,11 +67,13 @@ namespace Vertesaur.Generation.Expressions
         private Expression CreateExpression(IList<Expression> inputs) {
             Contract.Requires(null != inputs);
             Contract.Requires(inputs.Count > 0);
+            Contract.Requires(Contract.ForAll(inputs, x => x != null));
+            Contract.Ensures(Contract.Result<Expression>() != null);
+
             var gen = ReductionExpressionGenerator;
-            // build the equation
-            var result = gen.Generate("Square", inputs[0]);
+            var result = gen.GenerateOrThrow("SQUARE", inputs[0]);
             for (int i = 1; i < inputs.Count; i++) {
-                result = gen.Generate("Add", result, gen.Generate("Square", inputs[i]));
+                result = gen.GenerateOrThrow("ADD", result, gen.GenerateOrThrow("SQUARE", inputs[i]));
             }
             return result;
         }

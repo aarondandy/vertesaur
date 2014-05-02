@@ -90,7 +90,9 @@ namespace Vertesaur.Generation.Expressions
 
         private string GetNewVariableName() {
             Contract.Ensures(!String.IsNullOrEmpty(Contract.Result<string>()));
-            return "t" + GetNewVariableNumber().ToString(CultureInfo.InvariantCulture);
+            var result = "t" + GetNewVariableNumber().ToString(CultureInfo.InvariantCulture);
+            Contract.Assume(!String.IsNullOrEmpty(result));
+            return result;
         }
 
         private ParameterExpression RemoveFirstPending(Type type) {

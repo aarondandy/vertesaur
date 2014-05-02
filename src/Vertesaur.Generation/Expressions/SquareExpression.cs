@@ -25,11 +25,12 @@ namespace Vertesaur.Generation.Expressions
             var squareRootExpression = UnaryParameter as SquareRootExpression;
             if (squareRootExpression != null)
                 return squareRootExpression.UnaryParameter;
+
             if (UnaryParameter.IsMemoryLocationOrConstant())
-                return ReductionExpressionGenerator.Generate("MULTIPLY", UnaryParameter, UnaryParameter);
+                return ReductionExpressionGenerator.GenerateOrThrow("MULTIPLY", UnaryParameter, UnaryParameter);
 
             return new BlockExpressionBuilder().AddUsingMemoryLocationOrConstant(
-                local => new[] { ReductionExpressionGenerator.Generate("MULTIPLY", local, local)},
+                local => new[] { ReductionExpressionGenerator.GenerateOrThrow("MULTIPLY", local, local)},
                 UnaryParameter
             ).GetExpression();
         }

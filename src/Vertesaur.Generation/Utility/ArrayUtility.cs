@@ -2,7 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Diagnostics.Contracts;
 
-namespace Vertesaur.Utility
+namespace Vertesaur.Generation.Utility
 {
     internal static class ArrayUtility
     {
@@ -16,10 +16,13 @@ namespace Vertesaur.Utility
         public static ReadOnlyCollection<T> AsReadOnly<T>(this T[] array) {
             Contract.Requires(array != null);
             Contract.Ensures(Contract.Result<ReadOnlyCollection<T>>() != null);
-#if NETFX_CORE
-            return new ReadOnlyCollection<T>(array);
+            Contract.Ensures(Contract.Result<ReadOnlyCollection<T>>().Count == array.Length);
+#if DEBUG
+            var result = new ReadOnlyCollection<T>(array);
+            Contract.Assume(result.Count == array.Length);
+            return result;
 #else
-            return Array.AsReadOnly(array);
+            return new ReadOnlyCollection<T>(array);
 #endif
         }
 
@@ -40,7 +43,13 @@ namespace Vertesaur.Utility
             Contract.Requires(converter != null);
             Contract.Ensures(Contract.Result<TTo[]>() != null);
             Contract.Ensures(Contract.Result<TTo[]>().Length == array.Length);
+#if DEBUG
+            var result = Array.ConvertAll(array, converter);
+            Contract.Assume(result.Length == array.Length);
+            return result;
+#else
             return Array.ConvertAll(array, converter);
+#endif
         }
 #endif
 

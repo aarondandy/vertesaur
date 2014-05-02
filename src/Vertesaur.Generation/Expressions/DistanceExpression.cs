@@ -21,7 +21,7 @@ namespace Vertesaur.Generation.Expressions
             : base(reductionExpressionGenerator) {
             if (null == components) throw new ArgumentNullException("components");
             if (components.Count == 0) throw new ArgumentException("Must have at least 1 component.", "components");
-            if ((components.Count % 2) != 0) throw new ArgumentException("Must have an even number of components.", "components");
+            if (components.Count % 2 != 0) throw new ArgumentException("Must have an even number of components.", "components");
             Contract.Requires(components.All(x => null != x));
 
             if (components.Any(x => null == x)) throw new ArgumentException("All components expressions must be non null.", "components");

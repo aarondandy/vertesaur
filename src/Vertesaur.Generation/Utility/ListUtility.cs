@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 
-namespace Vertesaur.Utility
+namespace Vertesaur.Generation.Utility
 {
     internal static class ListUtility
     {

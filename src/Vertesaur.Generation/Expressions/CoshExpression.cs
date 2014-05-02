@@ -2,6 +2,7 @@
 using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
 using System.Reflection;
+using Vertesaur.Generation.Utility;
 using Vertesaur.Utility;
 
 namespace Vertesaur.Generation.Expressions
@@ -31,9 +32,7 @@ namespace Vertesaur.Generation.Expressions
         /// <inheritdoc/>
         public override Expression Reduce() {
             Contract.Ensures(Contract.Result<Expression>() != null);
-            return typeof(double) == Type
-                ? (Expression)Call(MathCoshMethod, UnaryParameter)
-                : Convert(Call(MathCoshMethod, Convert(UnaryParameter, typeof(double))), Type);
+            return ReductionExpressionGenerator.BuildConversionCall(MathCoshMethod, UnaryParameter, Type);
         }
 
     }

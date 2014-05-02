@@ -23,11 +23,9 @@ namespace Vertesaur.Generation.Expressions
             if (null == unaryParameter) throw new ArgumentNullException("unaryParameter");
             Contract.EndContractBlock();
             UnaryParameter = unaryParameter;
-            Contract.Assume(null != UnaryParameter);
         }
 
         [ContractInvariantMethod]
-        [Conditional("CONTRACTS_FULL")]
         private void CodeContractInvariant() {
             Contract.Invariant(UnaryParameter != null);
         }

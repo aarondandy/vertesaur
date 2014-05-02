@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
+using Vertesaur.Generation.Utility;
 using Vertesaur.Utility;
 
 namespace Vertesaur.Generation.Expressions
@@ -25,7 +26,7 @@ namespace Vertesaur.Generation.Expressions
             Contract.Ensures(Contract.Result<Expression>() != null);
             var method = typeof(Math).GetPublicStaticInvokableMethod("Abs", Type);
             if (null != method)
-                return Call(method, UnaryParameter);
+                return ReductionExpressionGenerator.BuildConversionCall(method, UnaryParameter, Type);
 
             if (UnaryParameter.IsMemoryLocationOrConstant())
                 return GenerateExpression(UnaryParameter);
@@ -40,13 +41,11 @@ namespace Vertesaur.Generation.Expressions
             Contract.Requires(parameter != null);
             Contract.Requires(parameter.IsMemoryLocationOrConstant());
             Contract.Ensures(Contract.Result<Expression>() != null);
-            var test = ReductionExpressionGenerator.Generate("GREATEREQUAL", parameter, ReductionExpressionGenerator.Generate("ZERO", Type));
-            if (test == null)
-                return null;
+            var gen = ReductionExpressionGenerator;
             return Condition(
-                test,
+                gen.GenerateOrThrow("GREATEREQUAL", parameter, gen.GenerateOrThrow("ZERO", Type)),
                 parameter,
-                ReductionExpressionGenerator.Generate("NEGATE", parameter)
+                gen.GenerateOrThrow("NEGATE", parameter)
             );
         }
 

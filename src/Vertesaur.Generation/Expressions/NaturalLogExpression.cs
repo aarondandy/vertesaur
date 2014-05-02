@@ -2,6 +2,7 @@
 using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
 using System.Reflection;
+using Vertesaur.Generation.Utility;
 using Vertesaur.Utility;
 
 namespace Vertesaur.Generation.Expressions
@@ -9,12 +10,12 @@ namespace Vertesaur.Generation.Expressions
     /// <summary>
     /// A natural logarithm expression.
     /// </summary>
-    public class LogExpression : ReducibleUnaryExpressionBase
+    public class NaturalLogExpression : ReducibleUnaryExpressionBase
     {
-        private static readonly MethodInfo MathLogMethod;
+        private static readonly MethodInfo MathNaturalLogMethod;
 
-        static LogExpression() {
-            MathLogMethod = typeof(Math).GetPublicStaticInvokableMethod("Log", typeof(double));
+        static NaturalLogExpression() {
+            MathNaturalLogMethod = typeof(Math).GetPublicStaticInvokableMethod("Log", typeof(double));
         }
 
         /// <summary>
@@ -22,7 +23,7 @@ namespace Vertesaur.Generation.Expressions
         /// </summary>
         /// <param name="input">The expression to calculate the natural logarithm of.</param>
         /// <param name="generator">The optional expression generator used during reduction.</param>
-        public LogExpression(Expression input, IExpressionGenerator generator = null)
+        public NaturalLogExpression(Expression input, IExpressionGenerator generator = null)
             : base(input, generator) {
             Contract.Requires(null != input);
         }
@@ -30,9 +31,11 @@ namespace Vertesaur.Generation.Expressions
         /// <inheritdoc/>
         public override Expression Reduce() {
             Contract.Ensures(Contract.Result<Expression>() != null);
-            return typeof(double) == Type
-                ? (Expression)Call(MathLogMethod, UnaryParameter)
-                : Convert(Call(MathLogMethod, Convert(UnaryParameter, typeof(double))), Type);
+            var gen = ReductionExpressionGenerator;
+            if (Type == typeof(double) || Type == typeof(float))
+                return gen.BuildConversionCall(MathNaturalLogMethod, UnaryParameter, Type);
+
+            return gen.GenerateOrThrow("LOG", UnaryParameter, gen.GenerateOrThrow("E", Type));
         }
     }
 }

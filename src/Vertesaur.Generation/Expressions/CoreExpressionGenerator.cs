@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
-using Vertesaur.Utility;
+using Vertesaur.Generation.Utility;
 
 namespace Vertesaur.Generation.Expressions
 {
@@ -171,7 +171,8 @@ namespace Vertesaur.Generation.Expressions
                 {"COSH", (g,i) => new CoshExpression(i,g.TopLevelGenerator)},
                 {"SINH", (g,i) => new SinhExpression(i,g.TopLevelGenerator)},
                 {"TANH", (g,i) => new TanhExpression(i,g.TopLevelGenerator)},
-                {"LOG", (g,i) => new LogExpression(i,g.TopLevelGenerator)},
+                {"LOG", (g,i) => new NaturalLogExpression(i,g.TopLevelGenerator)},
+                {"LN", (g,i) => new NaturalLogExpression(i,g.TopLevelGenerator)},
                 {"LOG10", (g,i) => new Log10Expression(i,g.TopLevelGenerator)},
                 {"EXP", (g,i) => new ExpExpression(i,g.TopLevelGenerator)},
                 {"ABS", (g,i) => new AbsExpression(i,g.TopLevelGenerator)},
@@ -194,7 +195,8 @@ namespace Vertesaur.Generation.Expressions
                 {"MAX", (g,left,right) => new MaxExpression(left,right,g.TopLevelGenerator)},
                 {"COMPARETO", GenerateCompareTo},
                 {"ATAN2", (g,left,right) => new Atan2Expression(left,right,g.TopLevelGenerator)},
-                {"POW", CreatePow}
+                {"POW", CreatePow},
+                {"LOG", (g,v,b) => new LogExpression(v,b,g.TopLevelGenerator)}
             };
         }
 
@@ -206,13 +208,12 @@ namespace Vertesaur.Generation.Expressions
             if (left.Type == typeof(double) && right.Type == typeof(double))
                 return Expression.Power(left, right);
 
-            return request.TopLevelGenerator.GenerateConversionExpression(
-                left.Type,
-                Expression.Power(
-                    request.TopLevelGenerator.GenerateConversionExpression(typeof(double), left),
-                    request.TopLevelGenerator.GenerateConversionExpression(typeof(double), right)
-                )
-            );
+            var lhsDouble = request.TopLevelGenerator.GenerateConversion(typeof (double), left);
+            var rhsDouble = request.TopLevelGenerator.GenerateConversion(typeof (double), right);
+            if (lhsDouble == null || rhsDouble == null)
+                return null;
+
+            return Expression.Power(lhsDouble, rhsDouble);
         }
 
         private Expression GenerateSquare(IExpressionGenerationRequest request, Expression parameter) {
@@ -277,8 +278,10 @@ namespace Vertesaur.Generation.Expressions
             Contract.Requires(null != left);
             Contract.Requires(null != right);
             if ((left.Type == right.Type) && (left.Type == typeof(byte) || left.Type == typeof(char) || left.Type == typeof(sbyte))) {
+                var methodName = ToTitleCase(request.ExpressionName) + (Checked ? "Checked" : "Unchecked");
+                Contract.Assume(!String.IsNullOrEmpty(methodName));
                 var method = typeof(SpecializedOperations).GetPublicStaticInvokableMethod(
-                    ToTitleCase(request.ExpressionName) + (Checked ? "Checked" : "Unchecked"),
+                    methodName,
                     new[] { left.Type, left.Type }
                 );
                 if (null != method) {
@@ -302,28 +305,31 @@ namespace Vertesaur.Generation.Expressions
             Contract.Requires(null != left);
             Contract.Requires(null != right);
             if (left.IsMemoryLocationOrConstant() && right.IsMemoryLocationOrConstant()) {
-                var eq = request.TopLevelGenerator.Generate("EQUAL", left, right);
-                Contract.Assume(null != eq);
-                var less = request.TopLevelGenerator.Generate("LESS", left, right);
-                Contract.Assume(null != less);
+                var eq = request.TopLevelGenerator.GenerateOrThrow("EQUAL", left, right);
+                var less = request.TopLevelGenerator.GenerateOrThrow("LESS", left, right);
                 var comparableType = typeof(IComparable<>).MakeGenericType(new[] { right.Type });
-                return left.Type.ImplementsInterface(comparableType)
-                    ? Expression.Call(
+                Contract.Assume(comparableType != null);
+
+                if (left.Type.ImplementsInterface(comparableType)) {
+                    return Expression.Call(
                         left,
                         comparableType.GetPublicInstanceInvokableMethod(
                             "CompareTo",
-                            new[] { right.Type }),
-                        new[] { right }
-                    ) as Expression
-                    : Expression.Condition(
-                        eq,
-                        Expression.Constant(0),
-                        Expression.Condition(
-                            less,
-                            Expression.Constant(-1),
-                            Expression.Constant(1)
-                        )
+                            new[] {right.Type}
+                        ),
+                        new[] {right}
                     );
+                }
+
+                return Expression.Condition(
+                    eq,
+                    Expression.Constant(0),
+                    Expression.Condition(
+                        less,
+                        Expression.Constant(-1),
+                        Expression.Constant(1)
+                    )
+                );
             }
 
             return new BlockExpressionBuilder().AddUsingMemoryLocationsOrConstants(locals => new[] {
@@ -457,16 +463,17 @@ namespace Vertesaur.Generation.Expressions
 
             var expressionName = request.ExpressionName;
 
-            if ("CONVERT".Equals(expressionName, StringComparison.OrdinalIgnoreCase)
-                && request.InputExpressions != null
+            if (
+                "CONVERT".Equals(expressionName, StringComparison.OrdinalIgnoreCase)
                 && request.InputExpressions.Count == 1
                 && null != request.DesiredResultType
             ) {
+                Contract.Assume(request.InputExpressions[0] != null);
                 return GenerateConversionExpression(request.InputExpressions[0], request.DesiredResultType);
             }
 
             if (
-                (request.InputExpressions == null || request.InputExpressions.Count == 0)
+                request.InputExpressions.Count == 0
                 && null != request.DesiredResultType
                 && typeof(void) != request.DesiredResultType
             ) {

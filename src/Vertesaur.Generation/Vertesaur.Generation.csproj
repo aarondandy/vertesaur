@@ -162,7 +162,8 @@
     <Compile Include="Expressions\FloorExpression.cs" />
     <Compile Include="Expressions\FunctionExpressionGenerationRequest.cs" />
     <Compile Include="Expressions\Log10Expression.cs" />
-    <Compile Include="Expressions\LogExpression.cs" />
+    <Compile Include="Expressions\LogExpressioncs.cs" />
+    <Compile Include="Expressions\NaturalLogExpression.cs" />
     <Compile Include="Expressions\MaxExpression.cs" />
     <Compile Include="Expressions\MefCombinedExpressionGenerator.cs" />
     <Compile Include="Expressions\MinExpression.cs" />
@@ -186,6 +187,7 @@
     <Compile Include="Point2.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utility\ArrayUtility.cs" />
+    <Compile Include="Utility\ExpressionEx.cs" />
     <Compile Include="Utility\ListUtility.cs" />
     <Compile Include="Utility\ReflectionUtils.cs" />
     <Compile Include="Vector2.cs" />

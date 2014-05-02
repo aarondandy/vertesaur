@@ -3,7 +3,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Linq.Expressions;
-using Vertesaur.Utility;
+using Vertesaur.Generation.Utility;
 
 namespace Vertesaur.Generation.Expressions
 {

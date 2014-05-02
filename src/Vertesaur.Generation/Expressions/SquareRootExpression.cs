@@ -2,6 +2,7 @@
 using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
 using System.Reflection;
+using Vertesaur.Generation.Utility;
 using Vertesaur.Utility;
 
 namespace Vertesaur.Generation.Expressions
@@ -31,12 +32,13 @@ namespace Vertesaur.Generation.Expressions
         /// <inheritdoc/>
         public override Expression Reduce() {
             Contract.Ensures(Contract.Result<Expression>() != null);
+
+            // TODO: should there be an optimization option?
             var squareExpression = UnaryParameter as SquareExpression;
             if (squareExpression != null)
                 return squareExpression.UnaryParameter;
-            return typeof(double) == Type
-                ? (Expression)Call(MathSqrtMethod, UnaryParameter)
-                : Convert(Call(MathSqrtMethod, Convert(UnaryParameter, typeof(double))), Type);
+
+            return ReductionExpressionGenerator.BuildConversionCall(MathSqrtMethod, UnaryParameter, Type);
         }
 
     }

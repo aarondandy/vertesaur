@@ -156,6 +156,7 @@ namespace Vertesaur
             if (PointWinding.Unknown == desiredWinding) throw new ArgumentException("desiredWinding may not be Unknown", "desiredWinding");
             Contract.EndContractBlock();
             foreach (var ring in this) {
+                Contract.Assume(ring != null);
                 ring.ForceFillWinding(desiredWinding);
             }
         }

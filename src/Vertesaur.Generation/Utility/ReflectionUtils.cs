@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 
-namespace Vertesaur.Utility
+namespace Vertesaur.Generation.Utility
 {
     internal static class ReflectionUtils
     {

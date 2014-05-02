@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
+using Vertesaur.Generation.Utility;
 using Vertesaur.Utility;
 
 namespace Vertesaur.Generation.Expressions
@@ -37,7 +38,7 @@ namespace Vertesaur.Generation.Expressions
             Contract.Ensures(Contract.Result<Expression>() != null);
             var method = typeof(Math).GetPublicStaticInvokableMethod("Min", LeftParameter.Type, RightParameter.Type);
             if (null != method)
-                return Call(method, LeftParameter, RightParameter);
+                return method.BuildCallExpression(LeftParameter, RightParameter);
 
             if (LeftParameter.IsMemoryLocationOrConstant() && RightParameter.IsMemoryLocationOrConstant())
                 return GenerateExpression(LeftParameter, RightParameter);
@@ -56,11 +57,13 @@ namespace Vertesaur.Generation.Expressions
             Contract.Requires(left.IsMemoryLocationOrConstant());
             Contract.Requires(right.IsMemoryLocationOrConstant());
             Contract.Ensures(Contract.Result<Expression>() != null);
-            return Condition(
-                ReductionExpressionGenerator.Generate("LESSEQUAL", left, right),
+            var result = Condition(
+                ReductionExpressionGenerator.GenerateOrThrow("LESSEQUAL", left, right),
                 left,
                 right
             );
+            Contract.Assume(result != null);
+            return result;
         }
     }
 }

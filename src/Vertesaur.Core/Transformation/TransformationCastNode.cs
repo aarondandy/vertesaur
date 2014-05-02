@@ -183,6 +183,7 @@ namespace Vertesaur.Transformation
             Contract.Requires(null != m);
             if (TransformValuesMethodName.Equals(m.Name) && m.ReturnType == MakeGenericEnumerableType(ToType)) {
                 var parameters = m.GetParameters();
+                Contract.Assume(parameters != null);
                 if (parameters.Length == 1 && parameters[0].ParameterType == MakeGenericEnumerableType(FromType)) {
                     return true;
                 }

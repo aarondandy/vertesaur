@@ -37,12 +37,12 @@ namespace Vertesaur.Generation.Expressions
             Contract.Requires(input.IsMemoryLocationOrConstant());
             Contract.Ensures(Contract.Result<Expression>() != null);
             var gen = ReductionExpressionGenerator;
-            return gen.Generate("LOG",
-                gen.Generate("ADD",
-                    gen.Generate("SQUAREROOT",
-                        gen.Generate("SUBTRACT",
-                            gen.Generate("SQUARE", input),
-                            gen.Generate("1", input.Type)
+            return gen.GenerateOrThrow("LOG",
+                gen.GenerateOrThrow("ADD",
+                    gen.GenerateOrThrow("SQUAREROOT",
+                        gen.GenerateOrThrow("SUBTRACT",
+                            gen.GenerateOrThrow("SQUARE", input),
+                            gen.GenerateOrThrow("1", input.Type)
                         )
                     ),
                     input

@@ -7,7 +7,6 @@ namespace Vertesaur.Generation.Expressions
     /// <summary>
     /// An expression that can be reduced to a compilable expression.
     /// </summary>
-    [ContractClass(typeof(ReducibleExpressionBaseContracts))]
     public abstract class ReducibleExpressionBase : Expression
     {
 
@@ -48,23 +47,6 @@ namespace Vertesaur.Generation.Expressions
         /// <inheritdoc/>
         public abstract override Expression Reduce();
 
-    }
-
-    [ContractClassFor(typeof(ReducibleExpressionBase))]
-    internal abstract class ReducibleExpressionBaseContracts : ReducibleExpressionBase
-    {
-
-        public override Type Type {
-            get {
-                Contract.Ensures(Contract.Result<Type>() != null);
-                throw new NotImplementedException();
-            }
-        }
-
-        public override Expression Reduce() {
-            Contract.Ensures(Contract.Result<Expression>() != null);
-            throw new NotImplementedException();
-        }
     }
 
 }

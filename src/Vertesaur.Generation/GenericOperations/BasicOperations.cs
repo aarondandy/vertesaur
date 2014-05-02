@@ -276,7 +276,8 @@ namespace Vertesaur.Generation.GenericOperations
 
         private Func<TFrom, TTo> BuildConversion<TFrom, TTo>() {
             var inputParam = Expression.Parameter(typeof(TFrom));
-            var expression = ExpressionGenerator.GenerateConversionExpression(typeof(TTo), inputParam);
+            Contract.Assume(inputParam != null);
+            var expression = ExpressionGenerator.GenerateConversion(typeof(TTo), inputParam);
             if (null == expression)
                 return null;
             return Expression.Lambda<Func<TFrom, TTo>>(expression, inputParam).Compile();

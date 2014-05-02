@@ -60,14 +60,20 @@ namespace Vertesaur.Generation.Expressions
         public CombinedExpressionGenerator(IEnumerable<IExpressionGenerator> expressionGenerators) {
             if (null == expressionGenerators) throw new ArgumentNullException("expressionGenerators");
             Contract.EndContractBlock();
-            _expressionGenerators = expressionGenerators.ToArray();
+            _expressionGenerators = expressionGenerators.Where(x => x != null).ToArray();
+        }
 
+        [ContractInvariantMethod]
+        private void ObjectInvariants() {
+            Contract.Invariant(_expressionGenerators != null);
+            Contract.Invariant(Contract.ForAll(_expressionGenerators, x => x != null));
         }
 
         /// <inheritdoc/>
         public Expression Generate(IExpressionGenerationRequest request) {
             if (null == request) throw new ArgumentNullException("request");
-            Contract.Ensures(Contract.Result<Expression>() != null);
+            Contract.EndContractBlock();
+
             return _expressionGenerators
                 .Select(x => x.Generate(request))
                 .FirstOrDefault(x => null != x);
