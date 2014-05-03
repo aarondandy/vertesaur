@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using System.Linq;
 using System.Linq.Expressions;
 
 namespace Vertesaur.Generation.Expressions
@@ -17,13 +15,17 @@ namespace Vertesaur.Generation.Expressions
         /// </summary>
         /// <param name="components">The coordinate expressions.</param>
         /// <param name="reductionExpressionGenerator">The optional expression generator used for reduction.</param>
-        public MagnitudeExpression(IList<Expression> components, IExpressionGenerator reductionExpressionGenerator = null)
-            : base(reductionExpressionGenerator) {
-            Contract.Requires(null != components);
-            Contract.Requires(components.Count != 0);
-            Contract.Requires(components.All(x => null != x));
-            Contract.Ensures(null != InnerExpression);
-            InnerExpression = new SquaredMagnitudeExpression(components, reductionExpressionGenerator);
+        public MagnitudeExpression(Expression[] components, IExpressionGenerator reductionExpressionGenerator = null)
+            : this(new SquaredMagnitudeExpression(components, reductionExpressionGenerator), reductionExpressionGenerator) {
+            Contract.Requires(components != null);
+            Contract.Requires(components.Length != 0);
+            Contract.Requires(Contract.ForAll(components, x => x != null));
+        }
+
+        private MagnitudeExpression(SquaredMagnitudeExpression innerExpression, IExpressionGenerator reductionExpressionGenerator = null) {
+            if(innerExpression == null) throw new ArgumentNullException("innerExpression");
+            Contract.EndContractBlock();
+            InnerExpression = innerExpression;
         }
 
         [ContractInvariantMethod]

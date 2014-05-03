@@ -23,7 +23,7 @@
 // ===============================================================================
 
 using System;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
 
@@ -47,7 +47,7 @@ namespace Vertesaur.Generation.Expressions
         /// <summary>
         /// The function inputs for the expression.
         /// </summary>
-        ReadOnlyCollection<Expression> InputExpressions { get; }
+        IList<Expression> InputExpressions { get; }
         /// <summary>
         /// The optional desired result type for the generated expression.
         /// </summary>
@@ -73,10 +73,10 @@ namespace Vertesaur.Generation.Expressions
             }
         }
 
-        public ReadOnlyCollection<Expression> InputExpressions {
+        public IList<Expression> InputExpressions {
             get {
-                Contract.Ensures(Contract.Result<ReadOnlyCollection<Expression>>() != null);
-                Contract.Ensures(Contract.ForAll(Contract.Result<ReadOnlyCollection<Expression>>(), x => x != null));
+                Contract.Ensures(Contract.Result<IList<Expression>>() != null);
+                Contract.Ensures(Contract.ForAll(Contract.Result<IList<Expression>>(), x => x != null));
                 throw new NotImplementedException();
             }
         }

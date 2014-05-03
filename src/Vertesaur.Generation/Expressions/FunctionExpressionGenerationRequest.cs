@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.ObjectModel;
+using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Linq.Expressions;
@@ -26,21 +26,23 @@ namespace Vertesaur.Generation.Expressions
             if (inputs.Length == 0) throw new ArgumentException("At least one input expression is required.", "inputs");
             Contract.Requires(Contract.ForAll(inputs, x => x != null));
 
-            if (inputs.Any(x => x == null))
-                throw new ArgumentException("No expressions may not be null", "inputs");
-
             TopLevelGenerator = generator;
             ExpressionName = expressionName;
-            InputExpressions = inputs.AsReadOnly();
+            _inputExpressions = inputs; // TODO: consider a clone
+
+            if (_inputExpressions.ContainsNull())
+                throw new ArgumentException("No expressions may not be null", "inputs");
         }
 
         [ContractInvariantMethod]
         private void CodeContractInvariants() {
             Contract.Invariant(TopLevelGenerator != null);
             Contract.Invariant(!String.IsNullOrEmpty(ExpressionName));
-            Contract.Invariant(InputExpressions != null);
-            Contract.Invariant(Contract.ForAll(InputExpressions, x => x != null));
+            Contract.Invariant(_inputExpressions != null);
+            Contract.Invariant(Contract.ForAll(_inputExpressions, x => x != null));
         }
+
+        private readonly Expression[] _inputExpressions;
 
         /// <inheritdoc/>
         public IExpressionGenerator TopLevelGenerator { get; private set; }
@@ -49,7 +51,13 @@ namespace Vertesaur.Generation.Expressions
         public string ExpressionName { get; private set; }
 
         /// <inheritdoc/>
-        public ReadOnlyCollection<Expression> InputExpressions { get; private set; }
+        public IList<Expression> InputExpressions {
+            get {
+                var result = _inputExpressions.AsReadOnly();
+                Contract.Assume(Contract.ForAll(result, x => x != null));
+                return result;
+            }
+        }
 
         /// <inheritdoc/>
         public Type DesiredResultType { get { return null; } }

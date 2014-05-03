@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
@@ -52,10 +53,10 @@ namespace Vertesaur.Generation.Expressions
         }
 
         /// <inheritdoc/>
-        public ReadOnlyCollection<Expression> InputExpressions {
+        public IList<Expression> InputExpressions {
             get {
-                Contract.Ensures(Contract.Result<ReadOnlyCollection<Expression>>() != null);
-                return new[] { InputExpression }.AsReadOnly();
+                Contract.Ensures(Contract.Result<IList<Expression>>() != null);
+                return new[] { InputExpression };
             }
         }
 

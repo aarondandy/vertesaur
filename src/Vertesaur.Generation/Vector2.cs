@@ -106,9 +106,11 @@ namespace Vertesaur.Generation
         /// <param name="value">The vector to cast and convert.</param>
         /// <returns>The resulting double vector representation of the casted generic vector.</returns>
         public static explicit operator Vector2(Vector2<TValue> value) {
-            var x = BasicOperations<TValue>.Default.ToDouble(value.X);
-            var y = BasicOperations<TValue>.Default.ToDouble(value.Y);
-            return new Vector2(x, y);
+            if(BasicOperations<TValue>.Default.ToDouble == null)
+                throw new InvalidOperationException();
+            return new Vector2(
+                BasicOperations<TValue>.Default.ToDouble(value.X),
+                BasicOperations<TValue>.Default.ToDouble(value.Y));
         }
 
         /// <summary>
@@ -156,6 +158,8 @@ namespace Vertesaur.Generation
         /// <param name="v">The vector to convert and clone from.</param>
         /// <exception cref="System.ArgumentException">Coordinate type conversion fails.</exception>
         public Vector2(Vector2 v) {
+            if (BasicOperations<TValue>.Default.FromDouble == null)
+                throw new InvalidOperationException();
             X = BasicOperations<TValue>.Default.FromDouble(v.X);
             Y = BasicOperations<TValue>.Default.FromDouble(v.Y);
         }
@@ -194,11 +198,15 @@ namespace Vertesaur.Generation
 
         /// <inheritdoc/>
         public TValue GetMagnitude() {
+            if (VectorOperations<TValue>.Default.Magnitude2D == null)
+                throw new InvalidOperationException();
             return VectorOperations<TValue>.Default.Magnitude2D(X, Y);
         }
 
         /// <inheritdoc/>
         public TValue GetMagnitudeSquared() {
+            if (VectorOperations<TValue>.Default.SquaredMagnitude2D == null)
+                throw new InvalidOperationException();
             return VectorOperations<TValue>.Default.SquaredMagnitude2D(X, Y);
         }
 
@@ -208,9 +216,11 @@ namespace Vertesaur.Generation
         /// <param name="rightHandSide">The vector to add.</param>
         /// <returns>A result of adding this vector with the given vector.</returns>
         public Vector2<TValue> Add(Vector2<TValue> rightHandSide) {
-            var x = BasicOperations<TValue>.Default.Add(X, rightHandSide.X);
-            var y = BasicOperations<TValue>.Default.Add(Y, rightHandSide.Y);
-            return new Vector2<TValue>(x, y);
+            if(BasicOperations<TValue>.Default.Add == null)
+                throw new InvalidOperationException();
+            return new Vector2<TValue>(
+                BasicOperations<TValue>.Default.Add(X, rightHandSide.X),
+                BasicOperations<TValue>.Default.Add(Y, rightHandSide.Y));
         }
 
         /// <summary>
@@ -219,9 +229,11 @@ namespace Vertesaur.Generation
         /// <param name="rightHandSide">The vector to add.</param>
         /// <returns>A result of adding this vector with the given vector.</returns>
         public Point2<TValue> Add(Point2<TValue> rightHandSide) {
-            var x = BasicOperations<TValue>.Default.Add(X, rightHandSide.X);
-            var y = BasicOperations<TValue>.Default.Add(Y, rightHandSide.Y);
-            return new Point2<TValue>(x, y);
+            if(BasicOperations<TValue>.Default.Add == null)
+                throw new InvalidOperationException();
+            return new Point2<TValue>(
+                BasicOperations<TValue>.Default.Add(X, rightHandSide.X),
+                BasicOperations<TValue>.Default.Add(Y, rightHandSide.Y));
         }
 
         /// <summary>
@@ -230,9 +242,11 @@ namespace Vertesaur.Generation
         /// <param name="rightHandSide">The vector to subtract.</param>
         /// <returns>A result of subtracting the given vector from this vector.</returns>
         public Vector2<TValue> Difference(Vector2<TValue> rightHandSide) {
-            var x = BasicOperations<TValue>.Default.Subtract(X, rightHandSide.X);
-            var y = BasicOperations<TValue>.Default.Subtract(Y, rightHandSide.Y);
-            return new Vector2<TValue>(x, y);
+            if(BasicOperations<TValue>.Default.Subtract == null)
+                throw new InvalidOperationException();
+            return new Vector2<TValue>(
+                BasicOperations<TValue>.Default.Subtract(X, rightHandSide.X),
+                BasicOperations<TValue>.Default.Subtract(Y, rightHandSide.Y));
         }
 
         /// <summary>
@@ -241,9 +255,11 @@ namespace Vertesaur.Generation
         /// <param name="rightHandSide">The vector to subtract.</param>
         /// <returns>A result of subtracting the given vector from this vector.</returns>
         public Point2<TValue> Difference(Point2<TValue> rightHandSide) {
-            var x = BasicOperations<TValue>.Default.Subtract(X, rightHandSide.X);
-            var y = BasicOperations<TValue>.Default.Subtract(Y, rightHandSide.Y);
-            return new Point2<TValue>(x, y);
+            if(BasicOperations<TValue>.Default.Subtract == null)
+                throw new InvalidOperationException();
+            return new Point2<TValue>(
+                BasicOperations<TValue>.Default.Subtract(X, rightHandSide.X),
+                BasicOperations<TValue>.Default.Subtract(Y, rightHandSide.Y));
         }
 
         /// <summary>
@@ -252,6 +268,8 @@ namespace Vertesaur.Generation
         /// <param name="rightHandSide">Another vector to use for the calculation of the dot product.</param>
         /// <returns>The dot product.</returns>
         public TValue Dot(Vector2<TValue> rightHandSide) {
+            if (VectorOperations<TValue>.Default.DotProduct2D == null)
+                throw new InvalidOperationException();
             return VectorOperations<TValue>.Default.DotProduct2D(X, Y, rightHandSide.X, rightHandSide.Y);
         }
 
@@ -260,9 +278,11 @@ namespace Vertesaur.Generation
         /// </summary>
         /// <returns>A vector with the same component values but different signs.</returns>
         public Vector2<TValue> GetNegative() {
-            var x = BasicOperations<TValue>.Default.Negate(X);
-            var y = BasicOperations<TValue>.Default.Negate(Y);
-            return new Vector2<TValue>(x, y);
+            if(BasicOperations<TValue>.Default.Negate == null)
+                throw new InvalidOperationException();
+            return new Vector2<TValue>(
+                BasicOperations<TValue>.Default.Negate(X),
+                BasicOperations<TValue>.Default.Negate(Y));
         }
 
         /// <summary>
@@ -273,9 +293,13 @@ namespace Vertesaur.Generation
         public Vector2<TValue> GetScaled(TValue factor) {
             if (null == factor) throw new ArgumentNullException("factor");
             Contract.EndContractBlock();
-            var x = BasicOperations<TValue>.Default.Multiply(X, factor);
-            var y = BasicOperations<TValue>.Default.Multiply(Y, factor);
-            return new Vector2<TValue>(x, y);
+
+            if(BasicOperations<TValue>.Default.Multiply == null)
+                throw new InvalidOperationException();
+
+            return new Vector2<TValue>(
+                BasicOperations<TValue>.Default.Multiply(X, factor),
+                BasicOperations<TValue>.Default.Multiply(Y, factor));
         }
 
         /// <summary>
@@ -285,6 +309,8 @@ namespace Vertesaur.Generation
         /// <returns>The z-coordinate of the cross product.</returns>
         /// <remarks>Also calculates the z-coordinate of the cross product of this vector and another vector.</remarks>
         public TValue PerpendicularDot(Vector2<TValue> rightHandSide) {
+            if (VectorOperations<TValue>.Default.PerpendicularDotProduct2D == null)
+                throw new InvalidOperationException();
             return VectorOperations<TValue>.Default.PerpendicularDotProduct2D(
                 X, Y, rightHandSide.X, rightHandSide.Y);
         }
@@ -294,8 +320,9 @@ namespace Vertesaur.Generation
         /// </summary>
         /// <returns>A vector.</returns>
         public Vector2<TValue> GetPerpendicularClockwise() {
-            var x = BasicOperations<TValue>.Default.Negate(X);
-            return new Vector2<TValue>(Y, x);
+            if (BasicOperations<TValue>.Default.Negate == null)
+                throw new InvalidOperationException();
+            return new Vector2<TValue>(Y, BasicOperations<TValue>.Default.Negate(X));
         }
 
         /// <summary>
@@ -303,8 +330,9 @@ namespace Vertesaur.Generation
         /// </summary>
         /// <returns>A vector.</returns>
         public Vector2<TValue> GetPerpendicularCounterClockwise() {
-            var y = BasicOperations<TValue>.Default.Negate(Y);
-            return new Vector2<TValue>(y, X);
+            if (BasicOperations<TValue>.Default.Negate == null)
+                throw new InvalidOperationException();
+            return new Vector2<TValue>(BasicOperations<TValue>.Default.Negate(Y), X);
         }
 
         /// <summary>
@@ -316,9 +344,12 @@ namespace Vertesaur.Generation
             if (BasicOperations<TValue>.Default.ZeroValue.Equals(m))
                 return CreateZero();
 
-            var x = BasicOperations<TValue>.Default.Divide(X, m);
-            var y = BasicOperations<TValue>.Default.Divide(Y, m);
-            return new Vector2<TValue>(x, y);
+            if (BasicOperations<TValue>.Default.Divide == null)
+                throw new InvalidOperationException();
+
+            return new Vector2<TValue>(
+                BasicOperations<TValue>.Default.Divide(X, m),
+                BasicOperations<TValue>.Default.Divide(Y, m));
         }
 
     }

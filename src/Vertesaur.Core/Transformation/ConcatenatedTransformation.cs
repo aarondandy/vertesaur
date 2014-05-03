@@ -279,7 +279,7 @@ namespace Vertesaur.Transformation
         public ConcatenatedTransformation(IEnumerable<ITransformation> transformations)
             : base(transformations) {
             Contract.Requires(transformations != null);
-            Contract.EndContractBlock();
+            Contract.Requires(Contract.ForAll(transformations, x => x != null));
         }
 
         /// <inheritdoc/>

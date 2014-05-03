@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
+using System.Linq;
 using System.Linq.Expressions;
 
 namespace Vertesaur.Generation.Expressions
@@ -22,16 +23,17 @@ namespace Vertesaur.Generation.Expressions
             Contract.EndContractBlock();
 
             var expressionName = request.ExpressionName;
-            var inputExpressions = request.InputExpressions;
+            var inputExpressions = request.InputExpressions.ToArray();
+            Contract.Assume(Contract.ForAll(inputExpressions, x => x != null));
             var topLevelGenerator = request.TopLevelGenerator;
 
-            if (inputExpressions.Count > 0) {
+            if (inputExpressions.Length > 0) {
                 if (StringComparer.OrdinalIgnoreCase.Equals(expressionName, "MAGNITUDE"))
                     return new MagnitudeExpression(inputExpressions, topLevelGenerator);
                 if (StringComparer.OrdinalIgnoreCase.Equals(expressionName, "SQUAREDMAGNITUDE"))
                     return new SquaredMagnitudeExpression(inputExpressions, topLevelGenerator);
 
-                if ((inputExpressions.Count % 2) == 0) {
+                if (inputExpressions.Length % 2 == 0) {
                     if (StringComparer.OrdinalIgnoreCase.Equals(expressionName, "DOTPRODUCT"))
                         return new DotProductExpression(inputExpressions, topLevelGenerator);
                     if (StringComparer.OrdinalIgnoreCase.Equals(expressionName, "DISTANCE"))

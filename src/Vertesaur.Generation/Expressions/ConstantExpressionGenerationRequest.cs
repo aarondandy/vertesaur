@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
@@ -11,9 +12,6 @@ namespace Vertesaur.Generation.Expressions
     /// </summary>
     public class ConstantExpressionGenerationRequest : IExpressionGenerationRequest
     {
-
-        private static readonly ReadOnlyCollection<Expression> EmptyExpressionList = new Expression[0].AsReadOnly();
-
         /// <summary>
         /// Creates a new function expression generation request. This request is for a function that accepts one or more expressions as input.
         /// </summary>
@@ -44,7 +42,7 @@ namespace Vertesaur.Generation.Expressions
         public string ExpressionName { get; private set; }
 
         /// <inheritdoc/>
-        public ReadOnlyCollection<Expression> InputExpressions { get { return EmptyExpressionList; } }
+        public IList<Expression> InputExpressions { get { return ArrayUtility<Expression>.Empty; } }
 
         /// <inheritdoc/>
         public Type DesiredResultType { get; private set; }

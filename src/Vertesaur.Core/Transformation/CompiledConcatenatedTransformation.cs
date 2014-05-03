@@ -45,6 +45,7 @@ namespace Vertesaur.Transformation
         /// <param name="transformations"></param>
         public CompiledConcatenatedTransformation(IEnumerable<ITransformation> transformations) : base(transformations) {
             Contract.Requires(transformations != null);
+            Contract.Requires(Contract.ForAll(transformations, x => x != null));
             var singleParam = Expression.Parameter(typeof(TFrom), "x");
             _singleTransform = Expression.Lambda<Func<TFrom, TTo>>(
                 BuildSingleTransformExpression(singleParam),

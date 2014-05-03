@@ -200,6 +200,12 @@ namespace Vertesaur.Generation.Expressions
             };
         }
 
+        [ContractInvariantMethod]
+        private void ObjectInvariants() {
+            Contract.Invariant(_standardUnaryExpressionGeneratorLookup != null);
+            Contract.Invariant(_standardBinaryExpressionGeneratorLookup != null);
+        }
+
         private Expression CreatePow(IExpressionGenerationRequest request, Expression left, Expression right) {
             Contract.Requires(null != request);
             Contract.Requires(null != left);
@@ -259,7 +265,6 @@ namespace Vertesaur.Generation.Expressions
             Contract.Requires(inputs != null);
             Contract.Requires(inputs.Count >= 1);
             Contract.Requires(Contract.ForAll(inputs, x => x != null));
-            Contract.Requires(Contract.ForAll(0, inputs.Count, i => inputs[i] != null));
             Contract.Assume(inputs[0] != null);
             var result = inputs[0]; // GenerateArithmetic(request, inputs[0], inputs[1]);
             if (null == result)
@@ -307,18 +312,19 @@ namespace Vertesaur.Generation.Expressions
             if (left.IsMemoryLocationOrConstant() && right.IsMemoryLocationOrConstant()) {
                 var eq = request.TopLevelGenerator.GenerateOrThrow("EQUAL", left, right);
                 var less = request.TopLevelGenerator.GenerateOrThrow("LESS", left, right);
-                var comparableType = typeof(IComparable<>).MakeGenericType(new[] { right.Type });
+                Contract.Assume(typeof(IComparable<>).GetGenericArguments() != null);
+                Contract.Assume(typeof(IComparable<>).GetGenericArguments().Length == 1);
+                Contract.Assume(typeof(IComparable<>).IsGenericTypeDefinition);
+                var comparableType = typeof(IComparable<>).MakeGenericType(right.Type);
                 Contract.Assume(comparableType != null);
 
                 if (left.Type.ImplementsInterface(comparableType)) {
-                    return Expression.Call(
-                        left,
-                        comparableType.GetPublicInstanceInvokableMethod(
-                            "CompareTo",
-                            new[] {right.Type}
-                        ),
-                        new[] {right}
+                    var method = comparableType.GetPublicInstanceInvokableMethod(
+                        "CompareTo",
+                        new[] {right.Type}
                     );
+                    Contract.Assume(method != null);
+                    return method.BuildInstanceCallExpression(left, right);
                 }
 
                 return Expression.Condition(
@@ -422,17 +428,22 @@ namespace Vertesaur.Generation.Expressions
             Contract.Requires(null != expressionRequest);
 
             var parameters = expressionRequest.InputExpressions;
+            Contract.Assume(Contract.ForAll(parameters, x => x != null));
             var expressionName = expressionRequest.ExpressionName;
 
             if (parameters.Count == 1) {
                 Func<IExpressionGenerationRequest, Expression, Expression> unaryGenerator;
-                if (_standardUnaryExpressionGeneratorLookup.TryGetValue(expressionName, out unaryGenerator))
+                if (_standardUnaryExpressionGeneratorLookup.TryGetValue(expressionName, out unaryGenerator)) {
+                    Contract.Assume(unaryGenerator != null);
                     return unaryGenerator(expressionRequest, parameters[0]);
+                }
             }
             if (parameters.Count == 2) {
                 Func<IExpressionGenerationRequest, Expression, Expression, Expression> binaryGenerator;
-                if (_standardBinaryExpressionGeneratorLookup.TryGetValue(expressionName, out binaryGenerator))
+                if (_standardBinaryExpressionGeneratorLookup.TryGetValue(expressionName, out binaryGenerator)) {
+                    Contract.Assume(binaryGenerator != null);
                     return binaryGenerator(expressionRequest, parameters[0], parameters[1]);
+                }
             }
             if (parameters.Count > 2) {
                 var result = GenerateArithmetic(expressionRequest, parameters);

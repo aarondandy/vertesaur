@@ -63,6 +63,38 @@ namespace Vertesaur.Generation.Expressions
         /// </summary>
         /// <param name="generator">The expression generator to use.</param>
         /// <param name="expressionName">The name of the requested expression.</param>
+        /// <param name="input">The requested input for the expression.</param>
+        /// <returns>A new requested expression or null if one could not be generated.</returns>
+        public static Expression Generate(this IExpressionGenerator generator, string expressionName, Expression input) {
+            Contract.Requires(generator != null);
+            Contract.Requires(!String.IsNullOrEmpty(expressionName));
+            Contract.Requires(input != null);
+            var request = NewRequest(generator, expressionName, input);
+            return generator.Generate(request);
+        }
+
+        /// <summary>
+        /// Creates a new expression.
+        /// </summary>
+        /// <param name="generator">The expression generator to use.</param>
+        /// <param name="expressionName">The name of the requested expression.</param>
+        /// <param name="input0">The first requested input for the expression.</param>
+        /// <param name="input1">The second requested input for the expression.</param>
+        /// <returns>A new requested expression or null if one could not be generated.</returns>
+        public static Expression Generate(this IExpressionGenerator generator, string expressionName, Expression input0, Expression input1) {
+            Contract.Requires(generator != null);
+            Contract.Requires(!String.IsNullOrEmpty(expressionName));
+            Contract.Requires(input0 != null);
+            Contract.Requires(input1 != null);
+            var request = NewRequest(generator, expressionName, input0, input1);
+            return generator.Generate(request);
+        }
+
+        /// <summary>
+        /// Creates a new expression.
+        /// </summary>
+        /// <param name="generator">The expression generator to use.</param>
+        /// <param name="expressionName">The name of the requested expression.</param>
         /// <param name="inputExpressions">The requested inputs for the expression.</param>
         /// <returns>A new requested expression or null if one could not be generated.</returns>
         public static Expression Generate(this IExpressionGenerator generator, string expressionName, params Expression[] inputExpressions) {
@@ -73,6 +105,28 @@ namespace Vertesaur.Generation.Expressions
             Contract.Requires(Contract.ForAll(inputExpressions, x => x != null));
             var request = NewRequest(generator, expressionName, inputExpressions);
             return generator.Generate(request);
+        }
+
+        /// <summary>
+        /// Creates a new expression.
+        /// </summary>
+        /// <param name="generator">The expression generator to use.</param>
+        /// <param name="expressionName">The name of the requested expression.</param>
+        /// <param name="input0">The first input argument.</param>
+        /// <param name="input1">The second input argument.</param>
+        /// <returns>A new requested expression or null if one could not be generated.</returns>
+        public static Expression GenerateOrThrow(this IExpressionGenerator generator, string expressionName, Expression input0, Expression input1) {
+            Contract.Requires(null != generator);
+            Contract.Requires(!String.IsNullOrEmpty(expressionName));
+            Contract.Requires(input0 != null);
+            Contract.Requires(input1 != null);
+            Contract.Ensures(Contract.Result<Expression>() != null);
+            var inputs = new[] {input0, input1};
+            var request = NewRequest(generator, expressionName, inputs);
+            var result = generator.Generate(request);
+            if (result == null)
+                throw InvalidOp(expressionName, inputs);
+            return result;
         }
 
         /// <summary>

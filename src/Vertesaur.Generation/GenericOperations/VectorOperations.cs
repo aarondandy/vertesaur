@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
 using Vertesaur.Generation.Expressions;
+using Vertesaur.Generation.Utility;
 
 namespace Vertesaur.Generation.GenericOperations
 {
@@ -14,7 +15,7 @@ namespace Vertesaur.Generation.GenericOperations
     {
 
         static VectorOperations() {
-            Default = new VectorOperations<TValue>(
+            _default = new VectorOperations<TValue>(
 #if !NO_MEF
                 new MefCombinedExpressionGenerator()
 #else
@@ -26,7 +27,12 @@ namespace Vertesaur.Generation.GenericOperations
         /// <summary>
         /// The default vector operation implementation.
         /// </summary>
-        public static VectorOperations<TValue> Default { get; private set; }
+        public static VectorOperations<TValue> Default {
+            get {
+                Contract.Ensures(Contract.Result<VectorOperations<TValue>>() != null);
+                return _default;
+            }
+        }
 
         /// <summary>
         /// A delegate for methods that reduce a 2D coordinate down to a single result value of the same component type.
@@ -70,15 +76,17 @@ namespace Vertesaur.Generation.GenericOperations
         }
 
         private TwoCoordinateToValue2D CreatePerpendicularDotProduct2D() {
-            var x0 = Expression.Parameter(typeof(TValue));
-            var y0 = Expression.Parameter(typeof(TValue));
-            var x1 = Expression.Parameter(typeof(TValue));
-            var y1 = Expression.Parameter(typeof(TValue));
-            var expression = ExpressionGenerator.Generate(
-                "Subtract",
-                ExpressionGenerator.Generate("Multiply", x0, y1),
-                ExpressionGenerator.Generate("Multiply", y0, x1)
-            );
+            var x0 = typeof(TValue).CreateParameterExpression();
+            var y0 = typeof(TValue).CreateParameterExpression();
+            var x1 = typeof(TValue).CreateParameterExpression();
+            var y1 = typeof(TValue).CreateParameterExpression();
+
+            var mula = ExpressionGenerator.Generate("Multiply", x0, y1);
+            var mulb = ExpressionGenerator.Generate("Multiply", y0, x1);
+            if (mula == null || mulb == null)
+                return null;
+
+            var expression = ExpressionGenerator.Generate("Subtract", mula, mulb);
             if (expression == null)
                 return null;
             return Expression.Lambda<TwoCoordinateToValue2D>(
@@ -88,8 +96,8 @@ namespace Vertesaur.Generation.GenericOperations
 
         private CoordinateToValue2D CreateCoordinateToValue2D(string expressionName) {
             Contract.Requires(!string.IsNullOrEmpty(expressionName));
-            var tParam0 = Expression.Parameter(typeof(TValue));
-            var tParam1 = Expression.Parameter(typeof(TValue));
+            var tParam0 = typeof(TValue).CreateParameterExpression();
+            var tParam1 = typeof(TValue).CreateParameterExpression();
             var expression = ExpressionGenerator.Generate(expressionName, tParam0, tParam1);
             if (null == expression)
                 return null;
@@ -100,10 +108,10 @@ namespace Vertesaur.Generation.GenericOperations
 
         private TwoCoordinateToValue2D CreateTwoCoordinateToValue2D(string expressionName) {
             Contract.Requires(!string.IsNullOrEmpty(expressionName));
-            var tParam0 = Expression.Parameter(typeof(TValue));
-            var tParam1 = Expression.Parameter(typeof(TValue));
-            var tParam2 = Expression.Parameter(typeof(TValue));
-            var tParam3 = Expression.Parameter(typeof(TValue));
+            var tParam0 = typeof(TValue).CreateParameterExpression();
+            var tParam1 = typeof(TValue).CreateParameterExpression();
+            var tParam2 = typeof(TValue).CreateParameterExpression();
+            var tParam3 = typeof(TValue).CreateParameterExpression();
             var expression = ExpressionGenerator.Generate(expressionName, tParam0, tParam1, tParam2, tParam3);
             if (null == expression)
                 return null;
@@ -143,5 +151,6 @@ namespace Vertesaur.Generation.GenericOperations
         /// </summary>
         public readonly TwoCoordinateToValue2D PerpendicularDotProduct2D;
 
+        private static VectorOperations<TValue> _default;
     }
 }

@@ -47,16 +47,20 @@ namespace Vertesaur.Generation.Expressions
                 Assembly.GetExecutingAssembly(),
                 GetType().Assembly
             }.Distinct().ToArray();
+            Contract.Assume(Contract.ForAll(assemblies, x => x != null));
+            Contract.Assume(Contract.ForAll(assemblies, x => !x.ReflectionOnly));
             ComposeFromAssemblies(assemblies);
         }
 
         private void ComposeFromAssemblies(Assembly[] assemblies) {
             Contract.Requires(assemblies != null);
             Contract.Requires(Contract.ForAll(assemblies, x => x != null));
+            Contract.Requires(Contract.ForAll(assemblies, x => !x.ReflectionOnly));
 
             ComposablePartCatalog catalog;
             if (assemblies.Length == 1) {
                 Contract.Assume(assemblies[0] != null);
+                Contract.Assume(!assemblies[0].ReflectionOnly);
                 catalog = new AssemblyCatalog(assemblies[0]);
             }
             else {

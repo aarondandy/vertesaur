@@ -38,6 +38,17 @@ namespace Vertesaur.Generation.Utility
             return result;
         }
 
+        public static MethodCallExpression BuildInstanceCallExpression(this MethodInfo method, Expression instance, params Expression[] args) {
+            Contract.Requires(instance != null);
+            Contract.Requires(method != null);
+            Contract.Requires(args != null);
+            Contract.Requires(Contract.ForAll(args, x => x != null));
+            Contract.Ensures(Contract.Result<MethodCallExpression>() != null);
+            var result = Expression.Call(instance, method, args);
+            Contract.Assume(result != null);
+            return result;
+        }
+
         [Obsolete]
         public static UnaryExpression BuildConversion(this Expression expression, Type type) {
             Contract.Requires(expression != null);
@@ -90,14 +101,36 @@ namespace Vertesaur.Generation.Utility
             }
 
             Expression result = method.BuildCallExpression(inputExpressions);
-            if (resultType != null && result.Type != resultType) {
+            if (resultType != null && result.Type != resultType)
                 result = gen.GenerateConversionOrThrow(resultType, result);
-            }
 
             return result;
         }
 
+        public static ParameterExpression CreateParameterExpression(this Type type) {
+            Contract.Requires(type != null);
+            Contract.Ensures(Contract.Result<ParameterExpression>() != null);
+#if DEBUG
+            var result = Expression.Parameter(type);
+            Contract.Assume(result != null);
+            return result;
+#else
+            return Expression.Parameter(type);
+#endif
+        }
 
+        public static ParameterExpression CreateParameterExpression(this Type type, string name) {
+            Contract.Requires(type != null);
+            Contract.Requires(!String.IsNullOrEmpty(name));
+            Contract.Ensures(Contract.Result<ParameterExpression>() != null);
+#if DEBUG
+            var result = Expression.Parameter(type, name);
+            Contract.Assume(result != null);
+            return result;
+#else
+            return Expression.Parameter(type, name);
+#endif
+        }
 
     }
 }

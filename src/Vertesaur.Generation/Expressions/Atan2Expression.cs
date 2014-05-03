@@ -58,39 +58,41 @@ namespace Vertesaur.Generation.Expressions
             Contract.Ensures(Contract.Result<Expression>() != null);
             var gen = ReductionExpressionGenerator;
 
-            var xGreaterZero = gen.GenerateOrThrow("ATAN", gen.GenerateOrThrow("DIVIDE", y, x));
+            var yxParams = new[] {y, x};
+            var divYx = gen.GenerateOrThrow("DIVIDE", yxParams);
+            var atanDivYx = gen.GenerateOrThrow("ATAN", divYx);
+            var zeroY = gen.GenerateOrThrow("ZERO", y.Type);
+            var zeroX = gen.GenerateOrThrow("ZERO", x.Type);
+            var piX = gen.GenerateOrThrow("PI", x.Type);
+            var halfPiY = gen.GenerateOrThrow("HALFPI", y.Type);
+
             var xEqualZero = Condition(
-                gen.GenerateOrThrow("EQUAL", y, gen.GenerateOrThrow("ZERO", y.Type)),
+                gen.GenerateOrThrow("EQUAL", y, zeroY),
                 // y == 0 && x == 0
-                gen.GenerateOrThrow("INVALID", y.Type) ?? gen.GenerateOrThrow("ZERO", y.Type),
+                gen.GenerateOrThrow("INVALID", y.Type) ?? zeroY,
                 Condition(
-                    gen.GenerateOrThrow("GREATER", y, gen.GenerateOrThrow("ZERO", y.Type)),
+                    gen.GenerateOrThrow("GREATER", y, zeroY),
                 // y > 0 && x == 0
-                    gen.GenerateOrThrow("HALFPI", y.Type),
+                    halfPiY,
                 // y < 0 && x == 0
-                    gen.GenerateOrThrow("NEGATE", gen.GenerateOrThrow("HALFPI", y.Type))
+                    gen.GenerateOrThrow("NEGATE", halfPiY)
                 )
             );
             var xLessZero = Condition(
-                gen.GenerateOrThrow("GREATEREQUAL", y, gen.GenerateOrThrow("ZERO", x.Type)),
+                gen.GenerateOrThrow("GREATEREQUAL", y, zeroX),
                 // y >= 0 && x < 0
-                gen.GenerateOrThrow("ADD",
-                    gen.GenerateOrThrow("ATAN", gen.GenerateOrThrow("DIVIDE", y, x)),
-                    gen.GenerateOrThrow("PI", x.Type)),
+                gen.GenerateOrThrow("ADD", atanDivYx, piX),
                 // y < 0 && x < 0
-                gen.GenerateOrThrow("SUBTRACT",
-                    gen.GenerateOrThrow("ATAN", gen.GenerateOrThrow("DIVIDE", y, x)),
-                    gen.GenerateOrThrow("PI", x.Type))
+                gen.GenerateOrThrow("SUBTRACT", atanDivYx, piX)
             );
             var xLequalZero = Condition(
-                gen.GenerateOrThrow("EQUAL", x, gen.GenerateOrThrow("ZERO", x.Type)),
+                gen.GenerateOrThrow("EQUAL", x, zeroX),
                 xEqualZero,
                 xLessZero
             );
-
             return Condition(
-                gen.GenerateOrThrow("GREATER", x, gen.GenerateOrThrow("ZERO", x.Type)),
-                xGreaterZero,
+                gen.GenerateOrThrow("GREATER", x, zeroX),
+                atanDivYx,
                 xLequalZero
             );
         }

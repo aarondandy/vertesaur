@@ -187,6 +187,7 @@
     <Compile Include="Point2.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utility\ArrayUtility.cs" />
+    <Compile Include="Utility\EnumerableEx.cs" />
     <Compile Include="Utility\ExpressionEx.cs" />
     <Compile Include="Utility\ListUtility.cs" />
     <Compile Include="Utility\ReflectionUtils.cs" />

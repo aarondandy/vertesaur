@@ -119,9 +119,11 @@ namespace Vertesaur.Generation
         /// <param name="value">The point to cast and convert.</param>
         /// <returns>The resulting double point representation of the casted generic point.</returns>
         public static explicit operator Point2(Point2<TValue> value) {
-            var x = BasicOperations<TValue>.Default.ToDouble(value.X);
-            var y = BasicOperations<TValue>.Default.ToDouble(value.Y);
-            return new Point2(x, y);
+            if(BasicOperations<TValue>.Default.ToDouble == null)
+                throw new InvalidOperationException();
+            return new Point2(
+                BasicOperations<TValue>.Default.ToDouble(value.X),
+                BasicOperations<TValue>.Default.ToDouble(value.Y));
         }
 
         /// <summary>
@@ -169,6 +171,8 @@ namespace Vertesaur.Generation
         /// <param name="p">The point to convert and clone from.</param>
         /// <exception cref="System.ArgumentException">Coordinate type conversion fails.</exception>
         public Point2(Point2 p) {
+            if (BasicOperations<TValue>.Default.FromDouble == null)
+                throw new InvalidOperationException();
             X = BasicOperations<TValue>.Default.FromDouble(p.X);
             Y = BasicOperations<TValue>.Default.FromDouble(p.Y);
         }
@@ -205,6 +209,8 @@ namespace Vertesaur.Generation
         /// <param name="point">The point to calculate distance to.</param>
         /// <returns>The distance.</returns>
         public TValue Distance(Point2<TValue> point) {
+            if (VectorOperations<TValue>.Default.Distance2D == null)
+                throw new InvalidOperationException();
             return VectorOperations<TValue>.Default.Distance2D(X, Y, point.X, point.Y);
         }
 
@@ -214,6 +220,8 @@ namespace Vertesaur.Generation
         /// <param name="point">The point to calculate squared distance to.</param>
         /// <returns>The squared distance.</returns>
         public TValue DistanceSquared(Point2<TValue> point) {
+            if (VectorOperations<TValue>.Default.DistanceSquared2D == null)
+                throw new InvalidOperationException();
             return VectorOperations<TValue>.Default.DistanceSquared2D(X, Y, point.X, point.Y);
         }
 
@@ -223,9 +231,11 @@ namespace Vertesaur.Generation
         /// <param name="delta">An offset vector.</param>
         /// <returns>An offset point.</returns>
         public Point2<TValue> Add(Vector2<TValue> delta) {
-            var x = BasicOperations<TValue>.Default.Add(X, delta.X);
-            var y = BasicOperations<TValue>.Default.Add(Y, delta.Y);
-            return new Point2<TValue>(x, y);
+            if(BasicOperations<TValue>.Default.Add == null)
+                throw new InvalidOperationException();
+            return new Point2<TValue>(
+                BasicOperations<TValue>.Default.Add(X, delta.X),
+                BasicOperations<TValue>.Default.Add(Y, delta.Y));
         }
 
         /// <summary>
@@ -234,9 +244,11 @@ namespace Vertesaur.Generation
         /// <param name="b">The other point.</param>
         /// <returns>The vector difference.</returns>
         public Vector2<TValue> Difference(Point2<TValue> b) {
-            var x = BasicOperations<TValue>.Default.Subtract(X, b.X);
-            var y = BasicOperations<TValue>.Default.Subtract(Y, b.Y);
-            return new Vector2<TValue>(x, y);
+            if(BasicOperations<TValue>.Default.Subtract == null)
+                throw new InvalidOperationException();
+            return new Vector2<TValue>(
+                BasicOperations<TValue>.Default.Subtract(X, b.X),
+                BasicOperations<TValue>.Default.Subtract(Y, b.Y));
         }
 
         /// <summary>
@@ -245,9 +257,11 @@ namespace Vertesaur.Generation
         /// <param name="b">The vector.</param>
         /// <returns>The offset point.</returns>
         public Point2<TValue> Difference(Vector2<TValue> b) {
-            var x = BasicOperations<TValue>.Default.Subtract(X, b.X);
-            var y = BasicOperations<TValue>.Default.Subtract(Y, b.Y);
-            return new Point2<TValue>(x, y);
+            if(BasicOperations<TValue>.Default.Subtract == null)
+                throw new InvalidOperationException();
+            return new Point2<TValue>(
+                BasicOperations<TValue>.Default.Subtract(X, b.X),
+                BasicOperations<TValue>.Default.Subtract(Y, b.Y));
         }
 
 

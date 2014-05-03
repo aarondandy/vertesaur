@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using System.Linq;
 using System.Linq.Expressions;
 
 namespace Vertesaur.Generation.Expressions
@@ -17,15 +15,19 @@ namespace Vertesaur.Generation.Expressions
         /// </summary>
         /// <param name="components">The ordered components of the two vectors in the order of first vectors coordinates then second vectors coordinates (ex: x0,y0,x1,y1).</param>
         /// <param name="reductionExpressionGenerator">The optional expression generator that can be used to produce reduced expressions.</param>
-        public DistanceExpression(IList<Expression> components, IExpressionGenerator reductionExpressionGenerator = null)
-            : base(reductionExpressionGenerator) {
-            if (null == components) throw new ArgumentNullException("components");
-            if (components.Count == 0) throw new ArgumentException("Must have at least 1 component.", "components");
-            if (components.Count % 2 != 0) throw new ArgumentException("Must have an even number of components.", "components");
-            Contract.Requires(components.All(x => null != x));
+        public DistanceExpression(Expression[] components, IExpressionGenerator reductionExpressionGenerator = null)
+            : this(new SquaredDistanceExpression(components, reductionExpressionGenerator), reductionExpressionGenerator) {
+            Contract.Requires(components != null);
+            Contract.Requires(components.Length != 0);
+            Contract.Requires(components.Length % 2 == 0);
+            Contract.Requires(Contract.ForAll(components, x => null != x));
+        }
 
-            if (components.Any(x => null == x)) throw new ArgumentException("All components expressions must be non null.", "components");
-            InnerExpression = new SquaredDistanceExpression(components, reductionExpressionGenerator);
+        private DistanceExpression(SquaredDistanceExpression innerExpression, IExpressionGenerator reductionExpressionGenerator = null)
+            : base(reductionExpressionGenerator) {
+            if (innerExpression == null) throw new ArgumentNullException("innerExpression");
+            Contract.EndContractBlock();
+            InnerExpression = innerExpression;
         }
 
         [ContractInvariantMethod]

@@ -37,15 +37,15 @@ namespace Vertesaur.Generation.Expressions
             Contract.Requires(input.IsMemoryLocationOrConstant());
             Contract.Ensures(Contract.Result<Expression>() != null);
             var gen = ReductionExpressionGenerator;
-            return gen.GenerateOrThrow("DIVIDE",
-                gen.GenerateOrThrow("LOG",
-                    gen.GenerateOrThrow("DIVIDE",
-                        gen.GenerateOrThrow("ADD", gen.Generate("1", input.Type), input),
-                        gen.GenerateOrThrow("SUBTRACT", gen.Generate("1", input.Type), input)
-                    )
-                ),
-                gen.GenerateOrThrow("2", input.Type)
+            var one = gen.GenerateOrThrow("1", input.Type);
+            var log = gen.GenerateOrThrow("LOG",
+                gen.GenerateOrThrow("DIVIDE",
+                    gen.GenerateOrThrow("ADD", one, input),
+                    gen.GenerateOrThrow("SUBTRACT", one, input)
+                )
             );
+            var two = gen.GenerateOrThrow("2", input.Type);
+            return gen.GenerateOrThrow("DIVIDE", log, two);
         }
 
     }

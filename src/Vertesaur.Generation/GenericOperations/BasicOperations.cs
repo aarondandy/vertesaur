@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq.Expressions;
 using Vertesaur.Generation.Expressions;
+using Vertesaur.Generation.Utility;
 
 namespace Vertesaur.Generation.GenericOperations
 {
@@ -14,7 +15,7 @@ namespace Vertesaur.Generation.GenericOperations
     {
 
         static BasicOperations() {
-            Default = new BasicOperations<TValue>(
+            _default = new BasicOperations<TValue>(
 #if !NO_MEF
                 new MefCombinedExpressionGenerator()
 #else
@@ -23,10 +24,17 @@ namespace Vertesaur.Generation.GenericOperations
             );
         }
 
+        private static readonly BasicOperations<TValue> _default;
+
         /// <summary>
         /// The default instance of the basic operations.
         /// </summary>
-        public static BasicOperations<TValue> Default { get; private set; }
+        public static BasicOperations<TValue> Default {
+            get {
+                Contract.Ensures(Contract.Result<BasicOperations<TValue>>() != null);
+                return _default;
+            }
+        }
 
         /// <summary>
         /// Defines a method that acts as a unary operation on the generic type.
@@ -275,8 +283,7 @@ namespace Vertesaur.Generation.GenericOperations
         }
 
         private Func<TFrom, TTo> BuildConversion<TFrom, TTo>() {
-            var inputParam = Expression.Parameter(typeof(TFrom));
-            Contract.Assume(inputParam != null);
+            var inputParam = typeof(TFrom).CreateParameterExpression();
             var expression = ExpressionGenerator.GenerateConversion(typeof(TTo), inputParam);
             if (null == expression)
                 return null;
@@ -285,19 +292,26 @@ namespace Vertesaur.Generation.GenericOperations
 
         private CreateConstantFunc BuildConstant(string expressionName) {
             Contract.Requires(!String.IsNullOrEmpty(expressionName));
-            Contract.Ensures(expressionName != "0" || Contract.Result<CreateConstantFunc>() != null);
-            var expression = ExpressionGenerator.Generate(expressionName, typeof(TValue));
-            if (expression == null && expressionName == "0")
-                expression = Expression.Default(typeof (TValue));
+            var expression = BuildConstantExpression(expressionName);
+            if (expression == null)
+                return null;
 
-            return expression == null
-                ? null
-                : Expression.Lambda<CreateConstantFunc>(expression).Compile();
+            return Expression.Lambda<CreateConstantFunc>(expression).Compile();
+        }
+
+        private Expression BuildConstantExpression(string expressionName) {
+            Contract.Requires(!String.IsNullOrEmpty(expressionName));
+            var expression = ExpressionGenerator.Generate(expressionName, typeof(TValue));
+            if (expression == null && expressionName == "0") {
+                expression = Expression.Default(typeof(TValue));
+                Contract.Assume(expression != null);
+            }
+            return expression;
         }
 
         private UnaryFunc BuildUnaryFunc(string expressionName) {
             Contract.Requires(!string.IsNullOrEmpty(expressionName));
-            var tParam = Expression.Parameter(typeof(TValue));
+            var tParam = typeof(TValue).CreateParameterExpression();
             var expression = ExpressionGenerator.Generate(expressionName, tParam);
             if (null == expression)
                 return null;
@@ -311,8 +325,8 @@ namespace Vertesaur.Generation.GenericOperations
 
         private TResult BuildBinaryFunc<TResult>(string expressionName) where TResult : class {
             Contract.Requires(!string.IsNullOrEmpty(expressionName));
-            var tParam0 = Expression.Parameter(typeof(TValue));
-            var tParam1 = Expression.Parameter(typeof(TValue));
+            var tParam0 = typeof(TValue).CreateParameterExpression();
+            var tParam1 = typeof(TValue).CreateParameterExpression();
             var expression = ExpressionGenerator.Generate(expressionName, tParam0, tParam1);
             if (null == expression)
                 return null;
@@ -329,7 +343,11 @@ namespace Vertesaur.Generation.GenericOperations
         /// <summary>
         /// A new constant with a value of zero.
         /// </summary>
-        public TValue ZeroValue { get { return _zeroValueGenerator(); } }
+        public TValue ZeroValue {
+            get {
+                return _zeroValueGenerator();
+            }
+        }
 
     }
 }

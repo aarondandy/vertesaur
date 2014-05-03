@@ -4,6 +4,20 @@ using System.Diagnostics.Contracts;
 
 namespace Vertesaur.Generation.Utility
 {
+    internal static class ArrayUtility<T>
+    {
+        private static readonly T[] _empty = new T[0];
+
+        public static T[] Empty {
+            get {
+                Contract.Ensures(Contract.Result<T[]>() != null);
+                Contract.Ensures(Contract.Result<T[]>().Length == 0);
+                Contract.Assume(_empty.Length == 0);
+                return _empty;
+            }
+        }
+    }
+
     internal static class ArrayUtility
     {
 

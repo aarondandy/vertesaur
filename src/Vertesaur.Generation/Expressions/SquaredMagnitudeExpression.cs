@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Linq.Expressions;
 using Vertesaur.Generation.Utility;
-using Vertesaur.Utility;
 
 namespace Vertesaur.Generation.Expressions
 {
@@ -20,33 +17,33 @@ namespace Vertesaur.Generation.Expressions
         /// </summary>
         /// <param name="components">The coordinate expressions.</param>
         /// <param name="reductionExpressionGenerator">The optional expression generator used for reduction.</param>
-        public SquaredMagnitudeExpression(IList<Expression> components, IExpressionGenerator reductionExpressionGenerator = null)
+        public SquaredMagnitudeExpression(Expression[] components, IExpressionGenerator reductionExpressionGenerator = null)
             : base(reductionExpressionGenerator) {
             if (null == components) throw new ArgumentNullException("components");
-            if (components.Count == 0) throw new ArgumentException("Must have at least 1 component.", "components");
+            if (components.Length == 0) throw new ArgumentException("Must have at least 1 component.", "components");
             Contract.Requires(Contract.ForAll(components, x => x != null));
-            
-            if (components.Any(x => null == x))
+
+            Components = components; // TODO: clone?
+
+            if (Components.ContainsNull())
                 throw new ArgumentException("All components expressions must be non null.", "components");
-            Components = components.ToArray().AsReadOnly();
         }
 
         [ContractInvariantMethod]
         private void CodeContractInvariants() {
             Contract.Invariant(Components != null);
-            Contract.Invariant(Components.Count > 0);
+            Contract.Invariant(Components.Length > 0);
             Contract.Invariant(Contract.ForAll(Components, x => x != null));
         }
 
         /// <summary>
         /// The coordinate expressions.
         /// </summary>
-        public ReadOnlyCollection<Expression> Components { get; private set; }
+        private Expression[] Components { get; set; }
 
         /// <inheritdoc/>
         public override Type Type {
             get {
-                Contract.Assume(Components[0] != null);
                 return Components[0].Type;
             }
         }
@@ -64,15 +61,15 @@ namespace Vertesaur.Generation.Expressions
             ).GetExpression();
         }
 
-        private Expression CreateExpression(IList<Expression> inputs) {
+        private Expression CreateExpression(Expression[] inputs) {
             Contract.Requires(null != inputs);
-            Contract.Requires(inputs.Count > 0);
+            Contract.Requires(inputs.Length > 0);
             Contract.Requires(Contract.ForAll(inputs, x => x != null));
             Contract.Ensures(Contract.Result<Expression>() != null);
 
             var gen = ReductionExpressionGenerator;
             var result = gen.GenerateOrThrow("SQUARE", inputs[0]);
-            for (int i = 1; i < inputs.Count; i++) {
+            for (int i = 1; i < inputs.Length; i++) {
                 result = gen.GenerateOrThrow("ADD", result, gen.GenerateOrThrow("SQUARE", inputs[i]));
             }
             return result;

@@ -61,6 +61,7 @@ namespace Vertesaur.Generation.Expressions
             if (null == expressionGenerators) throw new ArgumentNullException("expressionGenerators");
             Contract.EndContractBlock();
             _expressionGenerators = expressionGenerators.Where(x => x != null).ToArray();
+            Contract.Assume(Contract.ForAll(_expressionGenerators, x => x != null));
         }
 
         [ContractInvariantMethod]
