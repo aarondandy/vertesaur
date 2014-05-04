@@ -179,7 +179,7 @@ namespace Vertesaur.Transformation
 
         /// <inheritdoc/>
         public IEnumerator<ITransformation> GetEnumerator() {
-            return (IEnumerator<ITransformation>)Transformations.GetEnumerator();
+            return ((IEnumerable<ITransformation>)Transformations).GetEnumerator();
         }
 
         /// <inheritdoc/>

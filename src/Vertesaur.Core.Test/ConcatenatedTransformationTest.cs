@@ -175,5 +175,20 @@ namespace Vertesaur.Core.Test
             Assert.AreEqual(new Vector2(3, 6), cat.TransformValue(2));
         }
 
+        [Test]
+        public void generic_enumerator_test() {
+            var txList = new ITransformation[] { new A(), new B(), new A() };
+            var cat = new ConcatenatedTransformation<double, Vector2>(txList);
+            var enumerator = cat.GetEnumerator();
+            Assert.IsNotNull(enumerator);
+            while (enumerator.MoveNext()) {
+                Assert.IsNotNull(enumerator.Current);
+            }
+
+            foreach (var tx in cat) {
+                Assert.IsNotNull(tx);
+            }
+        }
+
     }
 }
