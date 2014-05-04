@@ -66,11 +66,11 @@ namespace Vertesaur.Transformation
 
             var fromType = typeof(TFrom);
             var toType = typeof(TTo);
-            if (TransformationPath.Count == 0)
+            if (TransformationPath.Length == 0)
                 return (fromType == toType) ? input : Expression.Convert(input, toType);
 
             var exp = input;
-            for (int i = 0; i < TransformationPath.Count; i++) {
+            for (int i = 0; i < TransformationPath.Length; i++) {
                 var txInfo = TransformationPath[i];
                 Contract.Assume(txInfo != null);
                 exp = Expression.Call(Expression.Constant(txInfo.Core), txInfo.GetTransformValueMethod(), new[] { exp });
@@ -116,6 +116,7 @@ namespace Vertesaur.Transformation
         public CompiledConcatenatedTransformation(IEnumerable<ITransformation> transformations)
             : base(transformations) {
             Contract.Requires(transformations != null);
+            Contract.Requires(Contract.ForAll(transformations, x => x != null));
         }
 
         /// <inheritdoc/>

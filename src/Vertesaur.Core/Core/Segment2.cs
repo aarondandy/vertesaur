@@ -65,7 +65,7 @@ namespace Vertesaur
                 Contract.Result<double>() >= 0.0
                 || Double.IsNaN(Contract.Result<double>())
                 || Double.IsPositiveInfinity(Contract.Result<double>()));
-            Order(ref a, ref b);
+            Point2.Order(ref a, ref b);
             var d = b - a;
             var v = p - a;
 
@@ -93,7 +93,7 @@ namespace Vertesaur
                 Contract.Result<double>() >= 0.0
                 || Double.IsNaN(Contract.Result<double>())
                 || Double.IsPositiveInfinity(Contract.Result<double>()));
-            Order(ref a, ref b);
+            Point2.Order(ref a, ref b);
             var d = b - a;
             var v = p - a;
 
@@ -121,7 +121,7 @@ namespace Vertesaur
             if (p.Equals(a) || p.Equals(b)) {
                 return true;
             }
-            Order(ref a, ref b);
+            Point2.Order(ref a, ref b);
             var d = b - a;
             var v = p - a;
             var aDot = d.Dot(v);
@@ -134,32 +134,6 @@ namespace Vertesaur
                 )
             );
             // ReSharper restore CompareOfFloatsByEqualityOperator
-        }
-
-        [Obsolete("Move to a helper class for sharing.")]
-        private static void Order(ref Point2 a, ref Point2 b) {
-            if (a.CompareTo(b) > 0) {
-                var t = a;
-                a = b;
-                b = t;
-            }
-        }
-
-        [Obsolete("Move to a helper class for sharing.")]
-        private static void Order(ref Point2 a, ref Point2 b, ref Point2 c, ref Point2 d) {
-            // first order the points in the segments
-            Order(ref a, ref b);
-            Order(ref c, ref d);
-            // next order the segments
-            var compareResult = a.CompareTo(c);
-            if (0 < (compareResult == 0 ? b.CompareTo(d) : compareResult)) {
-                var t = a;
-                a = c;
-                c = t;
-                t = b;
-                b = d;
-                d = t;
-            }
         }
 
         /// <summary>
@@ -183,7 +157,7 @@ namespace Vertesaur
         /// <param name="d">Another end point on the second segment.</param>
         /// <returns>The resulting intersection geometry.</returns>
         public static IPlanarGeometry Intersection(Point2 a, Point2 b, Point2 c, Point2 d) {
-            Order(ref a, ref b, ref c, ref d);
+            Point2.SegmentOrder(ref a, ref b, ref c, ref d);
             return SegmentIntersectionOperation.Intersection(a, b, c, d);
         }
 

@@ -71,11 +71,7 @@ namespace Vertesaur.PolygonOperation
         /// <param name="b">A polygon.</param>
         /// <returns>The union of <paramref name="a"/> and <paramref name="b"/>.</returns>
         public IPlanarGeometry Union(Polygon2 a, Polygon2 b) {
-            Contract.Ensures(
-                a == null && b == null
-                ? Contract.Result<IPlanarGeometry>() == null
-                : Contract.Result<IPlanarGeometry>() != null
-            );
+            Contract.Ensures((a != null || b != null) || Contract.Result<IPlanarGeometry>() == null);
             if (null == a)
                 return b;
             if (null == b)

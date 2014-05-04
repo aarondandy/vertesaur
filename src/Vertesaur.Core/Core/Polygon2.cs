@@ -125,10 +125,7 @@ namespace Vertesaur
         public void AddRange(IEnumerable<Ring2> rings) {
             if (null == rings) throw new ArgumentNullException("rings");
             Contract.Requires(Contract.ForAll(rings, x => x != null));
-
             foreach (var ring in rings) {
-                if (null == ring)
-                    throw new ArgumentException("Null rings are not valid.", "rings");
                 Add(ring);
             }
         }

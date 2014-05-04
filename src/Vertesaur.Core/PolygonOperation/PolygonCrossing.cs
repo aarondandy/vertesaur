@@ -293,8 +293,7 @@ namespace Vertesaur.PolygonOperation
         }
 
         [ContractInvariantMethod]
-        [Conditional("CONTRACTS_FULL")]
-        private void CodeContractInvariant() {
+        private void ObjectInvariants() {
             Contract.Invariant(LocationA != null);
             Contract.Invariant(LocationB != null);
         }

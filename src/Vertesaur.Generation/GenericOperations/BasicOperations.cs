@@ -254,7 +254,7 @@ namespace Vertesaur.Generation.GenericOperations
             Log10 = BuildUnaryFunc("Log10");
             Exp = BuildUnaryFunc("Exp");
             Abs = BuildUnaryFunc("Abs");
-            Atan2 = BuildBinaryFunc<ReverseCoordinates>("Atan2");
+            Atan2 = BuildBinaryFunc<ReverseCoordinates, TValue>("Atan2");
             Pow = BuildBinaryFunc("Pow");
             Ceiling = BuildUnaryFunc("Ceiling");
             Floor = BuildUnaryFunc("Floor");
@@ -262,13 +262,13 @@ namespace Vertesaur.Generation.GenericOperations
             Min = BuildBinaryFunc("Min");
             Max = BuildBinaryFunc("Max");
 
-            Equal = BuildBinaryFunc<ComparisonTest>("Equal");
-            NotEqual = BuildBinaryFunc<ComparisonTest>("NotEqual");
-            Less = BuildBinaryFunc<ComparisonTest>("Less");
-            LessOrEqual = BuildBinaryFunc<ComparisonTest>("LessEqual");
-            Greater = BuildBinaryFunc<ComparisonTest>("Greater");
-            GreaterOrEqual = BuildBinaryFunc<ComparisonTest>("GreaterOrEqual");
-            CompareTo = BuildBinaryFunc<Comparison<TValue>>("CompareTo");
+            Equal = BuildBinaryFunc<ComparisonTest, bool>("Equal");
+            NotEqual = BuildBinaryFunc<ComparisonTest, bool>("NotEqual");
+            Less = BuildBinaryFunc<ComparisonTest, bool>("Less");
+            LessOrEqual = BuildBinaryFunc<ComparisonTest, bool>("LessEqual");
+            Greater = BuildBinaryFunc<ComparisonTest, bool>("Greater");
+            GreaterOrEqual = BuildBinaryFunc<ComparisonTest, bool>("GreaterOrEqual");
+            CompareTo = BuildBinaryFunc<Comparison<TValue>, int>("CompareTo");
 
             ToDouble = BuildConversion<TValue, double>();
             FromDouble = BuildConversion<double, TValue>();
@@ -311,25 +311,49 @@ namespace Vertesaur.Generation.GenericOperations
 
         private UnaryFunc BuildUnaryFunc(string expressionName) {
             Contract.Requires(!string.IsNullOrEmpty(expressionName));
+            return BuildUnaryFunc<TValue>(expressionName);
+        }
+
+        private UnaryFunc BuildUnaryFunc<TReturn>(string expressionName) {
+            Contract.Requires(!string.IsNullOrEmpty(expressionName));
             var tParam = typeof(TValue).CreateParameterExpression();
             var expression = ExpressionGenerator.Generate(expressionName, tParam);
             if (null == expression)
                 return null;
+
+            if (typeof(TReturn) != typeof(void) && typeof(TReturn) != expression.Type) {
+                expression = ExpressionGenerator.GenerateConversion(typeof(TReturn), expression);
+                if (null == expression)
+                    return null;
+            }
+
             return Expression.Lambda<UnaryFunc>(expression, tParam).Compile();
         }
 
         private BinaryFunc BuildBinaryFunc(string expressionName) {
             Contract.Requires(!string.IsNullOrEmpty(expressionName));
-            return BuildBinaryFunc<BinaryFunc>(expressionName);
+            return BuildBinaryFunc<BinaryFunc, TValue>(expressionName);
         }
 
-        private TResult BuildBinaryFunc<TResult>(string expressionName) where TResult : class {
+        private BinaryFunc BuildBinaryFunc<TReturn>(string expressionName) {
+            Contract.Requires(!string.IsNullOrEmpty(expressionName));
+            return BuildBinaryFunc<BinaryFunc, TReturn>(expressionName);
+        }
+
+        private TResult BuildBinaryFunc<TResult,TReturn>(string expressionName) where TResult : class {
             Contract.Requires(!string.IsNullOrEmpty(expressionName));
             var tParam0 = typeof(TValue).CreateParameterExpression();
             var tParam1 = typeof(TValue).CreateParameterExpression();
             var expression = ExpressionGenerator.Generate(expressionName, tParam0, tParam1);
             if (null == expression)
                 return null;
+
+            if (typeof(TReturn) != typeof(void) && typeof(TReturn) != expression.Type) {
+                expression = ExpressionGenerator.GenerateConversion(typeof(TReturn), expression);
+                if (null == expression)
+                    return null;
+            }
+
             return Expression.Lambda<TResult>(expression, tParam0, tParam1).Compile();
         }
 

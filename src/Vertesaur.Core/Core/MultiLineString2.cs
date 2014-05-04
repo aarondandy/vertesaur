@@ -28,6 +28,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
+using Vertesaur.Utility;
 
 namespace Vertesaur
 {
@@ -63,14 +64,27 @@ namespace Vertesaur
         /// </summary>
         /// <param name="expectedCapacity">The expected number of line strings.</param>
         public MultiLineString2(int expectedCapacity)
-            : this(new List<LineString2>(expectedCapacity)) { }
+            : this(ListUtility.CreateEmpty<LineString2>(expectedCapacity)) {
+            Contract.Requires(expectedCapacity >= 0);
+        }
+
+        private static List<LineString2> ToList(IEnumerable<LineString2> lineStrings) {
+            Contract.Ensures(Contract.Result<List<LineString2>>() != null);
+            Contract.Ensures(Contract.ForAll(Contract.Result<List<LineString2>>(), x => x != null));
+
+            var result = lineStrings == null
+                ? new List<LineString2>()
+                : lineStrings.Where(x => x != null).ToList();
+            Contract.Assume(Contract.ForAll(result, x => x != null));
+            return result;
+        }
 
         /// <summary>
         /// Constructs a new multi-line string containing the given line strings.
         /// </summary>
         /// <param name="lineStrings">The line strings.</param>
         public MultiLineString2(IEnumerable<LineString2> lineStrings)
-            : this(null == lineStrings ? null : new List<LineString2>(lineStrings)) { }
+            : this(ToList(lineStrings)) { }
 
         /// <summary>
         /// This private constructor is used to initialize the collection with a new list.
@@ -81,13 +95,14 @@ namespace Vertesaur
         /// All public access to the points must be through the Collection wrapper around the points list.
         /// </remarks>
         private MultiLineString2(List<LineString2> lineStrings)
-            : base(lineStrings ?? new List<LineString2>()) { }
+            : base(lineStrings) {
+            Contract.Requires(lineStrings != null);
+            Contract.Requires(Contract.ForAll(lineStrings, x => x != null));
+        }
 
         [ContractInvariantMethod]
-        [Conditional("CONTRACTS_FULL")]
-        private void CodeContractInvariant() {
+        private void ObjectInvariants() {
             Contract.Invariant(Contract.ForAll(this, x => x != null));
-            Contract.Invariant(Contract.ForAll(0, Count, i => this[i] != null));
         }
 
         /// <summary>
@@ -165,6 +180,7 @@ namespace Vertesaur
                 Contract.Assume(this[i] != null);
                 lines.Add(this[i].Clone());
             }
+            Contract.Assume(Contract.ForAll(lines, x => x != null));
             return new MultiLineString2(lines);
         }
 

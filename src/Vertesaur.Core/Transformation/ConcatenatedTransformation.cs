@@ -37,7 +37,7 @@ namespace Vertesaur.Transformation
     /// <summary>
     /// A transformation that is composed of a sequence of composite transformations.
     /// </summary>
-    public class ConcatenatedTransformation : ITransformation
+    public class ConcatenatedTransformation : ITransformation, IEnumerable<ITransformation>
     {
 
 
@@ -48,15 +48,12 @@ namespace Vertesaur.Transformation
         /// <exception cref="System.ArgumentException">Thrown if a transformation is <c>null</c>.</exception>
         public ConcatenatedTransformation(IEnumerable<ITransformation> transformations) {
             if (null == transformations) throw new ArgumentNullException("transformations");
-            Contract.EndContractBlock();
+            Contract.Requires(Contract.ForAll(transformations, x => x != null));
 
-            var txArray = transformations.ToArray();
-            for (int i = 0; i < txArray.Length; i++)
-                if (txArray[i] == null)
+            Transformations = transformations.ToArray();
+            for (int i = 0; i < Transformations.Length; i++)
+                if (Transformations[i] == null)
                     throw new ArgumentException("null transformations are not valid.");
-
-            Transformations = txArray.AsReadOnly();
-
         }
 
         /// <summary>
@@ -69,7 +66,7 @@ namespace Vertesaur.Transformation
         private ConcatenatedTransformation(ITransformation[] transformations) {
             Contract.Requires(transformations != null);
             Contract.Requires(Contract.ForAll(transformations, x => x != null));
-            Transformations = transformations.AsReadOnly();
+            Transformations = transformations;
         }
 
         [ContractInvariantMethod]
@@ -77,7 +74,6 @@ namespace Vertesaur.Transformation
         private void CodeContractInvariant() {
             Contract.Invariant(Transformations != null);
             Contract.Invariant(Contract.ForAll(Transformations, x => x != null));
-            Contract.Invariant(Contract.ForAll(0, Transformations.Count, i => Transformations[i] != null));
         }
 
         /// <summary>
@@ -89,9 +85,9 @@ namespace Vertesaur.Transformation
             Contract.Ensures(Contract.Result<ITransformation[]>() != null);
             Contract.Ensures(Contract.ForAll(Contract.Result<ITransformation[]>(), x => x != null));
 
-            var inverseTransformations = new ITransformation[Transformations.Count];
+            var inverseTransformations = new ITransformation[Transformations.Length];
             for (int i = 0; i < inverseTransformations.Length; i++) {
-                var tx = Transformations[Transformations.Count - 1 - i];
+                var tx = Transformations[Transformations.Length - 1 - i];
                 Contract.Assume(tx != null);
                 Contract.Assume(tx.HasInverse);
                 var ix = tx.GetInverse();
@@ -113,8 +109,7 @@ namespace Vertesaur.Transformation
         /// <summary>
         /// Gets the transformations that make up this concatenated transformation.
         /// </summary>
-        [Obsolete("May move to IEnumerable.")]
-        public ReadOnlyCollection<ITransformation> Transformations { get; private set; }
+        protected ITransformation[] Transformations { get; set; }
 
         /// <summary>
         /// Creates a new concatenated transformation that is the inverse of this transformation.
@@ -133,9 +128,9 @@ namespace Vertesaur.Transformation
         /// <inheritdoc/>
         public bool HasInverse {
             get {
-                if (Transformations.Count == 0)
+                if (Transformations.Length == 0)
                     return true;
-                for (int i = 0; i < Transformations.Count; i++) {
+                for (int i = 0; i < Transformations.Length; i++) {
                     Contract.Assume(Transformations[i] != null);
                     if (!Transformations[i].HasInverse)
                         return false;
@@ -144,28 +139,35 @@ namespace Vertesaur.Transformation
             }
         }
 
+        /// <inheritdoc/>
         public object TransformValue(object value) {
-            foreach (var tx in Transformations)
+            foreach (var tx in Transformations) {
+                Contract.Assume(tx != null);
                 value = tx.TransformValue(value);
+            }
             return value;
         }
 
+        /// <inheritdoc/>
         public IEnumerable<object> TransformValues(IEnumerable<object> values) {
             if(values == null) throw new ArgumentNullException("values");
             Contract.Ensures(Contract.Result<IEnumerable<object>>() != null);
             return values.Select(TransformValue);
         }
 
+        /// <inheritdoc/>
         public Type[] GetInputTypes() {
-            if (Transformations.Count == 0)
+            if (Transformations.Length == 0)
                 return EmptyArray<Type>.Value;
             Contract.Assume(Transformations[0] != null);
             return Transformations[0].GetInputTypes();
         }
 
+        /// <inheritdoc/>
         public Type[] GetOutputTypes(Type inputType) {
             var types = new []{inputType};
             foreach (var tx in Transformations) {
+                Contract.Assume(tx != null);
                 if (types.Length == 0)
                     break;
                 types = types
@@ -174,6 +176,16 @@ namespace Vertesaur.Transformation
                     .ToArray();
             }
             return types;
+        }
+
+        /// <inheritdoc/>
+        public IEnumerator<ITransformation> GetEnumerator() {
+            return (IEnumerator<ITransformation>)Transformations.GetEnumerator();
+        }
+
+        /// <inheritdoc/>
+        IEnumerator IEnumerable.GetEnumerator() {
+            return Transformations.GetEnumerator();
         }
     }
 
@@ -193,10 +205,9 @@ namespace Vertesaur.Transformation
             Contract.Requires(transformations != null);
             Contract.Requires(Contract.ForAll(transformations, x => x != null));
 
-            var path = TransformationCastNode.FindCastPath(Transformations, typeof(TFrom), typeof(TTo));
-            if (null == path)
+            TransformationPath = TransformationCastNode.FindCastPath(Transformations, typeof(TFrom), typeof(TTo));
+            if (TransformationPath == null)
                 throw new InvalidOperationException("A concatenated transformation casting path could not be found.");
-            TransformationPath = path.AsReadOnly();
         }
 
         [ContractInvariantMethod]
@@ -204,24 +215,22 @@ namespace Vertesaur.Transformation
         private void CodeContractInvariant() {
             Contract.Invariant(null != TransformationPath);
             Contract.Invariant(Contract.ForAll(TransformationPath, x => x != null));
-            Contract.Invariant(Contract.ForAll(0, TransformationPath.Count, i => TransformationPath[i] != null));
         }
 
         /// <summary>
         /// The chosen transformation cast path used when compiling the concatenated transformation.
         /// </summary>
-        [Obsolete("May move to IEnumerable")]
-        public ReadOnlyCollection<TransformationCastNode> TransformationPath { get; private set; }
+        protected TransformationCastNode[] TransformationPath { get; set; }
 
         /// <inheritdoc/>
         public virtual TTo TransformValue(TFrom value) {
-            if (TransformationPath.Count == 1) {
+            if (TransformationPath.Length == 1) {
                 Contract.Assume(TransformationPath[0] != null);
                 return ((ITransformation<TFrom, TTo>) (TransformationPath[0].Core)).TransformValue(value);
             }
 
             object tempValue = value;
-            for (int i = 0; i < TransformationPath.Count; i++) {
+            for (int i = 0; i < TransformationPath.Length; i++) {
                 Contract.Assume(TransformationPath[i] != null);
                 tempValue = TransformationPath[i].TransformValue(tempValue);
             }
@@ -234,13 +243,13 @@ namespace Vertesaur.Transformation
         public virtual IEnumerable<TTo> TransformValues(IEnumerable<TFrom> values) {
             Contract.Ensures(Contract.Result<IEnumerable<TTo>>() != null);
 
-            if (Transformations.Count == 1) {
+            if (TransformationPath.Length == 1) {
                 Contract.Assume(TransformationPath[0] != null);
                 return ((ITransformation<TFrom, TTo>) (TransformationPath[0].Core)).TransformValues(values);
             }
 
             IEnumerable tempValues = values;
-            for (int i = 0; i < TransformationPath.Count; i++) {
+            for (int i = 0; i < TransformationPath.Length; i++) {
                 Contract.Assume(TransformationPath[i] != null);
                 tempValues = TransformationPath[i].TransformValues(tempValues);
             }

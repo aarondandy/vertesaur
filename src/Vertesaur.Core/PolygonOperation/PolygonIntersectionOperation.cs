@@ -116,6 +116,7 @@ namespace Vertesaur.PolygonOperation
                 Contract.Requires(a != null);
                 Contract.Requires(b != null);
                 Contract.Requires(crossings != null);
+                Contract.Requires(Contract.ForAll(crossings, x => x != null));
                 A = a;
                 B = b;
 
@@ -129,7 +130,9 @@ namespace Vertesaur.PolygonOperation
                     }
                     Contract.Assume(list != null);
                     list.Add(crossing);
+                    Contract.Assume(crossing.LocationB != null);
                     if (!ringCrossingsBBuilder.TryGetValue(crossing.LocationB.RingIndex, out list)) {
+                        Contract.Assume(crossing.LocationB != null);
                         list = new List<PolygonCrossing>();
                         ringCrossingsBBuilder.Add(crossing.LocationB.RingIndex, list);
                     }
@@ -161,7 +164,9 @@ namespace Vertesaur.PolygonOperation
                 Contract.Invariant(Exits != null);
                 Contract.Invariant(Contract.ForAll(Exits, x => x != null));
                 Contract.Invariant(EntranceHops != null);
+                Contract.Invariant(Contract.ForAll(EntranceHops.Values, x => x != null));
                 Contract.Invariant(ExitHops != null);
+                Contract.Invariant(Contract.ForAll(ExitHops.Values, x => x != null));
                 Contract.Invariant(VisitedCrossings != null);
                 Contract.Invariant(VisitedCrossingsRingIndicesA != null);
                 Contract.Invariant(VisitedCrossingsRingIndicesA.Count <= A.Count);
@@ -426,6 +431,7 @@ namespace Vertesaur.PolygonOperation
                 Contract.Requires(rings != null);
                 Contract.Requires(boundaryTree != null);
                 Contract.Ensures(Contract.Result<IEnumerable<Ring2>>() != null);
+                Contract.Ensures(Contract.ForAll(Contract.Result<IEnumerable<Ring2>>(), x => x != null));
                 return rings.Where(ring => ring.Hole.GetValueOrDefault() == boundaryTree.NonIntersectingContains(ring));
             }
 
@@ -593,6 +599,7 @@ namespace Vertesaur.PolygonOperation
             var result = new List<Ring2>();
             var ringTree = new RingBoundaryTree(polygon);
             foreach (var ring in untouchedRings) {
+                Contract.Assume(ring != null);
                 // TODO: speed this up through some kind of magic, like RingBoundaryTree or something
                 // TODO: var eq = new SpatialEqualityComparerThing(ringA); var stuff = otherRings.Where(r = > eq.SpatiallyEqual(r));
                 if (polygon.Any(r => ring.SpatiallyEqual(r))) {

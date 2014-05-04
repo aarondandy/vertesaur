@@ -219,7 +219,12 @@ namespace Vertesaur.Generation.Expressions
             if (lhsDouble == null || rhsDouble == null)
                 return null;
 
-            return Expression.Power(lhsDouble, rhsDouble);
+            Expression result = Expression.Power(lhsDouble, rhsDouble);
+
+            if (request.DesiredResultType != null && request.DesiredResultType != result.Type)
+                result = request.TopLevelGenerator.GenerateConversion(request.DesiredResultType, result);
+
+            return result;
         }
 
         private Expression GenerateSquare(IExpressionGenerationRequest request, Expression parameter) {

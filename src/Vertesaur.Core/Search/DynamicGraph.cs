@@ -320,6 +320,7 @@ namespace Vertesaur.Search
                 DynamicGraphNodeData<TNode, TCost, TEdge> currentNodeData;
                 Contract.Assume(visitRequired.Count > 0);
                 Contract.Assume(nodeDataCache.Count >= visitRequired.Count);
+                Contract.Assume(Contract.ForAll(visitRequired, k => k != null && nodeDataCache.ContainsKey(k)));
                 FindSmallestNodeData(visitRequired, nodeDataCache, out currentNode, out currentNodeData);
                 visitRequired.Remove(currentNode);
 

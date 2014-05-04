@@ -186,23 +186,17 @@ namespace Vertesaur
 
         [ContractInvariantMethod]
         private void ObjectInvariants() {
-            Contract.Invariant(SegmentCount <= Count);
-            Contract.Invariant(SegmentCount >= 0);
             Contract.Invariant(Count >= 0);
-            Contract.Invariant(Contract.ForAll(0, Count, i => this[i] != null));
             Contract.Invariant(_pointList != null);
             Contract.Invariant(_pointList.Count >= 0);
+            Contract.Invariant(_pointList.Count == Count);
         }
 
         private void ResetAllCache() {
-            Contract.Ensures(SegmentCount == Contract.OldValue(SegmentCount));
-            Contract.Ensures(Count == Contract.OldValue(Count));
             _allPointsCacheData = null;
         }
 
         private AllPointsCacheData GetAllPointsCacheData() {
-            Contract.Ensures(SegmentCount == Contract.OldValue(SegmentCount));
-            Contract.Ensures(Count == Contract.OldValue(Count));
             return _allPointsCacheData ?? (_allPointsCacheData = CalculateAllPointsCacheData());
         }
 
@@ -314,6 +308,8 @@ namespace Vertesaur
         /// </remarks>
         public int SegmentCount {
             [Pure] get {
+                Contract.Ensures(Contract.Result<int>() <= Count);
+                Contract.Ensures(Contract.Result<int>() >= 0);
                 var c = _pointList.Count;
                 return (
                     c >= 3

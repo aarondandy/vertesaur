@@ -155,12 +155,14 @@ namespace Vertesaur.Transformation
         public Type ToType { get; private set; }
 
         private Type MakeGenericTransformationType() {
-            Contract.Assume(2 == TxGenericType.GetGenericArguments().Length);
+            Contract.Assume(TxGenericType.GetGenericArguments() != null);
+            Contract.Assume(TxGenericType.GetGenericArguments().Length == 2);
             return TxGenericType.MakeGenericType(FromType, ToType);
         }
 
         private static Type MakeGenericEnumerableType(Type itemType) {
-            Contract.Assume(1 == EnumerableGenericType.GetGenericArguments().Length);
+            Contract.Assume(TxGenericType.GetGenericArguments() != null);
+            Contract.Assume(TxGenericType.GetGenericArguments().Length == 1);
             return EnumerableGenericType.MakeGenericType(itemType);
         }
 
@@ -184,6 +186,7 @@ namespace Vertesaur.Transformation
             if (TransformValuesMethodName.Equals(m.Name) && m.ReturnType == MakeGenericEnumerableType(ToType)) {
                 var parameters = m.GetParameters();
                 Contract.Assume(parameters != null);
+                Contract.Assume(Contract.ForAll(parameters, x => x != null));
                 if (parameters.Length == 1 && parameters[0].ParameterType == MakeGenericEnumerableType(FromType)) {
                     return true;
                 }

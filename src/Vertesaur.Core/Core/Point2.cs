@@ -150,6 +150,32 @@ namespace Vertesaur
         [DebuggerBrowsable(DebuggerBrowsableState.Never)]
         public static readonly Point2 Invalid = new Point2(Double.NaN, Double.NaN);
 
+        internal static void Order(ref Point2 a, ref Point2 b) {
+            if (a.CompareTo(b) > 0) {
+                var t = a;
+                a = b;
+                b = t;
+            }
+        }
+
+        internal static void SegmentOrder(ref Point2 a, ref Point2 b, ref Point2 c, ref Point2 d) {
+            // first order the points in the segments
+            Order(ref a, ref b);
+            Order(ref c, ref d);
+            // next order the segments
+            var compareResult = a.CompareTo(c);
+            if (compareResult == 0)
+                compareResult = b.CompareTo(d);
+            if (0 < compareResult) {
+                var t = a;
+                a = c;
+                c = t;
+                t = b;
+                b = d;
+                d = t;
+            }
+        }
+
         /// <summary>
         /// The x-coordinate of this point.
         /// </summary>

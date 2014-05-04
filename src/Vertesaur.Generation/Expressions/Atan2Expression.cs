@@ -69,7 +69,7 @@ namespace Vertesaur.Generation.Expressions
             var xEqualZero = Condition(
                 gen.GenerateOrThrow("EQUAL", y, zeroY),
                 // y == 0 && x == 0
-                gen.GenerateOrThrow("INVALID", y.Type) ?? zeroY,
+                gen.Generate("INVALID", y.Type) ?? zeroY,
                 Condition(
                     gen.GenerateOrThrow("GREATER", y, zeroY),
                 // y > 0 && x == 0

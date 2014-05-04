@@ -24,6 +24,7 @@ namespace Vertesaur.Utility
             return c;
         }
 #endif
+
 #if NO_LIST_FIND_ALL
         public static List<T> FindAll<T>(this List<T> list, Predicate<T> predicate){
             Contract.Requires(list != null);
@@ -38,6 +39,21 @@ namespace Vertesaur.Utility
             return result;
         }
 #endif
+
+        public static List<T> CreateEmpty<T>(int expectedCapacity) {
+            Contract.Ensures(Contract.Result<List<T>>() != null);
+            Contract.Ensures(Contract.Result<List<T>>().Count == 0);
+#if DEBUG
+            var result = new List<T>(expectedCapacity);
+            Contract.Assume(result.Count == 0);
+            return result;
+#else
+            return new List<T>(expectedCapacity);
+#endif
+        }
+
     }
+
+
 
 }

@@ -33,11 +33,18 @@ namespace Vertesaur.Generation.Expressions
             Contract.Ensures(Contract.Result<Expression>() != null);
 
             var gen = ReductionExpressionGenerator;
-            var method = typeof (Math).GetPublicStaticInvokableMethod("Exp", Type);
-            if (method != null)
-                return gen.BuildConversionCall(method, UnaryParameter, Type);
 
-            return gen.GenerateOrThrow("POW", gen.GenerateOrThrow("E", Type), UnaryParameter);
+            
+            if (typeof (double) == Type) {
+                Contract.Assume(MathExpMethod != null);
+                return gen.BuildConversionCall(MathExpMethod, UnaryParameter, Type);
+            }
+
+            var result = gen.GenerateOrThrow("POW", gen.GenerateOrThrow("E", Type), UnaryParameter);
+            if (result.Type != Type)
+                result = gen.GenerateConversionOrThrow(Type, result);
+
+            return result;
         }
     }
 }
