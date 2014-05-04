@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 
-namespace Vertesaur
+namespace System.Diagnostics.Contracts
 {
     /// <summary>
     /// A placeholder for the .NET pure attribute

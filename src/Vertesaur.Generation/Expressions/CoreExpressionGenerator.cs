@@ -319,7 +319,7 @@ namespace Vertesaur.Generation.Expressions
                 var less = request.TopLevelGenerator.GenerateOrThrow("LESS", left, right);
                 Contract.Assume(typeof(IComparable<>).GetGenericArguments() != null);
                 Contract.Assume(typeof(IComparable<>).GetGenericArguments().Length == 1);
-                Contract.Assume(typeof(IComparable<>).IsGenericTypeDefinition);
+                Contract.Assume(typeof(IComparable<>).IsGenericTypeDefinition());
                 var comparableType = typeof(IComparable<>).MakeGenericType(right.Type);
                 Contract.Assume(comparableType != null);
 

@@ -9,7 +9,7 @@ namespace Vertesaur.Generation.Utility
     internal static class ReflectionUtils
     {
 
-        public static IEnumerable<Type> GetInterfacesByGenericTypeDefinition(this Type targetType, Type genericTypeDefinition) {
+        [Pure] public static IEnumerable<Type> GetInterfacesByGenericTypeDefinition(this Type targetType, Type genericTypeDefinition) {
             Contract.Requires(null != targetType);
             Contract.Requires(null != genericTypeDefinition);
             Contract.Ensures(Contract.Result<IEnumerable<Type>>() != null);
@@ -27,7 +27,7 @@ namespace Vertesaur.Generation.Utility
 
         }
 
-        public static bool ImplementsInterface(this Type targetType, Type interfaceType) {
+        [Pure] public static bool ImplementsInterface(this Type targetType, Type interfaceType) {
             Contract.Requires(null != targetType);
             Contract.Requires(null != interfaceType);
 #if NETFX_CORE
@@ -37,7 +37,7 @@ namespace Vertesaur.Generation.Utility
 #endif
         }
 
-        public static IEnumerable<MethodInfo> GetPublicInstanceInvokableMethods(this Type targetType) {
+        [Pure] public static IEnumerable<MethodInfo> GetPublicInstanceInvokableMethods(this Type targetType) {
             Contract.Requires(null != targetType);
             Contract.Ensures(Contract.Result<IEnumerable<MethodInfo>>() != null);
 #if NETFX_CORE
@@ -47,7 +47,7 @@ namespace Vertesaur.Generation.Utility
 #endif
         }
 
-        public static IEnumerable<MethodInfo> GetPublicStaticInvokableMethods(this Type targetType) {
+        [Pure] public static IEnumerable<MethodInfo> GetPublicStaticInvokableMethods(this Type targetType) {
             Contract.Requires(null != targetType);
             Contract.Ensures(Contract.Result<IEnumerable<MethodInfo>>() != null);
 #if NETFX_CORE
@@ -57,7 +57,7 @@ namespace Vertesaur.Generation.Utility
 #endif
         }
 
-        private static bool TypesEqual(ParameterInfo[] parameterInfos, Type[] compareTypes) {
+        [Pure] private static bool TypesEqual(ParameterInfo[] parameterInfos, Type[] compareTypes) {
             Contract.Requires(parameterInfos != null);
             Contract.Requires(Contract.ForAll(parameterInfos, x => x != null));
             Contract.Requires(compareTypes != null);
@@ -71,7 +71,7 @@ namespace Vertesaur.Generation.Utility
             return true;
         }
 
-        public static MethodInfo GetPublicInstanceInvokableMethod(this Type targetType, string methodName, params Type[] paramTypes) {
+        [Pure] public static MethodInfo GetPublicInstanceInvokableMethod(this Type targetType, string methodName, params Type[] paramTypes) {
             Contract.Requires(null != targetType);
             Contract.Requires(!String.IsNullOrEmpty(methodName));
             Contract.Requires(null != paramTypes);
@@ -89,7 +89,7 @@ namespace Vertesaur.Generation.Utility
 #endif
         }
 
-        public static MethodInfo GetPublicStaticInvokableMethod(this Type targetType, string methodName, params Type[] paramTypes) {
+        [Pure] public static MethodInfo GetPublicStaticInvokableMethod(this Type targetType, string methodName, params Type[] paramTypes) {
             Contract.Requires(null != targetType);
             Contract.Requires(!String.IsNullOrEmpty(methodName));
             Contract.Requires(null != paramTypes);
@@ -109,18 +109,28 @@ namespace Vertesaur.Generation.Utility
 
 
 #if NETFX_CORE
-        public static IEnumerable<MethodInfo> GetMethods(this Type targetType) {
+        [Pure] public static IEnumerable<MethodInfo> GetMethods(this Type targetType) {
             Contract.Ensures(Contract.Result<IEnumerable<MethodInfo>>() != null);
             Contract.Requires(null != targetType);
             return targetType.GetTypeInfo().DeclaredMethods;
         } 
 
-        public static Type[] GetGenericArguments(this Type targetType) {
+
+        [Pure] public static Type[] GetGenericArguments(this Type targetType) {
             Contract.Ensures(Contract.Result<IEnumerable<Type>>() != null);
             Contract.Requires(null != targetType);
             return targetType.GetTypeInfo().GenericTypeArguments;
         }
 #endif
+
+        [Pure] public static bool IsGenericTypeDefinition(this Type type) {
+            Contract.Requires(type != null);
+#if NETFX_CORE
+            return type.GetTypeInfo().IsGenericTypeDefinition;
+#else
+            return type.IsGenericTypeDefinition;
+#endif
+        }
 
     }
 }

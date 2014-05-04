@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 
 namespace Vertesaur
 {
@@ -54,11 +55,11 @@ namespace Vertesaur
         public void CopyTo(T[] array) {
             if (array == null) throw new ArgumentNullException("array");
             if (array.Length < Count) throw new ArgumentException("Array too small.", "array");
+            Contract.EndContractBlock();
             int i = 0;
             foreach (var item in this) {
                 array[i++] = item;
             }
-            Contract.EndContractBlock();
         }
 
         public IEnumerator<T> GetEnumerator() {
