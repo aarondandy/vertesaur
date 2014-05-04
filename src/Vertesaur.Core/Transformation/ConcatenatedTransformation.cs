@@ -24,7 +24,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Collections;
@@ -37,7 +36,7 @@ namespace Vertesaur.Transformation
     /// <summary>
     /// A transformation that is composed of a sequence of composite transformations.
     /// </summary>
-    public class ConcatenatedTransformation : ITransformation, IEnumerable<ITransformation>
+    public class ConcatenatedTransformation : ITransformation, IList<ITransformation>
     {
 
 
@@ -187,6 +186,63 @@ namespace Vertesaur.Transformation
         IEnumerator IEnumerable.GetEnumerator() {
             return Transformations.GetEnumerator();
         }
+
+        /// <inheritdoc/>
+        public int IndexOf(ITransformation item) {
+            return Array.IndexOf(Transformations, item);
+        }
+
+        /// <inheritdoc/>
+        public ITransformation this[int index] {
+            get { return Transformations[index]; }
+            set { throw new NotSupportedException(); }
+        }
+
+        /// <inheritdoc/>
+        public bool Contains(ITransformation item) {
+            return Transformations.Contains(item);
+        }
+
+        /// <inheritdoc/>
+        public void CopyTo(ITransformation[] array, int arrayIndex) {
+            Transformations.CopyTo(array, arrayIndex);
+        }
+
+        /// <inheritdoc/>
+        public int Count {
+            get { return Transformations.Length; }
+        }
+
+        /// <inheritdoc/>
+        public bool IsReadOnly {
+            get { return true; }
+        }
+
+        /// <inheritdoc/>
+        bool ICollection<ITransformation>.Remove(ITransformation item) {
+            throw new NotSupportedException();
+        }
+
+        /// <inheritdoc/>
+        void IList<ITransformation>.Insert(int index, ITransformation item) {
+            throw new NotSupportedException();
+        }
+
+        /// <inheritdoc/>
+        void IList<ITransformation>.RemoveAt(int index) {
+            throw new NotSupportedException();
+        }
+
+        /// <inheritdoc/>
+        void ICollection<ITransformation>.Add(ITransformation item) {
+            throw new NotSupportedException();
+        }
+
+        /// <inheritdoc/>
+        void ICollection<ITransformation>.Clear() {
+            throw new NotSupportedException();
+        }
+
     }
 
     /// <summary>

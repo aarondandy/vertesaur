@@ -1,6 +1,18 @@
 Release Notes
 =============
 
+## 0.11.0
+
+- **Breaking**: Concatenated transformations no longer expose their transformations through the `Transformations` property but instead implement `IList<ITransformation>`.
+- **Breaking**: `LogExpression` has been renamed to `NaturalLogExpression` while a new arbitrary base `LogExpression` uses that name. The correct `NaturalLogExpression` will still be selected for "log"  or the new "ln" alias when requesting the unary function. A binary request for "log" will give a `NaturalLogExpression`.
+- **Breaking**: Some constructors that previously accepted `IEnumerable<T>` or some other collection type now only accept `T[]`. 
+- Major internal refactoring.
+- Code contract changes and fixes.
+- Reduced usage of `ReadOnlyCollection` in favor of `IList<>` or arrays.
+- New arbitrary base log expression: `NaturalLogExpression`.
+- Improved handling of return types for generated delegates for generic operations.
+- Improved safety of generic vector and point types.
+
 ## 0.10.0
 
 - **Breaking**: Transformation interfaces have a `object TransformValue(object)` signature and provide information on the types it can transform to and from.
