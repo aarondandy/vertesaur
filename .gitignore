@@ -108,3 +108,5 @@ Backup*/
 UpgradeLog*.XML
 [Bb]uild/[Pp]acked
 *.snk
+
+/artifacts

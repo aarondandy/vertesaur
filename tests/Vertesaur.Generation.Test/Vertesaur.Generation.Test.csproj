@@ -5,13 +5,14 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{DED4013E-C292-4CE9-B4B6-FB6B2F839D60}</ProjectGuid>
+    <ProjectGuid>{CC6226E4-4CF8-4A11-B845-F994ED1DE85B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Vertesaur.PolygonOperation.Test</RootNamespace>
-    <AssemblyName>Vertesaur.Core.PolygonOperation.Test</AssemblyName>
+    <RootNamespace>Vertesaur.Generation.Test</RootNamespace>
+    <AssemblyName>Vertesaur.Generation.Test</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
   </PropertyGroup>
@@ -46,9 +47,6 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="nunit.extensions">
-      <HintPath>..\..\packages\NUnit.Extensions.2.6.0.0\lib\net40\nunit.extensions.dll</HintPath>
-    </Reference>
     <Reference Include="nunit.framework">
       <HintPath>..\..\packages\NUnit.2.6.1\lib\nunit.framework.dll</HintPath>
     </Reference>
@@ -60,28 +58,27 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="PolygonDifferenceTest.cs" />
-    <Compile Include="PolygonFindPointCrossingsTest.cs" />
-    <Compile Include="PolygonIntersectionTest.cs" />
-    <Compile Include="PolygonUnionTest.cs" />
-    <Compile Include="PolygonXorTest.cs" />
-    <Compile Include="PolyOperationTestUtility.cs" />
-    <Compile Include="PolyPairTestData.cs" />
-    <Compile Include="PolyPairTestDataKeyedCollection.cs" />
-    <Compile Include="RingOperationTestUtility.cs" />
-    <Compile Include="RingFindPointCrossingsTest.cs" />
+    <Compile Include="CoreExpressionGeneratorTests.cs" />
+    <Compile Include="MathFunctionsTest.cs" />
+    <Compile Include="Point2Test.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RingPairTestData.cs" />
-    <Compile Include="RingPairTestDataKeyedCollection.cs" />
+    <Compile Include="Vector2Test.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Vertesaur.Core\Vertesaur.Core.csproj">
+    <ProjectReference Include="..\..\src\Vertesaur.Core\Vertesaur.Core.csproj">
       <Project>{3202D8B1-CA6C-4403-912B-8D9063CA022A}</Project>
       <Name>Vertesaur.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\Vertesaur.Generation\Vertesaur.Generation.csproj">
+      <Project>{3D67D62D-0F74-4570-9BB3-2653E7DFBC4E}</Project>
+      <Name>Vertesaur.Generation</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
