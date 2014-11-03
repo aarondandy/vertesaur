@@ -21,20 +21,20 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\bin\Debug\net40-client\</OutputPath>
+    <OutputPath>..\..\artifacts\bin\Debug\net40-client\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\bin\Debug\net40-client\Vertesaur.Core.XML</DocumentationFile>
+    <DocumentationFile>..\..\artifacts\bin\Debug\net40-client\Vertesaur.Core.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\bin\Release\net40-client\</OutputPath>
+    <OutputPath>..\..\artifacts\bin\Release\net40-client\</OutputPath>
     <DefineConstants>TRACE;SIGN_ASM</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\bin\Release\net40-client\Vertesaur.Core.XML</DocumentationFile>
+    <DocumentationFile>..\..\artifacts\bin\Release\net40-client\Vertesaur.Core.XML</DocumentationFile>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <CodeContractsEnableRuntimeChecking>False</CodeContractsEnableRuntimeChecking>
     <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
@@ -73,9 +73,9 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugCC|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>..\..\bin\DebugCC\net40-client\</OutputPath>
+    <OutputPath>..\..\artifacts\bin\DebugCC\net40-client\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DocumentationFile>..\..\bin\DebugCC\net40-client\Vertesaur.Core.XML</DocumentationFile>
+    <DocumentationFile>..\..\artifacts\bin\DebugCC\net40-client\Vertesaur.Core.XML</DocumentationFile>
     <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>

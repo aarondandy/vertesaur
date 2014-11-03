@@ -28,24 +28,24 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\bin\Debug\sl5\</OutputPath>
+    <OutputPath>..\..\artifacts\bin\Debug\sl5\</OutputPath>
     <DefineConstants>TRACE;DEBUG;SILVERLIGHT;NO_MEF</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <NoConfig>true</NoConfig>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\bin\Debug\sl5\Vertesaur.Generation.XML</DocumentationFile>
+    <DocumentationFile>..\..\artifacts\bin\Debug\sl5\Vertesaur.Generation.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\bin\Release\sl5\</OutputPath>
+    <OutputPath>..\..\artifacts\bin\Release\sl5\</OutputPath>
     <DefineConstants>TRACE;SILVERLIGHT;NO_MEF</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <NoConfig>true</NoConfig>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\bin\Release\sl5\Vertesaur.Generation.XML</DocumentationFile>
+    <DocumentationFile>..\..\artifacts\bin\Release\sl5\Vertesaur.Generation.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>

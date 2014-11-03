@@ -29,24 +29,24 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\bin\Debug\sl5\</OutputPath>
+    <OutputPath>..\..\artifacts\bin\Debug\sl5\</OutputPath>
     <DefineConstants>TRACE;DEBUG;SILVERLIGHT;NO_LIST_FIND_ALL</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <NoConfig>true</NoConfig>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\bin\Debug\sl5\Vertesaur.Core.XML</DocumentationFile>
+    <DocumentationFile>..\..\artifacts\bin\Debug\sl5\Vertesaur.Core.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\bin\Release\sl5\</OutputPath>
+    <OutputPath>..\..\artifacts\bin\Release\sl5\</OutputPath>
     <DefineConstants>TRACE;SILVERLIGHT;NO_LIST_FIND_ALL</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <NoConfig>true</NoConfig>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\bin\Release\sl5\Vertesaur.Core.XML</DocumentationFile>
+    <DocumentationFile>..\..\artifacts\bin\Release\sl5\Vertesaur.Core.XML</DocumentationFile>
     <CodeContractsEnableRuntimeChecking>False</CodeContractsEnableRuntimeChecking>
     <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
     <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>

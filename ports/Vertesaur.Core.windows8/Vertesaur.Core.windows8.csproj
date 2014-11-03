@@ -20,20 +20,20 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>..\..\bin\Debug\windows8\</OutputPath>
+    <OutputPath>..\..\artifacts\bin\Debug\windows8\</OutputPath>
     <DefineConstants>TRACE;DEBUG;NETFX_CORE;HAS_CC_EXTENSIONS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\bin\Debug\windows8\Vertesaur.Core.XML</DocumentationFile>
+    <DocumentationFile>..\..\artifacts\bin\Debug\windows8\Vertesaur.Core.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\..\bin\Release\windows8\</OutputPath>
+    <OutputPath>..\..\artifacts\bin\Release\windows8\</OutputPath>
     <DefineConstants>TRACE;NETFX_CORE;HAS_CC_EXTENSIONS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\bin\Release\windows8\Vertesaur.Core.XML</DocumentationFile>
+    <DocumentationFile>..\..\artifacts\bin\Release\windows8\Vertesaur.Core.XML</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
     <DebugSymbols>true</DebugSymbols>
