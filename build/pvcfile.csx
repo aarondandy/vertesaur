@@ -39,19 +39,19 @@ pvc.Task("nuget-pack", () => {
         .Single();
 
     Directory.SetCurrentDirectory(pushDir);
-
-    if(!Directory.Exists("../artifacts/nuget"))
-        Directory.CreateDirectory("../artifacts/nuget");
     
     var nuspecSources = pvc.Source("*.nuspec");
 
-    Directory.SetCurrentDirectory("../artifacts/nuget");
-    nuspecSources
-        .Pipe(new PvcNuGetPack(
-            createSymbolsPackage: true,
-            version: threePartVersionString,
-            properties: String.Format("Configuration={0}", buildConfigurationName)
-        ));
+    var nugetArtifactDir = String.Format("../artifacts/nuget/{0}", buildConfigurationName);
+    if(!Directory.Exists(nugetArtifactDir))
+        Directory.CreateDirectory(nugetArtifactDir);
+    Directory.SetCurrentDirectory(nugetArtifactDir);
+
+    nuspecSources.Pipe(new PvcNuGetPack(
+        createSymbolsPackage: true,
+        version: threePartVersionString,
+        properties: String.Format("Configuration={0}", buildConfigurationName)
+    ));
 
     Directory.SetCurrentDirectory(pushDir);
 });
