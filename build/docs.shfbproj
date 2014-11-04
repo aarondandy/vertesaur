@@ -106,7 +106,7 @@
     <PlugInConfigurations>
     </PlugInConfigurations>
     <ProjectSummary>A computational geometry and math library for the CLR with potential medical, gaming, and GIS uses.</ProjectSummary>
-    <CopyrightText>Copyright &amp;#169%3b Aaron Dandy 2012</CopyrightText>
+    <CopyrightText>Copyright &amp;#169%3b Aaron Dandy 2014</CopyrightText>
     <FeedbackEMailLinkText>http://code.mediocresoft.com/vertesaur/issues</FeedbackEMailLinkText>
     <HelpTitle>Vertesaur</HelpTitle>
     <NamingMethod>MemberName</NamingMethod>
