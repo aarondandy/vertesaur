@@ -14,23 +14,23 @@
     </references>
   </metadata>
   <files>
-    <file src="..\bin\$configuration$\net40-client\Vertesaur.Core.dll" target="lib\net40-client" />
-    <file src="..\bin\$configuration$\net40-client\Vertesaur.Core.pdb" target="lib\net40-client" />
-    <file src="..\bin\$configuration$\net40-client\Vertesaur.Core.XML" target="lib\net40-client" />
+    <file src="..\artifacts\bin\$configuration$\net40-client\Vertesaur.Core.dll" target="lib\net40-client" />
+    <file src="..\artifacts\bin\$configuration$\net40-client\Vertesaur.Core.pdb" target="lib\net40-client" />
+    <file src="..\artifacts\bin\$configuration$\net40-client\Vertesaur.Core.XML" target="lib\net40-client" />
 
-    <file src="..\bin\$configuration$\sl5\Vertesaur.Core.dll" target="lib\sl5" />
-    <file src="..\bin\$configuration$\sl5\Vertesaur.Core.pdb" target="lib\sl5" />
-    <file src="..\bin\$configuration$\sl5\Vertesaur.Core.XML" target="lib\sl5" />
+    <file src="..\artifacts\bin\$configuration$\sl5\Vertesaur.Core.dll" target="lib\sl5" />
+    <file src="..\artifacts\bin\$configuration$\sl5\Vertesaur.Core.pdb" target="lib\sl5" />
+    <file src="..\artifacts\bin\$configuration$\sl5\Vertesaur.Core.XML" target="lib\sl5" />
 
-    <file src="..\bin\$configuration$\windowsphone8\Vertesaur.Core.dll" target="lib\windowsphone8" />
-    <file src="..\bin\$configuration$\windowsphone8\Vertesaur.Core.pdb" target="lib\windowsphone8" />
-    <file src="..\bin\$configuration$\windowsphone8\Vertesaur.Core.XML" target="lib\windowsphone8" />
+    <file src="..\artifacts\bin\$configuration$\windowsphone8\Vertesaur.Core.dll" target="lib\windowsphone8" />
+    <file src="..\artifacts\bin\$configuration$\windowsphone8\Vertesaur.Core.pdb" target="lib\windowsphone8" />
+    <file src="..\artifacts\bin\$configuration$\windowsphone8\Vertesaur.Core.XML" target="lib\windowsphone8" />
 
-    <file src="..\bin\$configuration$\windows8\Vertesaur.Core.dll" target="lib\windows8" />
-    <file src="..\bin\$configuration$\windows8\Vertesaur.Core.pdb" target="lib\windows8" />
-    <file src="..\bin\$configuration$\windows8\Vertesaur.Core.XML" target="lib\windows8" />
+    <file src="..\artifacts\bin\$configuration$\windows8\Vertesaur.Core.dll" target="lib\windows8" />
+    <file src="..\artifacts\bin\$configuration$\windows8\Vertesaur.Core.pdb" target="lib\windows8" />
+    <file src="..\artifacts\bin\$configuration$\windows8\Vertesaur.Core.XML" target="lib\windows8" />
 
-    <file src="..\bin\$configuration$\net40-client\CodeContracts\Vertesaur.Core.Contracts.dll" target="lib\net40-client\CodeContracts" />
+    <file src="..\artifacts\bin\$configuration$\net40-client\CodeContracts\Vertesaur.Core.Contracts.dll" target="lib\net40-client\CodeContracts" />
     <file src="..\src\Vertesaur.Core\**.cs" target="src" />
     <file src="..\ports\feature-replacements\**.cs" target="src\feature-replacements" />
   </files>
