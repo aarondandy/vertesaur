@@ -6,8 +6,9 @@
     <title>Vertesaur</title>
     <authors>aarondandy</authors>
     <description>A computational geometry and math library for the CLR with potential medical, gaming, and GIS uses.</description>
+    <licenseUrl>https://raw.githubusercontent.com/aarondandy/vertesaur/master/LICENSE.txt</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <tags>geometry</tags>
+    <tags>geometry math</tags>
     <projectUrl>http://mediocresoft.com/vertesaur/</projectUrl>
     <references>
       <reference file="Vertesaur.Core.dll" />

@@ -9,7 +9,7 @@
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
-[assembly: AssemblyVersion("0.11.1.*")]
+[assembly: AssemblyVersion("0.12.0.*")]
 #if DEBUG
 [assembly: AssemblyInformationalVersion("developer build")]
 #endif

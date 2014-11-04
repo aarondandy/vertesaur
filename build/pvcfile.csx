@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Text.RegularExpressions;
 
 var buildConfigurationName = "Debug";
 
@@ -56,7 +57,27 @@ pvc.Task("nuget-pack", () => {
     Directory.SetCurrentDirectory(pushDir);
 });
 
-pvc.Task("release", () => {
+pvc.Task("nuget-push", () => {
+    buildConfigurationName = "Release";
+
+    var fileRegex = new Regex(@".*[.](\d+\.\d+\.\d+).nupkg");
+    var nugetArtifactDir = String.Format("../artifacts/nuget/{0}", buildConfigurationName);
+    var bestVersion = Directory.GetFiles(nugetArtifactDir, "*.nupkg")
+        .Select(f => fileRegex.Match(f))
+        .Where(m => m.Success)
+        .Select(m => m.Groups[1].Value)
+        .Select(v => new Version(v))
+        .Distinct()
+        .Max();
+
+    Directory.SetCurrentDirectory(nugetArtifactDir);
+
+    pvc.Source("*." + bestVersion + ".nupkg")
+        .Pipe(new PvcNuGetPush());
+
+});
+
+pvc.Task("build-release", () => {
     buildConfigurationName = "Release";
     pvc.Start("build");
     pvc.Start("nuget-pack");

@@ -6,8 +6,9 @@
     <title>Vertesaur: Generation</title>
     <authors>aarondandy</authors>
     <description>A computational geometry and math library for the CLR with potential medical, gaming, and GIS uses.</description>
+    <licenseUrl>https://raw.githubusercontent.com/aarondandy/vertesaur/master/LICENSE.txt</licenseUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
-    <tags>geometry expressions expression-trees</tags>
+    <tags>geometry math expressions expression-trees</tags>
     <projectUrl>http://mediocresoft.com/vertesaur/</projectUrl>
     <dependencies>
       <dependency id="Vertesaur.Core" version="$version$"/>

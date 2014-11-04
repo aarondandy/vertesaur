@@ -1,6 +1,16 @@
 Release Notes
 =============
 
+## 0.12.0
+
+- **Breaking**: Changed the license to Apache 2.0
+- Major project reorganization
+- Switched from Rake/Albacore to PVCBuild for builds.=
+
+## 0.11.1
+
+- Fixed a bad cast in `ConcatenatedTransformation`
+
 ## 0.11.0
 
 - **Breaking**: Concatenated transformations no longer expose their transformations through the `Transformations` property but instead implement `IList<ITransformation>`.

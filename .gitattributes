@@ -4,3 +4,5 @@
 *.sln    text merge=union eol=crlf
 *.rtf    diff=astextplain
 *.json   text
+*.md     text
+*.txt    text
