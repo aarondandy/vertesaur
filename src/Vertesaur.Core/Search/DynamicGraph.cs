@@ -17,6 +17,7 @@ namespace Vertesaur.Search
     /// <param name="node">The node to find neighbors for.</param>
     /// <param name="currentCost">The current cost to get to the given node.</param>
     /// <returns>Neighbor node info.</returns>
+    [Obsolete("This delegate will be removed.")]
     public delegate IEnumerable<DynamicGraphNodeData<TNode, TCost, TEdge>> GetDynamicGraphNeighborInfo<TNode, TCost, TEdge>(TNode node, TCost currentCost);
 
     /// <summary>
@@ -25,6 +26,7 @@ namespace Vertesaur.Search
     /// <typeparam name="TNode">The node type.</typeparam>
     /// <typeparam name="TCost">The edge cost type.</typeparam>
     /// <typeparam name="TEdge">The edge data type.</typeparam>
+    [Obsolete("This type will be removed.")]
     public sealed class DynamicGraphNodeData<TNode, TCost, TEdge>
     {
         /// <summary>
@@ -72,6 +74,7 @@ namespace Vertesaur.Search
     /// <remarks>
     /// These helpers exist primarily to enable generic type inference.
     /// </remarks>
+    [Obsolete("This type will be removed.")]
     public static class DynamicGraph
     {
 
@@ -138,6 +141,7 @@ namespace Vertesaur.Search
     /// <typeparam name="TNode">The node type.</typeparam>
     /// <typeparam name="TCost">The edge cost type.</typeparam>
     /// <typeparam name="TEdge">The edge data type.</typeparam>
+    [Obsolete("This type will be removed.")]
     public class DynamicGraph<TNode, TCost, TEdge> : DynamicGraphBase<TNode, TCost, TEdge>
     {
 
@@ -198,6 +202,7 @@ namespace Vertesaur.Search
     /// <typeparam name="TCost">The edge cost type.</typeparam>
     /// <typeparam name="TEdge">The edge data type.</typeparam>
     [ContractClass(typeof(DynamicGraphBaseCodeContract<,,>))]
+    [Obsolete("This type will be removed.")]
     public abstract class DynamicGraphBase<TNode, TCost, TEdge>
     {
 
