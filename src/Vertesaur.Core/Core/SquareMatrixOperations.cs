@@ -22,8 +22,7 @@ namespace Vertesaur
             Contract.Requires(result != null);
             Contract.Requires(sourceData.Order == result.Order);
 
-            // NOTE: This approach may skip some possible solutions
-            // TODO: A better algorithm should be developed for this
+            // TODO: Determine if this approach skips some possible solutions
 
             for (int i = 0; i < sourceData.Order; i++) {
                 if (!DiagonalToOne(sourceData, result, i))

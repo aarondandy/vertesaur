@@ -499,6 +499,7 @@ namespace Vertesaur
         /// </summary>
         /// <exception cref="Vertesaur.NoInverseException">An inverse requires a valid non-zero finite determinant.</exception>
         public void Invert() {
+            Contract.Ensures(Contract.Result<Matrix3>() != null);
             var copy = Clone();
             var result = new Matrix3();
             Contract.Assume(result.IsIdentity);
@@ -514,6 +515,7 @@ namespace Vertesaur
         /// <returns>The inverse of the matrix.</returns>
         /// <exception cref="Vertesaur.NoInverseException">An inverse requires a valid non-zero finite determinant.</exception>
         public Matrix3 GetInverse() {
+            Contract.Ensures(Contract.Result<Matrix3>() != null);
             var copy = Clone();
             var result = new Matrix3();
             Contract.Assume(result.IsIdentity);
