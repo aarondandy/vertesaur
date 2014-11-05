@@ -154,18 +154,25 @@ namespace Vertesaur.Core.Test
             Assert.AreEqual(_postInvert, b);
         }
 
+        public void AreEqual(Matrix2 a, Matrix2 b, double delta) {
+            Assert.AreEqual(a.E00, b.E00, delta);
+            Assert.AreEqual(a.E01, b.E01, delta);
+            Assert.AreEqual(a.E10, b.E10, delta);
+            Assert.AreEqual(a.E11, b.E11, delta);
+        }
+
         [Test]
         public void GetInvertedTests() {
             Assert.AreEqual(_postInvert, _priorInvert.GetInverse());
             Assert.AreEqual(_priorInvert, _postInvert.GetInverse());
             Assert.AreEqual(_identity, _identity.GetInverse());
             Assert.AreEqual(new Matrix2(-3 / 2.0, 0.5, 1, 0), _incremented.GetInverse());
-            Assert.AreEqual(new Matrix2(-1 / 17.0, 4/17.0, -5/34.0, 3/34.0), _determinant34.GetInverse());
             Assert.AreEqual(new Matrix2(-3 / 2.0, 1, 0.5, 0), _trans.GetInverse());
-            Assert.AreEqual(new Matrix2(-0.5, -0.25, 5 / 2.0, 0.75), _a.GetInverse());
-            Assert.AreEqual(new Matrix2(5 / 22.0, -3 / 22.0, 2 / 11.0, 1 / 11.0), _b.GetInverse());
-            Assert.AreEqual(new Matrix2(-5 / 11.0, -7 / 44.0, 3 / 22.0, 1 / 44.0), _product.GetInverse());
-            Assert.AreEqual(new Matrix2(3 / 71.0, -4 / 71.0, 14 / 71.0, 5 / 71.0), _sum.GetInverse());
+            AreEqual(new Matrix2(-0.5, -0.25, 5 / 2.0, 0.75), _a.GetInverse(), 0.00000001);
+            AreEqual(new Matrix2(5 / 22.0, -3 / 22.0, 2 / 11.0, 1 / 11.0), _b.GetInverse(), 0.00000001);
+            AreEqual(new Matrix2(-5 / 11.0, -7 / 44.0, 3 / 22.0, 1 / 44.0), _product.GetInverse(), 0.00000001);
+            AreEqual(new Matrix2(3 / 71.0, -4 / 71.0, 14 / 71.0, 5 / 71.0), _sum.GetInverse(), 0.00000001);
+            AreEqual(new Matrix2(-1 / 17.0, 4 / 17.0, -5 / 34.0, 3 / 34.0), _determinant34.GetInverse(), 0.00000001);
         }
 
         [Test]

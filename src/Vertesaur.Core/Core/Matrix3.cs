@@ -11,6 +11,7 @@ namespace Vertesaur
     /// </summary>
     public sealed class Matrix3 :
         IMatrixSquare<double>,
+        IMatrixMutable<double>,
         IEquatable<Matrix3>,
         ICloneable
     {
@@ -176,15 +177,7 @@ namespace Vertesaur
         public Matrix3(Matrix3 m) {
             if (null == m) throw new ArgumentNullException("m");
             Contract.EndContractBlock();
-            E00 = m.E00;
-            E01 = m.E01;
-            E02 = m.E02;
-            E10 = m.E10;
-            E11 = m.E11;
-            E12 = m.E12;
-            E20 = m.E20;
-            E21 = m.E21;
-            E22 = m.E22;
+            CopyFrom(m);
         }
 
         /// <summary>
@@ -206,6 +199,19 @@ namespace Vertesaur
             E20 = m.Get(2, 0);
             E21 = m.Get(2, 1);
             E22 = m.Get(2, 2);
+        }
+
+        private void CopyFrom(Matrix3 m) {
+            Contract.Requires(m != null);
+            E00 = m.E00;
+            E01 = m.E01;
+            E02 = m.E02;
+            E10 = m.E10;
+            E11 = m.E11;
+            E12 = m.E12;
+            E20 = m.E20;
+            E21 = m.E21;
+            E22 = m.E22;
         }
 
         /// <summary>
@@ -493,25 +499,13 @@ namespace Vertesaur
         /// </summary>
         /// <exception cref="Vertesaur.NoInverseException">An inverse requires a valid non-zero finite determinant.</exception>
         public void Invert() {
-            var determinant = CalculateDeterminant();
-            if (0 == determinant || Double.IsNaN(determinant) || Double.IsInfinity(determinant))
+            var copy = Clone();
+            var result = new Matrix3();
+            Contract.Assume(result.IsIdentity);
+            if (SquareMatrixOperations.GaussJordanEliminationDestructive(copy, result))
+                CopyFrom(result);
+            else
                 throw new NoInverseException();
-
-            var t00 = E00;
-            E00 = ((E11 * E22) - (E21 * E12)) / determinant;
-            var t01 = E01;
-            E01 = ((E21 * E02) - (E01 * E22)) / determinant;
-            var t02 = E02;
-            E02 = ((t01 * E12) - (E11 * E02)) / determinant;
-            var t10 = E10;
-            E10 = ((E20 * E12) - (E10 * E22)) / determinant;
-            var t11 = E11;
-            E11 = ((t00 * E22) - (E20 * t02)) / determinant;
-            var t20 = E20;
-            E20 = ((t10 * E21) - (E20 * t11)) / determinant;
-            E12 = ((t10 * t02) - (t00 * E12)) / determinant;
-            E21 = ((t20 * t01) - (t00 * E21)) / determinant;
-            E22 = ((t00 * t11) - (t10 * t01)) / determinant;
         }
 
         /// <summary>
@@ -520,22 +514,13 @@ namespace Vertesaur
         /// <returns>The inverse of the matrix.</returns>
         /// <exception cref="Vertesaur.NoInverseException">An inverse requires a valid non-zero finite determinant.</exception>
         public Matrix3 GetInverse() {
-            Contract.Ensures(Contract.Result<Matrix3>() != null);
-            var determinant = CalculateDeterminant();
-            if (0 == determinant || Double.IsNaN(determinant) || Double.IsInfinity(determinant))
+            var copy = Clone();
+            var result = new Matrix3();
+            Contract.Assume(result.IsIdentity);
+            if (SquareMatrixOperations.GaussJordanEliminationDestructive(copy, result))
+                return result;
+            else
                 throw new NoInverseException();
-
-            return new Matrix3(
-                ((E11 * E22) - (E21 * E12)) / determinant,
-                ((E21 * E02) - (E01 * E22)) / determinant,
-                ((E01 * E12) - (E11 * E02)) / determinant,
-                ((E20 * E12) - (E10 * E22)) / determinant,
-                ((E00 * E22) - (E20 * E02)) / determinant,
-                ((E10 * E02) - (E00 * E12)) / determinant,
-                ((E10 * E21) - (E20 * E11)) / determinant,
-                ((E20 * E01) - (E00 * E21)) / determinant,
-                ((E00 * E11) - (E10 * E01)) / determinant
-            );
         }
 
         /// <summary>
@@ -695,6 +680,91 @@ namespace Vertesaur
             return Clone();
         }
 
+        public void SwapRows(int ra, int rb) {
+            if (ra < 0 || ra >= OrderValue) throw new ArgumentOutOfRangeException("ra", "Invalid row.");
+            if (rb < 0 || rb >= OrderValue) throw new ArgumentOutOfRangeException("rb", "Invalid row.");
+            Contract.EndContractBlock();
+            if (ra == rb)
+                return;
+            for (int c = 0; c < OrderValue; c++) {
+                var tmp = Get(ra, c);
+                Set(ra, c, Get(rb, c));
+                Set(rb, c, tmp);
+            }
+        }
+
+        public void SwapColumns(int ca, int cb) {
+            if (ca < 0 || ca >= OrderValue) throw new ArgumentOutOfRangeException("ca", "Invalid column.");
+            if (cb < 0 || cb >= OrderValue) throw new ArgumentOutOfRangeException("cb", "Invalid column.");
+            Contract.EndContractBlock();
+            if (ca == cb)
+                return;
+            for (int r = 0; r < OrderValue; r++) {
+                var tmp = Get(r, ca);
+                Set(r, ca, Get(r, cb));
+                Set(r, cb, tmp);
+            }
+        }
+
+        public void AddSourceRowToTarget(int sourceRow, int targetRow) {
+            if (sourceRow < 0 || sourceRow >= OrderValue) throw new ArgumentOutOfRangeException("sourceRow", "Invalid row.");
+            if (targetRow < 0 || targetRow >= OrderValue) throw new ArgumentOutOfRangeException("targetRow", "Invalid row.");
+            Contract.EndContractBlock();
+            for (int c = 0; c < OrderValue; c++)
+                Set(targetRow, c, Get(sourceRow, c) + Get(targetRow, c));
+        }
+
+        public void AddSourceRowToTarget(int sourceRow, int targetRow, double factor) {
+            if (sourceRow < 0 || sourceRow >= OrderValue) throw new ArgumentOutOfRangeException("sourceRow", "Invalid row.");
+            if (targetRow < 0 || targetRow >= OrderValue) throw new ArgumentOutOfRangeException("targetRow", "Invalid row.");
+            Contract.EndContractBlock();
+            for (int c = 0; c < OrderValue; c++)
+                Set(targetRow, c, (Get(sourceRow, c) * factor) + Get(targetRow, c));
+        }
+
+        public void AddSourceColumnToTarget(int sourceColumn, int targetColumn) {
+            if (sourceColumn < 0 || sourceColumn >= OrderValue) throw new ArgumentOutOfRangeException("sourceColumn", "Invalid column.");
+            if (targetColumn < 0 || targetColumn >= OrderValue) throw new ArgumentOutOfRangeException("targetColumn", "Invalid column.");
+            Contract.EndContractBlock();
+            for (int r = 0; r < OrderValue; r++)
+                Set(r, targetColumn, Get(r, sourceColumn) + Get(r, targetColumn));
+        }
+
+        public void AddSourceColumnToTarget(int sourceColumn, int targetColumn, double factor) {
+            if (sourceColumn < 0 || sourceColumn >= OrderValue) throw new ArgumentOutOfRangeException("sourceColumn", "Invalid column.");
+            if (targetColumn < 0 || targetColumn >= OrderValue) throw new ArgumentOutOfRangeException("targetColumn", "Invalid column.");
+            Contract.EndContractBlock();
+            for (int r = 0; r < OrderValue; r++)
+                Set(r, targetColumn, (Get(r, sourceColumn) * factor) + Get(r, targetColumn));
+        }
+
+        public void ScaleRow(int r, double value) {
+            if (r < 0 || r >= OrderValue) throw new ArgumentOutOfRangeException("r", "Invalid row.");
+            Contract.EndContractBlock();
+            for (int c = 0; c < OrderValue; c++)
+                Set(r, c, Get(r, c) * value);
+        }
+
+        public void ScaleColumn(int c, double value) {
+            if (c < 0 || c >= OrderValue) throw new ArgumentOutOfRangeException("c", "Invalid column.");
+            Contract.EndContractBlock();
+            for (int r = 0; r < OrderValue; r++)
+                Set(r, c, Get(r, c) * value);
+        }
+
+        public void DivideRow(int r, double denominator) {
+            if (r < 0 || r >= OrderValue) throw new ArgumentOutOfRangeException("r", "Invalid row.");
+            Contract.EndContractBlock();
+            for (int c = 0; c < OrderValue; c++)
+                Set(r, c, Get(r, c) / denominator);
+        }
+
+        public void DivideColumn(int c, double denominator) {
+            if (c < 0 || c >= OrderValue) throw new ArgumentOutOfRangeException("c", "Invalid column.");
+            Contract.EndContractBlock();
+            for (int r = 0; r < OrderValue; r++)
+                Set(r, c, Get(r, c) / denominator);
+        }
     }
 
 }

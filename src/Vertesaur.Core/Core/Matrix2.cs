@@ -190,9 +190,8 @@ namespace Vertesaur
             E01 = E10 = 0;
         }
 
-        public void CopyFrom(Matrix2 m) {
-            if(m == null) throw new ArgumentNullException("m");
-            Contract.EndContractBlock();
+        private void CopyFrom(Matrix2 m) {
+            Contract.Requires(m != null);
             E00 = m.E00;
             E01 = m.E01;
             E10 = m.E10;
@@ -500,6 +499,7 @@ namespace Vertesaur
         /// <returns>The inverse of the matrix.</returns>
         /// <exception cref="Vertesaur.NoInverseException">An inverse requires a valid non-zero finite determinant.</exception>
         public Matrix2 GetInverse() {
+            Contract.Ensures(Contract.Result<Matrix2>() != null);
             var copy = Clone();
             var result = new Matrix2();
             Contract.Assume(result.IsIdentity);
@@ -681,6 +681,34 @@ namespace Vertesaur
             else {
                 E01 *= value;
                 E11 *= value;
+            }
+        }
+
+        public void DivideRow(int r, double value) {
+            if (r < 0 || r > 1) throw new ArgumentOutOfRangeException("r", "Row must be 0 or 1.");
+            Contract.EndContractBlock();
+
+            if (r == 0) {
+                E00 /= value;
+                E01 /= value;
+            }
+            else {
+                E10 /= value;
+                E11 /= value;
+            }
+        }
+
+        public void DivideColumn(int c, double value) {
+            if (c < 0 || c > 1) throw new ArgumentOutOfRangeException("c", "Column must be 0 or 1.");
+            Contract.EndContractBlock();
+
+            if (c == 0) {
+                E00 /= value;
+                E10 /= value;
+            }
+            else {
+                E01 /= value;
+                E11 /= value;
             }
         }
     }

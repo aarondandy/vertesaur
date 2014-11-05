@@ -42,6 +42,10 @@ namespace Vertesaur
 
         void ScaleColumn(int c, TValue value);
 
+        void DivideRow(int r, TValue denominator);
+
+        void DivideColumn(int c, TValue denominator);
+
     }
 
     [ContractClassFor(typeof(IMatrixMutable<>))]
@@ -127,6 +131,20 @@ namespace Vertesaur
         }
 
         public void ScaleColumn(int c, TValue value) {
+            Contract.Requires(c >= 0);
+            Contract.Requires(c < ColumnCount);
+            Contract.EndContractBlock();
+            throw new NotImplementedException();
+        }
+
+        public void DivideRow(int r, TValue denominator) {
+            Contract.Requires(r >= 0);
+            Contract.Requires(r < RowCount);
+            Contract.EndContractBlock();
+            throw new NotImplementedException();
+        }
+
+        public void DivideColumn(int c, TValue denominator) {
             Contract.Requires(c >= 0);
             Contract.Requires(c < ColumnCount);
             Contract.EndContractBlock();

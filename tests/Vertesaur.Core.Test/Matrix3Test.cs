@@ -201,11 +201,17 @@ namespace Vertesaur.Core.Test
         }
 
         [Test]
-        public void GetInvertedTest() {
+        public void GetInvertedSafetyTest() {
             var a = new Matrix3(_priorInvert);
             var b = a.GetInverse();
             Assert.AreEqual(_priorInvert, a, "Matrix was mutated.");
             Assert.AreEqual(_postInvert, b);
+        }
+
+        [Test]
+        public void GetInvertedTests() {
+            Assert.AreEqual(_postInvert, _priorInvert.GetInverse());
+            Assert.AreEqual(_priorInvert, _postInvert.GetInverse());
         }
 
         [Test]

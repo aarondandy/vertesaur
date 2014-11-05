@@ -30,7 +30,6 @@ namespace Vertesaur
                     return false;
 
                 // now the other values in the column must be made to be 0
-
                 for (int r = 0; r < sourceData.Order; r++) {
                     if (r == i)
                         continue; // skip the row with the 1 value
@@ -48,33 +47,42 @@ namespace Vertesaur
             if (targetElementValue == 1.0)
                 return true;
 
-            // first we need to make the target element a one for this column
             // attempt to find a row that already has one
             var rowIndexWithOneValue = SearchDownRowsForOneValue(sourceData, ordinal, ordinal + 1);
             if (rowIndexWithOneValue > ordinal) {
                 // perform the swap to get the 1.0 value
                 sourceData.SwapRows(ordinal, rowIndexWithOneValue);
                 result.SwapRows(ordinal, rowIndexWithOneValue);
+                return true;
+            }
+            
+            // first attempt to find an additive value from the rows below to use with a multiple of one 1
+            var rowIndexAdditiveForOne = SearchDownRowsForAdditiveForOneValue(sourceData, ordinal, ordinal + 1, targetElementValue);
+            if (rowIndexAdditiveForOne > ordinal) {
+                // when a match is found add those values to the row to get the 1 value
+                sourceData.AddSourceRowToTarget(rowIndexAdditiveForOne, ordinal);
+                result.AddSourceRowToTarget(rowIndexAdditiveForOne, ordinal);
+                return true;
+            }
+            
+            // next attempt to find a scalar value that can be applied to the row
+            if (targetElementValue != 0.0) {
+                sourceData.DivideRow(ordinal, targetElementValue);
+                result.DivideRow(ordinal, targetElementValue);
+                return true;
             }
             else {
-                // first attempt to find an additive value from the rows below to use with a multiple of one 1
-                var rowIndexAdditiveForOne = SearchDownRowsForAdditiveForOneValue(sourceData, ordinal, ordinal + 1, targetElementValue);
-                if (rowIndexAdditiveForOne > ordinal) {
-                    // when a match is found add those values to the row to get the 1 value
-                    sourceData.AddSourceRowToTarget(rowIndexAdditiveForOne, ordinal);
-                    result.AddSourceRowToTarget(rowIndexAdditiveForOne, ordinal);
-                }
-                else {
-                    // next attempt to find a scalar value that can be applied to the row
-                    if (targetElementValue == 0.0)
-                        return false;
-
-                    var inverseValue = 1.0 / targetElementValue;
-                    sourceData.ScaleRow(ordinal, inverseValue);
-                    result.ScaleRow(ordinal, inverseValue);
+                // if this value is a zero we can try to find one under it that is non-zero, swap them, then try again
+                // this works out well because the zero is helpful down there later
+                for (int r = ordinal + 1; r < sourceData.Order; r++) {
+                    if (sourceData.Get(r, ordinal) != 0.0) {
+                        sourceData.SwapRows(ordinal, r);
+                        result.SwapRows(ordinal, r);
+                        return DiagonalToOne(sourceData, result, ordinal);
+                    }
                 }
             }
-            return true;
+            return false;
         }
 
         private static bool SetToGaussJordanZero<TMatrix>(TMatrix sourceData, TMatrix result, int targetRow, int targetColumn) where TMatrix : IMatrixSquare<double>, IMatrixMutable<double> {
