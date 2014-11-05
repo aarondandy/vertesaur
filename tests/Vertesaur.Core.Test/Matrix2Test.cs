@@ -127,7 +127,16 @@ namespace Vertesaur.Core.Test
 
         [Test]
         public void DeterminantTest() {
+            Assert.AreEqual(1, _identity.CalculateDeterminant());
+            Assert.AreEqual(-2, _incremented.CalculateDeterminant());
             Assert.AreEqual(34, _determinant34.CalculateDeterminant());
+            Assert.AreEqual(-2, _priorInvert.CalculateDeterminant());
+            Assert.AreEqual(-0.5, _postInvert.CalculateDeterminant());
+            Assert.AreEqual(-2, _trans.CalculateDeterminant());
+            Assert.AreEqual(4, _a.CalculateDeterminant());
+            Assert.AreEqual(22, _b.CalculateDeterminant());
+            Assert.AreEqual(88, _product.CalculateDeterminant());
+            Assert.AreEqual(71, _sum.CalculateDeterminant());
         }
 
         [Test]
@@ -138,11 +147,25 @@ namespace Vertesaur.Core.Test
         }
 
         [Test]
-        public void GetInvertedTest() {
+        public void GetInvertedSafetyTest() {
             var a = new Matrix2(_priorInvert);
             var b = a.GetInverse();
             Assert.AreEqual(_priorInvert, a, "Matrix mutated.");
             Assert.AreEqual(_postInvert, b);
+        }
+
+        [Test]
+        public void GetInvertedTests() {
+            Assert.AreEqual(_postInvert, _priorInvert.GetInverse());
+            Assert.AreEqual(_priorInvert, _postInvert.GetInverse());
+            Assert.AreEqual(_identity, _identity.GetInverse());
+            Assert.AreEqual(new Matrix2(-3 / 2.0, 0.5, 1, 0), _incremented.GetInverse());
+            Assert.AreEqual(new Matrix2(-1 / 17.0, 4/17.0, -5/34.0, 3/34.0), _determinant34.GetInverse());
+            Assert.AreEqual(new Matrix2(-3 / 2.0, 1, 0.5, 0), _trans.GetInverse());
+            Assert.AreEqual(new Matrix2(-0.5, -0.25, 5 / 2.0, 0.75), _a.GetInverse());
+            Assert.AreEqual(new Matrix2(5 / 22.0, -3 / 22.0, 2 / 11.0, 1 / 11.0), _b.GetInverse());
+            Assert.AreEqual(new Matrix2(-5 / 11.0, -7 / 44.0, 3 / 22.0, 1 / 44.0), _product.GetInverse());
+            Assert.AreEqual(new Matrix2(3 / 71.0, -4 / 71.0, 14 / 71.0, 5 / 71.0), _sum.GetInverse());
         }
 
         [Test]

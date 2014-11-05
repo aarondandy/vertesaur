@@ -146,6 +146,7 @@
     <Compile Include="Core\IHasCentroid.cs" />
     <Compile Include="Core\ILine2.cs" />
     <Compile Include="Core\IMatrix.cs" />
+    <Compile Include="Core\IMatrixMutable.cs" />
     <Compile Include="Core\IMatrixSquare.cs" />
     <Compile Include="Core\IMbr.cs" />
     <Compile Include="Core\IPlanarGeometry.cs" />
@@ -165,6 +166,7 @@
     <Compile Include="Core\ISpatiallyRelatable.cs" />
     <Compile Include="Core\ISphericalCoord.cs" />
     <Compile Include="Core\ISpheroid.cs" />
+    <Compile Include="Core\SquareMatrixOperations.cs" />
     <Compile Include="Transformation\ITransformation.cs" />
     <Compile Include="Core\IVector2.cs" />
     <Compile Include="Core\IVector3.cs" />

@@ -1,0 +1,131 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics.Contracts;
+using System.Linq;
+using System.Text;
+
+namespace Vertesaur
+{
+
+    /// <summary>
+    /// Various generalized operations that can be performed on square matrices.
+    /// </summary>
+    internal static class SquareMatrixOperations
+    {
+
+        internal static double CalculateDeterminantDestructive<TMatrix>(TMatrix matrix) where TMatrix : IMatrixSquare<double>, IMatrixMutable<double> {
+            throw new NotImplementedException();
+        }
+
+        internal static bool GaussJordanEliminationDestructive<TMatrix>(TMatrix sourceData, TMatrix result) where TMatrix : IMatrixSquare<double>, IMatrixMutable<double> {
+            Contract.Requires(sourceData != null);
+            Contract.Requires(result != null);
+            Contract.Requires(sourceData.Order == result.Order);
+
+            // NOTE: This approach may skip some possible solutions
+            // TODO: A better algorithm should be developed for this
+
+            for (int i = 0; i < sourceData.Order; i++) {
+                if (!DiagonalToOne(sourceData, result, i))
+                    return false;
+
+                // now the other values in the column must be made to be 0
+
+                for (int r = 0; r < sourceData.Order; r++) {
+                    if (r == i)
+                        continue; // skip the row with the 1 value
+
+                    if(!SetToGaussJordanZero(sourceData, result, r, i))
+                        return false;
+                }
+            }
+
+            return true;
+        }
+
+        private static bool DiagonalToOne<TMatrix>(TMatrix sourceData, TMatrix result, int ordinal) where TMatrix : IMatrixSquare<double>, IMatrixMutable<double> {
+            var targetElementValue = sourceData.Get(ordinal, ordinal);
+            if (targetElementValue == 1.0)
+                return true;
+
+            // first we need to make the target element a one for this column
+            // attempt to find a row that already has one
+            var rowIndexWithOneValue = SearchDownRowsForOneValue(sourceData, ordinal, ordinal + 1);
+            if (rowIndexWithOneValue > ordinal) {
+                // perform the swap to get the 1.0 value
+                sourceData.SwapRows(ordinal, rowIndexWithOneValue);
+                result.SwapRows(ordinal, rowIndexWithOneValue);
+            }
+            else {
+                // first attempt to find an additive value from the rows below to use with a multiple of one 1
+                var rowIndexAdditiveForOne = SearchDownRowsForAdditiveForOneValue(sourceData, ordinal, ordinal + 1, targetElementValue);
+                if (rowIndexAdditiveForOne > ordinal) {
+                    // when a match is found add those values to the row to get the 1 value
+                    sourceData.AddSourceRowToTarget(rowIndexAdditiveForOne, ordinal);
+                    result.AddSourceRowToTarget(rowIndexAdditiveForOne, ordinal);
+                }
+                else {
+                    // next attempt to find a scalar value that can be applied to the row
+                    if (targetElementValue == 0.0)
+                        return false;
+
+                    var inverseValue = 1.0 / targetElementValue;
+                    sourceData.ScaleRow(ordinal, inverseValue);
+                    result.ScaleRow(ordinal, inverseValue);
+                }
+            }
+            return true;
+        }
+
+        private static bool SetToGaussJordanZero<TMatrix>(TMatrix sourceData, TMatrix result, int targetRow, int targetColumn) where TMatrix : IMatrixSquare<double>, IMatrixMutable<double> {
+            var targetElementValue = sourceData.Get(targetRow, targetColumn);
+            if (targetElementValue == 0.0)
+                return true;
+
+            for (int searchRow = targetColumn; searchRow < sourceData.Order; searchRow++) {
+                if (searchRow == targetRow)
+                    continue; // can't use self
+
+                var usedValue = sourceData.Get(searchRow, targetColumn);
+                if (usedValue != 0.0) {
+                    // find a value such that targetElementValue + (usedValue * factor) = 0
+                    var factor = -targetElementValue / usedValue;
+
+                    sourceData.AddSourceRowToTarget(searchRow, targetRow, factor);
+                    result.AddSourceRowToTarget(searchRow, targetRow, factor);
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private static int SearchDownRowsForOneValue<TMatrix>(TMatrix m, int column, int rowSearchIndex) where TMatrix : IMatrix<double> {
+            Contract.Requires(m != null);
+            Contract.Requires(column >= 0);
+            Contract.Requires(column < m.ColumnCount);
+            Contract.Requires(rowSearchIndex >= 0);
+            Contract.Ensures(Contract.Result<int>() < m.RowCount);
+
+            for (; rowSearchIndex < m.RowCount; rowSearchIndex++) {
+                if (m.Get(rowSearchIndex, column) == 1.0)
+                    return rowSearchIndex;
+            }
+            return -1;
+        }
+
+        private static int SearchDownRowsForAdditiveForOneValue<TMatrix>(TMatrix m, int column, int rowSearchIndex, double additiveValue) where TMatrix : IMatrix<double> {
+            Contract.Requires(m != null);
+            Contract.Requires(column >= 0);
+            Contract.Requires(column < m.ColumnCount);
+            Contract.Requires(rowSearchIndex >= 0);
+            Contract.Ensures(Contract.Result<int>() < m.RowCount);
+
+            for (; rowSearchIndex < m.RowCount; rowSearchIndex++) {
+                if (m.Get(rowSearchIndex, column) + additiveValue == 1.0)
+                    return rowSearchIndex;
+            }
+            return -1;
+        }
+
+    }
+}
