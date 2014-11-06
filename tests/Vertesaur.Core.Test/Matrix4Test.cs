@@ -286,21 +286,42 @@ namespace Vertesaur.Core.Test
         public void DeterminantTest() {
             Assert.AreEqual(660, _forDeterminant660.CalculateDeterminant());
             Assert.AreEqual(0, _forDeterminant0.CalculateDeterminant());
+            Assert.AreEqual(0, new Matrix4(1, -1, 0, 2, -1, 1, 2, 3, 2, -2, 3, 4, 6, -6, 6, 1).CalculateDeterminant());
+            Assert.AreEqual(12, new Matrix4(1, 0, 2, 1, 2, -1, 1, 0, 1, 0, 0, 3, -1, 0, 2, 1).CalculateDeterminant());
+        }
+
+        public void AreEqual(Matrix4 a, Matrix4 b, double delta) {
+            Assert.AreEqual(a.E00, b.E00, delta);
+            Assert.AreEqual(a.E01, b.E01, delta);
+            Assert.AreEqual(a.E02, b.E02, delta);
+            Assert.AreEqual(a.E03, b.E03, delta);
+            Assert.AreEqual(a.E10, b.E10, delta);
+            Assert.AreEqual(a.E11, b.E11, delta);
+            Assert.AreEqual(a.E12, b.E12, delta);
+            Assert.AreEqual(a.E13, b.E13, delta);
+            Assert.AreEqual(a.E20, b.E20, delta);
+            Assert.AreEqual(a.E21, b.E21, delta);
+            Assert.AreEqual(a.E22, b.E22, delta);
+            Assert.AreEqual(a.E23, b.E23, delta);
+            Assert.AreEqual(a.E30, b.E30, delta);
+            Assert.AreEqual(a.E31, b.E31, delta);
+            Assert.AreEqual(a.E32, b.E32, delta);
+            Assert.AreEqual(a.E33, b.E33, delta);
         }
 
         [Test]
-        public void InvertTest() {
+        public void InvertBasicTest() {
             var m = new Matrix4(_priorInv);
             m.Invert();
-            Assert.AreEqual(_postInv, m, "Inversion failure.");
+            AreEqual(_postInv, m, 0.0000001);
         }
 
         [Test]
-        public void GetInvertedTest() {
+        public void GetInvertedSafetyTest() {
             var m = new Matrix4(_priorInv);
             var n = m.GetInverse();
             Assert.AreEqual(_priorInv, m, "Matrix was mutated.");
-            Assert.AreEqual(_postInv, n, "Inversion failure.");
+            AreEqual(_postInv, n, 0.0000001);
         }
 
         [Test]

@@ -12,6 +12,7 @@ namespace Vertesaur
     /// </summary>
     public sealed class Matrix4 :
         IMatrixSquare<double>,
+        IMatrixMutable<double>,
         IEquatable<Matrix4>,
         ICloneable
     {
@@ -222,22 +223,7 @@ namespace Vertesaur
         public Matrix4(Matrix4 m) {
             if (m == null) throw new ArgumentNullException("m");
             Contract.EndContractBlock();
-            E00 = m.E00;
-            E01 = m.E01;
-            E02 = m.E02;
-            E03 = m.E03;
-            E10 = m.E10;
-            E11 = m.E11;
-            E12 = m.E12;
-            E13 = m.E13;
-            E20 = m.E20;
-            E21 = m.E21;
-            E22 = m.E22;
-            E23 = m.E23;
-            E30 = m.E30;
-            E31 = m.E31;
-            E32 = m.E32;
-            E33 = m.E33;
+            CopyFrom(m);
             Contract.Assume(OrderValue == RowCount);
             Contract.Assume(OrderValue == ColumnCount);
         }
@@ -344,6 +330,26 @@ namespace Vertesaur
                 && E32 == other.Get(3, 2)
                 && E33 == other.Get(3, 3)
             ;
+        }
+
+        private void CopyFrom(Matrix4 m) {
+            Contract.Requires(m != null);
+            E00 = m.E00;
+            E01 = m.E01;
+            E02 = m.E02;
+            E03 = m.E03;
+            E10 = m.E10;
+            E11 = m.E11;
+            E12 = m.E12;
+            E13 = m.E13;
+            E20 = m.E20;
+            E21 = m.E21;
+            E22 = m.E22;
+            E23 = m.E23;
+            E30 = m.E30;
+            E31 = m.E31;
+            E32 = m.E32;
+            E33 = m.E33;
         }
 
         /// <summary>
@@ -531,101 +537,17 @@ namespace Vertesaur
             Contract.Assume(OrderValue == ColumnCount);
         }
 
+        /// <inheritdoc/>
+        public double CalculateDiagonalProduct() {
+            return E00 * E11 * E22 * E33;
+        }
+
         /// <summary>
         /// Calculates the determinant of the matrix.
         /// </summary>
         /// <returns>The determinant.</returns>
         public double CalculateDeterminant() {
-            return CalculateDeterminantSlow();
-        }
-        /// <summary>
-        /// This method is slow but will produce the correct result.
-        /// </summary>
-        private double CalculateDeterminantSlow() {
-            var v = 0.0;
-            if (0 != E31)
-                v = E31 * SubDeterminantA();
-            if (0 != E30)
-                v -= E30 * SubDeterminantB();
-            if (0 != E32)
-                v -= E32 * SubDeterminantC();
-            if (0 != E33)
-                v += E33 * SubDeterminantD();
-            return v;
-        }
-
-        private double SubDeterminantA() {
-            return ((E00 * E12 * E23) + (E02 * E13 * E20) + (E03 * E10 * E22))
-                - ((E03 * E12 * E20) + (E00 * E13 * E22) + (E02 * E10 * E23));
-        }
-
-        private double SubDeterminantB() {
-            return ((E01 * E12 * E23) + (E02 * E13 * E21) + (E03 * E11 * E22))
-                - ((E03 * E12 * E21) + (E01 * E13 * E22) + (E02 * E11 * E23));
-        }
-
-        private double SubDeterminantC() {
-            return ((E00 * E11 * E23) + (E01 * E13 * E20) + (E03 * E10 * E21))
-                - ((E03 * E11 * E20) + (E00 * E13 * E21) + (E01 * E10 * E23));
-        }
-
-        private double SubDeterminantD() {
-            return ((E00 * E11 * E22) + (E01 * E12 * E20) + (E02 * E10 * E21))
-                - ((E02 * E11 * E20) + (E00 * E12 * E21) + (E01 * E10 * E22));
-        }
-
-        private double SubDeterminant(int r0, int r1, int r2, int c0, int c1, int c2) {
-            Contract.Requires(r0 >= 0);
-            Contract.Requires(r0 < RowCount);
-            Contract.Requires(c0 >= 0);
-            Contract.Requires(c0 < ColumnCount);
-
-            Contract.Requires(r1 >= 0);
-            Contract.Requires(r1 < RowCount);
-            Contract.Requires(c1 >= 0);
-            Contract.Requires(c1 < ColumnCount);
-
-            Contract.Requires(r2 >= 0);
-            Contract.Requires(r2 < RowCount);
-            Contract.Requires(c2 >= 0);
-            Contract.Requires(c2 < ColumnCount);
-            
-            return (
-                (
-                    (Get(r0, c0) * Get(r1, c1) * Get(r2, c2))
-                    +
-                    (Get(r0, c1) * Get(r1, c2) * Get(r2, c0))
-                    +
-                    (Get(r0, c2) * Get(r1, c0) * Get(r2, c1))
-                )
-                -
-                (
-                    (Get(r2, c0) * Get(r1, c1) * Get(r0, c2))
-                    +
-                    (Get(r2, c1) * Get(r1, c2) * Get(r0, c0))
-                    +
-                    (Get(r2, c2) * Get(r1, c0) * Get(r0, c1))
-                )
-            );
-        }
-
-        private double SubDeterminantShort(int ir, int ic) {
-            Contract.Requires(ir >= 0);
-            Contract.Requires(ir < RowCount);
-            Contract.Requires(ic >= 0);
-            Contract.Requires(ic < ColumnCount);
-
-            /*Contract.Ensures(Contract.OldValue(RowCount) == RowCount);
-            Contract.Ensures(Contract.OldValue(ColumnCount) == ColumnCount);*/
-
-            return SubDeterminant(
-                (ir == 0) ? 1 : 0,
-                (ir < 2) ? 2 : 1,
-                (ir < 3) ? 3 : 2,
-                (ic == 0) ? 1 : 0,
-                (ic < 2) ? 2 : 1,
-                (ic < 3) ? 3 : 2
-            );
+            return SquareMatrixOperations.CalculateDeterminantDestructive(Clone());
         }
 
         /// <summary>
@@ -633,33 +555,14 @@ namespace Vertesaur
         /// </summary>
         /// <exception cref="Vertesaur.NoInverseException">An inverse requires a valid non-zero finite determinant.</exception>
         public void Invert() {
-            var determinant = CalculateDeterminant();
-            if (0 == determinant || Double.IsNaN(determinant) || Double.IsInfinity(determinant)) {
+            Contract.Ensures(Contract.Result<Matrix4>() != null);
+            var copy = Clone();
+            var result = new Matrix4();
+            Contract.Assume(result.IsIdentity);
+            if (SquareMatrixOperations.GaussJordanEliminationDestructive(copy, result))
+                CopyFrom(result);
+            else
                 throw new NoInverseException();
-            }
-            var negativeDeterminant = -determinant;
-
-            SetElements(
-                (SubDeterminantShort(0, 0) / determinant),
-                (SubDeterminantShort(1, 0) / negativeDeterminant),
-                (SubDeterminantShort(2, 0) / determinant),
-                (SubDeterminantShort(3, 0) / negativeDeterminant),
-
-                (SubDeterminantShort(0, 1) / negativeDeterminant),
-                (SubDeterminantShort(1, 1) / determinant),
-                (SubDeterminantShort(2, 1) / negativeDeterminant),
-                (SubDeterminantShort(3, 1) / determinant),
-
-                (SubDeterminantShort(0, 2) / determinant),
-                (SubDeterminantShort(1, 2) / negativeDeterminant),
-                (SubDeterminantShort(2, 2) / determinant),
-                (SubDeterminantShort(3, 2) / negativeDeterminant),
-
-                (SubDeterminantShort(0, 3) / negativeDeterminant),
-                (SubDeterminantShort(1, 3) / determinant),
-                (SubDeterminantShort(2, 3) / negativeDeterminant),
-                (SubDeterminantShort(3, 3) / determinant)
-            );
         }
 
         /// <summary>
@@ -669,33 +572,13 @@ namespace Vertesaur
         /// <exception cref="Vertesaur.NoInverseException">An inverse requires a valid non-zero finite determinant.</exception>
         public Matrix4 GetInverse() {
             Contract.Ensures(Contract.Result<Matrix4>() != null);
-
-            var determinant = CalculateDeterminant();
-            if (0 == determinant || Double.IsNaN(determinant) || Double.IsInfinity(determinant)) {
+            var copy = Clone();
+            var result = new Matrix4();
+            Contract.Assume(result.IsIdentity);
+            if (SquareMatrixOperations.GaussJordanEliminationDestructive(copy, result))
+                return result;
+            else
                 throw new NoInverseException();
-            }
-            var negativeDeterminant = -determinant;
-            return new Matrix4(
-                (SubDeterminantShort(0, 0) / determinant),
-                (SubDeterminantShort(1, 0) / negativeDeterminant),
-                (SubDeterminantShort(2, 0) / determinant),
-                (SubDeterminantShort(3, 0) / negativeDeterminant),
-
-                (SubDeterminantShort(0, 1) / negativeDeterminant),
-                (SubDeterminantShort(1, 1) / determinant),
-                (SubDeterminantShort(2, 1) / negativeDeterminant),
-                (SubDeterminantShort(3, 1) / determinant),
-
-                (SubDeterminantShort(0, 2) / determinant),
-                (SubDeterminantShort(1, 2) / negativeDeterminant),
-                (SubDeterminantShort(2, 2) / determinant),
-                (SubDeterminantShort(3, 2) / negativeDeterminant),
-
-                (SubDeterminantShort(0, 3) / negativeDeterminant),
-                (SubDeterminantShort(1, 3) / determinant),
-                (SubDeterminantShort(2, 3) / negativeDeterminant),
-                (SubDeterminantShort(3, 3) / determinant)
-            );
         }
 
         /// <summary>
@@ -992,6 +875,102 @@ namespace Vertesaur
 
         object ICloneable.Clone() {
             return Clone();
+        }
+
+        /// <inheritdoc/>
+        public void SwapRows(int ra, int rb) {
+            if (ra < 0 || ra >= OrderValue) throw new ArgumentOutOfRangeException("ra", "Invalid row.");
+            if (rb < 0 || rb >= OrderValue) throw new ArgumentOutOfRangeException("rb", "Invalid row.");
+            Contract.EndContractBlock();
+            if (ra == rb)
+                return;
+            for (int c = 0; c < OrderValue; c++) {
+                var tmp = Get(ra, c);
+                Set(ra, c, Get(rb, c));
+                Set(rb, c, tmp);
+            }
+        }
+
+        /// <inheritdoc/>
+        public void SwapColumns(int ca, int cb) {
+            if (ca < 0 || ca >= OrderValue) throw new ArgumentOutOfRangeException("ca", "Invalid column.");
+            if (cb < 0 || cb >= OrderValue) throw new ArgumentOutOfRangeException("cb", "Invalid column.");
+            Contract.EndContractBlock();
+            if (ca == cb)
+                return;
+            for (int r = 0; r < OrderValue; r++) {
+                var tmp = Get(r, ca);
+                Set(r, ca, Get(r, cb));
+                Set(r, cb, tmp);
+            }
+        }
+
+        /// <inheritdoc/>
+        public void AddSourceRowToTarget(int sourceRow, int targetRow) {
+            if (sourceRow < 0 || sourceRow >= OrderValue) throw new ArgumentOutOfRangeException("sourceRow", "Invalid row.");
+            if (targetRow < 0 || targetRow >= OrderValue) throw new ArgumentOutOfRangeException("targetRow", "Invalid row.");
+            Contract.EndContractBlock();
+            for (int c = 0; c < OrderValue; c++)
+                Set(targetRow, c, Get(sourceRow, c) + Get(targetRow, c));
+        }
+
+        /// <inheritdoc/>
+        public void AddSourceRowToTarget(int sourceRow, int targetRow, double factor) {
+            if (sourceRow < 0 || sourceRow >= OrderValue) throw new ArgumentOutOfRangeException("sourceRow", "Invalid row.");
+            if (targetRow < 0 || targetRow >= OrderValue) throw new ArgumentOutOfRangeException("targetRow", "Invalid row.");
+            Contract.EndContractBlock();
+            for (int c = 0; c < OrderValue; c++)
+                Set(targetRow, c, (Get(sourceRow, c) * factor) + Get(targetRow, c));
+        }
+
+        /// <inheritdoc/>
+        public void AddSourceColumnToTarget(int sourceColumn, int targetColumn) {
+            if (sourceColumn < 0 || sourceColumn >= OrderValue) throw new ArgumentOutOfRangeException("sourceColumn", "Invalid column.");
+            if (targetColumn < 0 || targetColumn >= OrderValue) throw new ArgumentOutOfRangeException("targetColumn", "Invalid column.");
+            Contract.EndContractBlock();
+            for (int r = 0; r < OrderValue; r++)
+                Set(r, targetColumn, Get(r, sourceColumn) + Get(r, targetColumn));
+        }
+
+        /// <inheritdoc/>
+        public void AddSourceColumnToTarget(int sourceColumn, int targetColumn, double factor) {
+            if (sourceColumn < 0 || sourceColumn >= OrderValue) throw new ArgumentOutOfRangeException("sourceColumn", "Invalid column.");
+            if (targetColumn < 0 || targetColumn >= OrderValue) throw new ArgumentOutOfRangeException("targetColumn", "Invalid column.");
+            Contract.EndContractBlock();
+            for (int r = 0; r < OrderValue; r++)
+                Set(r, targetColumn, (Get(r, sourceColumn) * factor) + Get(r, targetColumn));
+        }
+
+        /// <inheritdoc/>
+        public void ScaleRow(int r, double value) {
+            if (r < 0 || r >= OrderValue) throw new ArgumentOutOfRangeException("r", "Invalid row.");
+            Contract.EndContractBlock();
+            for (int c = 0; c < OrderValue; c++)
+                Set(r, c, Get(r, c) * value);
+        }
+
+        /// <inheritdoc/>
+        public void ScaleColumn(int c, double value) {
+            if (c < 0 || c >= OrderValue) throw new ArgumentOutOfRangeException("c", "Invalid column.");
+            Contract.EndContractBlock();
+            for (int r = 0; r < OrderValue; r++)
+                Set(r, c, Get(r, c) * value);
+        }
+
+        /// <inheritdoc/>
+        public void DivideRow(int r, double denominator) {
+            if (r < 0 || r >= OrderValue) throw new ArgumentOutOfRangeException("r", "Invalid row.");
+            Contract.EndContractBlock();
+            for (int c = 0; c < OrderValue; c++)
+                Set(r, c, Get(r, c) / denominator);
+        }
+
+        /// <inheritdoc/>
+        public void DivideColumn(int c, double denominator) {
+            if (c < 0 || c >= OrderValue) throw new ArgumentOutOfRangeException("c", "Invalid column.");
+            Contract.EndContractBlock();
+            for (int r = 0; r < OrderValue; r++)
+                Set(r, c, Get(r, c) / denominator);
         }
 
     }

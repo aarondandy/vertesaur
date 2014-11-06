@@ -191,6 +191,21 @@ namespace Vertesaur.Core.Test
         [Test]
         public void DeterminantTest() {
             Assert.AreEqual(99, _determinant99.CalculateDeterminant());
+            Assert.AreEqual(-244, _a.CalculateDeterminant());
+            Assert.AreEqual(-4851, _b.CalculateDeterminant());
+            Assert.AreEqual(1, _identity.CalculateDeterminant());
+            Assert.AreEqual(2, _priorInvert.CalculateDeterminant());
+            Assert.AreEqual(0.5, _postInvert.CalculateDeterminant());
+            Assert.AreEqual(45, _upperTrig.CalculateDeterminant());
+            Assert.AreEqual(45, _lowerTrig.CalculateDeterminant());
+            Assert.AreEqual(45, _diagonal.CalculateDeterminant());
+            Assert.AreEqual(2, new Matrix3(1, -2, 4, -1, 2, -5, 2, -2, 11).CalculateDeterminant());
+            Assert.AreEqual(0, new Matrix3(1, 0, 1, 1, 1, 0, 0, 0, 0).CalculateDeterminant());
+            Assert.AreEqual(0, new Matrix3(2, 0, -7, 3, 0, 1, -4, 0, 9).CalculateDeterminant());
+            Assert.AreEqual(0, new Matrix3(2, -1, 3, 1, 2, 4, 2, 4, 8).CalculateDeterminant());
+            Assert.AreEqual(-30, new Matrix3(2, -1, 1, 0, 3, -4, 0, 0, -5).CalculateDeterminant());
+            Assert.AreEqual(-26, new Matrix3(2, 4, 1, -2, -5, 4, 4, 9, 10).CalculateDeterminant());
+            Assert.AreEqual(2, new Matrix3(1, -2, 4, -1, 2, -5, 2, -2, 11).CalculateDeterminant());
         }
 
         [Test]
@@ -201,11 +216,17 @@ namespace Vertesaur.Core.Test
         }
 
         [Test]
-        public void GetInvertedTest() {
+        public void GetInvertedSafetyTest() {
             var a = new Matrix3(_priorInvert);
             var b = a.GetInverse();
             Assert.AreEqual(_priorInvert, a, "Matrix was mutated.");
             Assert.AreEqual(_postInvert, b);
+        }
+
+        [Test]
+        public void GetInvertedTests() {
+            Assert.AreEqual(_postInvert, _priorInvert.GetInverse());
+            Assert.AreEqual(_priorInvert, _postInvert.GetInverse());
         }
 
         [Test]

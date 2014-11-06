@@ -27,6 +27,11 @@ namespace Vertesaur
         /// <returns>The determinant value.</returns>
         TValue CalculateDeterminant();
         /// <summary>
+        /// Calculates the product of the diagonal values in this matrix.
+        /// </summary>
+        /// <returns>The product of the diagonal elements.</returns>
+        TValue CalculateDiagonalProduct();
+        /// <summary>
         /// Determines if this matrix is a diagonal matrix.
         /// </summary>
         bool IsDiagonal { get; }
@@ -65,6 +70,8 @@ namespace Vertesaur
         }
 
         public abstract TValue CalculateDeterminant();
+
+        public abstract TValue CalculateDiagonalProduct();
 
         public abstract bool IsDiagonal { get; }
 

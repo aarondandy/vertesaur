@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
+using Vertesaur;
 
 namespace Vertesaur
 {
@@ -11,6 +12,7 @@ namespace Vertesaur
     /// </summary>
     public sealed class Matrix2 :
         IMatrixSquare<double>,
+        IMatrixMutable<double>,
         IEquatable<Matrix2>,
         ICloneable
     {
@@ -145,10 +147,7 @@ namespace Vertesaur
         public Matrix2(Matrix2 m) {
             if (m == null) throw new ArgumentNullException("m");
             Contract.EndContractBlock();
-            E00 = m.E00;
-            E01 = m.E01;
-            E10 = m.E10;
-            E11 = m.E11;
+            CopyFrom(m);
         }
 
         /// <summary>
@@ -189,6 +188,14 @@ namespace Vertesaur
         public void SetIdentity() {
             E00 = E11 = 1.0;
             E01 = E10 = 0;
+        }
+
+        private void CopyFrom(Matrix2 m) {
+            Contract.Requires(m != null);
+            E00 = m.E00;
+            E01 = m.E01;
+            E10 = m.E10;
+            E11 = m.E11;
         }
 
         /// <summary>
@@ -300,11 +307,20 @@ namespace Vertesaur
             );
         }
 
+        /// <inheritdoc/>
+        public double CalculateDiagonalProduct() {
+            return E00 * E11;
+        }
+
         /// <summary>
         /// Calculates the determinant of the matrix.
         /// </summary>
         /// <returns>The determinant.</returns>
         public double CalculateDeterminant() {
+            if (IsUpperTriangular || IsLowerTriangular)
+                return E00 * E11;
+            if (E00 == 0.0 || E11 == 0.0)
+                return -(E01 * E10);
             return (E00 * E11) - (E10 * E01);
         }
 
@@ -473,16 +489,13 @@ namespace Vertesaur
         /// </summary>
         /// <exception cref="Vertesaur.NoInverseException">An inverse requires a valid non-zero finite determinant.</exception>
         public void Invert() {
-            var determinant = CalculateDeterminant();
-            if (0 == determinant || Double.IsNaN(determinant) || Double.IsInfinity(determinant))
+            var copy = Clone();
+            var result = new Matrix2();
+            Contract.Assume(result.IsIdentity);
+            if (SquareMatrixOperations.GaussJordanEliminationDestructive(copy, result))
+                CopyFrom(result);
+            else
                 throw new NoInverseException();
-
-            var temp = E00;
-            E00 = E11 / determinant;
-            E11 = temp / determinant;
-            temp = -determinant;
-            E01 = E01 / temp;
-            E10 = E10 / temp;
         }
 
         /// <summary>
@@ -492,16 +505,13 @@ namespace Vertesaur
         /// <exception cref="Vertesaur.NoInverseException">An inverse requires a valid non-zero finite determinant.</exception>
         public Matrix2 GetInverse() {
             Contract.Ensures(Contract.Result<Matrix2>() != null);
-            var determinant = CalculateDeterminant();
-            if (0 == determinant || Double.IsNaN(determinant) || Double.IsInfinity(determinant))
+            var copy = Clone();
+            var result = new Matrix2();
+            Contract.Assume(result.IsIdentity);
+            if (SquareMatrixOperations.GaussJordanEliminationDestructive(copy, result))
+                return result;
+            else
                 throw new NoInverseException();
-
-            return new Matrix2(
-                E11 / determinant,
-                E01 / -determinant,
-                E10 / -determinant,
-                E00 / determinant
-            );
         }
 
         /// <summary>
@@ -581,6 +591,141 @@ namespace Vertesaur
             return Clone();
         }
 
+        /// <inheritdoc/>
+        public void SwapRows(int ra, int rb) {
+            if (ra < 0 || ra > 1) throw new ArgumentOutOfRangeException("ra", "Row must be 0 or 1.");
+            if (rb < 0 || rb > 1) throw new ArgumentOutOfRangeException("ra", "Row must be 0 or 1.");
+            Contract.EndContractBlock();
+
+            if (ra == rb)
+                return;
+
+            var tmp = E00;
+            E00 = E10;
+            E10 = tmp;
+
+            tmp = E01;
+            E01 = E11;
+            E11 = tmp;
+        }
+
+        /// <inheritdoc/>
+        public void SwapColumns(int ca, int cb) {
+            if (ca < 0 || ca > 1) throw new ArgumentOutOfRangeException("ca", "Column must be 0 or 1.");
+            if (cb < 0 || cb > 1) throw new ArgumentOutOfRangeException("cb", "Row must be 0 or 1.");
+            Contract.EndContractBlock();
+
+            if (ca == cb)
+                return;
+
+            var tmp = E00;
+            E00 = E01;
+            E01 = tmp;
+
+            tmp = E10;
+            E10 = E11;
+            E11 = tmp;
+        }
+
+        /// <inheritdoc/>
+        public void AddSourceRowToTarget(int sourceRow, int targetRow) {
+            if (sourceRow < 0 || sourceRow > 1) throw new ArgumentOutOfRangeException("sourceRow", "Row must be 0 or 1.");
+            if (targetRow < 0 || targetRow > 1) throw new ArgumentOutOfRangeException("targetRow", "Row must be 0 or 1.");
+            Contract.EndContractBlock();
+
+            for (int c = 0; c < Order; c++)
+                Set(targetRow, c, Get(sourceRow, c) + Get(targetRow, c));
+        }
+
+        /// <inheritdoc/>
+        public void AddSourceRowToTarget(int sourceRow, int targetRow, double factor) {
+            if (sourceRow < 0 || sourceRow > 1) throw new ArgumentOutOfRangeException("sourceRow", "Row must be 0 or 1.");
+            if (targetRow < 0 || targetRow > 1) throw new ArgumentOutOfRangeException("targetRow", "Row must be 0 or 1.");
+            Contract.EndContractBlock();
+
+            for (int c = 0; c < Order; c++)
+                Set(targetRow, c, (Get(sourceRow, c) * factor) + Get(targetRow, c));
+        }
+
+        /// <inheritdoc/>
+        public void AddSourceColumnToTarget(int sourceColumn, int targetColumn) {
+            if (sourceColumn < 0 || sourceColumn > 1) throw new ArgumentOutOfRangeException("sourceColumn", "Column must be 0 or 1.");
+            if (targetColumn < 0 || targetColumn > 1) throw new ArgumentOutOfRangeException("targetColumn", "Column must be 0 or 1.");
+            Contract.EndContractBlock();
+
+            for (int r = 0; r < Order; r++)
+                Set(r, targetColumn, Get(r, sourceColumn) + Get(r, targetColumn));
+        }
+
+        /// <inheritdoc/>
+        public void AddSourceColumnToTarget(int sourceColumn, int targetColumn, double factor) {
+            if (sourceColumn < 0 || sourceColumn > 1) throw new ArgumentOutOfRangeException("sourceColumn", "Column must be 0 or 1.");
+            if (targetColumn < 0 || targetColumn > 1) throw new ArgumentOutOfRangeException("targetColumn", "Column must be 0 or 1.");
+            Contract.EndContractBlock();
+
+            for (int r = 0; r < Order; r++)
+                Set(r, targetColumn, (Get(r, sourceColumn) * factor) + Get(r, targetColumn));
+        }
+
+        /// <inheritdoc/>
+        public void ScaleRow(int r, double value) {
+            if (r < 0 || r > 1) throw new ArgumentOutOfRangeException("r", "Row must be 0 or 1.");
+            Contract.EndContractBlock();
+
+            if (r == 0) {
+                E00 *= value;
+                E01 *= value;
+            }
+            else {
+                E10 *= value;
+                E11 *= value;
+            }
+        }
+
+        /// <inheritdoc/>
+        public void ScaleColumn(int c, double value) {
+            if (c < 0 || c > 1) throw new ArgumentOutOfRangeException("c", "Column must be 0 or 1.");
+            Contract.EndContractBlock();
+
+            if (c == 0) {
+                E00 *= value;
+                E10 *= value;
+            }
+            else {
+                E01 *= value;
+                E11 *= value;
+            }
+        }
+
+        /// <inheritdoc/>
+        public void DivideRow(int r, double value) {
+            if (r < 0 || r > 1) throw new ArgumentOutOfRangeException("r", "Row must be 0 or 1.");
+            Contract.EndContractBlock();
+
+            if (r == 0) {
+                E00 /= value;
+                E01 /= value;
+            }
+            else {
+                E10 /= value;
+                E11 /= value;
+            }
+        }
+
+        /// <inheritdoc/>
+        public void DivideColumn(int c, double value) {
+            if (c < 0 || c > 1) throw new ArgumentOutOfRangeException("c", "Column must be 0 or 1.");
+            Contract.EndContractBlock();
+
+            if (c == 0) {
+                E00 /= value;
+                E10 /= value;
+            }
+            else {
+                E01 /= value;
+                E11 /= value;
+            }
+        }
     }
 
     // ReSharper restore CompareOfFloatsByEqualityOperator
