@@ -286,6 +286,8 @@ namespace Vertesaur.Core.Test
         public void DeterminantTest() {
             Assert.AreEqual(660, _forDeterminant660.CalculateDeterminant());
             Assert.AreEqual(0, _forDeterminant0.CalculateDeterminant());
+            Assert.AreEqual(0, new Matrix4(1, -1, 0, 2, -1, 1, 2, 3, 2, -2, 3, 4, 6, -6, 6, 1).CalculateDeterminant());
+            Assert.AreEqual(12, new Matrix4(1, 0, 2, 1, 2, -1, 1, 0, 1, 0, 0, 3, -1, 0, 2, 1).CalculateDeterminant());
         }
 
         public void AreEqual(Matrix4 a, Matrix4 b, double delta) {

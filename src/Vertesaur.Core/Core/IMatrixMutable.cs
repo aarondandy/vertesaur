@@ -26,24 +26,76 @@ namespace Vertesaur
         /// <param name="value">The value to store in the matrix element.</param>
         void Set(int r, int c, TValue value);
 
+        /// <summary>
+        /// Swaps the rows specified by the given row indices <paramref name="ra"/> and <paramref name="rb"/>.
+        /// </summary>
+        /// <param name="ra">A row index to be swapped.</param>
+        /// <param name="rb">The other row index to be swapped.</param>
         void SwapRows(int ra, int rb);
 
+        /// <summary>
+        /// Swaps the columns specified by the given column indices <paramref name="ca"/> and <paramref name="cb"/>.
+        /// </summary>
+        /// <param name="ca">A column index to be swapped.</param>
+        /// <param name="cb">The other column index to be swapped.</param>
         void SwapColumns(int ca, int cb);
 
+        /// <summary>
+        /// Increments the element values in the <paramref name="targetRow"/> using corresponding values in the <paramref name="sourceRow"/>.
+        /// </summary>
+        /// <param name="sourceRow">The row to read values from.</param>
+        /// <param name="targetRow">The row to increment.</param>
         void AddSourceRowToTarget(int sourceRow, int targetRow);
 
+        /// <summary>
+        /// Increments the element values in the <paramref name="targetRow"/> using corresponding values in the <paramref name="sourceRow"/>, scaled by a <paramref name="factor"/>.
+        /// </summary>
+        /// <param name="sourceRow">The row to read values from.</param>
+        /// <param name="targetRow">The row to increment.</param>
+        /// <param name="factor">The value to scale by before adding to the target.</param>
         void AddSourceRowToTarget(int sourceRow, int targetRow, TValue factor);
 
+        /// <summary>
+        /// Increments the element values in the <paramref name="targetColumn"/> using corresponding values in the <paramref name="sourceColumn"/>.
+        /// </summary>
+        /// <param name="sourceColumn">The column to read values from.</param>
+        /// <param name="targetColumn">The column to increment.</param>
         void AddSourceColumnToTarget(int sourceColumn, int targetColumn);
 
+        /// <summary>
+        /// Increments the element values in the <paramref name="targetColumn"/> using corresponding values in the <paramref name="sourceColumn"/>, scaled by a <paramref name="factor"/>.
+        /// </summary>
+        /// <param name="sourceColumn">The column to read values from.</param>
+        /// <param name="targetColumn">The column to increment.</param>
+        /// <param name="factor">The value to scale by before adding to the target.</param>
         void AddSourceColumnToTarget(int sourceColumn, int targetColumn, TValue factor);
 
+        /// <summary>
+        /// Scales all elements in a row by a factor <paramref name="value"/>.
+        /// </summary>
+        /// <param name="r">The row to scale.</param>
+        /// <param name="value">The value to scale the elements by.</param>
         void ScaleRow(int r, TValue value);
 
+        /// <summary>
+        /// Scales all elements in a column by a factor <paramref name="value"/>.
+        /// </summary>
+        /// <param name="c">The column to scale.</param>
+        /// <param name="value">The value to scale the elements by.</param>
         void ScaleColumn(int c, TValue value);
 
+        /// <summary>
+        /// Divides all elements in a row by a <paramref name="denominator"/> value.
+        /// </summary>
+        /// <param name="r">The row to divide.</param>
+        /// <param name="denominator">The value to divide the elements by.</param>
         void DivideRow(int r, TValue denominator);
 
+        /// <summary>
+        /// Divides all elements in a column by a <paramref name="denominator"/> value.
+        /// </summary>
+        /// <param name="c">The column to divide.</param>
+        /// <param name="denominator">The value to divide the elements by.</param>
         void DivideColumn(int c, TValue denominator);
 
     }

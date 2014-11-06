@@ -464,34 +464,17 @@ namespace Vertesaur
             get { return ElementCountValue; }
         }
 
+        /// <inheritdoc/>
+        public double CalculateDiagonalProduct() {
+            return E00 * E11 * E22;
+        }
+
         /// <summary>
         /// Calculates the determinant of the matrix.
         /// </summary>
         /// <returns>The determinant.</returns>
         public double CalculateDeterminant() {
-            if (1 == E00 && 1 == E11 && 1 == E22) {
-                if (E01 == E10 && E02 == E20 && E12 == E21)
-                    return 1 + (2 * E01 * E02 * E12) - (E01 * E01) - (E02 * E02) - (E12 * E12);
-                if (E01 == -E10 && E02 == -E20 && E12 == -E21)
-                    return 1 + (E01 * E01) + (E02 * E02) + (E12 * E12);
-            }
-            return (
-                (
-                    (E00 * E11 * E22)
-                    +
-                    (E01 * E12 * E20)
-                    +
-                    (E02 * E10 * E21)
-                )
-                -
-                (
-                    (E20 * E11 * E02)
-                    +
-                    (E21 * E12 * E00)
-                    +
-                    (E22 * E10 * E01)
-                )
-            );
+            return SquareMatrixOperations.CalculateDeterminantDestructive(Clone());
         }
 
         /// <summary>
@@ -682,6 +665,7 @@ namespace Vertesaur
             return Clone();
         }
 
+        /// <inheritdoc/>
         public void SwapRows(int ra, int rb) {
             if (ra < 0 || ra >= OrderValue) throw new ArgumentOutOfRangeException("ra", "Invalid row.");
             if (rb < 0 || rb >= OrderValue) throw new ArgumentOutOfRangeException("rb", "Invalid row.");
@@ -695,6 +679,7 @@ namespace Vertesaur
             }
         }
 
+        /// <inheritdoc/>
         public void SwapColumns(int ca, int cb) {
             if (ca < 0 || ca >= OrderValue) throw new ArgumentOutOfRangeException("ca", "Invalid column.");
             if (cb < 0 || cb >= OrderValue) throw new ArgumentOutOfRangeException("cb", "Invalid column.");
@@ -708,6 +693,7 @@ namespace Vertesaur
             }
         }
 
+        /// <inheritdoc/>
         public void AddSourceRowToTarget(int sourceRow, int targetRow) {
             if (sourceRow < 0 || sourceRow >= OrderValue) throw new ArgumentOutOfRangeException("sourceRow", "Invalid row.");
             if (targetRow < 0 || targetRow >= OrderValue) throw new ArgumentOutOfRangeException("targetRow", "Invalid row.");
@@ -716,6 +702,7 @@ namespace Vertesaur
                 Set(targetRow, c, Get(sourceRow, c) + Get(targetRow, c));
         }
 
+        /// <inheritdoc/>
         public void AddSourceRowToTarget(int sourceRow, int targetRow, double factor) {
             if (sourceRow < 0 || sourceRow >= OrderValue) throw new ArgumentOutOfRangeException("sourceRow", "Invalid row.");
             if (targetRow < 0 || targetRow >= OrderValue) throw new ArgumentOutOfRangeException("targetRow", "Invalid row.");
@@ -724,6 +711,7 @@ namespace Vertesaur
                 Set(targetRow, c, (Get(sourceRow, c) * factor) + Get(targetRow, c));
         }
 
+        /// <inheritdoc/>
         public void AddSourceColumnToTarget(int sourceColumn, int targetColumn) {
             if (sourceColumn < 0 || sourceColumn >= OrderValue) throw new ArgumentOutOfRangeException("sourceColumn", "Invalid column.");
             if (targetColumn < 0 || targetColumn >= OrderValue) throw new ArgumentOutOfRangeException("targetColumn", "Invalid column.");
@@ -732,6 +720,7 @@ namespace Vertesaur
                 Set(r, targetColumn, Get(r, sourceColumn) + Get(r, targetColumn));
         }
 
+        /// <inheritdoc/>
         public void AddSourceColumnToTarget(int sourceColumn, int targetColumn, double factor) {
             if (sourceColumn < 0 || sourceColumn >= OrderValue) throw new ArgumentOutOfRangeException("sourceColumn", "Invalid column.");
             if (targetColumn < 0 || targetColumn >= OrderValue) throw new ArgumentOutOfRangeException("targetColumn", "Invalid column.");
@@ -740,6 +729,7 @@ namespace Vertesaur
                 Set(r, targetColumn, (Get(r, sourceColumn) * factor) + Get(r, targetColumn));
         }
 
+        /// <inheritdoc/>
         public void ScaleRow(int r, double value) {
             if (r < 0 || r >= OrderValue) throw new ArgumentOutOfRangeException("r", "Invalid row.");
             Contract.EndContractBlock();
@@ -747,6 +737,7 @@ namespace Vertesaur
                 Set(r, c, Get(r, c) * value);
         }
 
+        /// <inheritdoc/>
         public void ScaleColumn(int c, double value) {
             if (c < 0 || c >= OrderValue) throw new ArgumentOutOfRangeException("c", "Invalid column.");
             Contract.EndContractBlock();
@@ -754,6 +745,7 @@ namespace Vertesaur
                 Set(r, c, Get(r, c) * value);
         }
 
+        /// <inheritdoc/>
         public void DivideRow(int r, double denominator) {
             if (r < 0 || r >= OrderValue) throw new ArgumentOutOfRangeException("r", "Invalid row.");
             Contract.EndContractBlock();
@@ -761,6 +753,7 @@ namespace Vertesaur
                 Set(r, c, Get(r, c) / denominator);
         }
 
+        /// <inheritdoc/>
         public void DivideColumn(int c, double denominator) {
             if (c < 0 || c >= OrderValue) throw new ArgumentOutOfRangeException("c", "Invalid column.");
             Contract.EndContractBlock();

@@ -14,7 +14,53 @@ namespace Vertesaur
     {
 
         internal static double CalculateDeterminantDestructive<TMatrix>(TMatrix matrix) where TMatrix : IMatrixSquare<double>, IMatrixMutable<double> {
-            throw new NotImplementedException();
+            Contract.Requires(matrix != null);
+            var negateValue = false;
+
+            // NOTE: try to create an upper triangular matrix
+
+            if (matrix.IsUpperTriangular || matrix.IsLowerTriangular)
+                return matrix.CalculateDiagonalProduct();
+
+            for (int i = 0; i < matrix.Order; i++) {
+
+                var currentDiagonalValue = matrix.Get(i, i);
+                if (currentDiagonalValue == 0.0) {
+                    if (SwapForNonZeroRowBelow(matrix, i)) {
+                        negateValue = !negateValue;
+                        currentDiagonalValue = matrix.Get(i, i); // update this as it will be used to create zeros
+                        Contract.Assume(currentDiagonalValue != 0.0);
+                    }
+                    else {
+                        return 0.0; // could not find anything below to swap for
+                    }
+                }
+
+                for (int zeroRow = i + 1; zeroRow < matrix.Order; zeroRow++) {
+                    var targetElementValue = matrix.Get(zeroRow, i);
+                    if (targetElementValue != 0.0) {
+                        var factor = -targetElementValue / currentDiagonalValue;
+                        matrix.AddSourceRowToTarget(i, zeroRow, factor);
+                    }
+                }
+
+            }
+
+            var determinantValue = matrix.CalculateDiagonalProduct();
+            if (negateValue)
+                determinantValue = -determinantValue;
+            return determinantValue;
+        }
+
+        private static bool SwapForNonZeroRowBelow<TMatrix>(TMatrix matrix, int ordinal) where TMatrix : IMatrixSquare<double>, IMatrixMutable<double> {
+            for (int rowSearch = ordinal + 1; rowSearch < matrix.Order; rowSearch++) {
+                var searchValue = matrix.Get(rowSearch, ordinal);
+                if (searchValue != 0.0) {
+                    matrix.SwapRows(ordinal, rowSearch);
+                    return true;
+                }
+            }
+            return false;
         }
 
         internal static bool GaussJordanEliminationDestructive<TMatrix>(TMatrix sourceData, TMatrix result) where TMatrix : IMatrixSquare<double>, IMatrixMutable<double> {
@@ -32,12 +78,10 @@ namespace Vertesaur
                 for (int r = 0; r < sourceData.Order; r++) {
                     if (r == i)
                         continue; // skip the row with the 1 value
-
                     if(!SetToGaussJordanZero(sourceData, result, r, i))
                         return false;
                 }
             }
-
             return true;
         }
 
@@ -97,7 +141,6 @@ namespace Vertesaur
                 if (usedValue != 0.0) {
                     // find a value such that targetElementValue + (usedValue * factor) = 0
                     var factor = -targetElementValue / usedValue;
-
                     sourceData.AddSourceRowToTarget(searchRow, targetRow, factor);
                     result.AddSourceRowToTarget(searchRow, targetRow, factor);
                     return true;

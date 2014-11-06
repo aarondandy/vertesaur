@@ -137,6 +137,7 @@ namespace Vertesaur.Core.Test
             Assert.AreEqual(22, _b.CalculateDeterminant());
             Assert.AreEqual(88, _product.CalculateDeterminant());
             Assert.AreEqual(71, _sum.CalculateDeterminant());
+            Assert.AreEqual(0, new Matrix2(3, 6, 1, 2).CalculateDeterminant());
         }
 
         [Test]

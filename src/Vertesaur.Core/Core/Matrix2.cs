@@ -307,6 +307,11 @@ namespace Vertesaur
             );
         }
 
+        /// <inheritdoc/>
+        public double CalculateDiagonalProduct() {
+            return E00 * E11;
+        }
+
         /// <summary>
         /// Calculates the determinant of the matrix.
         /// </summary>
@@ -586,6 +591,7 @@ namespace Vertesaur
             return Clone();
         }
 
+        /// <inheritdoc/>
         public void SwapRows(int ra, int rb) {
             if (ra < 0 || ra > 1) throw new ArgumentOutOfRangeException("ra", "Row must be 0 or 1.");
             if (rb < 0 || rb > 1) throw new ArgumentOutOfRangeException("ra", "Row must be 0 or 1.");
@@ -603,6 +609,7 @@ namespace Vertesaur
             E11 = tmp;
         }
 
+        /// <inheritdoc/>
         public void SwapColumns(int ca, int cb) {
             if (ca < 0 || ca > 1) throw new ArgumentOutOfRangeException("ca", "Column must be 0 or 1.");
             if (cb < 0 || cb > 1) throw new ArgumentOutOfRangeException("cb", "Row must be 0 or 1.");
@@ -620,6 +627,7 @@ namespace Vertesaur
             E11 = tmp;
         }
 
+        /// <inheritdoc/>
         public void AddSourceRowToTarget(int sourceRow, int targetRow) {
             if (sourceRow < 0 || sourceRow > 1) throw new ArgumentOutOfRangeException("sourceRow", "Row must be 0 or 1.");
             if (targetRow < 0 || targetRow > 1) throw new ArgumentOutOfRangeException("targetRow", "Row must be 0 or 1.");
@@ -629,6 +637,7 @@ namespace Vertesaur
                 Set(targetRow, c, Get(sourceRow, c) + Get(targetRow, c));
         }
 
+        /// <inheritdoc/>
         public void AddSourceRowToTarget(int sourceRow, int targetRow, double factor) {
             if (sourceRow < 0 || sourceRow > 1) throw new ArgumentOutOfRangeException("sourceRow", "Row must be 0 or 1.");
             if (targetRow < 0 || targetRow > 1) throw new ArgumentOutOfRangeException("targetRow", "Row must be 0 or 1.");
@@ -638,6 +647,7 @@ namespace Vertesaur
                 Set(targetRow, c, (Get(sourceRow, c) * factor) + Get(targetRow, c));
         }
 
+        /// <inheritdoc/>
         public void AddSourceColumnToTarget(int sourceColumn, int targetColumn) {
             if (sourceColumn < 0 || sourceColumn > 1) throw new ArgumentOutOfRangeException("sourceColumn", "Column must be 0 or 1.");
             if (targetColumn < 0 || targetColumn > 1) throw new ArgumentOutOfRangeException("targetColumn", "Column must be 0 or 1.");
@@ -647,6 +657,7 @@ namespace Vertesaur
                 Set(r, targetColumn, Get(r, sourceColumn) + Get(r, targetColumn));
         }
 
+        /// <inheritdoc/>
         public void AddSourceColumnToTarget(int sourceColumn, int targetColumn, double factor) {
             if (sourceColumn < 0 || sourceColumn > 1) throw new ArgumentOutOfRangeException("sourceColumn", "Column must be 0 or 1.");
             if (targetColumn < 0 || targetColumn > 1) throw new ArgumentOutOfRangeException("targetColumn", "Column must be 0 or 1.");
@@ -656,6 +667,7 @@ namespace Vertesaur
                 Set(r, targetColumn, (Get(r, sourceColumn) * factor) + Get(r, targetColumn));
         }
 
+        /// <inheritdoc/>
         public void ScaleRow(int r, double value) {
             if (r < 0 || r > 1) throw new ArgumentOutOfRangeException("r", "Row must be 0 or 1.");
             Contract.EndContractBlock();
@@ -670,6 +682,7 @@ namespace Vertesaur
             }
         }
 
+        /// <inheritdoc/>
         public void ScaleColumn(int c, double value) {
             if (c < 0 || c > 1) throw new ArgumentOutOfRangeException("c", "Column must be 0 or 1.");
             Contract.EndContractBlock();
@@ -684,6 +697,7 @@ namespace Vertesaur
             }
         }
 
+        /// <inheritdoc/>
         public void DivideRow(int r, double value) {
             if (r < 0 || r > 1) throw new ArgumentOutOfRangeException("r", "Row must be 0 or 1.");
             Contract.EndContractBlock();
@@ -698,6 +712,7 @@ namespace Vertesaur
             }
         }
 
+        /// <inheritdoc/>
         public void DivideColumn(int c, double value) {
             if (c < 0 || c > 1) throw new ArgumentOutOfRangeException("c", "Column must be 0 or 1.");
             Contract.EndContractBlock();
