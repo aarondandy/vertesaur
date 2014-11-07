@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
+using Vertesaur.Utility;
 
 namespace Vertesaur
 {
@@ -102,72 +103,75 @@ namespace Vertesaur
         /// <summary>
         /// The element at row 0 and column 0.
         /// </summary>
-        public double E00;
+        public double E00 { get { return _e[0, 0]; } }
         /// <summary>
         /// The element at row 0 and column 1.
         /// </summary>
-        public double E01;
+        public double E01 { get { return _e[0, 1]; } }
         /// <summary>
         /// The element at row 0 and column 2.
         /// </summary>
-        public double E02;
+        public double E02 { get { return _e[0, 2]; } }
         /// <summary>
         /// The element at row 0 and column 3.
         /// </summary>
-        public double E03;
+        public double E03 { get { return _e[0, 3]; } }
         /// <summary>
         /// The element at row 1 and column 0.
         /// </summary>
-        public double E10;
+        public double E10 { get { return _e[1, 0]; } }
         /// <summary>
         /// The element at row 1 and column 1.
         /// </summary>
-        public double E11;
+        public double E11 { get { return _e[1, 1]; } }
         /// <summary>
         /// The element at row 1 and column 2.
         /// </summary>
-        public double E12;
+        public double E12 { get { return _e[1, 2]; } }
         /// <summary>
         /// The element at row 1 and column 3.
         /// </summary>
-        public double E13;
+        public double E13 { get { return _e[1, 3]; } }
         /// <summary>
         /// The element at row 2 and column 0.
         /// </summary>
-        public double E20;
+        public double E20 { get { return _e[2, 0]; } }
         /// <summary>
         /// The element at row 2 and column 1.
         /// </summary>
-        public double E21;
+        public double E21 { get { return _e[2, 1]; } }
         /// <summary>
         /// The element at row 2 and column 2.
         /// </summary>
-        public double E22;
+        public double E22 { get { return _e[2, 2]; } }
         /// <summary>
         /// The element at row 2 and column 3.
         /// </summary>
-        public double E23;
+        public double E23 { get { return _e[2, 3]; } }
         /// <summary>
         /// The element at row 3 and column 0.
         /// </summary>
-        public double E30;
+        public double E30 { get { return _e[3, 0]; } }
         /// <summary>
         /// The element at row 3 and column 1.
         /// </summary>
-        public double E31;
+        public double E31 { get { return _e[3, 1]; } }
         /// <summary>
         /// The element at row 3 and column 2.
         /// </summary>
-        public double E32;
+        public double E32 { get { return _e[3, 2]; } }
         /// <summary>
         /// The element at row 3 and column 3.
         /// </summary>
-        public double E33;
+        public double E33 { get { return _e[3, 3]; } }
+
+        private double[,] _e;
 
         /// <summary>
         /// Constructs a new identity matrix.
         /// </summary>
         public Matrix4() {
+            _e = new double[4, 4];
             SetIdentity();
         }
 
@@ -196,22 +200,23 @@ namespace Vertesaur
             double e20, double e21, double e22, double e23,
             double e30, double e31, double e32, double e33
         ) {
-            E00 = e00;
-            E01 = e01;
-            E02 = e02;
-            E03 = e03;
-            E10 = e10;
-            E11 = e11;
-            E12 = e12;
-            E13 = e13;
-            E20 = e20;
-            E21 = e21;
-            E22 = e22;
-            E23 = e23;
-            E30 = e30;
-            E31 = e31;
-            E32 = e32;
-            E33 = e33;
+            _e = new double[4, 4];
+            _e[0,0] = e00;
+            _e[0,1] = e01;
+            _e[0,2] = e02;
+            _e[0,3] = e03;
+            _e[1,0] = e10;
+            _e[1,1] = e11;
+            _e[1,2] = e12;
+            _e[1,3] = e13;
+            _e[2,0] = e20;
+            _e[2,1] = e21;
+            _e[2,2] = e22;
+            _e[2,3] = e23;
+            _e[3,0] = e30;
+            _e[3,1] = e31;
+            _e[3,2] = e32;
+            _e[3,3] = e33;
             Contract.Assume(OrderValue == RowCount);
             Contract.Assume(OrderValue == ColumnCount);
         }
@@ -223,6 +228,7 @@ namespace Vertesaur
         public Matrix4(Matrix4 m) {
             if (m == null) throw new ArgumentNullException("m");
             Contract.EndContractBlock();
+            _e = new double[4, 4];
             CopyFrom(m);
             Contract.Assume(OrderValue == RowCount);
             Contract.Assume(OrderValue == ColumnCount);
@@ -238,22 +244,10 @@ namespace Vertesaur
             if (m.ColumnCount != OrderValue) throw new ArgumentException("Matrix must have 4 columns.", "m");
             Contract.Requires(m.RowCount == OrderValue);
             Contract.Requires(m.ColumnCount == OrderValue);
-            E00 = m.Get(0, 0);
-            E01 = m.Get(0, 1);
-            E02 = m.Get(0, 2);
-            E03 = m.Get(0, 3);
-            E10 = m.Get(1, 0);
-            E11 = m.Get(1, 1);
-            E12 = m.Get(1, 2);
-            E13 = m.Get(1, 3);
-            E20 = m.Get(2, 0);
-            E21 = m.Get(2, 1);
-            E22 = m.Get(2, 2);
-            E23 = m.Get(2, 3);
-            E30 = m.Get(3, 0);
-            E31 = m.Get(3, 1);
-            E32 = m.Get(3, 2);
-            E33 = m.Get(3, 3);
+            _e = new double[4, 4];
+            for (int r = 0; r < RowCount; r++)
+                for (int c = 0; c < ColumnCount; c++)
+                    _e[r, c] = m.Get(r, c);
             Contract.Assume(OrderValue == RowCount);
             Contract.Assume(OrderValue == ColumnCount);
         }
@@ -266,14 +260,15 @@ namespace Vertesaur
         /// <param name="e22">The value for the element at 2,2.</param>
         /// <param name="e33">The value for the element at 3,3.</param>
         public Matrix4(double e00, double e11, double e22, double e33) {
-            E00 = e00;
-            E11 = e11;
-            E22 = e22;
-            E33 = e33;
-            E01 = E02 = E03 = 0;
-            E10 = E12 = E13 = 0;
-            E20 = E21 = E23 = 0;
-            E30 = E31 = E32 = 0;
+            _e = new double[4, 4];
+            _e[0,0] = e00;
+            _e[1,1] = e11;
+            _e[2,2] = e22;
+            _e[3,3] = e33;
+            _e[0,1] = _e[0,2] = _e[0,3] = 0.0;
+            _e[1,0] = _e[1,2] = _e[1,3] = 0.0;
+            _e[2,0] = _e[2,1] = _e[2,3] = 0.0;
+            _e[3,0] = _e[3,1] = _e[3,2] = 0.0;
             Contract.Assume(OrderValue == RowCount);
             Contract.Assume(OrderValue == ColumnCount);
         }
@@ -289,22 +284,22 @@ namespace Vertesaur
         /// <inheritdoc/>
         public bool Equals(Matrix4 other) {
             return !ReferenceEquals(null, other)
-                && E00 == other.E00
-                && E01 == other.E01
-                && E02 == other.E02
-                && E03 == other.E03
-                && E10 == other.E10
-                && E11 == other.E11
-                && E12 == other.E12
-                && E13 == other.E13
-                && E20 == other.E20
-                && E21 == other.E21
-                && E22 == other.E22
-                && E23 == other.E23
-                && E30 == other.E30
-                && E31 == other.E31
-                && E32 == other.E32
-                && E33 == other.E33
+                && _e[0, 0] == other._e[0, 0]
+                && _e[0, 1] == other._e[0, 1]
+                && _e[0, 2] == other._e[0, 2]
+                && _e[0, 3] == other._e[0, 3]
+                && _e[1, 0] == other._e[1, 0]
+                && _e[1, 1] == other._e[1, 1]
+                && _e[1, 2] == other._e[1, 2]
+                && _e[1, 3] == other._e[1, 3]
+                && _e[2, 0] == other._e[2, 0]
+                && _e[2, 1] == other._e[2, 1]
+                && _e[2, 2] == other._e[2, 2]
+                && _e[2, 3] == other._e[2, 3]
+                && _e[3, 0] == other._e[3, 0]
+                && _e[3, 1] == other._e[3, 1]
+                && _e[3, 2] == other._e[3, 2]
+                && _e[3, 3] == other._e[3, 3]
             ;
         }
 
@@ -313,43 +308,28 @@ namespace Vertesaur
             return !ReferenceEquals(null, other)
                 && OrderValue == other.RowCount
                 && OrderValue == other.ColumnCount
-                && E00 == other.Get(0, 0)
-                && E01 == other.Get(0, 1)
-                && E02 == other.Get(0, 2)
-                && E03 == other.Get(0, 3)
-                && E10 == other.Get(1, 0)
-                && E11 == other.Get(1, 1)
-                && E12 == other.Get(1, 2)
-                && E13 == other.Get(1, 3)
-                && E20 == other.Get(2, 0)
-                && E21 == other.Get(2, 1)
-                && E22 == other.Get(2, 2)
-                && E23 == other.Get(2, 3)
-                && E30 == other.Get(3, 0)
-                && E31 == other.Get(3, 1)
-                && E32 == other.Get(3, 2)
-                && E33 == other.Get(3, 3)
+                && _e[0, 0] == other.Get(0, 0)
+                && _e[0, 1] == other.Get(0, 1)
+                && _e[0, 2] == other.Get(0, 2)
+                && _e[0, 3] == other.Get(0, 3)
+                && _e[1, 0] == other.Get(1, 0)
+                && _e[1, 1] == other.Get(1, 1)
+                && _e[1, 2] == other.Get(1, 2)
+                && _e[1, 3] == other.Get(1, 3)
+                && _e[2, 0] == other.Get(2, 0)
+                && _e[2, 1] == other.Get(2, 1)
+                && _e[2, 2] == other.Get(2, 2)
+                && _e[2, 3] == other.Get(2, 3)
+                && _e[3, 0] == other.Get(3, 0)
+                && _e[3, 1] == other.Get(3, 1)
+                && _e[3, 2] == other.Get(3, 2)
+                && _e[3, 3] == other.Get(3, 3)
             ;
         }
 
         private void CopyFrom(Matrix4 m) {
             Contract.Requires(m != null);
-            E00 = m.E00;
-            E01 = m.E01;
-            E02 = m.E02;
-            E03 = m.E03;
-            E10 = m.E10;
-            E11 = m.E11;
-            E12 = m.E12;
-            E13 = m.E13;
-            E20 = m.E20;
-            E21 = m.E21;
-            E22 = m.E22;
-            E23 = m.E23;
-            E30 = m.E30;
-            E31 = m.E31;
-            E32 = m.E32;
-            E33 = m.E33;
+            _e = (double[,])(m._e.Clone());
         }
 
         /// <summary>
@@ -419,22 +399,22 @@ namespace Vertesaur
         ) {
             Contract.Ensures(RowCount == 4);
             Contract.Ensures(ColumnCount == 4);
-            E00 = e00;
-            E01 = e01;
-            E02 = e02;
-            E03 = e03;
-            E10 = e10;
-            E11 = e11;
-            E12 = e12;
-            E13 = e13;
-            E20 = e20;
-            E21 = e21;
-            E22 = e22;
-            E23 = e23;
-            E30 = e30;
-            E31 = e31;
-            E32 = e32;
-            E33 = e33;
+            _e[0, 0] = e00;
+            _e[0, 1] = e01;
+            _e[0, 2] = e02;
+            _e[0, 3] = e03;
+            _e[1, 0] = e10;
+            _e[1, 1] = e11;
+            _e[1, 2] = e12;
+            _e[1, 3] = e13;
+            _e[2, 0] = e20;
+            _e[2, 1] = e21;
+            _e[2, 2] = e22;
+            _e[2, 3] = e23;
+            _e[3, 0] = e30;
+            _e[3, 1] = e31;
+            _e[3, 2] = e32;
+            _e[3, 3] = e33;
             Contract.Assume(OrderValue == RowCount);
             Contract.Assume(OrderValue == ColumnCount);
         }
@@ -443,11 +423,11 @@ namespace Vertesaur
         /// Sets the elements of this matrix to that of the identity matrix.
         /// </summary>
         public void SetIdentity() {
-            E00 = E11 = E22 = E33 = 1.0;
-            E01 = E02 = E03 = 0;
-            E10 = E12 = E13 = 0;
-            E20 = E21 = E23 = 0;
-            E30 = E31 = E32 = 0;
+            _e[0,0] = _e[1,1] = _e[2,2] = _e[3,3] = 1.0;
+            _e[0,1] = _e[0,2] = _e[0,3] = 0;
+            _e[1,0] = _e[1,2] = _e[1,3] = 0;
+            _e[2,0] = _e[2,1] = _e[2,3] = 0;
+            _e[3,0] = _e[3,1] = _e[3,2] = 0;
             Contract.Assume(OrderValue == RowCount);
             Contract.Assume(OrderValue == ColumnCount);
         }
@@ -462,24 +442,7 @@ namespace Vertesaur
             if (c < 0 || c >= OrderValue) throw new ArgumentOutOfRangeException("c", "Invalid column.");
             if (r < 0 || r >= OrderValue) throw new ArgumentOutOfRangeException("r", "Invalid row.");
             Contract.EndContractBlock();
-            if (0 == r) {
-                return c < 2
-                    ? (c == 0 ? E00 : E01)
-                    : (c == 2 ? E02 : E03);
-            }
-            if (1 == r) {
-                return c < 2
-                    ? (c == 0 ? E10 : E11)
-                    : (c == 2 ? E12 : E13);
-            }
-            if (2 == r) {
-                return c < 2
-                    ? (c == 0 ? E20 : E21)
-                    : (c == 2 ? E22 : E23);
-            }
-            return c < 2
-                ? (c == 0 ? E30 : E31)
-                : (c == 2 ? E32 : E33);
+            return _e[r, c];
         }
 
         /// <summary>
@@ -492,54 +455,12 @@ namespace Vertesaur
             if (c < 0 || c >= OrderValue) throw new ArgumentOutOfRangeException("c", "Invalid column.");
             if (r < 0 || r >= OrderValue) throw new ArgumentOutOfRangeException("r", "Invalid row.");
             Contract.EndContractBlock();
-
-            if (0 == r) {
-                if (0 == c)
-                    E00 = value;
-                else if (1 == c)
-                    E01 = value;
-                else if (2 == c)
-                    E02 = value;
-                else
-                    E03 = value;
-            }
-            else if (1 == r) {
-                if (0 == c)
-                    E10 = value;
-                else if (1 == c)
-                    E11 = value;
-                else if (2 == c)
-                    E12 = value;
-                else
-                    E13 = value;
-            }
-            else if (2 == r) {
-                if (0 == c)
-                    E20 = value;
-                else if (1 == c)
-                    E21 = value;
-                else if (2 == c)
-                    E22 = value;
-                else
-                    E23 = value;
-            }
-            else {
-                if (0 == c)
-                    E30 = value;
-                else if (1 == c)
-                    E31 = value;
-                else if (2 == c)
-                    E32 = value;
-                else
-                    E33 = value;
-            }
-            Contract.Assume(OrderValue == RowCount);
-            Contract.Assume(OrderValue == ColumnCount);
+            _e[r, c] = value;
         }
 
         /// <inheritdoc/>
         public double CalculateDiagonalProduct() {
-            return E00 * E11 * E22 * E33;
+            return _e[0,0] * _e[1,1] * _e[2,2] * _e[3,3];
         }
 
         /// <summary>
@@ -585,26 +506,12 @@ namespace Vertesaur
         /// Transposes this matrix.
         /// </summary>
         public void Transpose() {
-            var temp = E01;
-            E01 = E10;
-            E10 = temp;
-            temp = E02;
-            E02 = E20;
-            E20 = temp;
-            temp = E03;
-            E03 = E30;
-            E30 = temp;
-            temp = E12;
-            E12 = E21;
-            E21 = temp;
-            temp = E13;
-            E13 = E31;
-            E31 = temp;
-            temp = E23;
-            E23 = E32;
-            E32 = temp;
-            Contract.Assume(OrderValue == RowCount);
-            Contract.Assume(OrderValue == ColumnCount);
+            NumberUtility.Swap(ref _e[0, 1],ref _e[1, 0]);
+            NumberUtility.Swap(ref _e[0, 2],ref _e[2, 0]);
+            NumberUtility.Swap(ref _e[0, 3],ref _e[3, 0]);
+            NumberUtility.Swap(ref _e[1, 2],ref _e[2, 1]);
+            NumberUtility.Swap(ref _e[1, 3],ref _e[3, 1]);
+            NumberUtility.Swap(ref _e[2, 3],ref _e[3, 2]);
         }
 
         /// <summary>
@@ -629,22 +536,22 @@ namespace Vertesaur
         public Matrix4 Multiply(double factor) {
             Contract.Ensures(Contract.Result<Matrix4>() != null);
             return new Matrix4(
-                E00 * factor,
-                E01 * factor,
-                E02 * factor,
-                E03 * factor,
-                E10 * factor,
-                E11 * factor,
-                E12 * factor,
-                E13 * factor,
-                E20 * factor,
-                E21 * factor,
-                E22 * factor,
-                E23 * factor,
-                E30 * factor,
-                E31 * factor,
-                E32 * factor,
-                E33 * factor
+                _e[0,0] * factor,
+                _e[0,1] * factor,
+                _e[0,2] * factor,
+                _e[0,3] * factor,
+                _e[1,0] * factor,
+                _e[1,1] * factor,
+                _e[1,2] * factor,
+                _e[1,3] * factor,
+                _e[2,0] * factor,
+                _e[2,1] * factor,
+                _e[2,2] * factor,
+                _e[2,3] * factor,
+                _e[3,0] * factor,
+                _e[3,1] * factor,
+                _e[3,2] * factor,
+                _e[3,3] * factor
             );
         }
 
@@ -653,22 +560,22 @@ namespace Vertesaur
         /// </summary>
         /// <param name="factor">The factor to multiply by.</param>
         public void MultiplyAssign(double factor) {
-            E00 *= factor;
-            E01 *= factor;
-            E02 *= factor;
-            E03 *= factor;
-            E10 *= factor;
-            E11 *= factor;
-            E12 *= factor;
-            E13 *= factor;
-            E20 *= factor;
-            E21 *= factor;
-            E22 *= factor;
-            E23 *= factor;
-            E30 *= factor;
-            E31 *= factor;
-            E32 *= factor;
-            E33 *= factor;
+            _e[0,0] *= factor;
+            _e[0,1] *= factor;
+            _e[0,2] *= factor;
+            _e[0,3] *= factor;
+            _e[1,0] *= factor;
+            _e[1,1] *= factor;
+            _e[1,2] *= factor;
+            _e[1,3] *= factor;
+            _e[2,0] *= factor;
+            _e[2,1] *= factor;
+            _e[2,2] *= factor;
+            _e[2,3] *= factor;
+            _e[3,0] *= factor;
+            _e[3,1] *= factor;
+            _e[3,2] *= factor;
+            _e[3,3] *= factor;
             Contract.Assume(OrderValue == RowCount);
             Contract.Assume(OrderValue == ColumnCount);
         }
@@ -682,22 +589,22 @@ namespace Vertesaur
             if (null == right) throw new ArgumentNullException("right");
             Contract.Ensures(Contract.Result<Matrix4>() != null);
             return new Matrix4(
-                ((E00 * right.E00) + (E01 * right.E10) + (E02 * right.E20) + (E03 * right.E30)),
-                ((E00 * right.E01) + (E01 * right.E11) + (E02 * right.E21) + (E03 * right.E31)),
-                ((E00 * right.E02) + (E01 * right.E12) + (E02 * right.E22) + (E03 * right.E32)),
-                ((E00 * right.E03) + (E01 * right.E13) + (E02 * right.E23) + (E03 * right.E33)),
-                ((E10 * right.E00) + (E11 * right.E10) + (E12 * right.E20) + (E13 * right.E30)),
-                ((E10 * right.E01) + (E11 * right.E11) + (E12 * right.E21) + (E13 * right.E31)),
-                ((E10 * right.E02) + (E11 * right.E12) + (E12 * right.E22) + (E13 * right.E32)),
-                ((E10 * right.E03) + (E11 * right.E13) + (E12 * right.E23) + (E13 * right.E33)),
-                ((E20 * right.E00) + (E21 * right.E10) + (E22 * right.E20) + (E23 * right.E30)),
-                ((E20 * right.E01) + (E21 * right.E11) + (E22 * right.E21) + (E23 * right.E31)),
-                ((E20 * right.E02) + (E21 * right.E12) + (E22 * right.E22) + (E23 * right.E32)),
-                ((E20 * right.E03) + (E21 * right.E13) + (E22 * right.E23) + (E23 * right.E33)),
-                ((E30 * right.E00) + (E31 * right.E10) + (E32 * right.E20) + (E33 * right.E30)),
-                ((E30 * right.E01) + (E31 * right.E11) + (E32 * right.E21) + (E33 * right.E31)),
-                ((E30 * right.E02) + (E31 * right.E12) + (E32 * right.E22) + (E33 * right.E32)),
-                ((E30 * right.E03) + (E31 * right.E13) + (E32 * right.E23) + (E33 * right.E33))
+                ((_e[0,0] * right._e[0,0]) + (_e[0,1] * right._e[1,0]) + (_e[0,2] * right._e[2,0]) + (_e[0,3] * right._e[3,0])),
+                ((_e[0,0] * right._e[0,1]) + (_e[0,1] * right._e[1,1]) + (_e[0,2] * right._e[2,1]) + (_e[0,3] * right._e[3,1])),
+                ((_e[0,0] * right._e[0,2]) + (_e[0,1] * right._e[1,2]) + (_e[0,2] * right._e[2,2]) + (_e[0,3] * right._e[3,2])),
+                ((_e[0,0] * right._e[0,3]) + (_e[0,1] * right._e[1,3]) + (_e[0,2] * right._e[2,3]) + (_e[0,3] * right._e[3,3])),
+                ((_e[1,0] * right._e[0,0]) + (_e[1,1] * right._e[1,0]) + (_e[1,2] * right._e[2,0]) + (_e[1,3] * right._e[3,0])),
+                ((_e[1,0] * right._e[0,1]) + (_e[1,1] * right._e[1,1]) + (_e[1,2] * right._e[2,1]) + (_e[1,3] * right._e[3,1])),
+                ((_e[1,0] * right._e[0,2]) + (_e[1,1] * right._e[1,2]) + (_e[1,2] * right._e[2,2]) + (_e[1,3] * right._e[3,2])),
+                ((_e[1,0] * right._e[0,3]) + (_e[1,1] * right._e[1,3]) + (_e[1,2] * right._e[2,3]) + (_e[1,3] * right._e[3,3])),
+                ((_e[2,0] * right._e[0,0]) + (_e[2,1] * right._e[1,0]) + (_e[2,2] * right._e[2,0]) + (_e[2,3] * right._e[3,0])),
+                ((_e[2,0] * right._e[0,1]) + (_e[2,1] * right._e[1,1]) + (_e[2,2] * right._e[2,1]) + (_e[2,3] * right._e[3,1])),
+                ((_e[2,0] * right._e[0,2]) + (_e[2,1] * right._e[1,2]) + (_e[2,2] * right._e[2,2]) + (_e[2,3] * right._e[3,2])),
+                ((_e[2,0] * right._e[0,3]) + (_e[2,1] * right._e[1,3]) + (_e[2,2] * right._e[2,3]) + (_e[2,3] * right._e[3,3])),
+                ((_e[3,0] * right._e[0,0]) + (_e[3,1] * right._e[1,0]) + (_e[3,2] * right._e[2,0]) + (_e[3,3] * right._e[3,0])),
+                ((_e[3,0] * right._e[0,1]) + (_e[3,1] * right._e[1,1]) + (_e[3,2] * right._e[2,1]) + (_e[3,3] * right._e[3,1])),
+                ((_e[3,0] * right._e[0,2]) + (_e[3,1] * right._e[1,2]) + (_e[3,2] * right._e[2,2]) + (_e[3,3] * right._e[3,2])),
+                ((_e[3,0] * right._e[0,3]) + (_e[3,1] * right._e[1,3]) + (_e[3,2] * right._e[2,3]) + (_e[3,3] * right._e[3,3]))
             );
         }
 
@@ -709,22 +616,22 @@ namespace Vertesaur
             if (null == right) throw new ArgumentNullException("right");
             Contract.EndContractBlock();
             SetElements(
-                ((E00 * right.E00) + (E01 * right.E10) + (E02 * right.E20) + (E03 * right.E30)),
-                ((E00 * right.E01) + (E01 * right.E11) + (E02 * right.E21) + (E03 * right.E31)),
-                ((E00 * right.E02) + (E01 * right.E12) + (E02 * right.E22) + (E03 * right.E32)),
-                ((E00 * right.E03) + (E01 * right.E13) + (E02 * right.E23) + (E03 * right.E33)),
-                ((E10 * right.E00) + (E11 * right.E10) + (E12 * right.E20) + (E13 * right.E30)),
-                ((E10 * right.E01) + (E11 * right.E11) + (E12 * right.E21) + (E13 * right.E31)),
-                ((E10 * right.E02) + (E11 * right.E12) + (E12 * right.E22) + (E13 * right.E32)),
-                ((E10 * right.E03) + (E11 * right.E13) + (E12 * right.E23) + (E13 * right.E33)),
-                ((E20 * right.E00) + (E21 * right.E10) + (E22 * right.E20) + (E23 * right.E30)),
-                ((E20 * right.E01) + (E21 * right.E11) + (E22 * right.E21) + (E23 * right.E31)),
-                ((E20 * right.E02) + (E21 * right.E12) + (E22 * right.E22) + (E23 * right.E32)),
-                ((E20 * right.E03) + (E21 * right.E13) + (E22 * right.E23) + (E23 * right.E33)),
-                ((E30 * right.E00) + (E31 * right.E10) + (E32 * right.E20) + (E33 * right.E30)),
-                ((E30 * right.E01) + (E31 * right.E11) + (E32 * right.E21) + (E33 * right.E31)),
-                ((E30 * right.E02) + (E31 * right.E12) + (E32 * right.E22) + (E33 * right.E32)),
-                ((E30 * right.E03) + (E31 * right.E13) + (E32 * right.E23) + (E33 * right.E33))
+                ((_e[0,0] * right._e[0,0]) + (_e[0,1] * right._e[1,0]) + (_e[0,2] * right._e[2,0]) + (_e[0,3] * right._e[3,0])),
+                ((_e[0,0] * right._e[0,1]) + (_e[0,1] * right._e[1,1]) + (_e[0,2] * right._e[2,1]) + (_e[0,3] * right._e[3,1])),
+                ((_e[0,0] * right._e[0,2]) + (_e[0,1] * right._e[1,2]) + (_e[0,2] * right._e[2,2]) + (_e[0,3] * right._e[3,2])),
+                ((_e[0,0] * right._e[0,3]) + (_e[0,1] * right._e[1,3]) + (_e[0,2] * right._e[2,3]) + (_e[0,3] * right._e[3,3])),
+                ((_e[1,0] * right._e[0,0]) + (_e[1,1] * right._e[1,0]) + (_e[1,2] * right._e[2,0]) + (_e[1,3] * right._e[3,0])),
+                ((_e[1,0] * right._e[0,1]) + (_e[1,1] * right._e[1,1]) + (_e[1,2] * right._e[2,1]) + (_e[1,3] * right._e[3,1])),
+                ((_e[1,0] * right._e[0,2]) + (_e[1,1] * right._e[1,2]) + (_e[1,2] * right._e[2,2]) + (_e[1,3] * right._e[3,2])),
+                ((_e[1,0] * right._e[0,3]) + (_e[1,1] * right._e[1,3]) + (_e[1,2] * right._e[2,3]) + (_e[1,3] * right._e[3,3])),
+                ((_e[2,0] * right._e[0,0]) + (_e[2,1] * right._e[1,0]) + (_e[2,2] * right._e[2,0]) + (_e[2,3] * right._e[3,0])),
+                ((_e[2,0] * right._e[0,1]) + (_e[2,1] * right._e[1,1]) + (_e[2,2] * right._e[2,1]) + (_e[2,3] * right._e[3,1])),
+                ((_e[2,0] * right._e[0,2]) + (_e[2,1] * right._e[1,2]) + (_e[2,2] * right._e[2,2]) + (_e[2,3] * right._e[3,2])),
+                ((_e[2,0] * right._e[0,3]) + (_e[2,1] * right._e[1,3]) + (_e[2,2] * right._e[2,3]) + (_e[2,3] * right._e[3,3])),
+                ((_e[3,0] * right._e[0,0]) + (_e[3,1] * right._e[1,0]) + (_e[3,2] * right._e[2,0]) + (_e[3,3] * right._e[3,0])),
+                ((_e[3,0] * right._e[0,1]) + (_e[3,1] * right._e[1,1]) + (_e[3,2] * right._e[2,1]) + (_e[3,3] * right._e[3,1])),
+                ((_e[3,0] * right._e[0,2]) + (_e[3,1] * right._e[1,2]) + (_e[3,2] * right._e[2,2]) + (_e[3,3] * right._e[3,2])),
+                ((_e[3,0] * right._e[0,3]) + (_e[3,1] * right._e[1,3]) + (_e[3,2] * right._e[2,3]) + (_e[3,3] * right._e[3,3]))
             );
         }
 
@@ -737,22 +644,22 @@ namespace Vertesaur
             if (null == right) throw new ArgumentNullException("right");
             Contract.Ensures(Contract.Result<Matrix4>() != null);
             return new Matrix4(
-                E00 + right.E00,
-                E01 + right.E01,
-                E02 + right.E02,
-                E03 + right.E03,
-                E10 + right.E10,
-                E11 + right.E11,
-                E12 + right.E12,
-                E13 + right.E13,
-                E20 + right.E20,
-                E21 + right.E21,
-                E22 + right.E22,
-                E23 + right.E23,
-                E30 + right.E30,
-                E31 + right.E31,
-                E32 + right.E32,
-                E33 + right.E33
+                _e[0, 0] + right._e[0, 0],
+                _e[0, 1] + right._e[0, 1],
+                _e[0, 2] + right._e[0, 2],
+                _e[0, 3] + right._e[0, 3],
+                _e[1, 0] + right._e[1, 0],
+                _e[1, 1] + right._e[1, 1],
+                _e[1, 2] + right._e[1, 2],
+                _e[1, 3] + right._e[1, 3],
+                _e[2, 0] + right._e[2, 0],
+                _e[2, 1] + right._e[2, 1],
+                _e[2, 2] + right._e[2, 2],
+                _e[2, 3] + right._e[2, 3],
+                _e[3, 0] + right._e[3, 0],
+                _e[3, 1] + right._e[3, 1],
+                _e[3, 2] + right._e[3, 2],
+                _e[3, 3] + right._e[3, 3]
             );
         }
 
@@ -763,22 +670,22 @@ namespace Vertesaur
         public void AddAssign(Matrix4 right) {
             if (null == right) throw new ArgumentNullException("right");
             Contract.EndContractBlock();
-            E00 += right.E00;
-            E01 += right.E01;
-            E02 += right.E02;
-            E03 += right.E03;
-            E10 += right.E10;
-            E11 += right.E11;
-            E12 += right.E12;
-            E13 += right.E13;
-            E20 += right.E20;
-            E21 += right.E21;
-            E22 += right.E22;
-            E23 += right.E23;
-            E30 += right.E30;
-            E31 += right.E31;
-            E32 += right.E32;
-            E33 += right.E33;
+            _e[0, 0] += right._e[0, 0];
+            _e[0, 1] += right._e[0, 1];
+            _e[0, 2] += right._e[0, 2];
+            _e[0, 3] += right._e[0, 3];
+            _e[1, 0] += right._e[1, 0];
+            _e[1, 1] += right._e[1, 1];
+            _e[1, 2] += right._e[1, 2];
+            _e[1, 3] += right._e[1, 3];
+            _e[2, 0] += right._e[2, 0];
+            _e[2, 1] += right._e[2, 1];
+            _e[2, 2] += right._e[2, 2];
+            _e[2, 3] += right._e[2, 3];
+            _e[3, 0] += right._e[3, 0];
+            _e[3, 1] += right._e[3, 1];
+            _e[3, 2] += right._e[3, 2];
+            _e[3, 3] += right._e[3, 3];
             Contract.Assume(OrderValue == RowCount);
             Contract.Assume(OrderValue == ColumnCount);
         }
@@ -792,22 +699,22 @@ namespace Vertesaur
             if (null == right) throw new ArgumentNullException("right");
             Contract.Ensures(Contract.Result<Matrix4>() != null);
             return new Matrix4(
-                E00 - right.E00,
-                E01 - right.E01,
-                E02 - right.E02,
-                E03 - right.E03,
-                E10 - right.E10,
-                E11 - right.E11,
-                E12 - right.E12,
-                E13 - right.E13,
-                E20 - right.E20,
-                E21 - right.E21,
-                E22 - right.E22,
-                E23 - right.E23,
-                E30 - right.E30,
-                E31 - right.E31,
-                E32 - right.E32,
-                E33 - right.E33
+                _e[0, 0] - right._e[0, 0],
+                _e[0, 1] - right._e[0, 1],
+                _e[0, 2] - right._e[0, 2],
+                _e[0, 3] - right._e[0, 3],
+                _e[1, 0] - right._e[1, 0],
+                _e[1, 1] - right._e[1, 1],
+                _e[1, 2] - right._e[1, 2],
+                _e[1, 3] - right._e[1, 3],
+                _e[2, 0] - right._e[2, 0],
+                _e[2, 1] - right._e[2, 1],
+                _e[2, 2] - right._e[2, 2],
+                _e[2, 3] - right._e[2, 3],
+                _e[3, 0] - right._e[3, 0],
+                _e[3, 1] - right._e[3, 1],
+                _e[3, 2] - right._e[3, 2],
+                _e[3, 3] - right._e[3, 3]
             );
         }
 
@@ -838,29 +745,29 @@ namespace Vertesaur
 
         /// <inheritdoc/>
         public bool IsScalar {
-            get { return E00 == E11 && E11 == E22 && E22 == E33 && IsDiagonal; }
+            get { return _e[0, 0] == _e[1, 1] && _e[1, 1] == _e[2, 2] && _e[2, 2] == _e[3, 3] && IsDiagonal; }
         }
 
         /// <inheritdoc/>
         public bool IsIdentity {
-            get { return 1 == E00 && 1 == E11 && 1 == E22 && 1 == E33 && IsDiagonal; }
+            get { return 1 == _e[0, 0] && 1 == _e[1, 1] && 1 == _e[2, 2] && 1 == _e[3, 3] && IsDiagonal; }
         }
 
         /// <inheritdoc/>
         public bool IsUpperTriangular {
             get {
-                return 0 == E10
-                    && 0 == E20 && 0 == E21
-                    && 0 == E30 && 0 == E31 && 0 == E32;
+                return 0 == _e[1,0]
+                    && 0 == _e[2,0] && 0 == _e[2,1]
+                    && 0 == _e[3,0] && 0 == _e[3,1] && 0 == _e[3,2];
             }
         }
 
         /// <inheritdoc/>
         public bool IsLowerTriangular {
             get {
-                return 0 == E01 && 0 == E02 && 0 == E03
-                                && 0 == E12 && 0 == E13
-                                            && 0 == E23;
+                return 0 == _e[0,1] && 0 == _e[0,2] && 0 == _e[0,3]
+                                    && 0 == _e[1,2] && 0 == _e[1,3]
+                                                    && 0 == _e[2,3];
             }
         }
 
@@ -884,11 +791,8 @@ namespace Vertesaur
             Contract.EndContractBlock();
             if (ra == rb)
                 return;
-            for (int c = 0; c < OrderValue; c++) {
-                var tmp = Get(ra, c);
-                Set(ra, c, Get(rb, c));
-                Set(rb, c, tmp);
-            }
+            for (int c = 0; c < OrderValue; c++)
+                NumberUtility.Swap(ref _e[ra, c], ref _e[rb, c]);
         }
 
         /// <inheritdoc/>
@@ -898,11 +802,8 @@ namespace Vertesaur
             Contract.EndContractBlock();
             if (ca == cb)
                 return;
-            for (int r = 0; r < OrderValue; r++) {
-                var tmp = Get(r, ca);
-                Set(r, ca, Get(r, cb));
-                Set(r, cb, tmp);
-            }
+            for (int r = 0; r < OrderValue; r++)
+                NumberUtility.Swap(ref _e[r, ca], ref _e[r, cb]);
         }
 
         /// <inheritdoc/>
@@ -911,7 +812,7 @@ namespace Vertesaur
             if (targetRow < 0 || targetRow >= OrderValue) throw new ArgumentOutOfRangeException("targetRow", "Invalid row.");
             Contract.EndContractBlock();
             for (int c = 0; c < OrderValue; c++)
-                Set(targetRow, c, Get(sourceRow, c) + Get(targetRow, c));
+                _e[targetRow, c] += _e[sourceRow, c];
         }
 
         /// <inheritdoc/>
@@ -920,7 +821,7 @@ namespace Vertesaur
             if (targetRow < 0 || targetRow >= OrderValue) throw new ArgumentOutOfRangeException("targetRow", "Invalid row.");
             Contract.EndContractBlock();
             for (int c = 0; c < OrderValue; c++)
-                Set(targetRow, c, (Get(sourceRow, c) * factor) + Get(targetRow, c));
+                _e[targetRow, c] += _e[sourceRow, c] * factor;
         }
 
         /// <inheritdoc/>
@@ -929,7 +830,7 @@ namespace Vertesaur
             if (targetColumn < 0 || targetColumn >= OrderValue) throw new ArgumentOutOfRangeException("targetColumn", "Invalid column.");
             Contract.EndContractBlock();
             for (int r = 0; r < OrderValue; r++)
-                Set(r, targetColumn, Get(r, sourceColumn) + Get(r, targetColumn));
+                _e[r, targetColumn] += _e[r, sourceColumn];
         }
 
         /// <inheritdoc/>
@@ -938,15 +839,43 @@ namespace Vertesaur
             if (targetColumn < 0 || targetColumn >= OrderValue) throw new ArgumentOutOfRangeException("targetColumn", "Invalid column.");
             Contract.EndContractBlock();
             for (int r = 0; r < OrderValue; r++)
-                Set(r, targetColumn, (Get(r, sourceColumn) * factor) + Get(r, targetColumn));
+                _e[r, targetColumn] += _e[r, sourceColumn] * factor;
         }
 
         /// <inheritdoc/>
         public void ScaleRow(int r, double value) {
-            if (r < 0 || r >= OrderValue) throw new ArgumentOutOfRangeException("r", "Invalid row.");
-            Contract.EndContractBlock();
-            for (int c = 0; c < OrderValue; c++)
-                Set(r, c, Get(r, c) * value);
+            Contract.Requires(r >= 0 && r < OrderValue);
+            switch (r) {
+                case 0: {
+                    _e[0, 0] *= value;
+                    _e[0, 1] *= value;
+                    _e[0, 2] *= value;
+                    _e[0, 3] *= value;
+                    break;
+                }
+                case 1: {
+                    _e[1, 0] *= value;
+                    _e[1, 1] *= value;
+                    _e[1, 2] *= value;
+                    _e[1, 3] *= value;
+                    break;
+                }
+                case 2: {
+                    _e[2, 0] *= value;
+                    _e[2, 1] *= value;
+                    _e[2, 2] *= value;
+                    _e[2, 3] *= value;
+                    break;
+                }
+                case 3: {
+                    _e[3, 0] *= value;
+                    _e[3, 1] *= value;
+                    _e[3, 2] *= value;
+                    _e[3, 3] *= value;
+                    break;
+                }
+                default: throw new ArgumentOutOfRangeException("r", "Invalid row.");
+            }
         }
 
         /// <inheritdoc/>
@@ -954,15 +883,43 @@ namespace Vertesaur
             if (c < 0 || c >= OrderValue) throw new ArgumentOutOfRangeException("c", "Invalid column.");
             Contract.EndContractBlock();
             for (int r = 0; r < OrderValue; r++)
-                Set(r, c, Get(r, c) * value);
+                _e[r, c] *= value;
         }
 
         /// <inheritdoc/>
         public void DivideRow(int r, double denominator) {
-            if (r < 0 || r >= OrderValue) throw new ArgumentOutOfRangeException("r", "Invalid row.");
-            Contract.EndContractBlock();
-            for (int c = 0; c < OrderValue; c++)
-                Set(r, c, Get(r, c) / denominator);
+            Contract.Requires(r >= 0 && r < OrderValue);
+            switch (r) {
+                case 0: {
+                    _e[0, 0] /= denominator;
+                    _e[0, 1] /= denominator;
+                    _e[0, 2] /= denominator;
+                    _e[0, 3] /= denominator;
+                    break;
+                }
+                case 1: {
+                    _e[1, 0] /= denominator;
+                    _e[1, 1] /= denominator;
+                    _e[1, 2] /= denominator;
+                    _e[1, 3] /= denominator;
+                    break;
+                }
+                case 2: {
+                    _e[2, 0] /= denominator;
+                    _e[2, 1] /= denominator;
+                    _e[2, 2] /= denominator;
+                    _e[2, 3] /= denominator;
+                    break;
+                }
+                case 3: {
+                    _e[3, 0] /= denominator;
+                    _e[3, 1] /= denominator;
+                    _e[3, 2] /= denominator;
+                    _e[3, 3] /= denominator;
+                    break;
+                }
+                default: throw new ArgumentOutOfRangeException("r", "Invalid row.");
+            }
         }
 
         /// <inheritdoc/>
@@ -970,7 +927,7 @@ namespace Vertesaur
             if (c < 0 || c >= OrderValue) throw new ArgumentOutOfRangeException("c", "Invalid column.");
             Contract.EndContractBlock();
             for (int r = 0; r < OrderValue; r++)
-                Set(r, c, Get(r, c) / denominator);
+                _e[r, c] /= denominator;
         }
 
     }

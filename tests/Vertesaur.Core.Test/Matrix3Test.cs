@@ -174,17 +174,17 @@ namespace Vertesaur.Core.Test
 
         [Test]
         public void ElementFieldSetTest() {
-            var m = new Matrix3 {
-                E00 = 0,
-                E01 = 1,
-                E02 = 2,
-                E10 = 3,
-                E11 = 4,
-                E12 = 5,
-                E20 = 6,
-                E21 = 7,
-                E22 = 8
-            };
+            var m = new Matrix3(
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8
+            );
             Assert.AreEqual(_incremental, m);
         }
 
@@ -415,9 +415,8 @@ namespace Vertesaur.Core.Test
             Assert.IsFalse(_lowerTrig.IsUpperTriangular);
             Assert.IsTrue(_diagonal.IsUpperTriangular);
             Assert.IsTrue(_scalar.IsUpperTriangular);
-            var m = new Matrix3(_identity) {
-                E20 = 2
-            };
+            var m = new Matrix3(_identity);
+            m.Set(2, 0, 2);
             Assert.IsFalse(m.IsUpperTriangular);
         }
 
@@ -428,9 +427,8 @@ namespace Vertesaur.Core.Test
             Assert.IsTrue(_lowerTrig.IsLowerTriangular);
             Assert.IsTrue(_diagonal.IsLowerTriangular);
             Assert.IsTrue(_scalar.IsLowerTriangular);
-            var m = new Matrix3(_identity) {
-                E02 = 2
-            };
+            var m = new Matrix3(_identity);
+            m.Set(0, 2, 2);
             Assert.IsFalse(m.IsLowerTriangular);
         }
 

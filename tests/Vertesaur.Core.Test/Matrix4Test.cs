@@ -246,24 +246,24 @@ namespace Vertesaur.Core.Test
 
         [Test]
         public void ElementFieldSetTest() {
-            var m = new Matrix4 {
-                E00 = 0,
-                E01 = 1,
-                E02 = 2,
-                E03 = 3,
-                E10 = 4,
-                E11 = 5,
-                E12 = 6,
-                E13 = 7,
-                E20 = 8,
-                E21 = 9,
-                E22 = 10,
-                E23 = 11,
-                E30 = 12,
-                E31 = 13,
-                E32 = 14,
-                E33 = 15
-            };
+            var m = new Matrix4 (
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12,
+                13,
+                14,
+                15
+            );
             Assert.AreEqual(0, m.E00);
             Assert.AreEqual(1, m.E01);
             Assert.AreEqual(2, m.E02);
