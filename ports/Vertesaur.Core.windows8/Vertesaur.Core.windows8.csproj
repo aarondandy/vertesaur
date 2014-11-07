@@ -130,10 +130,6 @@
     <DocumentationFile>..\..\bin\Release\windows8\Vertesaur.Core.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
-    <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
-    <None Include="vertesaur-public.snk" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="..\..\src\VertesaurAssemblyInfo.cs">
       <Link>Properties\VertesaurAssemblyInfo.cs</Link>
     </Compile>
@@ -158,7 +154,8 @@
     <DelaySign>true</DelaySign>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>vertesaur-public.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject />

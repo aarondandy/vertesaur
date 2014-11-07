@@ -121,7 +121,8 @@
     <DelaySign>true</DelaySign>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>vertesaur-public.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -219,12 +220,10 @@
     <Compile Include="Utility\HashSetUtility.cs" />
     <Compile Include="Utility\IterationUtils.cs" />
     <Compile Include="Utility\ListUtility.cs" />
+    <Compile Include="Utility\NumberUtility.cs" />
     <Compile Include="Utility\ReflectionUtils.cs" />
     <Compile Include="Core\Vector2.cs" />
     <Compile Include="Core\Vector3.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="vertesaur-public.snk" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

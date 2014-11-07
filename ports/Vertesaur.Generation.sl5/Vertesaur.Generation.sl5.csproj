@@ -54,7 +54,8 @@
     <DelaySign>true</DelaySign>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>vertesaur-public.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
@@ -81,9 +82,6 @@
       <Project>{d5965b4e-e350-41e6-832c-4308fb9648d5}</Project>
       <Name>Vertesaur.Core.sl5</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="vertesaur-public.snk" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Silverlight\$(SilverlightVersion)\Microsoft.Silverlight.CSharp.targets" />
   <ProjectExtensions>
