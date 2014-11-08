@@ -9,6 +9,7 @@ namespace Vertesaur
     /// <summary>
     /// A straight line segment of minimal length between two points.
     /// </summary>
+    /// <seealso cref="Vertesaur.Line2"/>
     public sealed class Segment2 :
         ISegment2<double>,
         IEquatable<Segment2>,

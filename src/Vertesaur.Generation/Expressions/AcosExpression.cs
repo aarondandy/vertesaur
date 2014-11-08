@@ -19,7 +19,7 @@ namespace Vertesaur.Generation.Expressions
         }
 
         /// <summary>
-        /// Crates a new arc-cosine expression.
+        /// Creates a new arc-cosine expression.
         /// </summary>
         /// <param name="input">The expression to calculate the arc-cosine of.</param>
         /// <param name="generator">The optional expression generator used during reduction.</param>

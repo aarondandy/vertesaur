@@ -17,6 +17,7 @@ namespace Vertesaur
     /// the two directions in which it flies off into the vast infiniteness of
     /// space.
     /// </remarks>
+    /// <seealso cref="Vertesaur.Segment2"/>
     public sealed class Line2 :
         ILine2<double>,
         IEquatable<Line2>,
