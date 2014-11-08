@@ -434,6 +434,23 @@ namespace Vertesaur.Core.Test
             Assert.IsTrue(a.Intersects(f.GetReverse()));
         }
 
+        [Test]
+        public void ContructorTypeConversionTests() {
+            var zeroPoint = new Point2(0, 0);
+            var zeroVector = new Vector2(0, 0);
+            var fivePoint = new Point2(5, 0);
+            var fiveVector = new Vector2(5, 0);
+            var tenPoint = new Point2(10, 0);
+            var tenVector = new Vector2(10, 0);
+
+            Assert.AreEqual(5, new Segment2(zeroVector, fivePoint).GetMagnitude());
+            Assert.AreEqual(5, new Segment2(zeroVector, fiveVector).GetMagnitude());
+            Assert.AreEqual(5, new Segment2(fiveVector, tenPoint).GetMagnitude());
+            Assert.AreEqual(10, new Segment2(fiveVector, tenVector).GetMagnitude());
+            Assert.AreEqual(0, new Segment2(tenVector, zeroVector).GetMagnitude());
+            Assert.AreEqual(10, new Segment2(tenVector, zeroPoint).GetMagnitude());
+        }
+
     }
 }
 
