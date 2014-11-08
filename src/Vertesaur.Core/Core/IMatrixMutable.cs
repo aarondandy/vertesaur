@@ -174,7 +174,7 @@ namespace Vertesaur
             Contract.EndContractBlock();
             throw new NotImplementedException();
         }
-        
+
         public void ScaleRow(int r, TValue value) {
             Contract.Requires(r >= 0);
             Contract.Requires(r < RowCount);
@@ -202,6 +202,7 @@ namespace Vertesaur
             Contract.EndContractBlock();
             throw new NotImplementedException();
         }
+
     }
 
 }
