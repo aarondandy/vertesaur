@@ -34,7 +34,6 @@ namespace Vertesaur.Generation.Utility
             Contract.Requires(Contract.ForAll(args, x => x != null));
             Contract.Ensures(Contract.Result<MethodCallExpression>() != null);
             var result = Expression.Call(method, args);
-            Contract.Assume(result != null);
             return result;
         }
 
@@ -44,8 +43,7 @@ namespace Vertesaur.Generation.Utility
             Contract.Requires(args != null);
             Contract.Requires(Contract.ForAll(args, x => x != null));
             Contract.Ensures(Contract.Result<MethodCallExpression>() != null);
-            var result = Expression.Call(instance, method, args);
-            Contract.Assume(result != null);
+            var result = Expression.Call(instance, method, args);            
             return result;
         }
 
@@ -55,7 +53,6 @@ namespace Vertesaur.Generation.Utility
             Contract.Requires(type != null);
             Contract.Ensures(Contract.Result<UnaryExpression>() != null);
             var result = Expression.Convert(expression, type);
-            Contract.Assume(result != null);
             return result;
         }
 
@@ -123,13 +120,7 @@ namespace Vertesaur.Generation.Utility
             Contract.Requires(type != null);
             Contract.Requires(!String.IsNullOrEmpty(name));
             Contract.Ensures(Contract.Result<ParameterExpression>() != null);
-#if DEBUG
-            var result = Expression.Parameter(type, name);
-            Contract.Assume(result != null);
-            return result;
-#else
             return Expression.Parameter(type, name);
-#endif
         }
 
     }

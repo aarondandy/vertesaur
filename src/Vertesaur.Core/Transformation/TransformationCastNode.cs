@@ -81,7 +81,6 @@ namespace Vertesaur.Transformation
 
             // go through each combination of start and end types until something is found
             foreach (var startNode in startNodes) {
-                Contract.Assume(startNode != null); // because GenerateNodes will not return a null element
                 foreach (var endNode in endNodes) {
                     Contract.Assume(endNode != null); // because GenerateNodes will not return a null element
                     var result = DynamicGraph.FindPath(startNode, endNode, getNeighborhood);
@@ -170,7 +169,6 @@ namespace Vertesaur.Transformation
             Contract.Requires(null != m);
             if (TransformValueMethodName.Equals(m.Name) && m.ReturnType == ToType) {
                 var parameters = m.GetParameters();
-                Contract.Assume(parameters != null);
                 if (parameters.Length == 1) {
                     Contract.Assume(parameters[0] != null);
                     if(parameters[0].ParameterType == FromType) {
@@ -185,7 +183,6 @@ namespace Vertesaur.Transformation
             Contract.Requires(null != m);
             if (TransformValuesMethodName.Equals(m.Name) && m.ReturnType == MakeGenericEnumerableType(ToType)) {
                 var parameters = m.GetParameters();
-                Contract.Assume(parameters != null);
                 Contract.Assume(Contract.ForAll(parameters, x => x != null));
                 if (parameters.Length == 1 && parameters[0].ParameterType == MakeGenericEnumerableType(FromType)) {
                     return true;

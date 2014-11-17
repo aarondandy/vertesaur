@@ -245,8 +245,7 @@ namespace Vertesaur
         public double Distance(Point2 point) {
             Contract.Ensures(
                 Contract.Result<double>() >= 0.0
-                || Double.IsNaN(Contract.Result<double>())
-                || Double.IsPositiveInfinity(Contract.Result<double>()));
+                || Contract.Result<double>().Equals(Double.NaN));
             var dx = point.X - X;
             var dy = point.Y - Y;
             return Math.Sqrt((dx * dx) + (dy * dy));
@@ -261,8 +260,7 @@ namespace Vertesaur
         public double DistanceSquared(Point2 point) {
             Contract.Ensures(
                 Contract.Result<double>() >= 0.0
-                || Double.IsNaN(Contract.Result<double>())
-                || Double.IsPositiveInfinity(Contract.Result<double>()));
+                || Contract.Result<double>().Equals(Double.NaN));
             var dx = point.X - X;
             var dy = point.Y - Y;
             return (dx * dx) + (dy * dy);

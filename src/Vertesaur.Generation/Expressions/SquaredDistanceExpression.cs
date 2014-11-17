@@ -48,7 +48,6 @@ namespace Vertesaur.Generation.Expressions
         /// <inheritdoc/>
         public override Type Type {
             get {
-                Contract.Assume(Components[0] != null);
                 return Components[0].Type;
             }
         }
@@ -58,18 +57,14 @@ namespace Vertesaur.Generation.Expressions
             Contract.Ensures(Contract.Result<Expression>() != null);
             var gen = ReductionExpressionGenerator;
             var halfCount = Components.Length / 2;
-            Contract.Assume(halfCount <= Components.Length);
             var deltas = new Expression[halfCount];
             for (int i = 0; i < halfCount; i++) {
                 Contract.Assume(halfCount + i < Components.Length);
-                Contract.Assume(Components[i] != null);
-                Contract.Assume(Components[halfCount + i] != null);
                 deltas[i] = ReductionExpressionGenerator.GenerateOrThrow(
                     "SUBTRACT",
                     Components[i],
                     Components[halfCount + i]);
             }
-            Contract.Assume(deltas.Length != 0);
             return gen.Generate("SQUAREDMAGNITUDE", deltas)
                 ?? new SquaredMagnitudeExpression(deltas, gen);
         }

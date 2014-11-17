@@ -39,7 +39,6 @@ namespace Vertesaur.Generation.Expressions
                 (typeof (float) == LeftParameter.Type && typeof (float) == RightParameter.Type)
                 || (typeof(double) == LeftParameter.Type && typeof(double) == RightParameter.Type)
             ) {
-                Contract.Assume(MathAtan2DoubleMethod != null);
                 return gen.BuildConversionCall(MathAtan2DoubleMethod, LeftParameter.Type, LeftParameter, RightParameter);
             }
 

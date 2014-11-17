@@ -101,7 +101,7 @@ namespace Vertesaur
         /// <param name="r">A range.</param>
         /// <param name="v">A value.</param>
         private Range(Range r, double v) {
-            if (v < r.Low) {
+            if (v <= r.Low) {
                 Contract.Assume(v < r.High);
                 Low = v;
                 High = r.High;
@@ -126,7 +126,7 @@ namespace Vertesaur
         }
 
         [ContractInvariantMethod]
-        private void CodeContractInvariants() {
+        private void ObjectInvariants() {
             Contract.Invariant(Low <= High);
         }
 

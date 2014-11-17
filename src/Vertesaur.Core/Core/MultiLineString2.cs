@@ -40,7 +40,7 @@ namespace Vertesaur
         /// </summary>
         /// <param name="expectedCapacity">The expected number of line strings.</param>
         public MultiLineString2(int expectedCapacity)
-            : this(ListUtility.CreateEmpty<LineString2>(expectedCapacity)) {
+            : this(new List<LineString2>(expectedCapacity)) {
             Contract.Requires(expectedCapacity >= 0);
         }
 

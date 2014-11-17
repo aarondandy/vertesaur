@@ -31,7 +31,6 @@ namespace Vertesaur.Generation.Expressions
         /// <inheritdoc/>
         public override Expression Reduce() {
             Contract.Ensures(Contract.Result<Expression>() != null);
-            Contract.Assume(MathAsinMethod != null);
             return ReductionExpressionGenerator.BuildConversionCall(MathAsinMethod, UnaryParameter, Type);
         }
     }

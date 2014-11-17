@@ -132,6 +132,9 @@ namespace Vertesaur
             while (enumerator.MoveNext()) {
                 p = enumerator.Current;
 
+                Contract.Assume(xMin <= xMax);
+                Contract.Assume(yMin <= yMax);
+
                 if (p.X < xMin)
                     xMin = p.X;
                 else if (p.X > xMax)

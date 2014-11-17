@@ -271,9 +271,7 @@ namespace Vertesaur.Generation.Expressions
             Contract.Requires(inputs.Count >= 1);
             Contract.Requires(Contract.ForAll(inputs, x => x != null));
             Contract.Assume(inputs[0] != null);
-            var result = inputs[0]; // GenerateArithmetic(request, inputs[0], inputs[1]);
-            if (null == result)
-                return null;
+            var result = inputs[0];
             for (int i = 1; i < inputs.Count; i++) {
                 Contract.Assume(inputs[i] != null);
                 result = GenerateArithmetic(request, result, inputs[i]);
@@ -321,7 +319,6 @@ namespace Vertesaur.Generation.Expressions
                 Contract.Assume(typeof(IComparable<>).GetGenericArguments().Length == 1);
                 Contract.Assume(typeof(IComparable<>).IsGenericTypeDefinition());
                 var comparableType = typeof(IComparable<>).MakeGenericType(right.Type);
-                Contract.Assume(comparableType != null);
 
                 if (left.Type.ImplementsInterface(comparableType)) {
                     var method = comparableType.GetPublicInstanceInvokableMethod(
@@ -433,7 +430,6 @@ namespace Vertesaur.Generation.Expressions
             Contract.Requires(null != expressionRequest);
 
             var parameters = expressionRequest.InputExpressions;
-            Contract.Assume(Contract.ForAll(parameters, x => x != null));
             var expressionName = expressionRequest.ExpressionName;
 
             if (parameters.Count == 1) {

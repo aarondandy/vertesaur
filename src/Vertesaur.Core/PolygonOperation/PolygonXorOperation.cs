@@ -1,4 +1,5 @@
-﻿namespace Vertesaur.PolygonOperation
+﻿using System.Diagnostics.Contracts;
+namespace Vertesaur.PolygonOperation
 {
     /// <summary>
     /// An operation that will find the symmetric difference for two polygons.
@@ -24,6 +25,7 @@
         public PolygonXorOperation()
             : this(null, null) { }
 
+        [ContractVerification(false)] // TODO: remove when CC bugs are fixed
         internal PolygonXorOperation(PolygonDifferenceOperation differenceOperation, PolygonUnionOperation unionOperation) {
             _differenceOperation = differenceOperation ?? DefaultDifferenceOperation;
             _unionOperation = unionOperation ?? DefaultUnionOperation;

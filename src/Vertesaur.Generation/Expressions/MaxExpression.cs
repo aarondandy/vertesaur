@@ -56,13 +56,11 @@ namespace Vertesaur.Generation.Expressions
             Contract.Requires(left.IsMemoryLocationOrConstant());
             Contract.Requires(right.IsMemoryLocationOrConstant());
             Contract.Ensures(Contract.Result<Expression>() != null);
-            var result = Condition(
+            return Condition(
                 ReductionExpressionGenerator.GenerateOrThrow("GREATEREQUAL", left, right),
                 left,
                 right
             );
-            Contract.Assume(result != null);
-            return result;
         }
 
     }

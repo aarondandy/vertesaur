@@ -116,7 +116,6 @@ namespace Vertesaur.PolygonOperation
                 if (null == item)
                     return false;
 
-                Contract.Assume(null != item.Ring);
                 var holeFlag = NodesAreHole;
                 if (holeFlag.HasValue && item.Ring.Hole.HasValue && holeFlag.Value != item.Ring.Hole.Value)
                     return false;
@@ -250,7 +249,6 @@ namespace Vertesaur.PolygonOperation
 
             foreach (var node in roots) {
                 if (RingIsNonIntersectingBoundBy(ring, node.Ring)) {
-                    Contract.Assume(null != node);
                     return FindParent(ring, node) ?? node;
                 }
             }
@@ -263,7 +261,6 @@ namespace Vertesaur.PolygonOperation
 
             var ringMbr = ring.GetMbr();
             if (ringMbr != null){
-                Contract.Assume(ringMbr != null);
                 if(ringMbr.Within(container.GetMbr())) {
                     for (var i = 0; i < ring.Count; i++) {
                         var intersectionCount = container.IntersectionPositiveXRayCount(ring[i]);

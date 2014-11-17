@@ -43,7 +43,10 @@ namespace Vertesaur
         /// </summary>
         /// <param name="expectedCapacity">The expected number of rings the polygon will contain.</param>
         public Polygon2(int expectedCapacity)
-            : this(new List<Ring2>(expectedCapacity)) { }
+            : this(new List<Ring2>(expectedCapacity))
+        {
+            Contract.Requires(expectedCapacity >= 0);
+        }
         /// <summary>
         /// Constructs a new polygon geometry composed of the given rings.
         /// </summary>

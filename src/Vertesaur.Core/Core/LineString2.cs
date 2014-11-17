@@ -44,7 +44,10 @@ namespace Vertesaur
         /// </summary>
         /// <param name="expectedCapacity">The expected number of points.</param>
         public LineString2(int expectedCapacity)
-            : this(new List<Point2>(expectedCapacity)) { }
+            : this(new List<Point2>(expectedCapacity))
+        {
+            Contract.Requires(expectedCapacity >= 0);
+        }
 
         /// <summary>
         /// Constructs a new line string containing the given ordered set of points.

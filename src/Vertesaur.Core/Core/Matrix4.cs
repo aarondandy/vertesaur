@@ -217,8 +217,6 @@ namespace Vertesaur
             _e[13] = e31;
             _e[14] = e32;
             _e[15] = e33;
-            Contract.Assume(OrderValue == RowCount);
-            Contract.Assume(OrderValue == ColumnCount);
         }
 
         /// <summary>
@@ -230,8 +228,6 @@ namespace Vertesaur
             Contract.EndContractBlock();
             _e = new double[ElementCountValue];
             CopyFrom(m);
-            Contract.Assume(OrderValue == RowCount);
-            Contract.Assume(OrderValue == ColumnCount);
         }
 
         /// <summary>
@@ -250,8 +246,6 @@ namespace Vertesaur
                 for (int c = 0; c < ColumnCount; c++)
                     _e[rowOffset + c] = m.Get(r, c);
             }
-            Contract.Assume(OrderValue == RowCount);
-            Contract.Assume(OrderValue == ColumnCount);
         }
 
         /// <summary>
@@ -271,22 +265,22 @@ namespace Vertesaur
             _e[ 4] = _e[ 6] = _e[ 7] = 0.0;
             _e[ 8] = _e[ 9] = _e[11] = 0.0;
             _e[12] = _e[13] = _e[14] = 0.0;
-            Contract.Assume(OrderValue == RowCount);
-            Contract.Assume(OrderValue == ColumnCount);
         }
 
         [ContractInvariantMethod]
-        [Conditional("CONTRACTS_FULL")]
         private void CodeContractInvariant() {
-            Contract.Invariant(4 == OrderValue);
+            Contract.Invariant(_e != null);
+            Contract.Invariant(_e.Length == ElementCountValue);
             Contract.Invariant(OrderValue == RowCount);
             Contract.Invariant(OrderValue == ColumnCount);
         }
 
         /// <inheritdoc/>
         public bool Equals(Matrix4 other) {
-            return !ReferenceEquals(null, other)
-                && _e[ 0] == other._e[ 0]
+            if(ReferenceEquals(null, other))
+                return false;
+            Contract.Assume(other._e.Length == ElementCountValue);
+            return _e[ 0] == other._e[ 0]
                 && _e[ 1] == other._e[ 1]
                 && _e[ 2] == other._e[ 2]
                 && _e[ 3] == other._e[ 3]
@@ -307,8 +301,9 @@ namespace Vertesaur
 
         /// <inheritdoc/>
         public bool Equals(IMatrix<double> other) {
-            return !ReferenceEquals(null, other)
-                && OrderValue == other.RowCount
+            if(ReferenceEquals(null, other))
+                return false;
+            return OrderValue == other.RowCount
                 && OrderValue == other.ColumnCount
                 && _e[ 0] == other.Get(0, 0)
                 && _e[ 1] == other.Get(0, 1)
@@ -331,7 +326,9 @@ namespace Vertesaur
 
         private void CopyFrom(Matrix4 m) {
             Contract.Requires(m != null);
+            Contract.Requires(m._e != null);
             _e = (double[])(m._e.Clone());
+            Contract.Assume(_e.Length == ElementCountValue);
         }
 
         /// <summary>
@@ -417,8 +414,6 @@ namespace Vertesaur
             _e[13] = e31;
             _e[14] = e32;
             _e[15] = e33;
-            Contract.Assume(OrderValue == RowCount);
-            Contract.Assume(OrderValue == ColumnCount);
         }
 
         /// <summary>
@@ -430,8 +425,6 @@ namespace Vertesaur
             _e[ 4] = _e[ 6] = _e[ 7] = 0.0;
             _e[ 8] = _e[ 9] = _e[11] = 0.0;
             _e[12] = _e[13] = _e[14] = 0.0;
-            Contract.Assume(OrderValue == RowCount);
-            Contract.Assume(OrderValue == ColumnCount);
         }
 
         /// <summary>
@@ -478,7 +471,6 @@ namespace Vertesaur
         /// </summary>
         /// <exception cref="Vertesaur.NoInverseException">An inverse requires a valid non-zero finite determinant.</exception>
         public void Invert() {
-            Contract.Ensures(Contract.Result<Matrix4>() != null);
             var result = new Matrix4();
             Contract.Assume(result.IsIdentity);
             if (SquareMatrixOperations.GaussJordanEliminationDestructive(Clone(), result))
@@ -576,8 +568,6 @@ namespace Vertesaur
             _e[13] *= factor;
             _e[14] *= factor;
             _e[15] *= factor;
-            Contract.Assume(OrderValue == RowCount);
-            Contract.Assume(OrderValue == ColumnCount);
         }
 
         /// <summary>
@@ -588,6 +578,7 @@ namespace Vertesaur
         public Matrix4 Multiply(Matrix4 right) {
             if (null == right) throw new ArgumentNullException("right");
             Contract.Ensures(Contract.Result<Matrix4>() != null);
+            Contract.Assume(right._e.Length == ElementCountValue);
             return new Matrix4(
                 ((_e[ 0] * right._e[ 0]) + (_e[ 1] * right._e[ 4]) + (_e[ 2] * right._e[ 8]) + (_e[ 3] * right._e[12])),
                 ((_e[ 0] * right._e[ 1]) + (_e[ 1] * right._e[ 5]) + (_e[ 2] * right._e[ 9]) + (_e[ 3] * right._e[13])),
@@ -615,6 +606,7 @@ namespace Vertesaur
         public void MultiplyAssign(Matrix4 right) {
             if (null == right) throw new ArgumentNullException("right");
             Contract.EndContractBlock();
+            Contract.Assume(right._e.Length == ElementCountValue);
             SetElements(
                 ((_e[ 0] * right._e[ 0]) + (_e[ 1] * right._e[ 4]) + (_e[ 2] * right._e[ 8]) + (_e[ 3] * right._e[12])),
                 ((_e[ 0] * right._e[ 1]) + (_e[ 1] * right._e[ 5]) + (_e[ 2] * right._e[ 9]) + (_e[ 3] * right._e[13])),
@@ -643,6 +635,7 @@ namespace Vertesaur
         public Matrix4 Add(Matrix4 right) {
             if (null == right) throw new ArgumentNullException("right");
             Contract.Ensures(Contract.Result<Matrix4>() != null);
+            Contract.Assume(right._e.Length == ElementCountValue);
             return new Matrix4(
                 _e[ 0] + right._e[ 0],
                 _e[ 1] + right._e[ 1],
@@ -670,6 +663,7 @@ namespace Vertesaur
         public void AddAssign(Matrix4 right) {
             if (null == right) throw new ArgumentNullException("right");
             Contract.EndContractBlock();
+            Contract.Assume(right._e.Length == ElementCountValue);
             _e[ 0] += right._e[ 0];
             _e[ 1] += right._e[ 1];
             _e[ 2] += right._e[ 2];
@@ -686,8 +680,6 @@ namespace Vertesaur
             _e[13] += right._e[13];
             _e[14] += right._e[14];
             _e[15] += right._e[15];
-            Contract.Assume(OrderValue == RowCount);
-            Contract.Assume(OrderValue == ColumnCount);
         }
 
         /// <summary>
@@ -698,6 +690,7 @@ namespace Vertesaur
         public Matrix4 Subtract(Matrix4 right) {
             if (null == right) throw new ArgumentNullException("right");
             Contract.Ensures(Contract.Result<Matrix4>() != null);
+            Contract.Assume(right._e.Length == ElementCountValue);
             return new Matrix4(
                 _e[ 0] - right._e[ 0],
                 _e[ 1] - right._e[ 1],
@@ -854,7 +847,6 @@ namespace Vertesaur
 
         /// <inheritdoc/>
         public void ScaleRow(int r, double value) {
-            Contract.Requires(r >= 0 && r < OrderValue);
             switch (r) {
                 case 0: {
                     _e[0] *= value;
@@ -898,7 +890,6 @@ namespace Vertesaur
 
         /// <inheritdoc/>
         public void DivideRow(int r, double denominator) {
-            Contract.Requires(r >= 0 && r < OrderValue);
             switch (r) {
                 case 0: {
                     _e[0] /= denominator;

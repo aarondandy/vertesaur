@@ -43,12 +43,17 @@ namespace Vertesaur
         /// Constructs a new empty fmulti-point.
         /// </summary>
         public MultiPoint2() { }
+
         /// <summary>
         /// Constructs a new empty multi-point expecting the given number of points.
         /// </summary>
         /// <param name="expectedCapacity">The expected number of points.</param>
         public MultiPoint2(int expectedCapacity)
-            : this(new List<Point2>(expectedCapacity)) { }
+            : this(new List<Point2>(expectedCapacity))
+        {
+            Contract.Requires(expectedCapacity >= 0);
+        }
+
         /// <summary>
         /// Constructs a new multi-point containing the given points.
         /// </summary>

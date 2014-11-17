@@ -36,7 +36,6 @@ namespace Vertesaur.Generation.Expressions
 
             
             if (typeof (double) == Type) {
-                Contract.Assume(MathExpMethod != null);
                 return gen.BuildConversionCall(MathExpMethod, UnaryParameter, Type);
             }
 

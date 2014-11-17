@@ -53,6 +53,7 @@ namespace Vertesaur
         }
 
         private static bool SwapForNonZeroRowBelow<TMatrix>(TMatrix matrix, int ordinal) where TMatrix : IMatrixSquare<double>, IMatrixMutable<double> {
+            Contract.Requires(ordinal >= 0);
             for (int rowSearch = ordinal + 1; rowSearch < matrix.Order; rowSearch++) {
                 var searchValue = matrix.Get(rowSearch, ordinal);
                 if (searchValue != 0.0) {
@@ -86,11 +87,18 @@ namespace Vertesaur
         }
 
         private static bool DiagonalToOne<TMatrix>(TMatrix sourceData, TMatrix result, int ordinal) where TMatrix : IMatrixSquare<double>, IMatrixMutable<double> {
+            Contract.Requires(sourceData != null);
+            Contract.Requires(result != null);
+            Contract.Requires(ordinal >= 0);
+            Contract.Requires(ordinal < sourceData.RowCount);
+            Contract.Requires(ordinal < sourceData.ColumnCount);
+
             var targetElementValue = sourceData.Get(ordinal, ordinal);
             if (targetElementValue == 1.0)
                 return true;
 
             // attempt to find a row that already has one
+            Contract.Assume(sourceData != null);
             var rowIndexWithOneValue = SearchDownRowsForOneValue(sourceData, ordinal, ordinal + 1);
             if (rowIndexWithOneValue > ordinal) {
                 // perform the swap to get the 1.0 value
@@ -121,6 +129,8 @@ namespace Vertesaur
                     if (sourceData.Get(r, ordinal) != 0.0) {
                         sourceData.SwapRows(ordinal, r);
                         result.SwapRows(ordinal, r);
+                        Contract.Assume(sourceData != null);
+                        Contract.Assume(result != null);
                         return DiagonalToOne(sourceData, result, ordinal);
                     }
                 }
@@ -129,6 +139,11 @@ namespace Vertesaur
         }
 
         private static bool SetToGaussJordanZero<TMatrix>(TMatrix sourceData, TMatrix result, int targetRow, int targetColumn) where TMatrix : IMatrixSquare<double>, IMatrixMutable<double> {
+            Contract.Requires(targetRow >= 0);
+            Contract.Requires(targetRow < sourceData.RowCount);
+            Contract.Requires(targetColumn >= 0);
+            Contract.Requires(targetColumn < sourceData.ColumnCount);
+
             var targetElementValue = sourceData.Get(targetRow, targetColumn);
             if (targetElementValue == 0.0)
                 return true;
@@ -149,6 +164,7 @@ namespace Vertesaur
             return false;
         }
 
+        [ContractVerification(false)] // TODO: remove when CC bugs are fixed
         private static int SearchDownRowsForOneValue<TMatrix>(TMatrix m, int column, int rowSearchIndex) where TMatrix : IMatrix<double> {
             Contract.Requires(m != null);
             Contract.Requires(column >= 0);
@@ -157,12 +173,14 @@ namespace Vertesaur
             Contract.Ensures(Contract.Result<int>() < m.RowCount);
 
             for (; rowSearchIndex < m.RowCount; rowSearchIndex++) {
-                if (m.Get(rowSearchIndex, column) == 1.0)
+                if (m.Get(rowSearchIndex, column) == 1.0) {
                     return rowSearchIndex;
+                }
             }
             return -1;
         }
 
+        [ContractVerification(false)] // TODO: remove when CC bugs are fixed
         private static int SearchDownRowsForAdditiveForOneValue<TMatrix>(TMatrix m, int column, int rowSearchIndex, double additiveValue) where TMatrix : IMatrix<double> {
             Contract.Requires(m != null);
             Contract.Requires(column >= 0);
@@ -171,8 +189,9 @@ namespace Vertesaur
             Contract.Ensures(Contract.Result<int>() < m.RowCount);
 
             for (; rowSearchIndex < m.RowCount; rowSearchIndex++) {
-                if (m.Get(rowSearchIndex, column) + additiveValue == 1.0)
+                if (m.Get(rowSearchIndex, column) + additiveValue == 1.0) {
                     return rowSearchIndex;
+                }
             }
             return -1;
         }

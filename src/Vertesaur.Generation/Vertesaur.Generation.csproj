@@ -91,7 +91,7 @@
     <CodeContractsEnumObligations>False</CodeContractsEnumObligations>
     <CodeContractsRedundantAssumptions>False</CodeContractsRedundantAssumptions>
     <CodeContractsMissingPublicRequiresAsWarnings>True</CodeContractsMissingPublicRequiresAsWarnings>
-    <CodeContractsInferRequires>True</CodeContractsInferRequires>
+    <CodeContractsInferRequires>False</CodeContractsInferRequires>
     <CodeContractsInferEnsures>False</CodeContractsInferEnsures>
     <CodeContractsInferObjectInvariants>False</CodeContractsInferObjectInvariants>
     <CodeContractsSuggestAssumptions>False</CodeContractsSuggestAssumptions>
@@ -113,6 +113,15 @@
     <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
     <CodeContractsReferenceAssembly>Build</CodeContractsReferenceAssembly>
     <CodeContractsAnalysisWarningLevel>2</CodeContractsAnalysisWarningLevel>
+    <CodeContractsAssertsToContractsCheckBox>True</CodeContractsAssertsToContractsCheckBox>
+    <CodeContractsRedundantTests>True</CodeContractsRedundantTests>
+    <CodeContractsMissingPublicEnsuresAsWarnings>False</CodeContractsMissingPublicEnsuresAsWarnings>
+    <CodeContractsInferEnsuresAutoProperties>True</CodeContractsInferEnsuresAutoProperties>
+    <CodeContractsSuggestAssumptionsForCallees>False</CodeContractsSuggestAssumptionsForCallees>
+    <CodeContractsNecessaryEnsures>True</CodeContractsNecessaryEnsures>
+    <CodeContractsSuggestReadonly>True</CodeContractsSuggestReadonly>
+    <CodeContractsSkipAnalysisIfCannotConnectToCache>False</CodeContractsSkipAnalysisIfCannotConnectToCache>
+    <CodeContractsBeingOptimisticOnExternal>True</CodeContractsBeingOptimisticOnExternal>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>false</SignAssembly>

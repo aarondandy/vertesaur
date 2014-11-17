@@ -106,7 +106,9 @@ namespace Vertesaur
         /// Constructs a ring with no points while expecting the given number of points at a later time.
         /// </summary>
         /// <param name="expectedCapacity">The expected capacity of the ring.</param>
-        public Ring2(int expectedCapacity) : this(null, new List<Point2>(expectedCapacity)) { }
+        public Ring2(int expectedCapacity) : this(null, new List<Point2>(expectedCapacity)) {
+            Contract.Requires(expectedCapacity >= 0);
+        }
         /// <summary>
         /// Constructs a ring that will be explicitly set as a hole or fill.
         /// </summary>
@@ -118,7 +120,10 @@ namespace Vertesaur
         /// <param name="hole"><c>true</c> to flag as a hole, <c>false</c> to flag as a fill.</param>
         /// <param name="expectedCapacity">The expected capacity of the ring.</param>
         public Ring2(bool hole, int expectedCapacity)
-            : this(hole, new List<Point2>(expectedCapacity)) { }
+            : this(hole, new List<Point2>(expectedCapacity))
+        {
+            Contract.Requires(expectedCapacity >= 0);
+        }
         /// <summary>
         /// Constructs a ring with the given points.
         /// </summary>
@@ -157,7 +162,6 @@ namespace Vertesaur
             _hole = hole;
             _pointList = points;
             ResetAllCache();
-            Contract.Assume(SegmentCount <= Count);
         }
 
         [ContractInvariantMethod]
@@ -239,7 +243,6 @@ namespace Vertesaur
                     ResetAllCache();
 
                 _hole = value;
-                Contract.Assume(SegmentCount <= Count);
             }
         }
 
@@ -323,8 +326,6 @@ namespace Vertesaur
             if (Count != other.Count || !_hole.Equals(other._hole))
                 return false;
             for (var i = 0; i < _pointList.Count; i++) {
-                Contract.Assume(i < _pointList.Count);
-                Contract.Assume(i < other.Count);
                 if (!_pointList[i].Equals(other[i]))
                     return false;
             }
@@ -635,7 +636,6 @@ namespace Vertesaur
             else {
                 _hole = (currentWinding != desiredWinding);
             }
-            Contract.Assume(SegmentCount <= Count);
         }
 
 
@@ -717,7 +717,6 @@ namespace Vertesaur
             Contract.Ensures(Contract.Result<Ring2>() != null);
             var points = new List<Point2>(_pointList.Count);
             points.AddRange(_pointList);
-            Contract.Assume(SegmentCount <= Count);
             return new Ring2(_hole, points);
         }
 
@@ -803,7 +802,6 @@ namespace Vertesaur
             if (thisMbr == null)
                 return false;
 
-            Contract.Assume(thisMbr != null);
             var containerMbr = testContainer.GetMbr();
             if (containerMbr == null)
                 return false;
@@ -868,7 +866,6 @@ namespace Vertesaur
             var mbr = GetMbr();
             Contract.Assume(Count <= 0 || mbr != null);
             if (Count >= 2 && mbr.Intersects(p)) {
-                Contract.Assume(Count - 1 >= 0);
                 var b = this[Count - 1];
                 for (var nextIndex = 0; nextIndex < Count; nextIndex++) {
                     var a = b;

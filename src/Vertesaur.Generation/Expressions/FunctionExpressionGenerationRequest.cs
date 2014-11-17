@@ -18,6 +18,7 @@ namespace Vertesaur.Generation.Expressions
         /// <param name="generator">The primary generator to be used for the generation of sub expressions.</param>
         /// <param name="expressionName">The name of the requested expression.</param>
         /// <param name="inputs">The input expressions for the generated expression.</param>
+        [ContractVerification(false)] // TODO: remove when CC bugs are fixed
         public FunctionExpressionGenerationRequest(IExpressionGenerator generator, string expressionName, params Expression[] inputs) {
             if (null == generator) throw new ArgumentNullException("generator");
             if (String.IsNullOrEmpty(expressionName)) throw new ArgumentException("Invalid expression name.", "expressionName");

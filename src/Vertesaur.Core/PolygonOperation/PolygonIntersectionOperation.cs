@@ -88,6 +88,7 @@ namespace Vertesaur.PolygonOperation
             public readonly HashSet<int> VisitedCrossingsRingIndicesA;
             public readonly HashSet<int> VisitedCrossingsRingIndicesB;
 
+            [ContractVerification(false)] // TODO: remvoe when CC bugs are fixed
             public PolygonCrossingsAlgorithmKernel(Polygon2 a, Polygon2 b, List<PolygonCrossing> crossings) {
                 Contract.Requires(a != null);
                 Contract.Requires(b != null);
@@ -514,8 +515,6 @@ namespace Vertesaur.PolygonOperation
                 b = PolygonInverseOperation.Invert(b);
 
             // find all the crossings
-            Contract.Assume(a != null);
-            Contract.Assume(b != null);
             var fillWinding = DetermineFillWinding(a.Concat(b));
 
             var kernel = CreateIntersectionKernel(a, b);
@@ -649,12 +648,10 @@ namespace Vertesaur.PolygonOperation
             do {
                 if (to.SegmentIndex == currentSegmentIndex) {
                     if (to.SegmentRatio > 0) {
-                        Contract.Assume(currentSegmentIndex < ring.Count);
                         results.Add(ring[currentSegmentIndex]);
                     }
                     return;
                 }
-                Contract.Assume(currentSegmentIndex < ring.Count);
                 results.Add(ring[currentSegmentIndex]);
                 currentSegmentIndex = IterationUtils.AdvanceLoopingIndex(currentSegmentIndex, segmentCount);
             } while (true);
@@ -683,7 +680,6 @@ namespace Vertesaur.PolygonOperation
                 var ringA = a[ringIndexA];
                 Contract.Assume(ringA != null);
                 var crossingsOnRingA = kernel.RingCrossingsA.Get(ringIndexA);
-                Contract.Assume(crossingsOnRingA != null);
 
                 var priorPointA = FindPreviousRingPoint(currentCrossing, crossingsOnRingA, ringA, GetLocationA, PolygonCrossing.LocationAComparer.Default);
                 var nextPointA = FindNextRingPoint(currentCrossing, crossingsOnRingA, ringA, GetLocationA, PolygonCrossing.LocationAComparer.Default);
@@ -693,7 +689,6 @@ namespace Vertesaur.PolygonOperation
                 var ringB = b[ringIndexB];
                 Contract.Assume(ringB != null);
                 var crossingsOnRingB = kernel.RingCrossingsB.Get(ringIndexB);
-                Contract.Assume(crossingsOnRingB != null);
 
                 var priorPointB = FindPreviousRingPoint(currentCrossing, crossingsOnRingB, ringB, GetLocationB, PolygonCrossing.LocationBComparer.Default);
                 var nextPointB = FindNextRingPoint(currentCrossing, crossingsOnRingB, ringB, GetLocationB, PolygonCrossing.LocationBComparer.Default);
@@ -711,6 +706,7 @@ namespace Vertesaur.PolygonOperation
                 Contract.Assume(ringCrossings.Key >= 0 && ringCrossings.Key < a.Count);
                 if (a[ringCrossings.Key].FillSide == RelativeDirectionType.Right) {
                     foreach (var crossing in ringCrossings.Value) {
+                        Contract.Assume(crossing != null);
                         var crossLegType = crossing.CrossType & CrossingType.Parallel;
                         if (crossLegType == CrossingType.CrossToRight || crossLegType == CrossingType.DivergeRight)
                             kernel.Entrances.Add(crossing);
@@ -720,6 +716,7 @@ namespace Vertesaur.PolygonOperation
                 }
                 else {
                     foreach (var crossing in ringCrossings.Value) {
+                        Contract.Assume(crossing != null);
                         var crossLegType = crossing.CrossType & CrossingType.Parallel;
                         if (crossLegType == CrossingType.CrossToLeft || crossLegType == CrossingType.DivergeLeft)
                             kernel.Entrances.Add(crossing);
@@ -731,6 +728,7 @@ namespace Vertesaur.PolygonOperation
 
             var sortedEntrances = kernel.Entrances.ToArray();
             Array.Sort(sortedEntrances, PolygonCrossing.LocationAComparer.CompareNonNull);
+            Contract.Assume(kernel.Exits != null);
             var sortedExits = kernel.Exits.ToArray();
             Array.Sort(sortedExits, PolygonCrossing.LocationBComparer.CompareNonNull);
 
@@ -795,7 +793,6 @@ namespace Vertesaur.PolygonOperation
             var currentLocation = getLocation(currentCrossing);
             var segmentCount = ring.SegmentCount;
             int nextSegmentIndex = IterationUtils.AdvanceLoopingIndex(currentLocation.SegmentIndex, segmentCount);
-            Contract.Assume(nextSegmentIndex < ring.Count);
             var nextCrossing = FindNextCrossingNotEqual(currentCrossing, crossingsOnRing, crossingComparer);
             // NOTE: this method assumes a segment ratio less than 1, verify we can trust this
             if (null == nextCrossing) {
@@ -825,7 +822,6 @@ namespace Vertesaur.PolygonOperation
                 return null;
             int crossingsCount = crossingsOnRing.Length;
             // find the first crossing before this one that has a different point location
-            Contract.Assume(currentCrossingIndex < crossingsCount);
             for (
                 int i = IterationUtils.RetreatLoopingIndex(currentCrossingIndex, crossingsCount);
                 i != currentCrossingIndex;
@@ -859,8 +855,6 @@ namespace Vertesaur.PolygonOperation
             var previousSegmentIndex = IterationUtils.RetreatLoopingIndex(currentLocation.SegmentIndex, segmentCount);
             var previousCrossing = FindPreviousCrossingNotEqual(currentCrossing, crossingsOnRing, crossingComparer);
             if (null == previousCrossing) {
-                Contract.Assume(previousSegmentIndex < ring.Count);
-                Contract.Assume(currentLocation.SegmentIndex < ring.Count);
                 return ring[
                     currentLocation.SegmentRatio == 0
                     ? previousSegmentIndex
@@ -870,12 +864,10 @@ namespace Vertesaur.PolygonOperation
             var previousCrossingLocation = getLocation(previousCrossing);
             Contract.Assume(previousCrossingLocation != null);
             if (currentLocation.SegmentRatio == 0) {
-                Contract.Assume(previousSegmentIndex < ring.Count);
                 return previousSegmentIndex == previousCrossingLocation.SegmentIndex
                     ? previousCrossing.Point
                     : ring[previousSegmentIndex];
             }
-            Contract.Assume(currentLocation.SegmentIndex < ring.Count);
             return currentLocation.SegmentIndex == previousCrossingLocation.SegmentIndex
                 && currentLocation.SegmentRatio > previousCrossingLocation.SegmentRatio
                 ? previousCrossing.Point

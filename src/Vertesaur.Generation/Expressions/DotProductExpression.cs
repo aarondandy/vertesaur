@@ -55,9 +55,7 @@ namespace Vertesaur.Generation.Expressions
         public override Expression Reduce() {
             Contract.Ensures(Contract.Result<Expression>() != null);
             var halfCount = Components.Length / 2;
-            Contract.Assume(halfCount <= Components.Length);
             var gen = ReductionExpressionGenerator;
-            Contract.Assume(Contract.ForAll(Components, x => x != null));
             var result = gen.GenerateOrThrow(
                 "Multiply", Components[0], Components[halfCount]);
             for (int i = 1; i < halfCount; i++) {

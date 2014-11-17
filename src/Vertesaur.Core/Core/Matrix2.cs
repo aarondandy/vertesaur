@@ -632,9 +632,10 @@ namespace Vertesaur
             if (sourceRow < 0 || sourceRow > 1) throw new ArgumentOutOfRangeException("sourceRow", "Row must be 0 or 1.");
             if (targetRow < 0 || targetRow > 1) throw new ArgumentOutOfRangeException("targetRow", "Row must be 0 or 1.");
             Contract.EndContractBlock();
-
-            for (int c = 0; c < Order; c++)
+            
+            for (int c = 0; c < OrderValue; c++) {
                 Set(targetRow, c, Get(sourceRow, c) + Get(targetRow, c));
+            }
         }
 
         /// <inheritdoc/>
@@ -643,8 +644,9 @@ namespace Vertesaur
             if (targetRow < 0 || targetRow > 1) throw new ArgumentOutOfRangeException("targetRow", "Row must be 0 or 1.");
             Contract.EndContractBlock();
 
-            for (int c = 0; c < Order; c++)
+            for (int c = 0; c < OrderValue; c++) {
                 Set(targetRow, c, (Get(sourceRow, c) * factor) + Get(targetRow, c));
+            }
         }
 
         /// <inheritdoc/>
@@ -653,8 +655,9 @@ namespace Vertesaur
             if (targetColumn < 0 || targetColumn > 1) throw new ArgumentOutOfRangeException("targetColumn", "Column must be 0 or 1.");
             Contract.EndContractBlock();
 
-            for (int r = 0; r < Order; r++)
+            for (int r = 0; r < OrderValue; r++) {
                 Set(r, targetColumn, Get(r, sourceColumn) + Get(r, targetColumn));
+            }
         }
 
         /// <inheritdoc/>
@@ -663,8 +666,9 @@ namespace Vertesaur
             if (targetColumn < 0 || targetColumn > 1) throw new ArgumentOutOfRangeException("targetColumn", "Column must be 0 or 1.");
             Contract.EndContractBlock();
 
-            for (int r = 0; r < Order; r++)
+            for (int r = 0; r < OrderValue; r++) {
                 Set(r, targetColumn, (Get(r, sourceColumn) * factor) + Get(r, targetColumn));
+            }
         }
 
         /// <inheritdoc/>

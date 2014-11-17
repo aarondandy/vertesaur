@@ -59,7 +59,6 @@ namespace Vertesaur.Generation.Expressions
 
             ComposablePartCatalog catalog;
             if (assemblies.Length == 1) {
-                Contract.Assume(assemblies[0] != null);
                 Contract.Assume(!assemblies[0].ReflectionOnly);
                 catalog = new AssemblyCatalog(assemblies[0]);
             }
