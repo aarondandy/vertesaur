@@ -1,16 +1,57 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using NUnit.Framework;
 using Vertesaur.Transformation;
+using FluentAssertions;
+using Xunit;
 
-namespace Vertesaur.Core.Test
+namespace Vertesaur.Test
 {
-    [TestFixture]
-    public class ConcatenatedTransformationTest
+    public static class ConcatenatedTransformationFacts
     {
 
-        private class A :
+        [Fact]
+        public static void simple_typed_validation_test() {
+            var txList = new ITransformation[] { new DummyUpConversion(), new DummyDownConversion() };
+
+            var cat = new ConcatenatedTransformation<double, Point2>(txList);
+
+            cat.TransformValue(1).Should().Be(new Point2(1, 2));
+        }
+
+        [Fact]
+        public static void simple_single_validation_test() {
+            var txList = new ITransformation[] { new DummyUpConversion() };
+
+            var cat = new ConcatenatedTransformation<double, Vector2>(txList);
+
+            cat.TransformValue(2).Should().Be(new Vector2(2, 4));
+        }
+
+        [Fact]
+        public static void complex_validation_test() {
+            var txList = new ITransformation[] { new DummyUpConversion(), new DummyDownConversion(), new DummyUpConversion() };
+
+            var cat = new ConcatenatedTransformation<double, Vector2>(txList);
+
+            cat.TransformValue(2).Should().Be(new Vector2(3, 6));
+        }
+
+        [Fact]
+        public static void generic_enumerator_test() {
+            var txList = new ITransformation[] { new DummyUpConversion(), new DummyDownConversion(), new DummyUpConversion() };
+            var cat = new ConcatenatedTransformation<double, Vector2>(txList);
+            
+            var enumerator = cat.GetEnumerator();
+
+            cat.Should().NotContainNulls();
+            enumerator.Should().NotBeNull();
+            while (enumerator.MoveNext()) {
+                enumerator.Current.Should().NotBeNull();
+            }
+        }
+
+        private class DummyUpConversion :
             ITransformation<double, Vector2>,
             ITransformation<double, Vector3>,
             ITransformation<Vector2, Vector3>
@@ -76,15 +117,15 @@ namespace Vertesaur.Core.Test
             }
 
             public Type[] GetOutputTypes(Type inputType) {
-                if (inputType == typeof (double))
-                    return new[] {typeof (Vector2), typeof (Vector3)};
-                if (inputType == typeof (Vector2))
-                    return new[] {typeof(Vector3)};
+                if (inputType == typeof(double))
+                    return new[] { typeof(Vector2), typeof(Vector3) };
+                if (inputType == typeof(Vector2))
+                    return new[] { typeof(Vector3) };
                 return new Type[0];
             }
         }
 
-        private class B :
+        private class DummyDownConversion :
             ITransformation<Vector2, Point2>,
             ITransformation<Vector2, Point3>,
             ITransformation<Vector3, double>
@@ -142,51 +183,15 @@ namespace Vertesaur.Core.Test
             }
 
             public Type[] GetInputTypes() {
-                return new[] {typeof(Vector2), typeof(Vector3)};
+                return new[] { typeof(Vector2), typeof(Vector3) };
             }
 
             public Type[] GetOutputTypes(Type inputType) {
-                if (inputType == typeof (Vector2))
-                    return new[] {typeof (Point2), typeof (Point3)};
-                if (inputType == typeof (Vector3))
-                    return new[] {typeof (double)};
+                if (inputType == typeof(Vector2))
+                    return new[] { typeof(Point2), typeof(Point3) };
+                if (inputType == typeof(Vector3))
+                    return new[] { typeof(double) };
                 return new Type[0];
-            }
-        }
-
-        [Test]
-        public void Simple_typed_validation_test() {
-            var txList = new ITransformation[] { new A(), new B() };
-            var cat = new ConcatenatedTransformation<double, Point2>(txList);
-            Assert.AreEqual(new Point2(1, 2), cat.TransformValue(1));
-        }
-
-        [Test]
-        public void Simple_single_validation_test() {
-            var txList = new ITransformation[] { new A() };
-            var cat = new ConcatenatedTransformation<double, Vector2>(txList);
-            Assert.AreEqual(new Vector2(2, 4), cat.TransformValue(2));
-        }
-
-        [Test]
-        public void Complex_validation_test() {
-            var txList = new ITransformation[] { new A(), new B(), new A() };
-            var cat = new ConcatenatedTransformation<double, Vector2>(txList);
-            Assert.AreEqual(new Vector2(3, 6), cat.TransformValue(2));
-        }
-
-        [Test]
-        public void generic_enumerator_test() {
-            var txList = new ITransformation[] { new A(), new B(), new A() };
-            var cat = new ConcatenatedTransformation<double, Vector2>(txList);
-            var enumerator = cat.GetEnumerator();
-            Assert.IsNotNull(enumerator);
-            while (enumerator.MoveNext()) {
-                Assert.IsNotNull(enumerator.Current);
-            }
-
-            foreach (var tx in cat) {
-                Assert.IsNotNull(tx);
             }
         }
 

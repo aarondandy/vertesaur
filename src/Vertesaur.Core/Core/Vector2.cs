@@ -305,6 +305,15 @@ namespace Vertesaur
         }
 
         /// <summary>
+        /// Creates a new vector resulting from dividing the elements by a given <paramref name="denominator"/>.
+        /// </summary>
+        /// <param name="denominator">The value to divide all elements by.</param>
+        /// <returns>A new vector with elements that are the result of division.</returns>
+        [Pure] public Vector2 GetDivided(double denominator) {
+            return new Vector2(X / denominator, Y / denominator);
+        }
+
+        /// <summary>
         /// Calculates the dot product of this vector and a vector perpendicular to the other vector.
         /// </summary>
         /// <param name="rightHandSide">A vector.</param>

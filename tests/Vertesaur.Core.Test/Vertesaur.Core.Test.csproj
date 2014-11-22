@@ -8,7 +8,7 @@
     <ProjectGuid>{3E6B5F52-D710-4E19-8989-ECD9772977E6}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Vertesaur.Core.Test</RootNamespace>
+    <RootNamespace>Vertesaur.Test</RootNamespace>
     <AssemblyName>Vertesaur.Core.Test</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -46,8 +46,11 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="nunit.framework">
-      <HintPath>..\..\packages\NUnit.2.6.1\lib\nunit.framework.dll</HintPath>
+    <Reference Include="FluentAssertions">
+      <HintPath>..\..\packages\FluentAssertions.3.2.1\lib\net40\FluentAssertions.dll</HintPath>
+    </Reference>
+    <Reference Include="FluentAssertions.Core">
+      <HintPath>..\..\packages\FluentAssertions.3.2.1\lib\net40\FluentAssertions.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -55,32 +58,38 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
+    <Reference Include="xunit">
+      <HintPath>..\..\packages\xunit.1.9.2\lib\net20\xunit.dll</HintPath>
+    </Reference>
+    <Reference Include="xunit.extensions">
+      <HintPath>..\..\packages\xunit.extensions.1.9.2\lib\net20\xunit.extensions.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConcatenatedTransformationTest.cs" />
-    <Compile Include="DynamicGraphTest.cs" />
-    <Compile Include="Line2Test.cs" />
-    <Compile Include="LineString2Test.cs" />
-    <Compile Include="Matrix2Test.cs" />
-    <Compile Include="Matrix3Test.cs" />
-    <Compile Include="Matrix4Test.cs" />
-    <Compile Include="MbrTest.cs" />
-    <Compile Include="MultiLineString2Test.cs" />
-    <Compile Include="MultiPoint2Test.cs" />
-    <Compile Include="PeriodicOperationsTest.cs" />
-    <Compile Include="Point2Test.cs" />
-    <Compile Include="Point3Test.cs" />
+    <Compile Include="ConcatenatedTransformationFacts.cs" />
+    <Compile Include="DynamicGraphFacts.cs" />
+    <Compile Include="Line2Facts.cs" />
+    <Compile Include="LineString2Facts.cs" />
+    <Compile Include="Matrix2Facts.cs" />
+    <Compile Include="Matrix3Facts.cs" />
+    <Compile Include="Matrix4Facts.cs" />
+    <Compile Include="MbrFacts.cs" />
+    <Compile Include="MultiLineString2Facts.cs" />
+    <Compile Include="MultiPoint2Facts.cs" />
+    <Compile Include="PeriodicOperationsFacts.cs" />
+    <Compile Include="Point2Facts.cs" />
+    <Compile Include="Point3Facts.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RangeTest.cs" />
-    <Compile Include="Ray2Test.cs" />
-    <Compile Include="Ring2Test.cs" />
-    <Compile Include="Segment2Test.cs" />
-    <Compile Include="SegmentIntersectionOperationTest.cs" />
-    <Compile Include="SpheroidEquatorialFTest.cs" />
-    <Compile Include="SpheroidEquatorialInvFTest.cs" />
-    <Compile Include="SpheroidEquatorialPolarTest.cs" />
-    <Compile Include="Vector2Test.cs" />
-    <Compile Include="Vector3Test.cs" />
+    <Compile Include="RangeFacts.cs" />
+    <Compile Include="Ray2Facts.cs" />
+    <Compile Include="Ring2Facts.cs" />
+    <Compile Include="Segment2Facts.cs" />
+    <Compile Include="SegmentIntersectionOperationFacts.cs" />
+    <Compile Include="SpheroidEquatorialFFacts.cs" />
+    <Compile Include="SpheroidEquatorialInvFFacts.cs" />
+    <Compile Include="SpheroidEquatorialPolarFacts.cs" />
+    <Compile Include="Vector2Facts.cs" />
+    <Compile Include="Vector3Facts.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Vertesaur.Core\Vertesaur.Core.csproj">
@@ -89,10 +98,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
-    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

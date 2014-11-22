@@ -376,6 +376,16 @@ namespace Vertesaur
         }
 
         /// <summary>
+        /// Creates a new vector resulting from dividing the elements by a given <paramref name="denominator"/>.
+        /// </summary>
+        /// <param name="denominator">The value to divide all elements by.</param>
+        /// <returns>A new vector with elements that are the result of division.</returns>
+        [Pure]
+        public Vector3 GetDivided(double denominator) {
+            return new Vector3(X / denominator, Y / denominator, Z / denominator);     
+        }
+
+        /// <summary>
         /// Determines if the vector is valid.
         /// </summary>
         [Pure] public bool IsValid {

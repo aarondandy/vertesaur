@@ -420,28 +420,46 @@ namespace Vertesaur
 
         /// <inheritdoc/>
         public bool Crosses(Mbr other) {
-            // MBR with mbr: false
-            // MBR with segment: ?
-            // MBR with point: false
-            // segment with MBR: ?
-            // segment with segment: ?
-            // segment with point: ?
-            // point with MBR: false
-            // point with segment: ?
-            // point with point: false
-            // ReSharper disable CompareOfFloatsByEqualityOperator
             if (null == other)
                 return false;
-            return (
-                (
-                    ((0 == Width) ^ (0 == Height))
-                    ||
-                    ((0 == other.Width) ^ (0 == other.Height))
-                )
-                && X.Overlaps(other.Y)
-                && Y.Overlaps(other.Y)
-            );
-            // ReSharper restore CompareOfFloatsByEqualityOperator
+
+            if (Width == 0) {
+                if (Height == 0)
+                    return false; // points don't work
+                if (other.Width == 0 || other.Height == 0)
+                    return false; // only one can be 1D
+
+                return X.Intersects(other.X)
+                    && Y.Overlaps(other.Y);
+            }
+            if (Height == 0){
+                if (Width == 0)
+                    return false; // points don't work
+                if (other.Width == 0 || other.Height == 0)
+                    return false; // only one can be 1D
+
+                return Y.Intersects(other.Y)
+                    && X.Overlaps(other.X);
+            }
+            if (other.Width == 0) {
+                if (other.Height == 0)
+                    return false; // points don't work
+                if (Width == 0 || Height == 0)
+                    return false; // only one can be 1D
+
+                return X.Intersects(other.X)
+                    && Y.Overlaps(other.Y);
+            }
+            if (other.Height == 0) {
+                if (other.Width == 0)
+                    return false; // points don't work
+                if (Width == 0 || Height == 0)
+                    return false; // only one can be 1D
+
+                return Y.Intersects(other.Y)
+                    && X.Overlaps(other.X);
+            }
+            return false;
         }
 
         /// <inheritdoc/>
@@ -510,17 +528,8 @@ namespace Vertesaur
         }
 
         /// <inheritdoc/>
-        public bool Crosses(Point2 p) {
-            // MBR with point: false
-            // segment with point: ?
-            // point with point: false
-            // ReSharper disable CompareOfFloatsByEqualityOperator
-            return (
-                ((0 == Width) ^ (0 == Height))
-                && X.Overlaps(p.Y)
-                && Y.Overlaps(p.Y)
-            );
-            // ReSharper restore CompareOfFloatsByEqualityOperator
+        bool IRelatableCrosses<Point2>.Crosses(Point2 p) {
+            return false;
         }
 
         /// <inheritdoc/>
