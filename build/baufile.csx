@@ -1,5 +1,5 @@
 // parameters
-var msBuildFileVerbosity = (BauMSBuild.Verbosity)Enum.Parse(typeof(BauMSBuild.Verbosity), Environment.GetEnvironmentVariable("MSBUILD_FILE_VERBOSITY") ?? "minimal", true);
+var msBuildFileVerbosity = (BauMSBuild.Verbosity)Enum.Parse(typeof(BauMSBuild.Verbosity), Environment.GetEnvironmentVariable("MSBUILD_FILE_VERBOSITY") ?? "quiet", true);
 var nugetVerbosity = (BauNuGet.Verbosity)Enum.Parse(typeof(BauNuGet.Verbosity), Environment.GetEnvironmentVariable("NUGET_VERBOSITY") ?? "quiet", true);
 
 // solution specific variables
@@ -35,7 +35,9 @@ bau
 
 .Task("set-release").Do(() => {buildConfigurationName = "Release";})
 
-.MSBuild("build").Do(msb =>
+.NuGet("restore").Do(nuget => nuget.Restore(solution))
+
+.MSBuild("build").DependsOn("restore").Do(msb =>
 {
     msb.MSBuildArchitecture = System.Reflection.ProcessorArchitecture.X86; // required for building ports
     msb.Solution = solution;
