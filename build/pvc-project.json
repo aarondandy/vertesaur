@@ -1,7 +1,0 @@
-{
-  "dependencies": {
-    "Pvc.Core": "0.0.1.4",
-    "Pvc.MSBuild": "0.0.1.2",
-    "Pvc.NuGet": "0.0.1.2"
-  }
-}

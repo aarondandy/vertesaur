@@ -1,4 +1,4 @@
 @echo OFF
 pushd %~dp0build
-pvc build
+scriptcs baufile.csx -- %*
 popd
