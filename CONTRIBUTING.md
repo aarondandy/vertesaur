@@ -9,6 +9,7 @@ Contributions can be made in many ways, including:
 
 While there are rules with respect to contribution they are flexible.
 If you have a problem with them just discuss it with a committer.
+Come chat in the [JabbR room](https://jabbr.net/#/rooms/Vertesaur) to discuss the project.
 
 ## Issues
 
@@ -26,7 +27,7 @@ If you are having trouble finding an issue to work on try searching the code for
 For most minor changes it is probably not worth the trouble to deal with legal issues.
 Larger contributions and those dealing with algorithms will be of concern however.
 The simplest way to keep your contribution in this project is to just license your contributions
-under the same license as the project. If you are working on behalf of an organization, hold patents or are committing crazy amounts of code something like a CLA will need to be worked out.
+under the same license as the project. If you are working on behalf of an organization, hold patents or are committing crazy amounts of code something like a CLA should be worked out.
 Don't let legal concerns prevent contributions though!
 If you have concerns get in touch with a committer and something will be worked out.
 
