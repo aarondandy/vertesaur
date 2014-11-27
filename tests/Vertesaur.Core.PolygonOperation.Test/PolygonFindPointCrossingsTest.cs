@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using NUnit.Framework;
-
-#pragma warning disable 1591
+using FluentAssertions;
+using Xunit;
+using Xunit.Extensions;
 
 namespace Vertesaur.PolygonOperation.Test
 {
@@ -11,24 +11,21 @@ namespace Vertesaur.PolygonOperation.Test
     /// <summary>
     /// Various tests to verify that the points of intersection for two polygons are correct.
     /// </summary>
-    [TestFixture]
-    public class PolygonFindPointCrossingsTest
+    public static class PolygonFindPointCrossingsTest
     {
 
-        private PolygonIntersectionOperation _intersectionOperation;
-        private PolyPairTestDataKeyedCollection _polyPairData;
+        private static readonly PolygonIntersectionOperation _intersectionOperation;
+        private static readonly PolyPairTestDataKeyedCollection _polyPairData;
 
-        public PolygonFindPointCrossingsTest() {
+        static PolygonFindPointCrossingsTest() {
             _polyPairData = PolyOperationTestUtility.GeneratePolyPairTestDataCollection();
-        }
-
-        protected IEnumerable<object> GenerateTestPolyCrossingsParameters() {
-            return _polyPairData.Where(pp => null != pp.CrossingPoints);
-        }
-
-        [SetUp]
-        public void SetUp() {
             _intersectionOperation = new PolygonIntersectionOperation();
+        }
+
+        public static IEnumerable<object[]> TestPolyCrossingsParameters {
+            get {
+                return _polyPairData.Where(pp => null != pp.CrossingPoints).Select(x => new object[]{x});
+            }
         }
 
         public static bool PointsAlmostEqual(Point2 a, Point2 b) {
@@ -38,37 +35,36 @@ namespace Vertesaur.PolygonOperation.Test
             return d.GetMagnitudeSquared() < 0.000000000000000001;
         }
 
-
-        [Test]
-        public void TestPolyPointCrossings([ValueSource("GenerateTestPolyCrossingsParameters")] PolyPairTestData testData) {
+        [Theory, PropertyData("TestPolyCrossingsParameters")]
+        public static void polygon_intersection_point_crossings(PolyPairTestData testData) {
             if (testData.Name == "Fuzzed: 3")
-                Assert.Ignore("We must test this one a different way.");
+                return; // NOTE: we must test this one a different way
 
             Console.WriteLine(testData.Name);
 
             var result = _intersectionOperation.FindPointCrossings(testData.A, testData.B);
 
-            Assert.IsNotNull(result);
+            Assert.NotNull(result);
             Console.WriteLine("{0} crossing points", result.Count);
 
             PolyOperationTestUtility.AssertSame(
                 testData.CrossingPoints.OrderBy(p => p),
                 result.Select(r => r.Point).OrderBy(p => p),
-                (x, y) => Assert.That(PointsAlmostEqual(x, y), "Points not equal."));
+                (x, y) => Assert.True(PointsAlmostEqual(x, y), "Points not equal."));
 
             result = _intersectionOperation.FindPointCrossings(testData.B, testData.A);
-            Assert.IsNotNull(result);
+            Assert.NotNull(result);
 
             PolyOperationTestUtility.AssertSame(
                 testData.CrossingPoints.OrderBy(p => p),
                 result.Select(r => r.Point).OrderBy(p => p),
-                (x, y) => Assert.That(PointsAlmostEqual(x, y), "Points not equal."));
+                (x, y) => Assert.True(PointsAlmostEqual(x, y), "Points not equal."));
         }
 
-        [Test, Explicit("for debug")]
-        public void CascadeBoxesTest() {
+        [Fact]
+        public static void cascade_boxes_example() {
             var testData = _polyPairData[RingOperationTestUtility.RingPairNameCascadeBoxes];
-            TestPolyPointCrossings(testData);
+            polygon_intersection_point_crossings(testData);
         }
 
     }

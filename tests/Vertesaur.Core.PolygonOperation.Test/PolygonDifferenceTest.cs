@@ -1,31 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
-using NUnit.Framework;
+using FluentAssertions;
+using Xunit;
+using Xunit.Extensions;
 
 namespace Vertesaur.PolygonOperation.Test
 {
-    [TestFixture]
-    public class PolygonDifferenceTest
+    public static class PolygonDifferenceTest
     {
 
-        private PolygonDifferenceOperation _differenceOperation;
-        private PolyPairTestDataKeyedCollection _polyPairData;
+        private static readonly PolygonDifferenceOperation _differenceOperation;
+        private static readonly PolyPairTestDataKeyedCollection _polyPairData;
 
-        public PolygonDifferenceTest() {
+        static PolygonDifferenceTest() {
             _polyPairData = PolyOperationTestUtility.GeneratePolyPairDifferenceTestDataCollection();
-        }
-
-        protected IEnumerable<object> GenerateTestPolyDifferenceParameters() {
-            return _polyPairData;
-        }
-
-        [SetUp]
-        public void SetUp() {
             _differenceOperation = new PolygonDifferenceOperation();
         }
 
-        public static bool PointsAlmostEqual(Point2 a, Point2 b) {
+        public static IEnumerable<object[]> TestPolyDifferenceParameters {
+            get {
+                return _polyPairData.Select(x => new object[] { x });
+            }
+        }
+
+        private static bool PointsAlmostEqual(Point2 a, Point2 b) {
             if (a == b)
                 return true;
             var d = a.Difference(b);
@@ -50,17 +50,17 @@ namespace Vertesaur.PolygonOperation.Test
             return sb.ToString();
         }
 
-        [Test]
-        public void TestPolyDifference([ValueSource("GenerateTestPolyDifferenceParameters")]PolyPairTestData testData) {
+        [Theory, PropertyData("TestPolyDifferenceParameters")]
+        public static void polygon_difference(PolyPairTestData testData) {
             Console.WriteLine(testData.Name);
 
             var result = _differenceOperation.Difference(testData.A, testData.B) as Polygon2;
             if (null != testData.R) {
-                Assert.IsNotNull(result);
-                Assert.IsTrue(testData.R.SpatiallyEqual(result), "Failed: {0} - {1} ≠ {2}", testData.A, testData.B, PolygonToString(result));
+                Assert.NotNull(result);
+                testData.R.SpatiallyEqual(result).Should().BeTrue("Failed: {0} - {1} ≠ {2}", testData.A, testData.B, PolygonToString(result));
             }
             else {
-                Assert.IsNull(result);
+                Assert.Null(result);
             }
         }
 

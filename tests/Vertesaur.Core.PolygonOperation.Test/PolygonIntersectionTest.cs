@@ -2,37 +2,31 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using NUnit.Framework;
+using FluentAssertions;
+using Xunit;
+using Xunit.Extensions;
 
 namespace Vertesaur.PolygonOperation.Test
 {
 
-    [TestFixture]
-    public class PolygonIntersectionTest
+    public static class PolygonIntersectionTest
     {
 
-        private PolygonIntersectionOperation _intersectionOperation;
-        private PolyPairTestDataKeyedCollection _polyPairData;
+        private static readonly PolygonIntersectionOperation _intersectionOperation;
+        private static readonly PolyPairTestDataKeyedCollection _polyPairData;
 
-        public PolygonIntersectionTest() {
+        static PolygonIntersectionTest() {
             _polyPairData = PolyOperationTestUtility.GeneratePolyPairIntersectionTestDataCollection();
-        }
-
-        protected IEnumerable<object> GenerateTestPolyIntersectionParameters() {
-            return _polyPairData;
-        }
-
-        [TestFixtureSetUp]
-        public void FixtureSetUp() {
-
-        }
-
-        [SetUp]
-        public void SetUp() {
             _intersectionOperation = new PolygonIntersectionOperation();
         }
 
-        public static bool PointsAlmostEqual(Point2 a, Point2 b) {
+        public static IEnumerable<object[]> TestPolyIntersectionParameters {
+            get {
+                return _polyPairData.Select(x => new object[] { x });
+            }
+        }
+
+        private static bool PointsAlmostEqual(Point2 a, Point2 b) {
             if (a == b)
                 return true;
             var d = a.Difference(b);
@@ -57,8 +51,8 @@ namespace Vertesaur.PolygonOperation.Test
             return sb.ToString();
         }
 
-        [Test]
-        public void TestPolyIntersection([ValueSource("GenerateTestPolyIntersectionParameters")]PolyPairTestData testData) {
+        [Theory, PropertyData("TestPolyIntersectionParameters")]
+        public static void polygon_intersection(PolyPairTestData testData) {
             Console.WriteLine(testData.Name);
 
             if (testData.Name == "Fuzzed: 3") {
@@ -68,35 +62,35 @@ namespace Vertesaur.PolygonOperation.Test
 
             var result = _intersectionOperation.Intersect(testData.A, testData.B) as Polygon2;
             if (null != testData.R) {
-                Assert.IsNotNull(result);
-                Assert.IsTrue(testData.R.SpatiallyEqual(result), "Forward case failed: {0} ∩ {1} ≠ {2}", testData.A, testData.B, PolygonToString(result));
+                Assert.NotNull(result);
+                testData.R.SpatiallyEqual(result).Should().BeTrue("Forward case failed: {0} ∩ {1} ≠ {2}", testData.A, testData.B, PolygonToString(result));
             }
             else {
-                Assert.IsNull(result);
+                Assert.Null(result);
             }
 
             result = _intersectionOperation.Intersect(testData.B, testData.A) as Polygon2;
             if (null != testData.R) {
-                Assert.IsNotNull(result);
+                Assert.NotNull(result);
                 if (testData.Name == "Chess 4 (2 Fills and 2 Holes)")
-                    Assert.AreEqual(testData.R.GetArea(), result.GetArea()); // TODO: pinch self intersecting polygons
+                    Assert.Equal(testData.R.GetArea(), result.GetArea()); // TODO: pinch self intersecting polygons
                 else if (testData.Name == "Chess 9 (5 Fills and 4 Holes)")
-                    Assert.AreEqual(testData.R.GetArea(), result.GetArea()); // TODO: pinch self intersecting polygons
+                    Assert.Equal(testData.R.GetArea(), result.GetArea()); // TODO: pinch self intersecting polygons
                 else
-                    Assert.IsTrue(testData.R.SpatiallyEqual(result), "Reverse case failed: {0} ∩ {1} ≠ {2}", testData.B, testData.A, PolygonToString(result));
+                    testData.R.SpatiallyEqual(result).Should().BeTrue("Reverse case failed: {0} ∩ {1} ≠ {2}", testData.B, testData.A, PolygonToString(result));
             }
             else {
-                Assert.IsNull(result);
+                Assert.Null(result);
             }
         }
 
-        public Polygon2 ReverseWinding(Polygon2 p) {
+        private static Polygon2 ReverseWinding(Polygon2 p) {
             if (null == p)
                 return null;
             return new Polygon2(p.Select(ReverseWinding));
         }
 
-        public Ring2 ReverseWinding(Ring2 r) {
+        private static Ring2 ReverseWinding(Ring2 r) {
             if (null == r)
                 return null;
             return r.Hole.HasValue
@@ -106,8 +100,8 @@ namespace Vertesaur.PolygonOperation.Test
                 : new Ring2(r.Reverse());
         }
 
-        [Test]
-        public void TestPolyReverseWindingIntersection([ValueSource("GenerateTestPolyIntersectionParameters")]PolyPairTestData testData) {
+        [Theory, PropertyData("TestPolyIntersectionParameters")]
+        public static void polygon_intersection_reverse_winding(PolyPairTestData testData) {
             Console.WriteLine(testData.Name);
 
             var a = ReverseWinding(testData.A);
@@ -121,31 +115,31 @@ namespace Vertesaur.PolygonOperation.Test
 
             var result = _intersectionOperation.Intersect(a, b) as Polygon2;
             if (null != r) {
-                Assert.IsNotNull(result);
-                Assert.IsTrue(r.SpatiallyEqual(result), "Forward case failed: {0} ∩ {1} ≠ {2}", a, b, PolygonToString(result));
+                Assert.NotNull(result);
+                r.SpatiallyEqual(result).Should().BeTrue("Forward case failed: {0} ∩ {1} ≠ {2}", a, b, PolygonToString(result));
             }
             else {
-                Assert.IsNull(result);
+                Assert.Null(result);
             }
 
             result = _intersectionOperation.Intersect(b, a) as Polygon2;
             if (null != r) {
-                Assert.IsNotNull(result);
+                Assert.NotNull(result);
 
                 if (testData.Name == "Chess 4 (2 Fills and 2 Holes)")
-                    Assert.AreEqual(r.GetArea(), result.GetArea()); // TODO: pinch self intersecting polygons
+                    Assert.Equal(r.GetArea(), result.GetArea()); // TODO: pinch self intersecting polygons
                 else if (testData.Name == "Chess 9 (5 Fills and 4 Holes)")
-                    Assert.AreEqual(r.GetArea(), result.GetArea()); // TODO: pinch self intersecting polygons
+                    Assert.Equal(r.GetArea(), result.GetArea()); // TODO: pinch self intersecting polygons
                 else
-                    Assert.IsTrue(r.SpatiallyEqual(result), "Reverse case failed: {0} ∩ {1} ≠ {2}", b, a, PolygonToString(result));
+                    r.SpatiallyEqual(result).Should().BeTrue("Reverse case failed: {0} ∩ {1} ≠ {2}", b, a, PolygonToString(result));
             }
             else {
-                Assert.IsNull(result);
+                Assert.Null(result);
             }
         }
 
-        [Test, Explicit("for debug")]
-        public void BoxAndDonutTest() {
+        [Fact]
+        public static void can_perform_box_and_donut_intersection_without_exception() {
             var donut = new Polygon2 {
 				// outer boundary
 				new Ring2(
@@ -171,11 +165,10 @@ namespace Vertesaur.PolygonOperation.Test
 
             var intersectionOperation = new PolygonIntersectionOperation();
             var result = intersectionOperation.Intersect(box, donut);
-            Assert.Inconclusive();
         }
 
-        [Test]
-        public void CascadeBoxesTest() {
+        [Fact]
+        public static void cascade_boxes() {
             var data = _polyPairData["Cascade Boxes"];
             var intersectionOperation = new PolygonIntersectionOperation();
 
@@ -184,15 +177,14 @@ namespace Vertesaur.PolygonOperation.Test
             var r = data.R;
 
             var result = intersectionOperation.Intersect(a, b) as Polygon2;
-            Assert.IsTrue(result.SpatiallyEqual(r));
+            Assert.True(result.SpatiallyEqual(r));
 
             result = intersectionOperation.Intersect(b, a) as Polygon2;
-            Assert.IsTrue(result.SpatiallyEqual(r));
-
+            Assert.True(result.SpatiallyEqual(r));
         }
 
-        [Test]
-        public void ReverseCascadeBoxesTest() {
+        [Fact]
+        public static void cascade_boxes_reverse() {
             var data = _polyPairData["Cascade Boxes"];
             var intersectionOperation = new PolygonIntersectionOperation();
 
@@ -201,15 +193,15 @@ namespace Vertesaur.PolygonOperation.Test
             var r = ReverseWinding(data.R);
 
             var result = intersectionOperation.Intersect(a, b) as Polygon2;
-            Assert.IsTrue(result.SpatiallyEqual(r));
+            Assert.True(result.SpatiallyEqual(r));
 
             result = intersectionOperation.Intersect(b, a) as Polygon2;
-            Assert.IsTrue(result.SpatiallyEqual(r));
+            Assert.True(result.SpatiallyEqual(r));
 
         }
 
-        [Test]
-        public void UnderLedgeTest() {
+        [Fact]
+        public static void under_ledge() {
             var data = _polyPairData["Under Ledge"];
             var intersectionOperation = new PolygonIntersectionOperation();
 
@@ -217,17 +209,17 @@ namespace Vertesaur.PolygonOperation.Test
             var b = data.B;
             var r = data.R;
 
-            Assert.IsNull(r);
+            Assert.Null(r);
 
             var result = intersectionOperation.Intersect(a, b) as Polygon2;
-            Assert.IsNull(result);
+            Assert.Null(result);
 
             result = intersectionOperation.Intersect(b, a) as Polygon2;
-            Assert.IsNull(result);
+            Assert.Null(result);
         }
 
-        [Test]
-        public void ReverseSixTriangleHolesTest() {
+        [Fact]
+        public static void six_triangle_holes_reverse() {
             var data = _polyPairData["Six Triangle Holes"];
             var intersectionOperation = new PolygonIntersectionOperation();
 
@@ -236,32 +228,15 @@ namespace Vertesaur.PolygonOperation.Test
             var r = ReverseWinding(data.R);
 
             var result = intersectionOperation.Intersect(a, b) as Polygon2;
-            Assert.IsTrue(result.SpatiallyEqual(r));
+            Assert.True(result.SpatiallyEqual(r));
 
             result = intersectionOperation.Intersect(b, a) as Polygon2;
-            Assert.IsTrue(result.SpatiallyEqual(r));
+            Assert.True(result.SpatiallyEqual(r));
 
         }
 
-        [Test, Explicit("for debug")]
-        public void ReverseSixTriangleFillsHolesTest() {
-            var data = _polyPairData["Six Triangle Fills and Holes"];
-            var intersectionOperation = new PolygonIntersectionOperation();
-
-            var a = ReverseWinding(data.A);
-            var b = ReverseWinding(data.B);
-            var r = ReverseWinding(data.R);
-
-            var result = intersectionOperation.Intersect(a, b) as Polygon2;
-            Assert.IsTrue(result.SpatiallyEqual(r));
-
-            result = intersectionOperation.Intersect(b, a) as Polygon2;
-            Assert.IsTrue(result.SpatiallyEqual(r));
-
-        }
-
-        [Test]
-        public void ReverseTwoStackedBoxesTest() {
+        [Fact]
+        public static void two_stacked_boxes_reverse() {
             var data = _polyPairData["Two Stacked Boxes"];
             var intersectionOperation = new PolygonIntersectionOperation();
 
@@ -270,15 +245,15 @@ namespace Vertesaur.PolygonOperation.Test
             var r = ReverseWinding(data.R);
 
             var result = intersectionOperation.Intersect(a, b) as Polygon2;
-            Assert.IsNull(result);
+            Assert.Null(result);
 
             result = intersectionOperation.Intersect(b, a) as Polygon2;
-            Assert.IsNull(result);
+            Assert.Null(result);
 
         }
 
-        [Test]
-        public void ReverseZThingInBoxTest() {
+        [Fact]
+        public static void reverse_zThing_in_box() {
             var data = _polyPairData["Z-Thing in a Box"];
             var intersectionOperation = new PolygonIntersectionOperation();
 
@@ -287,269 +262,237 @@ namespace Vertesaur.PolygonOperation.Test
             var r = ReverseWinding(data.R);
 
             var result = intersectionOperation.Intersect(a, b) as Polygon2;
-            Assert.IsTrue(result.SpatiallyEqual(r));
+            Assert.True(result.SpatiallyEqual(r));
 
             result = intersectionOperation.Intersect(b, a) as Polygon2;
-            Assert.IsTrue(result.SpatiallyEqual(r));
+            Assert.True(result.SpatiallyEqual(r));
         }
 
-        [Test]
-        public void TriangleInBoxSideTouchTest() {
+        [Fact]
+        public static void triangle_in_box_side_touch() {
             var data = _polyPairData["Triangle In Box: side touch"];
             var intersectionOperation = new PolygonIntersectionOperation();
 
             var result = intersectionOperation.Intersect(data.A, data.B) as Polygon2;
-            Assert.IsTrue(result.SpatiallyEqual(data.R));
+            Assert.True(result.SpatiallyEqual(data.R));
 
             result = intersectionOperation.Intersect(data.B, data.A) as Polygon2;
-            Assert.IsTrue(result.SpatiallyEqual(data.R));
+            Assert.True(result.SpatiallyEqual(data.R));
 
         }
 
-        [Test]
-        public void TwoStackedBoxesTest() {
+        [Fact]
+        public static void two_stacked_boxes() {
             var data = _polyPairData["Two Stacked Boxes"];
             var intersectionOperation = new PolygonIntersectionOperation();
 
             var result = intersectionOperation.Intersect(data.A, data.B) as Polygon2;
-            Assert.IsNull(result);
+            Assert.Null(result);
 
             result = intersectionOperation.Intersect(data.B, data.A) as Polygon2;
-            Assert.IsNull(result);
+            Assert.Null(result);
 
         }
 
-        [Test]
-        public void SameBoxesTest() {
+        [Fact]
+        public static void same_boxes() {
             var data = _polyPairData["Same Boxes"];
             var intersectionOperation = new PolygonIntersectionOperation();
 
             var result = intersectionOperation.Intersect(data.A, data.B) as Polygon2;
-            Assert.IsTrue(result.SpatiallyEqual(data.R));
+            Assert.True(result.SpatiallyEqual(data.R));
 
             result = intersectionOperation.Intersect(data.B, data.A) as Polygon2;
-            Assert.IsTrue(result.SpatiallyEqual(data.R));
+            Assert.True(result.SpatiallyEqual(data.R));
 
         }
 
-        [Test]
-        public void NestedFillWithinAnotherTest() {
+        [Fact]
+        public static void nested_fill_within_another() {
             var data = _polyPairData["Nested: fill within another, not touching"];
             var intersectionOperation = new PolygonIntersectionOperation();
 
             var result = intersectionOperation.Intersect(data.A, data.B) as Polygon2;
-            Assert.IsTrue(result.SpatiallyEqual(data.R));
+            Assert.True(result.SpatiallyEqual(data.R));
 
             result = intersectionOperation.Intersect(data.B, data.A) as Polygon2;
-            Assert.IsTrue(result.SpatiallyEqual(data.R));
+            Assert.True(result.SpatiallyEqual(data.R));
 
         }
 
-        [Test]
-        public void HoleInHoleNoIntersectionTest() {
+        [Fact]
+        public static void hole_in_hole_no_intersection() {
             var data = _polyPairData["Nested: hole within a hole, not touching"];
             var intersectionOperation = new PolygonIntersectionOperation();
 
             var result = intersectionOperation.Intersect(data.A, data.B) as Polygon2;
-            Assert.IsTrue(result.SpatiallyEqual(data.R));
+            Assert.True(result.SpatiallyEqual(data.R));
 
             result = intersectionOperation.Intersect(data.B, data.A) as Polygon2;
-            Assert.IsTrue(result.SpatiallyEqual(data.R));
+            Assert.True(result.SpatiallyEqual(data.R));
 
         }
 
-        [Test]
-        public void DiamondInDoubleDiamondTouchingSidesTest() {
+        [Fact]
+        public static void diamond_in_double_diamond_touching_sides() {
             var data = _polyPairData["Diamond in Double Diamond: touching sides"];
             var intersectionOperation = new PolygonIntersectionOperation();
 
             var result = intersectionOperation.Intersect(data.A, data.B) as Polygon2;
-            Assert.IsTrue(result.SpatiallyEqual(data.R));
+            Assert.True(result.SpatiallyEqual(data.R));
 
             result = intersectionOperation.Intersect(data.B, data.A) as Polygon2;
-            Assert.IsTrue(result.SpatiallyEqual(data.R));
+            Assert.True(result.SpatiallyEqual(data.R));
 
         }
 
-        [Test]
-        public void ZigZagThingHolesTest() {
+        [Fact]
+        public static void zig_zag_thing_holes() {
             var data = _polyPairData["Zig-zag Thing: holes"];
             var intersectionOperation = new PolygonIntersectionOperation();
 
             var result = intersectionOperation.Intersect(data.A, data.B) as Polygon2;
-            Assert.IsTrue(result.SpatiallyEqual(data.R));
+            Assert.True(result.SpatiallyEqual(data.R));
 
             result = intersectionOperation.Intersect(data.B, data.A) as Polygon2;
-            Assert.IsTrue(result.SpatiallyEqual(data.R));
+            Assert.True(result.SpatiallyEqual(data.R));
 
         }
 
-        [Test]
-        public void CascadeFillHoleTest() {
+        [Fact]
+        public static void cascade_fill_hole() {
             var data = _polyPairData["Cascade Boxes: fill and a hole"];
             var intersectionOperation = new PolygonIntersectionOperation();
 
             var result = intersectionOperation.Intersect(data.A, data.B) as Polygon2;
-            Assert.IsTrue(result.SpatiallyEqual(data.R));
+            Assert.True(result.SpatiallyEqual(data.R));
 
             result = intersectionOperation.Intersect(data.B, data.A) as Polygon2;
-            Assert.IsTrue(result.SpatiallyEqual(data.R));
+            Assert.True(result.SpatiallyEqual(data.R));
 
         }
 
-        [Test]
-        public void Fuzzed3Test() {
+        [Fact]
+        public static void fuzzed_3() {
             var data = _polyPairData["Fuzzed: 3"];
             var intersectionOperation = new PolygonIntersectionOperation();
+
             var result = intersectionOperation.Intersect(data.A, data.B) as Polygon2;
-            Assert.IsNotNull(result);
-            Assert.IsTrue(result
+            Assert.NotNull(result);
+            Assert.True(result
                 .SelectMany(r => r)
                 .Select(p => data.R.DistanceSquared(p))
                 .All(d => d < 0.000000000000000001)
             );
+
             var result2 = intersectionOperation.Intersect(data.B, data.A) as Polygon2;
-            Assert.IsNotNull(result2);
-            Assert.IsTrue(result2
+            Assert.NotNull(result2);
+            Assert.True(result2
                 .SelectMany(r => r)
                 .Select(p => data.R.DistanceSquared(p))
                 .All(d => d < 0.000000000000000001)
             );
         }
 
-        [Test]
-        public void ZThingInBoxTest() {
+        [Fact]
+        public static void zThing_in_box() {
             var data = _polyPairData["Z-Thing in a Box"];
             var intersectionOperation = new PolygonIntersectionOperation();
+
             var result = intersectionOperation.Intersect(data.A, data.B) as Polygon2;
-            Assert.IsTrue(result.SpatiallyEqual(data.R));
+            Assert.True(result.SpatiallyEqual(data.R));
+
             result = intersectionOperation.Intersect(data.B, data.A) as Polygon2;
-            Assert.IsTrue(result.SpatiallyEqual(data.R));
+            Assert.True(result.SpatiallyEqual(data.R));
         }
 
-        [Test]
-        public void BoxesOverlappingTopHalfHoles() {
+        [Fact]
+        public static void boxes_overlapping_top_half_holes() {
             var sourceData = _polyPairData["Boxes Overlapping: top half"];
             var inverseA = new Polygon2(sourceData.A[0].Reverse(), true);
             var inverseB = new Polygon2(sourceData.B[0].Reverse(), true);
             var expectedResult = inverseA;
             var result = _intersectionOperation.Intersect(inverseA, inverseB) as Polygon2;
-            Assert.IsTrue(result.SpatiallyEqual(expectedResult));
+            Assert.True(result.SpatiallyEqual(expectedResult));
 
-            //result = _intersectionOperation.Intersect(inverseB, inverseA) as Polygon2;
-            //Assert.IsTrue(result.SpatiallyEqual(expectedResult));
+            result = _intersectionOperation.Intersect(inverseB, inverseA) as Polygon2;
+            Assert.True(result.SpatiallyEqual(expectedResult));
         }
 
-        [Test, Explicit("for debug")]
-        public void Chess4HoleTest() {
+        [Fact]
+        public static void chess_four_hole() {
             var data = _polyPairData["Chess 4 Holes"];
             var intersectionOperation = new PolygonIntersectionOperation();
 
             var result = intersectionOperation.Intersect(data.A, data.B) as Polygon2;
-            Assert.IsTrue(result.SpatiallyEqual(data.R));
+            Assert.True(result.SpatiallyEqual(data.R));
 
             result = intersectionOperation.Intersect(data.B, data.A) as Polygon2;
-            Assert.IsTrue(result.SpatiallyEqual(data.R));
-
+            Assert.True(result.SpatiallyEqual(data.R));
         }
 
-        [Test, Explicit("for debug")]
-        public void Chess9HoleTest() {
+        [Fact]
+        public static void chess_nine_hole() {
             var data = _polyPairData["Chess 9 Holes"];
             var intersectionOperation = new PolygonIntersectionOperation();
 
             var result = intersectionOperation.Intersect(data.A, data.B) as Polygon2;
-            Assert.IsTrue(result.SpatiallyEqual(data.R));
+            Assert.True(result.SpatiallyEqual(data.R));
 
             result = intersectionOperation.Intersect(data.B, data.A) as Polygon2;
-            Assert.IsTrue(result.SpatiallyEqual(data.R));
-
+            Assert.True(result.SpatiallyEqual(data.R));
         }
 
-        [Test, Explicit("for debug")]
-        public void Chess4FillHolesTest() {
+        [Fact]
+        public static void chess_four_fill_holes() {
             var data = _polyPairData["Chess 4 (2 Fills and 2 Holes)"];
             var intersectionOperation = new PolygonIntersectionOperation();
             Polygon2 result;
 
             result = intersectionOperation.Intersect(data.A, data.B) as Polygon2;
-            Assert.IsTrue(result.SpatiallyEqual(data.R), "Forward Result:\n {0}", PolygonToString(result));
+            result.SpatiallyEqual(data.R).Should().BeTrue("Forward Result:\n {0}", PolygonToString(result));
 
             result = intersectionOperation.Intersect(data.B, data.A) as Polygon2;
-            Assert.IsTrue(result.SpatiallyEqual(data.R), "Reverse Result:\n {0}", PolygonToString(result));
-
+            result.SpatiallyEqual(data.R).Should().BeTrue("Reverse Result:\n {0}", PolygonToString(result));
         }
 
-        [Test, Explicit("for debug")]
-        public void Chess9FillHolesTest() {
+        [Fact]
+        public static void chess_nine_fill_holes() {
             var data = _polyPairData["Chess 9 (5 Fills and 4 Holes)"];
             var intersectionOperation = new PolygonIntersectionOperation();
             Polygon2 result;
 
             result = intersectionOperation.Intersect(data.A, data.B) as Polygon2;
-            Assert.IsTrue(result.SpatiallyEqual(data.R), "Forward Result:\n {0}", PolygonToString(result));
+            result.SpatiallyEqual(data.R).Should().BeTrue("Forward Result:\n {0}", PolygonToString(result));
 
             result = intersectionOperation.Intersect(data.B, data.A) as Polygon2;
-            Assert.IsTrue(result.SpatiallyEqual(data.R), "Reverse Result:\n {0}", PolygonToString(result));
-
+            result.SpatiallyEqual(data.R).Should().BeTrue("Reverse Result:\n {0}", PolygonToString(result));
         }
 
-        [Test, Explicit("for debug")]
-        public void ThreePartTrigFillHoleTest() {
-            var data = _polyPairData["Three Part Triangle Fill Hole"];
-            var intersectionOperation = new PolygonIntersectionOperation();
-            Polygon2 result;
-
-            result = intersectionOperation.Intersect(data.A, data.B) as Polygon2;
-            Assert.IsTrue(result.SpatiallyEqual(data.R), "Forward Result:\n {0}", PolygonToString(result));
-
-            result = intersectionOperation.Intersect(data.B, data.A) as Polygon2;
-            Assert.IsTrue(result.SpatiallyEqual(data.R), "Reverse Result:\n {0}", PolygonToString(result));
-
-        }
-
-        [Test, Explicit("for debug")]
-        public void ThreePartTrigHolesTest() {
+        [Fact]
+        public static void three_part_trig_holes() {
             var data = _polyPairData["Three Part Triangle Holes"];
             var intersectionOperation = new PolygonIntersectionOperation();
             Polygon2 result;
 
             result = intersectionOperation.Intersect(data.A, data.B) as Polygon2;
-            Assert.IsTrue(result.SpatiallyEqual(data.R), "Forward Result:\n {0}", PolygonToString(result));
+            result.SpatiallyEqual(data.R).Should().BeTrue("Forward Result:\n {0}", PolygonToString(result));
 
             result = intersectionOperation.Intersect(data.B, data.A) as Polygon2;
-            Assert.IsTrue(result.SpatiallyEqual(data.R), "Reverse Result:\n {0}", PolygonToString(result));
-
+            result.SpatiallyEqual(data.R).Should().BeTrue("Reverse Result:\n {0}", PolygonToString(result));
         }
 
-        [Test, Explicit("for debug")]
-        public void EightTriangleFillsAndHolesTest() {
-            var data = _polyPairData["Eight Triangle Fills and Holes"];
-            var intersectionOperation = new PolygonIntersectionOperation();
-            Polygon2 result;
-
-            result = intersectionOperation.Intersect(data.A, data.B) as Polygon2;
-            Assert.IsTrue(result.SpatiallyEqual(data.R), "Forward Result:\n {0}", PolygonToString(result));
-
-            result = intersectionOperation.Intersect(data.B, data.A) as Polygon2;
-            Assert.IsTrue(result.SpatiallyEqual(data.R), "Reverse Result:\n {0}", PolygonToString(result));
-
-        }
-
-        [Test, Explicit("for debug")]
-        public void SixTriangleHolesTest() {
+        [Fact]
+        public static void six_triangle_holes() {
             var data = _polyPairData["Six Triangle Holes"];
             var intersectionOperation = new PolygonIntersectionOperation();
             Polygon2 result;
 
             result = intersectionOperation.Intersect(data.A, data.B) as Polygon2;
-            Assert.IsTrue(result.SpatiallyEqual(data.R), "Forward Result:\n {0}", PolygonToString(result));
+            result.SpatiallyEqual(data.R).Should().BeTrue("Forward Result:\n {0}", PolygonToString(result));
 
             result = intersectionOperation.Intersect(data.B, data.A) as Polygon2;
-            Assert.IsTrue(result.SpatiallyEqual(data.R), "Reverse Result:\n {0}", PolygonToString(result));
-
+            result.SpatiallyEqual(data.R).Should().BeTrue("Reverse Result:\n {0}", PolygonToString(result));
         }
-
-
     }
 }
