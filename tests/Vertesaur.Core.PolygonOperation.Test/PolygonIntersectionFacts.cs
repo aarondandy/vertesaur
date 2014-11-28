@@ -444,32 +444,6 @@ namespace Vertesaur.PolygonOperation.Test
         }
 
         [Fact]
-        public static void chess_four_fill_holes() {
-            var data = _polyPairData["Chess 4 (2 Fills and 2 Holes)"];
-            var intersectionOperation = new PolygonIntersectionOperation();
-            Polygon2 result;
-
-            result = intersectionOperation.Intersect(data.A, data.B) as Polygon2;
-            result.SpatiallyEqual(data.R).Should().BeTrue("Forward Result:\n {0}", PolygonToString(result));
-
-            result = intersectionOperation.Intersect(data.B, data.A) as Polygon2;
-            result.SpatiallyEqual(data.R).Should().BeTrue("Reverse Result:\n {0}", PolygonToString(result));
-        }
-
-        [Fact]
-        public static void chess_nine_fill_holes() {
-            var data = _polyPairData["Chess 9 (5 Fills and 4 Holes)"];
-            var intersectionOperation = new PolygonIntersectionOperation();
-            Polygon2 result;
-
-            result = intersectionOperation.Intersect(data.A, data.B) as Polygon2;
-            result.SpatiallyEqual(data.R).Should().BeTrue("Forward Result:\n {0}", PolygonToString(result));
-
-            result = intersectionOperation.Intersect(data.B, data.A) as Polygon2;
-            result.SpatiallyEqual(data.R).Should().BeTrue("Reverse Result:\n {0}", PolygonToString(result));
-        }
-
-        [Fact]
         public static void three_part_trig_holes() {
             var data = _polyPairData["Three Part Triangle Holes"];
             var intersectionOperation = new PolygonIntersectionOperation();
@@ -494,5 +468,32 @@ namespace Vertesaur.PolygonOperation.Test
             result = intersectionOperation.Intersect(data.B, data.A) as Polygon2;
             result.SpatiallyEqual(data.R).Should().BeTrue("Reverse Result:\n {0}", PolygonToString(result));
         }
+
+        [Fact(Skip="requires pinching self intersecting rings gh#1")]
+        public static void chess_four_fill_holes() {
+            var data = _polyPairData["Chess 4 (2 Fills and 2 Holes)"];
+            var intersectionOperation = new PolygonIntersectionOperation();
+            Polygon2 result;
+
+            result = intersectionOperation.Intersect(data.A, data.B) as Polygon2;
+            result.SpatiallyEqual(data.R).Should().BeTrue("Forward Result:\n {0}", PolygonToString(result));
+
+            result = intersectionOperation.Intersect(data.B, data.A) as Polygon2;
+            result.SpatiallyEqual(data.R).Should().BeTrue("Reverse Result:\n {0}", PolygonToString(result));
+        }
+
+        [Fact(Skip = "requires pinching self intersecting rings gh#1")]
+        public static void chess_nine_fill_holes() {
+            var data = _polyPairData["Chess 9 (5 Fills and 4 Holes)"];
+            var intersectionOperation = new PolygonIntersectionOperation();
+            Polygon2 result;
+
+            result = intersectionOperation.Intersect(data.A, data.B) as Polygon2;
+            result.SpatiallyEqual(data.R).Should().BeTrue("Forward Result:\n {0}", PolygonToString(result));
+
+            result = intersectionOperation.Intersect(data.B, data.A) as Polygon2;
+            result.SpatiallyEqual(data.R).Should().BeTrue("Reverse Result:\n {0}", PolygonToString(result));
+        }
+
     }
 }
