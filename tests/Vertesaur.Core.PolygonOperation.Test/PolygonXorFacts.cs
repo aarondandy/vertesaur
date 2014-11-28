@@ -1,31 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
-using NUnit.Framework;
+using FluentAssertions;
+using Xunit;
+using Xunit.Extensions;
 
 namespace Vertesaur.PolygonOperation.Test
 {
-    [TestFixture]
-    public class PolygonXorTest
+    public static class PolygonXorFacts
     {
 
-        private PolygonXorOperation _xorOperation;
-        private PolyPairTestDataKeyedCollection _polyPairData;
+        private static readonly PolygonXorOperation _xorOperation;
+        private static readonly PolyPairTestDataKeyedCollection _polyPairData;
 
-        public PolygonXorTest() {
+        static PolygonXorFacts() {
             _polyPairData = PolyOperationTestUtility.GeneratePolyPairXorTestDataCollection();
-        }
-
-        protected IEnumerable<object> GenerateTestPolyXorParameters() {
-            return _polyPairData;
-        }
-
-        [SetUp]
-        public void SetUp() {
             _xorOperation = new PolygonXorOperation();
         }
 
-        public static bool PointsAlmostEqual(Point2 a, Point2 b) {
+        public static IEnumerable<object[]> TestPolyXorParameters {
+            get {
+                return _polyPairData.Select(x => new object[] { x });
+            }
+        }
+
+        private static bool PointsAlmostEqual(Point2 a, Point2 b) {
             if (a == b)
                 return true;
             var d = a.Difference(b);
@@ -50,8 +50,8 @@ namespace Vertesaur.PolygonOperation.Test
             return sb.ToString();
         }
 
-        [Test]
-        public void TestPolyIntersection([ValueSource("GenerateTestPolyXorParameters")]PolyPairTestData testData) {
+        [Theory, PropertyData("TestPolyXorParameters")]
+        public static void polygon_xor(PolyPairTestData testData) {
             Console.WriteLine(testData.Name);
 
             if (testData.Name == "Fuzzed: 3") {
@@ -61,20 +61,20 @@ namespace Vertesaur.PolygonOperation.Test
 
             var result = _xorOperation.Xor(testData.A, testData.B) as Polygon2;
             if (null != testData.R) {
-                Assert.IsNotNull(result);
-                Assert.IsTrue(testData.R.SpatiallyEqual(result), "Forward case failed: {0} ∩ {1} ≠ {2}", testData.A, testData.B, PolygonToString(result));
+                Assert.NotNull(result);
+                testData.R.SpatiallyEqual(result).Should().BeTrue("Forward case failed: {0} ∩ {1} ≠ {2}", testData.A, testData.B, PolygonToString(result));
             }
             else {
-                Assert.IsNull(result);
+                Assert.Null(result);
             }
 
             result = _xorOperation.Xor(testData.B, testData.A) as Polygon2;
             if (null != testData.R) {
-                Assert.IsNotNull(result);
-                Assert.IsTrue(testData.R.SpatiallyEqual(result), "Reverse case failed: {0} ∩ {1} ≠ {2}", testData.B, testData.A, PolygonToString(result));
+                Assert.NotNull(result);
+                testData.R.SpatiallyEqual(result).Should().BeTrue("Reverse case failed: {0} ∩ {1} ≠ {2}", testData.B, testData.A, PolygonToString(result));
             }
             else {
-                Assert.IsNull(result);
+                Assert.Null(result);
             }
         }
 

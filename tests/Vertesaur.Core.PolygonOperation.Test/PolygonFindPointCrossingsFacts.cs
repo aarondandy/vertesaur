@@ -11,13 +11,13 @@ namespace Vertesaur.PolygonOperation.Test
     /// <summary>
     /// Various tests to verify that the points of intersection for two polygons are correct.
     /// </summary>
-    public static class PolygonFindPointCrossingsTest
+    public static class PolygonFindPointCrossingsFacts
     {
 
         private static readonly PolygonIntersectionOperation _intersectionOperation;
         private static readonly PolyPairTestDataKeyedCollection _polyPairData;
 
-        static PolygonFindPointCrossingsTest() {
+        static PolygonFindPointCrossingsFacts() {
             _polyPairData = PolyOperationTestUtility.GeneratePolyPairTestDataCollection();
             _intersectionOperation = new PolygonIntersectionOperation();
         }
@@ -47,7 +47,7 @@ namespace Vertesaur.PolygonOperation.Test
             Assert.NotNull(result);
             Console.WriteLine("{0} crossing points", result.Count);
 
-            PolyOperationTestUtility.AssertSame(
+            PolyOperationTestUtility.AssertEqual(
                 testData.CrossingPoints.OrderBy(p => p),
                 result.Select(r => r.Point).OrderBy(p => p),
                 (x, y) => Assert.True(PointsAlmostEqual(x, y), "Points not equal."));
@@ -55,7 +55,7 @@ namespace Vertesaur.PolygonOperation.Test
             result = _intersectionOperation.FindPointCrossings(testData.B, testData.A);
             Assert.NotNull(result);
 
-            PolyOperationTestUtility.AssertSame(
+            PolyOperationTestUtility.AssertEqual(
                 testData.CrossingPoints.OrderBy(p => p),
                 result.Select(r => r.Point).OrderBy(p => p),
                 (x, y) => Assert.True(PointsAlmostEqual(x, y), "Points not equal."));

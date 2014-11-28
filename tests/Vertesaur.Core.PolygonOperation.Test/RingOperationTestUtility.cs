@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-#pragma warning disable 1591
-
 namespace Vertesaur.PolygonOperation.Test
 {
 
@@ -657,5 +655,3 @@ namespace Vertesaur.PolygonOperation.Test
 
     }
 }
-
-#pragma warning restore 1591

@@ -1,33 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
-using NUnit.Framework;
+using FluentAssertions;
+using Xunit;
+using Xunit.Extensions;
 
 namespace Vertesaur.PolygonOperation.Test
 {
-    [TestFixture]
-    public class PolygonUnionTest
+    public static class PolygonUnionFacts
     {
 
-        private PolygonUnionOperation _unionOperation;
-        private PolyPairTestDataKeyedCollection _polyPairData;
+        private static readonly PolygonUnionOperation _unionOperation;
+        private static readonly PolyPairTestDataKeyedCollection _polyPairData;
 
-        public PolygonUnionTest() {
+        static PolygonUnionFacts() {
             _polyPairData = PolyOperationTestUtility.GeneratePolyPairUnionTestDataCollection();
-        }
-
-        protected IEnumerable<object> GenerateTestPolyUnionParameters() {
-            return _polyPairData;
-        }
-
-        [TestFixtureSetUp]
-        public void FixtureSetUp() {
-
-        }
-
-        [SetUp]
-        public void SetUp() {
             _unionOperation = new PolygonUnionOperation();
+        }
+
+        public static IEnumerable<object> TestPolyUnionParameters {
+            get {
+                return _polyPairData.Select(x => new object[] { x });
+            }
         }
 
         public static bool PointsAlmostEqual(Point2 a, Point2 b) {
@@ -55,45 +50,45 @@ namespace Vertesaur.PolygonOperation.Test
             return sb.ToString();
         }
 
-        [Test]
-        public void TestPolyUnion([ValueSource("GenerateTestPolyUnionParameters")]PolyPairTestData testData) {
+        [Theory, PropertyData("TestPolyUnionParameters")]
+        public static void polygon_union(PolyPairTestData testData) {
             Console.WriteLine(testData.Name);
 
             if (testData.Name == "Nested: hole within a fill, not touching") {
-                Assert.Ignore("infinite spaaaaaaaace");
+                return; // infinite spaaaaaaaace
             }
 
             var result = _unionOperation.Union(testData.A, testData.B) as Polygon2;
             if (null != testData.R) {
-                Assert.IsNotNull(result);
-                Assert.IsTrue(testData.R.SpatiallyEqual(result), "Forward case failed: {0} u {1} ≠ {2}", testData.A, testData.B, PolygonToString(result));
+                Assert.NotNull(result);
+                testData.R.SpatiallyEqual(result).Should().BeTrue("Forward case failed: {0} u {1} ≠ {2}", testData.A, testData.B, PolygonToString(result));
             }
             else {
-                Assert.IsNull(result);
+                Assert.Null(result);
             }
 
             result = _unionOperation.Union(testData.B, testData.A) as Polygon2;
             if (null != testData.R) {
-                Assert.IsNotNull(result);
-                Assert.IsTrue(testData.R.SpatiallyEqual(result), "Reverse case failed: {0} u {1} ≠ {2}", testData.B, testData.A, PolygonToString(result));
+                Assert.NotNull(result);
+                testData.R.SpatiallyEqual(result).Should().BeTrue("Reverse case failed: {0} u {1} ≠ {2}", testData.B, testData.A, PolygonToString(result));
             }
             else {
-                Assert.IsNull(result);
+                Assert.Null(result);
             }
         }
 
-        [Test]
-        public void ZigZagThing() {
+        [Fact]
+        public static void zig_zag_thing() {
             var data = _polyPairData["Zig-zag Thing"];
             var unionOperation = new PolygonUnionOperation();
 
             var result = unionOperation.Union(data.A, data.B) as Polygon2;
-            Assert.IsNotNull(result);
-            Assert.IsTrue(result.SpatiallyEqual(data.R));
+            Assert.NotNull(result);
+            Assert.True(result.SpatiallyEqual(data.R));
 
             result = unionOperation.Union(data.B, data.A) as Polygon2;
-            Assert.IsNotNull(result);
-            Assert.IsTrue(result.SpatiallyEqual(data.R));
+            Assert.NotNull(result);
+            Assert.True(result.SpatiallyEqual(data.R));
         }
 
     }

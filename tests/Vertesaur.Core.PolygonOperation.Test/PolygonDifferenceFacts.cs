@@ -8,13 +8,13 @@ using Xunit.Extensions;
 
 namespace Vertesaur.PolygonOperation.Test
 {
-    public static class PolygonDifferenceTest
+    public static class PolygonDifferenceFacts
     {
 
         private static readonly PolygonDifferenceOperation _differenceOperation;
         private static readonly PolyPairTestDataKeyedCollection _polyPairData;
 
-        static PolygonDifferenceTest() {
+        static PolygonDifferenceFacts() {
             _polyPairData = PolyOperationTestUtility.GeneratePolyPairDifferenceTestDataCollection();
             _differenceOperation = new PolygonDifferenceOperation();
         }

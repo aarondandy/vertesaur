@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using NUnit.Framework;
-
-// ReSharper disable RedundantCommaInArrayInitializer
+using FluentAssertions;
+using Xunit;
+using Xunit.Extensions;
 
 namespace Vertesaur.PolygonOperation.Test
 {
@@ -15,10 +15,10 @@ namespace Vertesaur.PolygonOperation.Test
     public static class PolyOperationTestUtility
     {
 
-        public static void AssertSame<T>(IEnumerable<T> expected, IEnumerable<T> actual, Action<T, T> assertEquals) {
+        public static void AssertEqual<T>(IEnumerable<T> expected, IEnumerable<T> actual, Action<T, T> assertEquals) {
             if (ReferenceEquals(expected, actual)) return;
-            Assert.IsNotNull(expected);
-            Assert.IsNotNull(actual);
+            Assert.NotNull(expected);
+            Assert.NotNull(actual);
 
             using (var expectedEnumerator = expected.GetEnumerator())
             using (var actualEnumerator = actual.GetEnumerator()) {
@@ -26,13 +26,8 @@ namespace Vertesaur.PolygonOperation.Test
                 do {
                     expectedMoved = expectedEnumerator.MoveNext();
                     actualMoved = actualEnumerator.MoveNext();
-                    Assert.AreEqual(
-                        expectedMoved,
-                        actualMoved,
-                        "Element count mismatch.");
-
+                    actualMoved.Should().Be(actualMoved, "Element count mismatch.");
                     assertEquals(expectedEnumerator.Current, actualEnumerator.Current);
-
                 } while (expectedMoved && actualMoved);
             }
 
@@ -1302,7 +1297,5 @@ namespace Vertesaur.PolygonOperation.Test
             );
         }
 
-
     }
-
 }

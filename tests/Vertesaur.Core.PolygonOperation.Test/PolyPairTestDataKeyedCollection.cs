@@ -8,7 +8,6 @@ namespace Vertesaur.PolygonOperation.Test
     /// </summary>
     public class PolyPairTestDataKeyedCollection : KeyedCollection<string, PolyPairTestData>
     {
-
         /// <summary>
         /// Default constructor of an empty collection.
         /// </summary>

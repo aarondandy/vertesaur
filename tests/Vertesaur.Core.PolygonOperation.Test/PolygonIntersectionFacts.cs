@@ -9,13 +9,13 @@ using Xunit.Extensions;
 namespace Vertesaur.PolygonOperation.Test
 {
 
-    public static class PolygonIntersectionTest
+    public static class PolygonIntersectionFacts
     {
 
         private static readonly PolygonIntersectionOperation _intersectionOperation;
         private static readonly PolyPairTestDataKeyedCollection _polyPairData;
 
-        static PolygonIntersectionTest() {
+        static PolygonIntersectionFacts() {
             _polyPairData = PolyOperationTestUtility.GeneratePolyPairIntersectionTestDataCollection();
             _intersectionOperation = new PolygonIntersectionOperation();
         }
