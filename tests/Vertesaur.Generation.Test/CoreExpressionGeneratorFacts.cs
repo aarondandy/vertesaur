@@ -17,27 +17,27 @@ namespace Vertesaur.Generation.Test
 
         [Fact]
         public static void zero_constant_is_zero() {
-            constant_is("0", 0);
+            ConstantIs("0", 0);
         }
 
         [Fact]
         public static void one_constant_is_one() {
-            constant_is("1", 1);
+            ConstantIs("1", 1);
         }
 
         [Fact]
         public static void two_constant_is_two() {
-            constant_is("2", 2);
+            ConstantIs("2", 2);
         }
 
         [Fact]
         public static void e_constant_is_e() {
-            real_number_constant_is("E", Math.E);
+            RealNumberConstantIs("E", Math.E);
         }
 
         [Fact]
         public static void pi_constant_is_pi() {
-            constant_is("PI", Math.PI);
+            ConstantIs("PI", Math.PI);
         }
 
         public static IEnumerable<object[]> generic_add_from_doubles_data {
@@ -54,13 +54,13 @@ namespace Vertesaur.Generation.Test
 
         [Theory, PropertyData("generic_add_from_doubles_data")]
         public static void generic_add_from_doubles(Type valueType, double aValue, double bValue) {
-            var method = TestType.GetMethod("generic_add", BindingFlags.NonPublic | BindingFlags.Static, null, new[] { typeof(double), typeof(double) }, null);
+            var method = TestType.GetMethod("GenericAdd", BindingFlags.NonPublic | BindingFlags.Static, null, new[] { typeof(double), typeof(double) }, null);
             var genericMethod = method.MakeGenericMethod(new[] { valueType });
             genericMethod.Invoke(null, new object[] { aValue, bValue });
             genericMethod.Invoke(null, new object[] { bValue, aValue });
         }
 
-        private static void generic_add<TValue>(double a, double b) {
+        private static void GenericAdd<TValue>(double a, double b) {
             var generator = new CoreExpressionGenerator();
             var expected = ConvertTo<TValue>(a + b);
             var leftHandSide = Expression.Parameter(typeof(TValue), "leftHandSide");
@@ -94,7 +94,7 @@ namespace Vertesaur.Generation.Test
 
         [Theory, PropertyData("generic_add_from_ints_signed_data")]
         public static void generic_add_from_ints_signed(Type valueType, int aValue, int bValue) {
-            var method = TestType.GetMethod("generic_add", BindingFlags.NonPublic | BindingFlags.Static, null, new[] { typeof(int), typeof(int) }, null);
+            var method = TestType.GetMethod("GenericAdd", BindingFlags.NonPublic | BindingFlags.Static, null, new[] { typeof(int), typeof(int) }, null);
             var genericMethod = method.MakeGenericMethod(new[] { valueType });
             genericMethod.Invoke(null, new object[] { aValue, bValue });
             genericMethod.Invoke(null, new object[] { bValue, aValue });
@@ -114,13 +114,13 @@ namespace Vertesaur.Generation.Test
 
         [Theory, PropertyData("generic_add_from_ints_unsigned_data")]
         public static void generic_add_from_ints_unsigned(Type valueType, int aValue, int bValue) {
-            var method = TestType.GetMethod("generic_add", BindingFlags.NonPublic | BindingFlags.Static, null, new[] { typeof(int), typeof(int) }, null);
+            var method = TestType.GetMethod("GenericAdd", BindingFlags.NonPublic | BindingFlags.Static, null, new[] { typeof(int), typeof(int) }, null);
             var genericMethod = method.MakeGenericMethod(new[] { valueType });
             genericMethod.Invoke(null, new object[] { aValue, bValue });
             genericMethod.Invoke(null, new object[] { bValue, aValue });
         }
 
-        private static void generic_add<TValue>(int a, int b) {
+        private static void GenericAdd<TValue>(int a, int b) {
             var generator = new CoreExpressionGenerator();
             var expected = ConvertTo<TValue>(a + b);
             var leftHandSide = Expression.Parameter(typeof(TValue), "leftHandSide");
@@ -146,13 +146,13 @@ namespace Vertesaur.Generation.Test
 
         [Theory, PropertyData("generic_subtract_real_data")]
         public static void generic_subtract_real(Type valueType, double aValue, double bValue) {
-            var method = TestType.GetMethod("generic_subtract", BindingFlags.NonPublic | BindingFlags.Static, null, new[] { typeof(double), typeof(double) }, null);
+            var method = TestType.GetMethod("GenericSubtract", BindingFlags.NonPublic | BindingFlags.Static, null, new[] { typeof(double), typeof(double) }, null);
             var genericMethod = method.MakeGenericMethod(new[] { valueType });
             genericMethod.Invoke(null, new object[] { aValue, bValue });
             genericMethod.Invoke(null, new object[] { bValue, aValue });
         }
 
-        private static void generic_subtract<TValue>(double a, double b) {
+        private static void GenericSubtract<TValue>(double a, double b) {
             var generator = new CoreExpressionGenerator();
             var expected = ConvertTo<TValue>(a - b);
             var leftHandSide = Expression.Parameter(typeof(TValue), "leftHandSide");
@@ -187,7 +187,7 @@ namespace Vertesaur.Generation.Test
 
         [Theory, PropertyData("generic_subtract_signed_data")]
         public static void generic_subtract_signed(Type valueType, int aValue, int bValue) {
-            var method = TestType.GetMethod("generic_subtract", BindingFlags.NonPublic | BindingFlags.Static, null, new[] { typeof(int), typeof(int) }, null);
+            var method = TestType.GetMethod("GenericSubtract", BindingFlags.NonPublic | BindingFlags.Static, null, new[] { typeof(int), typeof(int) }, null);
             var genericMethod = method.MakeGenericMethod(new[] { valueType });
             genericMethod.Invoke(null, new object[] { aValue, bValue });
             genericMethod.Invoke(null, new object[] { bValue, aValue });
@@ -207,12 +207,12 @@ namespace Vertesaur.Generation.Test
 
         [Theory, PropertyData("generic_subtract_unsigned_data")]
         public static void generic_subtract_unsigned(Type valueType, int aValue, int bValue) {
-            var method = TestType.GetMethod("generic_subtract", BindingFlags.NonPublic | BindingFlags.Static, null, new[] { typeof(int), typeof(int) }, null);
+            var method = TestType.GetMethod("GenericSubtract", BindingFlags.NonPublic | BindingFlags.Static, null, new[] { typeof(int), typeof(int) }, null);
             var genericMethod = method.MakeGenericMethod(new[] { valueType });
             genericMethod.Invoke(null, new object[] { aValue, bValue });
         }
 
-        private static void generic_subtract<TValue>(int a, int b) {
+        private static void GenericSubtract<TValue>(int a, int b) {
             var generator = new CoreExpressionGenerator();
             var expected = ConvertTo<TValue>(a - b);
             var leftHandSide = Expression.Parameter(typeof(TValue), "leftHandSide");
@@ -238,7 +238,7 @@ namespace Vertesaur.Generation.Test
 
         [Theory, PropertyData("generic_multiply_real_data")]
         public static void generic_multiply_real(Type valueType, double aValue, double bValue) {
-            var method = TestType.GetMethod("generic_multiply", BindingFlags.NonPublic | BindingFlags.Static, null, new[] { typeof(double), typeof(double) }, null);
+            var method = TestType.GetMethod("GenericMultiply", BindingFlags.NonPublic | BindingFlags.Static, null, new[] { typeof(double), typeof(double) }, null);
             var genericMethod = method.MakeGenericMethod(new[] { valueType });
             genericMethod.Invoke(null, new object[] { aValue, bValue });
             genericMethod.Invoke(null, new object[] { bValue, aValue });
@@ -267,7 +267,7 @@ namespace Vertesaur.Generation.Test
 
         [Theory, PropertyData("generic_multiply_signed_data")]
         public static void generic_multiply_signed(Type valueType, int aValue, int bValue) {
-            var method = TestType.GetMethod("generic_multiply", BindingFlags.NonPublic | BindingFlags.Static, null, new[] { typeof(int), typeof(int) }, null);
+            var method = TestType.GetMethod("GenericMultiply", BindingFlags.NonPublic | BindingFlags.Static, null, new[] { typeof(int), typeof(int) }, null);
             var genericMethod = method.MakeGenericMethod(new[] { valueType });
             genericMethod.Invoke(null, new object[] { aValue, bValue });
             genericMethod.Invoke(null, new object[] { bValue, aValue });
@@ -287,13 +287,13 @@ namespace Vertesaur.Generation.Test
 
         [Theory, PropertyData("generic_multiply_unsigned_data")]
         public static void generic_multiply_unsigned(Type valueType, int aValue, int bValue) {
-            var method = TestType.GetMethod("generic_multiply", BindingFlags.NonPublic | BindingFlags.Static, null, new[] { typeof(int), typeof(int) }, null);
+            var method = TestType.GetMethod("GenericMultiply", BindingFlags.NonPublic | BindingFlags.Static, null, new[] { typeof(int), typeof(int) }, null);
             var genericMethod = method.MakeGenericMethod(new[] { valueType });
             genericMethod.Invoke(null, new object[] { aValue, bValue });
             genericMethod.Invoke(null, new object[] { bValue, aValue });
         }
 
-        private static void generic_multiply<TValue>(int a, int b) {
+        private static void GenericMultiply<TValue>(int a, int b) {
             var generator = new CoreExpressionGenerator();
             var expected = ConvertTo<TValue>(a * b);
             var leftHandSide = Expression.Parameter(typeof(TValue), "leftHandSide");
@@ -305,7 +305,7 @@ namespace Vertesaur.Generation.Test
             Assert.Equal(expected, result);
         }
 
-        private static void generic_multiply<TValue>(double a, double b) {
+        private static void GenericMultiply<TValue>(double a, double b) {
             var generator = new CoreExpressionGenerator();
             var expected = ConvertTo<TValue>(a * b);
             var leftHandSide = Expression.Parameter(typeof(TValue), "leftHandSide");
@@ -331,13 +331,13 @@ namespace Vertesaur.Generation.Test
 
         [Theory, PropertyData("generic_divide_data")]
         public static void generic_divide(Type valueType, double aValue, double bValue) {
-            var method = TestType.GetMethod("generic_multiply", BindingFlags.NonPublic | BindingFlags.Static, null, new[] { typeof(double), typeof(double) }, null);
+            var method = TestType.GetMethod("GenericMultiply", BindingFlags.NonPublic | BindingFlags.Static, null, new[] { typeof(double), typeof(double) }, null);
             var genericMethod = method.MakeGenericMethod(new[] { valueType });
             genericMethod.Invoke(null, new object[] { aValue, bValue });
             genericMethod.Invoke(null, new object[] { bValue, aValue });
         }
 
-        private static void generic_divide<TValue>(double a, double b) {
+        private static void GenericDivide<TValue>(double a, double b) {
             var generator = new CoreExpressionGenerator();
             var expected = a / b;
             var leftHandSide = Expression.Parameter(typeof(TValue), "leftHandSide");
@@ -375,7 +375,7 @@ namespace Vertesaur.Generation.Test
 
         [Theory, PropertyData("from_double_and_back_again_data")]
         public static void from_double_and_back_again(Type valueType, double value) {
-            var method = TestType.GetMethod("from_double_and_back_again", BindingFlags.NonPublic | BindingFlags.Static, null, new[] { typeof(double) }, null);
+            var method = TestType.GetMethod("FromDoubleAndBackAgain", BindingFlags.NonPublic | BindingFlags.Static, null, new[] { typeof(double) }, null);
             var genericMethod = method.MakeGenericMethod(new[] { valueType });
             genericMethod.Invoke(null, new object[] { value });
         }
@@ -396,7 +396,7 @@ namespace Vertesaur.Generation.Test
 
         [Theory, PropertyData("from_double_and_back_again_real_data")]
         public static void from_double_and_back_again_real(Type valueType, double value) {
-            var method = TestType.GetMethod("from_double_and_back_again", BindingFlags.NonPublic | BindingFlags.Static, null, new[] { typeof(double) }, null);
+            var method = TestType.GetMethod("FromDoubleAndBackAgain", BindingFlags.NonPublic | BindingFlags.Static, null, new[] { typeof(double) }, null);
             var genericMethod = method.MakeGenericMethod(new[] { valueType });
             genericMethod.Invoke(null, new object[] { value });
         }
@@ -425,12 +425,12 @@ namespace Vertesaur.Generation.Test
 
         [Theory, PropertyData("from_int_and_back_again_data")]
         public static void from_int_and_back_again(Type valueType, int value) {
-            var method = TestType.GetMethod("from_int_and_back_again", BindingFlags.NonPublic | BindingFlags.Static, null, new[] { typeof(int) }, null);
+            var method = TestType.GetMethod("FromIntAndBackAgain", BindingFlags.NonPublic | BindingFlags.Static, null, new[] { typeof(int) }, null);
             var genericMethod = method.MakeGenericMethod(new[] { valueType });
             genericMethod.Invoke(null, new object[] { value });
         }
 
-        private static void from_double_and_back_again<TValue>(double value) {
+        private static void FromDoubleAndBackAgain<TValue>(double value) {
             var generator = new CoreExpressionGenerator();
 
             var doubleParam = Expression.Parameter(typeof(double), "dVal");
@@ -453,7 +453,7 @@ namespace Vertesaur.Generation.Test
             Assert.Equal(value, doubleResult, 5);
         }
 
-        private static void from_int_and_back_again<TValue>(int value) {
+        private static void FromIntAndBackAgain<TValue>(int value) {
             var generator = new CoreExpressionGenerator();
 
             var intParam = Expression.Parameter(typeof(int), "iVal");
@@ -520,7 +520,7 @@ namespace Vertesaur.Generation.Test
             return result;
         }
 
-        private static void constant_is<TValue>(string constantName, double value) {
+        private static void ConstantIs<TValue>(string constantName, double value) {
             var generator = new CoreExpressionGenerator();
 
             var expected = ConvertTo<TValue>(value);
@@ -533,25 +533,25 @@ namespace Vertesaur.Generation.Test
             Assert.Equal(expected, result);
         }
 
-        private static void constant_is(string constantName, double value) {
-            constant_is<double>(constantName, value);
-            constant_is<float>(constantName, value);
-            constant_is<int>(constantName, value);
-            constant_is<byte>(constantName, value);
-            constant_is<char>(constantName, value);
-            constant_is<decimal>(constantName, value);
-            constant_is<long>(constantName, value);
-            constant_is<sbyte>(constantName, value);
-            constant_is<short>(constantName, value);
-            constant_is<uint>(constantName, value);
-            constant_is<ulong>(constantName, value);
-            constant_is<ushort>(constantName, value);
+        private static void ConstantIs(string constantName, double value) {
+            ConstantIs<double>(constantName, value);
+            ConstantIs<float>(constantName, value);
+            ConstantIs<int>(constantName, value);
+            ConstantIs<byte>(constantName, value);
+            ConstantIs<char>(constantName, value);
+            ConstantIs<decimal>(constantName, value);
+            ConstantIs<long>(constantName, value);
+            ConstantIs<sbyte>(constantName, value);
+            ConstantIs<short>(constantName, value);
+            ConstantIs<uint>(constantName, value);
+            ConstantIs<ulong>(constantName, value);
+            ConstantIs<ushort>(constantName, value);
         }
 
-        private static void real_number_constant_is(string constantName, double value) {
-            constant_is<double>(constantName, value);
-            constant_is<float>(constantName, value);
-            constant_is<decimal>(constantName, value);
+        private static void RealNumberConstantIs(string constantName, double value) {
+            ConstantIs<double>(constantName, value);
+            ConstantIs<float>(constantName, value);
+            ConstantIs<decimal>(constantName, value);
         }
 
     }

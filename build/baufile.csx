@@ -11,12 +11,16 @@ var versionParts = File.ReadAllText("../src/VertesaurAssemblyInfo.cs")
     .Split(new[] { '.' })
     .Take(3);
 var version = String.Join(".", versionParts);
-var solution = "../vertesaur.sln";
 var buildConfigurationName = "Debug";
-var artifactFolder = "../artifacts";
-var nugetOutputFolder = Path.Combine(artifactFolder, "nuget");
-var logsFolder = Path.Combine(artifactFolder, "logs");
+var buildDir = new DirectoryInfo("./");
+var buildPackagesDir = new DirectoryInfo("packages");
+var artifactDir = new DirectoryInfo("../artifacts");
+var nugetOutputDir = new DirectoryInfo(Path.Combine(artifactDir.FullName, "nuget"));
+var logsDir = new DirectoryInfo(Path.Combine(artifactDir.FullName, "logs"));
+var repositoryDir = new DirectoryInfo("../");
+var solutionFile = new FileInfo(Path.Combine(repositoryDir.FullName,"vertesaur.sln"));
 
+// helpers
 private string GetVersionSuffix(){
     var versionSuffix = Environment.GetEnvironmentVariable("VERSION_SUFFIX");
     if(!String.IsNullOrEmpty(versionSuffix))
@@ -25,23 +29,27 @@ private string GetVersionSuffix(){
         return String.Empty;
     return "-adhoc";
 }
+private DirectoryInfo BinaryOutputFolder { get {
+    return new DirectoryInfo(Path.Combine(artifactDir.FullName, "bin", buildConfigurationName));
+} }
 
+// tasks
 var bau = Require<Bau>();
 bau
 
-.Task("default").DependsOn("build", "pack")
+.Task("default").DependsOn("build", "test", "pack")
 
 .Task("release").DependsOn("set-release", "default")
 
 .Task("set-release").Do(() => {buildConfigurationName = "Release";})
 
-.NuGet("restore").Do(nuget => nuget.Restore(solution))
+.NuGet("restore").Do(nuget => nuget.Restore(solutionFile.FullName))
 
 .MSBuild("build")
 .DependsOn("restore", "create-artifact-folders")
 .Do(msb => {
     msb.MSBuildArchitecture = System.Reflection.ProcessorArchitecture.X86; // required for building ports
-    msb.Solution = solution;
+    msb.Solution = solutionFile.FullName;
     msb.Targets = new[] { "Clean", "Build" };
     msb.Properties = new { Configuration = buildConfigurationName };
     msb.Verbosity = BauMSBuild.Verbosity.Minimal;
@@ -51,7 +59,7 @@ bau
             PerformanceSummary = true,
             Summary = true,
             Verbosity = msBuildFileVerbosity,
-            LogFile = Path.Combine(logsFolder,"build.log")
+            LogFile = Path.Combine(logsDir.FullName,"build.log")
         }
     });
 })
@@ -59,23 +67,35 @@ bau
 .NuGet("pack")
 .DependsOn("create-artifact-folders")
 .Do(nuget => nuget.Pack(
-    Directory.EnumerateFiles("./", "*.nuspec"),
+    Directory.EnumerateFiles(buildDir.FullName, "*.nuspec"),
     r => r
-        .WithOutputDirectory("../artifacts/nuget")
+        .WithOutputDirectory(nugetOutputDir.FullName)
         .WithProperty("Configuration", buildConfigurationName)
         .WithIncludeReferencedProjects()
         .WithVerbosity(nugetVerbosity)
         .WithVersion(version + GetVersionSuffix())
 ))
 
+.Task("test").DependsOn("xunit")
+
+.Xunit("xunit")
+.DependsOn("create-artifact-folders")
+.Do(xunit => {
+    xunit.Exe = buildPackagesDir
+        .EnumerateFiles("xunit.console.clr4.exe", SearchOption.AllDirectories)
+        .Single()
+        .FullName;
+    xunit.Assemblies = BinaryOutputFolder.EnumerateFiles("*.Test.dll").Select(f => f.FullName);
+})
+
 .Task("create-artifact-folders").Do(() => {
-    var directories = new[]{
-        artifactFolder,
-        nugetOutputFolder,
-        logsFolder
-    }.Select(d => new DirectoryInfo(d));
-    foreach(var directory in directories.Where(di => !di.Exists)){
-        directory.Create();
+    var dirsToCreate = new[] {
+        artifactDir,
+        nugetOutputDir,
+        logsDir
+    }.Where(di => !di.Exists);
+    foreach(var di in dirsToCreate) {
+        di.Create();
     }
     System.Threading.Thread.Sleep(100);
 })
