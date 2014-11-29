@@ -24,7 +24,6 @@ namespace Vertesaur.Generation.Expressions
 
             var expressionName = request.ExpressionName;
             var inputExpressions = request.InputExpressions.ToArray();
-            Contract.Assume(Contract.ForAll(inputExpressions, x => x != null));
             var topLevelGenerator = request.TopLevelGenerator;
 
             if (inputExpressions.Length > 0) {

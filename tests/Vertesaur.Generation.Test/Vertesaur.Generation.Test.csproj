@@ -77,20 +77,20 @@
     <Compile Include="Vector2Facts.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Vertesaur.Core\Vertesaur.Core.csproj">
-      <Project>{3202D8B1-CA6C-4403-912B-8D9063CA022A}</Project>
-      <Name>Vertesaur.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\src\Vertesaur.Generation\Vertesaur.Generation.csproj">
-      <Project>{3D67D62D-0F74-4570-9BB3-2653E7DFBC4E}</Project>
-      <Name>Vertesaur.Generation</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Vertesaur.Core\Vertesaur.Core.csproj">
+      <Project>{3202d8b1-ca6c-4403-912b-8d9063ca022a}</Project>
+      <Name>Vertesaur.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\src\Vertesaur.Generation\Vertesaur.Generation.csproj">
+      <Project>{3d67d62d-0f74-4570-9bb3-2653e7dfbc4e}</Project>
+      <Name>Vertesaur.Generation</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -513,6 +513,7 @@ namespace Vertesaur
         /// This method is extracted from Intersection(Ray2) as it is a rare case.
         /// </summary>
         private IPlanarGeometry IntersectionParallel(Vector2 d0, Vector2 d1, Vector2 e, Ray2 ray) {
+            Contract.Requires(ray != null);
             var magnitudeSquared0 = d0.GetMagnitudeSquared();
             var sa = d0.Dot(e) / magnitudeSquared0;
             var sb = sa + (d0.Dot(d1) / magnitudeSquared0);

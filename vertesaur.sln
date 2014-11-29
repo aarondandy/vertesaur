@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vertesaur.Core", "src\Verte
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "build", "build", "{B41B37F5-9D3F-4181-8E5B-89BC0DA48447}"
 	ProjectSection(SolutionItems) = preProject
-		rakefile = rakefile
+		build\baufile.csx = build\baufile.csx
 		build\vertesaur.generation.nuspec = build\vertesaur.generation.nuspec
 		build\vertesaur.nuspec = build\vertesaur.nuspec
 	EndProjectSection

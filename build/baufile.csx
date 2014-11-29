@@ -37,9 +37,9 @@ private DirectoryInfo BinaryOutputFolder { get {
 var bau = Require<Bau>();
 bau
 
-.Task("default").DependsOn("build", "test", "pack")
+.Task("default").DependsOn("build", "test")
 
-.Task("release").DependsOn("set-release", "default")
+.Task("release").DependsOn("set-release", "default", "pack")
 
 .Task("set-release").Do(() => {buildConfigurationName = "Release";})
 
