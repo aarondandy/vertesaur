@@ -87,10 +87,7 @@ namespace Vertesaur
             return (
                 !ReferenceEquals(null, other)
                 && Radius == other.A
-                && (
-                    Radius == other.B
-                    || other.F == 0
-                )
+                && (Radius == other.B || other.F == 0)
             );
             // ReSharper restore CompareOfFloatsByEqualityOperator
         }

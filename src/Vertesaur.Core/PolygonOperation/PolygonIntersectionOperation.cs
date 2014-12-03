@@ -88,7 +88,7 @@ namespace Vertesaur.PolygonOperation
             public readonly HashSet<int> VisitedCrossingsRingIndicesA;
             public readonly HashSet<int> VisitedCrossingsRingIndicesB;
 
-            [ContractVerification(false)] // TODO: remvoe when CC bugs are fixed
+            [ContractVerification(false)] // TODO: remove when CC bugs are fixed
             public PolygonCrossingsAlgorithmKernel(Polygon2 a, Polygon2 b, List<PolygonCrossing> crossings) {
                 Contract.Requires(a != null);
                 Contract.Requires(b != null);

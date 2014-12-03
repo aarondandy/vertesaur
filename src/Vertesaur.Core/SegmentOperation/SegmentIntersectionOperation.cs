@@ -216,11 +216,11 @@ namespace Vertesaur.SegmentOperation
             var d0 = b - a;
             var d1 = d - c;
             var e = c - a;
-
+            var tNumerator = (e.X * d0.Y) - (e.Y * d0.X);
             var cross = (d0.X * d1.Y) - (d1.X * d0.Y);
             if (cross == 0.0) {
                 // parallel
-                return (e.X*d0.Y) == (e.Y*d0.X)
+                return tNumerator == 0.0
                     ? IntersectionDetailsParallel(d0, d1, e, a, b, c, d)
                     : DefaultNoIntersection;
             }
@@ -230,7 +230,7 @@ namespace Vertesaur.SegmentOperation
             if (s < 0 || s > 1.0)
                 return DefaultNoIntersection; // not intersecting on this segment
 
-            var t = ((e.X * d0.Y) - (e.Y * d0.X)) / cross;
+            var t = tNumerator / cross;
             if (t < 0 || t > 1.0)
                 return DefaultNoIntersection; // not intersecting on other segment
 

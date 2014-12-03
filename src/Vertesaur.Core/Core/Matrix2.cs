@@ -476,12 +476,12 @@ namespace Vertesaur
         public void MultiplyAssign(Matrix2 right) {
             if (null == right) throw new ArgumentNullException("right");
             Contract.EndContractBlock();
-            var t00 = E00;
-            E00 = (t00 * right.E00) + (E01 * right.E10);
-            E01 = (t00 * right.E01) + (E01 * right.E11);
-            var t10 = E10;
-            E10 = (t10 * right.E00) + (E11 * right.E10);
-            E11 = (t10 * right.E01) + (E11 * right.E11);
+            var t = E00;
+            E00 = (t * right.E00) + (E01 * right.E10);
+            E01 = (t * right.E01) + (E01 * right.E11);
+            t = E10;
+            E10 = (t * right.E00) + (E11 * right.E10);
+            E11 = (t * right.E01) + (E11 * right.E11);
         }
 
         /// <summary>

@@ -107,7 +107,7 @@ namespace Vertesaur
                 ? (0 == v.X && 0 == v.Y)
                 : (
                     !(aDot >= d.GetMagnitudeSquared())
-                    && (d.X * v.Y) == (d.Y * v.X)
+                    && (d.X * v.Y) - (d.Y * v.X) == 0.0
                 )
             );
             // ReSharper restore CompareOfFloatsByEqualityOperator
@@ -448,7 +448,7 @@ namespace Vertesaur
             var cross = (d0.X * d1.Y) - (d1.X * d0.Y);
             if (cross == 0.0) {
                 // parallel
-                return (e.X*d0.Y) == (e.Y*d0.X);
+                return (e.X*d0.Y) - (e.Y*d0.X) == 0.0;
             }
 
             // not parallel
@@ -481,23 +481,25 @@ namespace Vertesaur
             var d0 = Direction;
             var d1 = ray.Direction;
             var e = ray.P - A;
+            var tNumerator = (e.X * d0.Y) - (e.Y * d0.X);
             var cross = (d0.X * d1.Y) - (d1.X * d0.Y);
 
             if (cross == 0.0) {
                 // parallel
-                return (e.X*d0.Y) == (e.Y*d0.X)
+                return tNumerator == 0.0
                     ? IntersectionParallel(d0, d1, e, ray)
                     : null;
             }
 
             // not parallel
+
+            var t = tNumerator / cross;
+            if (t < 0.0)
+                return null; // not intersecting on the ray
+
             var s = ((e.X * d1.Y) - (e.Y * d1.X)) / cross;
             if (s < 0.0 || s > 1.0)
                 return null; // not intersecting on this segment
-
-            var t = ((e.X * d0.Y) - (e.Y * d0.X)) / cross;
-            if (t < 0.0)
-                return null; // not intersecting on the ray
 
             // it must intersect at a point, so find where
             if (0.0 == s)
@@ -562,11 +564,12 @@ namespace Vertesaur
             var d0 = Direction;
             var d1 = line.Direction;
             var e = line.P - A;
+            var tNumerator = (e.X * d0.Y) - (e.Y * d0.X);
             var cross = (d0.X * d1.Y) - (d1.X * d0.Y);
 
             if (cross == 0.0) {
                 // parallel
-                return (e.X*d0.Y) == (e.Y*d0.X)
+                return tNumerator == 0.0
                     ? Clone()
                     : null;
             }
@@ -579,7 +582,7 @@ namespace Vertesaur
                 return A;
 
             //var t = ((e.X * d0.Y) - (e.Y * d0.X)) / cross;
-            if ((e.X * d0.Y) == (e.Y * d0.X))
+            if (tNumerator == 0.0)
                 return line.P;
             return A + d0.GetScaled(s); // it must intersect at a point, so find where
 

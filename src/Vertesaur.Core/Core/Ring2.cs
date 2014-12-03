@@ -766,7 +766,7 @@ namespace Vertesaur
             if (2 <= lastIndex) {
                 var intersectionCount = IntersectionPositiveXRayCount(p);
                 if (intersectionCount > 0) {
-                    return (intersectionCount % 2) == ((_hole.HasValue && _hole.Value) ? 0 : 1);
+                    return ((_hole.HasValue && _hole.Value) ? 0 : 1) == (intersectionCount % 2);
                 }
                 if ((_hole.HasValue && _hole.Value)) {
                     return true;
@@ -813,11 +813,9 @@ namespace Vertesaur
                     if (notEqual) {
                         if (thisMbr.Contains(containerMbr)) {
                             bestResultGuess = true;
-                            //return true;
                         }
                         else if (containerMbr.Contains(thisMbr)) {
                             bestResultGuess = false;
-                            //return false;
                         }
                     }
                 }
@@ -830,11 +828,9 @@ namespace Vertesaur
                     if (notEqual) {
                         if (thisMbr.Contains(containerMbr)) {
                             bestResultGuess = false;
-                            //return false;
                         }
                         if (containerMbr.Contains(thisMbr)) {
                             bestResultGuess = true;
-                            //return true;
                         }
                     }
                 }

@@ -40,7 +40,7 @@ namespace Vertesaur
         }
 
         /// <summary>
-        /// Constructs a new empty fmulti-point.
+        /// Constructs a new empty multi-point.
         /// </summary>
         public MultiPoint2() { }
 

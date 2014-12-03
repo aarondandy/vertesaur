@@ -97,7 +97,7 @@ namespace Vertesaur
             get {
                 return P.IsValid
                     && Direction.IsValid
-                    && Direction != Vector2.Zero;
+                    && !Vector2.Zero.Equals(Direction);
             }
         }
 
@@ -124,8 +124,7 @@ namespace Vertesaur
                 && P.Equals(other.P)
                 && (
                     Direction.Equals(other.Direction)
-                    ||
-                    Direction.GetNormalized().Equals(other.Direction.GetNormalized())
+                    || Direction.GetNormalized().Equals(other.Direction.GetNormalized())
                 );
         }
 
@@ -285,7 +284,7 @@ namespace Vertesaur
             return (
                 (aDot <= 0.0)
                 ? v0.X == 0.0 && v0.Y == 0.0
-                : v0.GetMagnitudeSquared() == ((aDot * aDot) / Direction.GetMagnitudeSquared())
+                : v0.GetMagnitudeSquared() - ((aDot * aDot) / Direction.GetMagnitudeSquared()) == 0.0
             );
             // ReSharper restore CompareOfFloatsByEqualityOperator
         }
@@ -381,22 +380,24 @@ namespace Vertesaur
             }
 
             var e = c - a;
+            var tNumerator = (e.X * d0.Y) - (e.Y * d0.X);
             var cross = (d0.X * d1.Y) - (d1.X * d0.Y);
             if (cross == 0.0) {
                 // parallel
-                return ((e.X * d0.Y) == (e.Y * d0.X))
+                return tNumerator == 0.0
                     ? IntersectionParallel(d0, d1, e, a, c)
                     : null; // no intersection
             }
 
             // not parallel
+
+            var t = tNumerator / cross;
+            if (t < 0.0)
+                return null; // not intersecting on other ray
+
             var s = ((e.X * d1.Y) - (e.Y * d1.X)) / cross;
             if (s < 0.0)
                 return null; // not intersecting on this ray
-
-            var t = ((e.X * d0.Y) - (e.Y * d0.X)) / cross;
-            if (t < 0.0)
-                return null; // not intersecting on other ray
 
             if (s == 0.0)
                 return a;
