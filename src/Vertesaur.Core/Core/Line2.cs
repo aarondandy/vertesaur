@@ -220,7 +220,7 @@ namespace Vertesaur
         /// <returns>The length.</returns>
         [Pure]
         public double GetMagnitude() {
-            return Vector2.Zero == Direction ? 0 : Double.PositiveInfinity;
+            return Vector2.Zero == Direction ? 0.0 : Double.PositiveInfinity;
         }
 
         /// <summary>
@@ -304,7 +304,7 @@ namespace Vertesaur
             // ReSharper disable CompareOfFloatsByEqualityOperator
             if (m != 0.0) {
                 var aDot = Direction.Dot(v0);
-                return (v0.GetMagnitudeSquared() - ((aDot * aDot) / m));
+                return v0.GetMagnitudeSquared() - ((aDot * aDot) / m);
             }
             return v0.GetMagnitudeSquared();
             // ReSharper restore CompareOfFloatsByEqualityOperator
@@ -323,7 +323,7 @@ namespace Vertesaur
             if (m != 0.0) {
                 var aDot = Direction.Dot(v0);
                 // NOTE: preserve the /m to be consistent with DistanceSquared
-                return v0.GetMagnitudeSquared() == ((aDot * aDot) / m);
+                return v0.GetMagnitudeSquared() - ((aDot * aDot) / m) == 0.0;
             }
             return v0.X == 0.0 && v0.Y == 0.0;
             // ReSharper restore CompareOfFloatsByEqualityOperator
@@ -351,15 +351,15 @@ namespace Vertesaur
             var d0 = Direction;
             var d1 = ray.Direction;
             var e = ray.P - P;
+            var tNumerator = (e.X * d0.Y) - (e.Y * d0.X);
             var cross = (d0.X * d1.Y) - (d1.X * d0.Y);
-
             if (cross == 0.0) {
                 // parallel
-                return (e.X*d0.Y) == (e.Y*d0.X);
+                return tNumerator == 0.0;
             }
 
             // not parallel
-            var t = ((e.X * d0.Y) - (e.Y * d0.X)) / cross;
+            var t = tNumerator / cross;
             return t >= 0.0; // it intersects at a point if on the positive side of the ray
 
             // ReSharper restore CompareOfFloatsByEqualityOperator
@@ -393,11 +393,14 @@ namespace Vertesaur
                 d0 = Direction;
                 d1 = other.Direction;
             }
-            
-            if ((d0.X * d1.Y) == (d1.X * d0.Y)) {
+
+            var cross = (d0.X * d1.Y) - (d1.X * d0.Y);
+            if (cross == 0.0)
+            {
                 // parallel
                 var e = c - a;
-                return (e.X*d0.Y) == (e.Y*d0.X);
+                var tNumerator = (e.X * d0.Y) - (e.Y * d0.X);
+                return tNumerator == 0.0;
             }
 
             return true; // not parallel
@@ -441,7 +444,8 @@ namespace Vertesaur
                 return a + d0.GetScaled(((e.X * d1.Y) - (e.Y * d1.X)) / cross); // not parallel
 
             // parallel
-            return (e.X * d0.Y) == (e.Y * d0.X)
+            var tNumerator = (e.X * d0.Y) - (e.Y * d0.X);
+            return tNumerator == 0.0
                 ? new Line2(a, d0) // construct a new line from the a/d0 values to be consistent
                 : null;
 
@@ -451,7 +455,7 @@ namespace Vertesaur
         /// <inheritdoc/>
         public IPlanarGeometry Intersection(Ray2 ray) {
             // ReSharper disable CompareOfFloatsByEqualityOperator
-            if (ReferenceEquals(null, ray))
+            if (ray == null)
                 return null;
 
             Point2 a, c;
@@ -461,17 +465,17 @@ namespace Vertesaur
             d0 = Direction;
             d1 = ray.Direction;
             var e = c - a;
+            var tNumerator = (e.X * d0.Y) - (e.Y * d0.X);
             var cross = (d0.X * d1.Y) - (d1.X * d0.Y);
-
             if (cross == 0.0) {
                 // parallel
-                return (e.X*d0.Y) == (e.Y*d0.X)
-                    ? ray.Clone()
+                return tNumerator == 0.0
+                    ? ray // NOTE: this relies on Ray2 being immutable
                     : null;
             }
 
             // not parallel
-            var t = ((e.X * d0.Y) - (e.Y * d0.X)) / cross;
+            var t = tNumerator / cross;
             if (t < 0.0)
                 return null; // not intersecting on other ray
             if (t == 0.0)

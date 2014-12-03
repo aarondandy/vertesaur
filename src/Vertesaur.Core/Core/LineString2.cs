@@ -311,23 +311,6 @@ namespace Vertesaur
                 return Intersects(other[0]) ? (IPlanarGeometry)other[0] : null;
 
             throw new NotImplementedException();
-            /*
-            var resultBag = new List<IPlanarGeometry>();
-            for (int segmentIndexA = 0; segmentIndexA < SegmentCount; segmentIndexA++) {
-                var segmentA = GetSegment(segmentIndexA);
-                var segmentIntersectionResult = other.Intersection(segmentA);
-                if(null != segmentIntersectionResult)
-                    resultBag.Add(segmentIntersectionResult);
-            }
-
-            throw new NotImplementedException("need to flatten the result bag");
-            throw new NotImplementedException("need to remove intersected items that are fully contained within others");
-            if (resultBag.Count == 0)
-                return null;
-            if (resultBag.Count == 1)
-                return resultBag[0];
-
-            throw new NotImplementedException("need to return a bag of results");*/
         }
 
         /// <inheritdoc/>
@@ -345,6 +328,7 @@ namespace Vertesaur
                 return null;
             if (Count == 1)
                 return other.Intersection(this[0]);
+
             throw new NotImplementedException();
         }
     }
