@@ -13,8 +13,6 @@ namespace Vertesaur
         IComparable<Vector2>
     {
 
-        // ReSharper disable CompareOfFloatsByEqualityOperator
-
         /// <summary>
         /// Implements the operator ==.
         /// </summary>

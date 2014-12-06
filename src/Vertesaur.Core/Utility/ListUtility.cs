@@ -1,8 +1,6 @@
-﻿// ReSharper disable RedundantUsingDirective
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-// ReSharper restore RedundantUsingDirective
 
 namespace Vertesaur.Utility
 {
@@ -42,7 +40,4 @@ namespace Vertesaur.Utility
 
 
     }
-
-
-
 }

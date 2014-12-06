@@ -151,12 +151,10 @@ namespace Vertesaur
         /// </summary>
         /// <returns>The length.</returns>
         public double GetMagnitude() {
-            // ReSharper disable CompareOfFloatsByEqualityOperator
             Contract.Ensures(
                 Contract.Result<double>() == 0.0
                 || Double.IsNaN(Contract.Result<double>())
                 || Contract.Result<double>() == Double.PositiveInfinity);
-            // ReSharper restore CompareOfFloatsByEqualityOperator
             return Vector2.Zero.Equals(Direction) ? 0 : Double.PositiveInfinity;
         }
 
@@ -165,12 +163,10 @@ namespace Vertesaur
         /// </summary>
         /// <returns>The length.</returns>
         public double GetMagnitudeSquared() {
-            // ReSharper disable CompareOfFloatsByEqualityOperator
             Contract.Ensures(
                 Contract.Result<double>() == 0.0
                 || Double.IsNaN(Contract.Result<double>())
                 || Contract.Result<double>() == Double.PositiveInfinity);
-            // ReSharper restore CompareOfFloatsByEqualityOperator
             return GetMagnitude();
         }
 
@@ -197,7 +193,6 @@ namespace Vertesaur
         /// <returns>A minimum bounding rectangle.</returns>
         public Mbr GetMbr() {
             Contract.Ensures(Contract.Result<Mbr>() != null);
-            // ReSharper disable CompareOfFloatsByEqualityOperator
             return (
                 (Direction.X == 0.0)
                 ? (
@@ -231,7 +226,6 @@ namespace Vertesaur
                     )
                 )
             );
-            // ReSharper restore CompareOfFloatsByEqualityOperator
         }
 
         /// <summary>

@@ -354,10 +354,8 @@ namespace Vertesaur.Test
 
             Assert.False(a.Equals(b));
             Assert.False(b.Equals(a));
-            // ReSharper disable EqualExpressionComparison
             Assert.True(a.Equals(a));
             Assert.True(b.Equals(b));
-            // ReSharper restore EqualExpressionComparison
             Assert.False(a.Equals(c));
             Assert.True(b.Equals(c));
             Assert.False(a.Equals(null));

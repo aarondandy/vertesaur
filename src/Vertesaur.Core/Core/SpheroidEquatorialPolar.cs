@@ -82,11 +82,9 @@ namespace Vertesaur
 
         /// <inheritdoc/>
         [Pure] public bool Equals(ISpheroid<double> other) {
-            // ReSharper disable CompareOfFloatsByEqualityOperator
             return !ReferenceEquals(null, other)
                 && other.A == A
                 && (other.B == B || other.InvF == InvF);
-            // ReSharper restore CompareOfFloatsByEqualityOperator
         }
 
         /// <inheritdoc/>
@@ -103,9 +101,7 @@ namespace Vertesaur
 
         /// <inheritdoc/>
         [Pure] public bool Equals(SpheroidEquatorialPolar other) {
-            // ReSharper disable CompareOfFloatsByEqualityOperator
             return other.A == A && other.B == B;
-            // ReSharper restore CompareOfFloatsByEqualityOperator
         }
 
     }

@@ -5,8 +5,6 @@ using System.Diagnostics.Contracts;
 namespace Vertesaur
 {
 
-    // ReSharper disable CompareOfFloatsByEqualityOperator
-
     /// <summary>
     /// A range which encompasses all values between two values, inclusive.
     /// </summary>

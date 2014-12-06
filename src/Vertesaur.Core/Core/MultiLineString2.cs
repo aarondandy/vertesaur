@@ -9,8 +9,6 @@ using Vertesaur.Utility;
 namespace Vertesaur
 {
 
-    // ReSharper disable LoopCanBeConvertedToQuery
-
     /// <summary>
     /// A collection of line strings.
     /// </summary>
@@ -186,7 +184,6 @@ namespace Vertesaur
         /// </summary>
         /// <returns>A centroid.</returns>
         public Point2 GetCentroid() {
-            // ReSharper disable CompareOfFloatsByEqualityOperator
             var lastIndex = Count - 1;
             if (lastIndex > 0) {
                 var mSum = 0.0;
@@ -208,7 +205,6 @@ namespace Vertesaur
             }
             Contract.Assume(this[0] != null);
             return lastIndex == 0 ? this[0].GetCentroid() : Point2.Invalid;
-            // ReSharper restore CompareOfFloatsByEqualityOperator
         }
 
         /// <summary>

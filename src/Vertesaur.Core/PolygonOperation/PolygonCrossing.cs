@@ -120,12 +120,10 @@ namespace Vertesaur.PolygonOperation
             //var dotAPriorBPrior = vectorAPrior.Dot(vectorBPrior);
 
             // get parallel out of the way, so we don’t have to worry about it
-            // ReSharper disable CompareOfFloatsByEqualityOperator
             var parallelANextBNext = vectorANext.Equals(vectorBNext) || (crossANextBNext == 0 && vectorANext.Dot(vectorBNext) > 0);
             var parallelAPriorBNext = vectorAPrior.Equals(vectorBNext) || (crossAPriorBNext == 0 && vectorAPrior.Dot(vectorBNext) > 0);
             var parallelANextBPrior = vectorANext.Equals(vectorBPrior) || (crossANextBPrior == 0 && vectorANext.Dot(vectorBPrior) > 0);
             var parallelAPriorBPrior = vectorAPrior.Equals(vectorBPrior) || (crossAPriorBPrior == 0 && vectorAPrior.Dot(vectorBPrior) > 0);
-            // ReSharper restore CompareOfFloatsByEqualityOperator
 
             // parallel cases
             if (parallelANextBNext && parallelAPriorBPrior)

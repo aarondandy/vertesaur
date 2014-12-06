@@ -22,7 +22,6 @@ namespace Vertesaur.Generation.Expressions
         private static class SpecializedOperations
         {
 
-            // ReSharper disable UnusedMember.Local
             public static byte AddChecked(byte leftHandSide, byte rightHandSide) {
                 return checked((byte)(leftHandSide + rightHandSide));
             }
@@ -118,8 +117,6 @@ namespace Vertesaur.Generation.Expressions
             public static char DivideUnchecked(char leftHandSide, char rightHandSide) {
                 return unchecked((char)(leftHandSide / rightHandSide));
             }
-
-            // ReSharper restore UnusedMember.Local
 
         }
 

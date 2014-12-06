@@ -83,20 +83,16 @@ namespace Vertesaur
 
         /// <inheritdoc/>
         public bool Equals(ISpheroid<double> other) {
-            // ReSharper disable CompareOfFloatsByEqualityOperator
             return (
                 !ReferenceEquals(null, other)
                 && Radius == other.A
                 && (Radius == other.B || other.F == 0)
             );
-            // ReSharper restore CompareOfFloatsByEqualityOperator
         }
 
         /// <inheritdoc/>
         public bool Equals(Sphere other) {
-            // ReSharper disable CompareOfFloatsByEqualityOperator
             return Radius == other.Radius;
-            // ReSharper restore CompareOfFloatsByEqualityOperator
         }
 
         /// <inheritdoc/>

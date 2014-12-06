@@ -38,9 +38,7 @@ namespace Vertesaur.Generation.Expressions
         /// All expression generators known to this combined expression generator.
         /// </summary>
         [ImportMany(typeof(IExpressionGenerator))]
-        // ReSharper disable UnusedAutoPropertyAccessor.Local
         public IEnumerable<IExpressionGenerator> AllExpressionGenerators { get; private set; }
-        // ReSharper restore UnusedAutoPropertyAccessor.Local
 
         private void ComposeFromAssemblies() {
             var assemblies = new[]{

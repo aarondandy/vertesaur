@@ -1,7 +1,5 @@
 ﻿using System.Diagnostics.Contracts;
-// ReSharper disable RedundantUsingDirective
 using System.Linq;
-// ReSharper restore RedundantUsingDirective
 using System.Linq.Expressions;
 using System.Reflection;
 

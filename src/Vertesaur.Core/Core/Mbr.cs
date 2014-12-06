@@ -315,13 +315,10 @@ namespace Vertesaur
         /// <inheritdoc/>
         public bool Equals(IMbr<double> other) {
             return !ReferenceEquals(null, other)
-                // ReSharper disable CompareOfFloatsByEqualityOperator
                 && XMin == other.XMin
                 && XMax == other.XMax
                 && YMin == other.YMin
-                && YMax == other.YMax
-                // ReSharper restore CompareOfFloatsByEqualityOperator
-            ;
+                && YMax == other.YMax;
         }
 
         /// <inheritdoc/>
@@ -477,7 +474,6 @@ namespace Vertesaur
             if (null == other)
                 return false;
 
-            // ReSharper disable CompareOfFloatsByEqualityOperator
             var yMagnitude = Y.GetMagnitude();
             if (0 == X.GetMagnitude()) {
                 if (0 == yMagnitude)
@@ -496,7 +492,6 @@ namespace Vertesaur
                 }
             }
             return !Equals(other) && Intersects(other);
-            // ReSharper restore CompareOfFloatsByEqualityOperator
         }
 
         /// <inheritdoc/>

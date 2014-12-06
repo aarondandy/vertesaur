@@ -94,9 +94,7 @@ namespace Vertesaur.PolygonOperation.Test
             if (null == r)
                 return null;
             return r.Hole.HasValue
-                // ReSharper disable PossibleInvalidOperationException
                 ? new Ring2(r.Reverse(), r.Hole.Value)
-                // ReSharper restore PossibleInvalidOperationException
                 : new Ring2(r.Reverse());
         }
 

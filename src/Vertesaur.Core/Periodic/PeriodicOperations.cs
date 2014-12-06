@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
 
-// ReSharper disable CompareOfFloatsByEqualityOperator
-
 namespace Vertesaur.Periodic
 {
     /// <summary>

@@ -5,8 +5,6 @@ using Vertesaur.Utility;
 namespace Vertesaur
 {
 
-    // ReSharper disable CompareOfFloatsByEqualityOperator
-
     /// <summary>
     /// A square matrix with three rows and three columns with an element type of double.
     /// </summary>
@@ -366,9 +364,7 @@ namespace Vertesaur
         /// A hash code for this instance, suitable for use in hashing algorithms and data structures like a hash table. 
         /// </returns>
         public override int GetHashCode() {
-            // ReSharper disable NonReadonlyFieldInGetHashCode
             return E00.GetHashCode() ^ OrderValue;
-            // ReSharper restore NonReadonlyFieldInGetHashCode
         }
 
         /// <summary>

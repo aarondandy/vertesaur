@@ -78,7 +78,6 @@ namespace Vertesaur
 
             Point2 p;
             Vector2 v;
-            // ReSharper disable CompareOfFloatsByEqualityOperator
             if (a == 0.0) {
                 p = b == 0.0
                     ? Point2.Zero
@@ -92,7 +91,6 @@ namespace Vertesaur
                     : new Vector2(-p.X, (c / b) - p.Y);
             }
             return new Line2(p, v);
-            // ReSharper restore CompareOfFloatsByEqualityOperator
         }
 
         /// <summary>
@@ -257,7 +255,6 @@ namespace Vertesaur
         [Pure]
         public Mbr GetMbr() {
             Contract.Ensures(Contract.Result<Mbr>() != null);
-            // ReSharper disable CompareOfFloatsByEqualityOperator
             return (
                 (Direction.X == 0.0)
                 ? (
@@ -271,7 +268,6 @@ namespace Vertesaur
                     : new Mbr(Double.NegativeInfinity, Double.NegativeInfinity, Double.PositiveInfinity, Double.PositiveInfinity)
                 )
             );
-            // ReSharper restore CompareOfFloatsByEqualityOperator
         }
 
         /// <summary>
@@ -283,13 +279,11 @@ namespace Vertesaur
         public double Distance(Point2 point) {
             var v0 = point - P;
             var m = Direction.GetMagnitudeSquared();
-            // ReSharper disable CompareOfFloatsByEqualityOperator
             if (m != 0.0) {
                 var aDot = Direction.Dot(v0);
                 return Math.Sqrt(v0.GetMagnitudeSquared() - ((aDot * aDot) / m));
             }
             return v0.GetMagnitude();
-            // ReSharper restore CompareOfFloatsByEqualityOperator
         }
 
         /// <summary>
@@ -301,13 +295,11 @@ namespace Vertesaur
         public double DistanceSquared(Point2 point) {
             var v0 = point - P;
             var m = Direction.GetMagnitudeSquared();
-            // ReSharper disable CompareOfFloatsByEqualityOperator
             if (m != 0.0) {
                 var aDot = Direction.Dot(v0);
                 return v0.GetMagnitudeSquared() - ((aDot * aDot) / m);
             }
             return v0.GetMagnitudeSquared();
-            // ReSharper restore CompareOfFloatsByEqualityOperator
         }
 
         /// <summary>
@@ -320,14 +312,12 @@ namespace Vertesaur
             // TODO: make sure the line used to test for intersection is consistent, (A,B) n P == (B,A) n P
             var v0 = p - P;
             var m = Direction.GetMagnitudeSquared();
-            // ReSharper disable CompareOfFloatsByEqualityOperator
             if (m != 0.0) {
                 var aDot = Direction.Dot(v0);
                 // NOTE: preserve the /m to be consistent with DistanceSquared
                 return v0.GetMagnitudeSquared() - ((aDot * aDot) / m) == 0.0;
             }
             return v0.X == 0.0 && v0.Y == 0.0;
-            // ReSharper restore CompareOfFloatsByEqualityOperator
         }
 
 

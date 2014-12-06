@@ -5,8 +5,6 @@ using System.Diagnostics.Contracts;
 namespace Vertesaur
 {
 
-    // ReSharper disable CompareOfFloatsByEqualityOperator
-
     /// <summary>
     /// A point in 3D space.
     /// </summary>
@@ -439,5 +437,4 @@ namespace Vertesaur
             return Equals(other);
         }
     }
-
 }

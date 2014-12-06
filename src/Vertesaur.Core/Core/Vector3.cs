@@ -13,9 +13,6 @@ namespace Vertesaur
         IEquatable<ICoordinateTriple<double>>,
         IComparable<Vector3>
     {
-
-        // ReSharper disable CompareOfFloatsByEqualityOperator
-
         /// <summary>
         /// Implements the operator ==.
         /// </summary>

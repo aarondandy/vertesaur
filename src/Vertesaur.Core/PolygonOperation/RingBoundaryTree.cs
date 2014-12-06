@@ -4,9 +4,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Diagnostics.Contracts;
 using System.Linq;
-// ReSharper disable RedundantUsingDirective
 using Vertesaur.Utility;
-// ReSharper restore RedundantUsingDirective
 
 namespace Vertesaur.PolygonOperation
 {

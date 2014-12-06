@@ -106,9 +106,7 @@ namespace Vertesaur.PolygonOperation
         public bool Equals(PolygonBoundaryLocation other) {
             return !ReferenceEquals(null, other)
                 && SegmentIndex == other.SegmentIndex
-                // ReSharper disable CompareOfFloatsByEqualityOperator
                 && SegmentRatio == other.SegmentRatio
-                // ReSharper restore CompareOfFloatsByEqualityOperator
                 && RingIndex == other.RingIndex;
         }
 

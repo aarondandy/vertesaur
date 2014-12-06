@@ -41,9 +41,7 @@ namespace Vertesaur.Search
         /// <param name="cost">The cost related to the edge.</param>
         /// <param name="edge">The edge data related to the node.</param>
         public DynamicGraphNodeData(TNode node, TCost cost, TEdge edge) {
-            // ReSharper disable CompareNonConstrainedGenericWithNull
             if (null == node) throw new ArgumentNullException("node");
-            // ReSharper restore CompareNonConstrainedGenericWithNull
             Contract.EndContractBlock();
             Node = node;
             Cost = cost;
@@ -93,10 +91,8 @@ namespace Vertesaur.Search
             TNode target,
             GetDynamicGraphNeighborInfo<TNode, TCost, TEdge> generateNeighborInfo
         ) {
-            // ReSharper disable CompareNonConstrainedGenericWithNull
             if (null == start) throw new ArgumentNullException("start");
             if (null == target) throw new ArgumentNullException("target");
-            // ReSharper restore CompareNonConstrainedGenericWithNull
             if (null == generateNeighborInfo) throw new ArgumentNullException("generateNeighborInfo");
             Contract.EndContractBlock();
 
@@ -122,10 +118,8 @@ namespace Vertesaur.Search
             IComparer<TCost> costComparer,
             IEqualityComparer<TNode> nodeComparer
         ) {
-            // ReSharper disable CompareNonConstrainedGenericWithNull
             if (null == start) throw new ArgumentNullException("start");
             if (null == target) throw new ArgumentNullException("target");
-            // ReSharper restore CompareNonConstrainedGenericWithNull
             if (null == generateNeighborInfo) throw new ArgumentNullException("generateNeighborInfo");
             Contract.EndContractBlock();
 
@@ -187,11 +181,9 @@ namespace Vertesaur.Search
     {
 
         protected override IEnumerable<DynamicGraphNodeData<TNode, TCost, TEdge>> GetNeighborInfo(TNode node, TCost currentCost) {
-            // ReSharper disable CompareNonConstrainedGenericWithNull
             Contract.Requires(null != node);
             Contract.Ensures(Contract.Result<IEnumerable<DynamicGraphNodeData<TNode, TCost, TEdge>>>() != null);
             throw new NotImplementedException();
-            // ReSharper restore CompareNonConstrainedGenericWithNull
         }
     }
 
@@ -258,10 +250,8 @@ namespace Vertesaur.Search
             Contract.Requires(lookUp.Count > 0);
             Contract.Requires(lookUp.Count >= keys.Count);
             Contract.Requires(Contract.ForAll(lookUp.Values, x => x != null));
-            // ReSharper disable CompareNonConstrainedGenericWithNull
             Contract.Requires(Contract.ForAll(keys, key => key != null && lookUp.ContainsKey(key)));
             Contract.Ensures(Contract.ValueAtReturn(out smallestNode) != null);
-            // ReSharper restore CompareNonConstrainedGenericWithNull
             Contract.Ensures(Contract.ValueAtReturn(out smallestEdge) != null);
 
             using (var enumerator = keys.GetEnumerator()) {
@@ -269,20 +259,16 @@ namespace Vertesaur.Search
                     throw new ArgumentException("keys is empty", "keys");
                 var currentNode = enumerator.Current;
 
-                // ReSharper disable AssignNullToNotNullAttribute
                 //var smallest = new KeyValuePair<TNode, DynamicGraphNodeData<TNode, TCost, TEdge>>(currentNode, lookUp[currentNode]);
                 smallestNode = currentNode;
                 smallestEdge = lookUp[currentNode];
                 Contract.Assume(smallestEdge != null);
-                // ReSharper restore AssignNullToNotNullAttribute
 
                 while (enumerator.MoveNext()) {
                     currentNode = enumerator.Current;
 
-                    // ReSharper disable AssignNullToNotNullAttribute
                     var currentData = lookUp[currentNode];
                     Contract.Assume(currentData != null);
-                    // ReSharper restore AssignNullToNotNullAttribute
 
                     if (CostComparer.Compare(smallestEdge.Cost, currentData.Cost) > 0) {
                         smallestNode = currentNode;
@@ -290,10 +276,8 @@ namespace Vertesaur.Search
                     }
                 }
             }
-            // ReSharper disable CompareNonConstrainedGenericWithNull
             if (null == smallestNode) throw new ArgumentException("null keys are not allowed", "keys");
             if (null == smallestEdge) throw new ArgumentException("null edge contained in edge look-up", "lookUp");
-            // ReSharper restore CompareNonConstrainedGenericWithNull
         }
 
         /// <summary>
@@ -304,10 +288,8 @@ namespace Vertesaur.Search
         /// <returns>The shortest path from the start node to the target node if one exists.</returns>
         /// <exception cref="System.ArgumentException">Thrown if a node or edge encountered within the graph is <c>null</c>.</exception>
         public ReadOnlyCollection<DynamicGraphNodeData<TNode, TCost, TEdge>> FindPath(TNode start, TNode target) {
-            // ReSharper disable CompareNonConstrainedGenericWithNull
             if (null == start) throw new ArgumentNullException("start");
             if (null == target) throw new ArgumentNullException("target");
-            // ReSharper restore CompareNonConstrainedGenericWithNull
             Contract.EndContractBlock();
 
             // initialize the look-ups
@@ -371,20 +353,16 @@ namespace Vertesaur.Search
                     new DynamicGraphNodeData<TNode, TCost, TEdge>(target, nodeData.Cost, nodeData.Edge)
                 };
                 currentNode = nodeData.Node;
-                // ReSharper disable CompareNonConstrainedGenericWithNull
                 if (null == currentNode)
                     return null;
-                // ReSharper restore CompareNonConstrainedGenericWithNull
                 while (nodeDataCache.TryGetValue(currentNode, out nodeData)) {
                     Contract.Assume(nodeData != null);
                     pathResult.Add(new DynamicGraphNodeData<TNode, TCost, TEdge>(currentNode, nodeData.Cost, nodeData.Edge));
                     if (Equals(currentNode, start))
                         break;
                     currentNode = nodeData.Node;
-                    // ReSharper disable CompareNonConstrainedGenericWithNull
                     if (null == currentNode)
                         return null;
-                    // ReSharper restore CompareNonConstrainedGenericWithNull
                 }
                 pathResult.Reverse();
                 return new ReadOnlyCollection<DynamicGraphNodeData<TNode, TCost, TEdge>>(pathResult);

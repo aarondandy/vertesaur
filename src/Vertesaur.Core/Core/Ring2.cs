@@ -534,7 +534,6 @@ namespace Vertesaur
         /// </summary>
         /// <returns>The centroid of the ring.</returns>
         public Point2 GetCentroid() {
-            // ReSharper disable CompareOfFloatsByEqualityOperator
             var lastIndex = _pointList.Count - 1;
             if (lastIndex > 1) {
                 var sumValue = 0.0;
@@ -566,7 +565,6 @@ namespace Vertesaur
                     : Point2.Invalid
                 )
             );
-            // ReSharper restore CompareOfFloatsByEqualityOperator
         }
 
         /// <summary>
@@ -579,7 +577,6 @@ namespace Vertesaur
         /// </list></remarks>
         /// <returns>The point winding of the ring.</returns>
         public PointWinding DetermineWinding() {
-            // ReSharper disable CompareOfFloatsByEqualityOperator
             var areaSum = GetAreaSumValue();
             return (
                 (0 == areaSum || Double.IsNaN(areaSum) || Double.IsInfinity(areaSum))
@@ -590,7 +587,6 @@ namespace Vertesaur
                     : PointWinding.CounterClockwise
                 )
             );
-            // ReSharper restore CompareOfFloatsByEqualityOperator
         }
 
         /// <summary>

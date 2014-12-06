@@ -70,7 +70,6 @@ namespace Vertesaur
         /// </summary>
         /// <param name="vector">The vector to construct a spherical coordinate for.</param>
         public SphericalCoord(Vector3 vector) {
-            // ReSharper disable CompareOfFloatsByEqualityOperator
             Rho = vector.GetMagnitude();
             if (0 == Rho) {
                 Theta = 0;
@@ -80,7 +79,6 @@ namespace Vertesaur
                 Theta = Math.Atan2(vector.Y, vector.X);
                 Phi = Math.Acos(vector.Z / Rho);
             }
-            // ReSharper restore CompareOfFloatsByEqualityOperator
         }
 
         /// <summary>
@@ -88,7 +86,6 @@ namespace Vertesaur
         /// </summary>
         /// <param name="point">The point to construct a spherical coordinate for.</param>
         public SphericalCoord(Point3 point) {
-            // ReSharper disable CompareOfFloatsByEqualityOperator
             Rho = Point3.Zero.Distance(point);
             if (0 == Rho) {
                 Theta = 0;
@@ -98,7 +95,6 @@ namespace Vertesaur
                 Theta = Math.Atan2(point.Y, point.X);
                 Phi = Math.Acos(point.Z / Rho);
             }
-            // ReSharper restore CompareOfFloatsByEqualityOperator
         }
 
         /// <inheritdoc/>
@@ -110,21 +106,17 @@ namespace Vertesaur
 
         /// <inheritdoc/>
         public bool Equals(SphericalCoord other) {
-            // ReSharper disable CompareOfFloatsByEqualityOperator
             return Rho == other.Rho
                 && Theta == other.Theta
                 && Phi == other.Phi;
-            // ReSharper restore CompareOfFloatsByEqualityOperator
         }
 
         /// <inheritdoc/>
         public bool Equals(ISphericalCoordinate<double> other) {
-            // ReSharper disable CompareOfFloatsByEqualityOperator
             return !ReferenceEquals(null, other)
                 && Rho == other.Rho
                 && Theta == other.Theta
                 && Phi == other.Phi;
-            // ReSharper restore CompareOfFloatsByEqualityOperator
         }
 
         /// <inheritdoc/>

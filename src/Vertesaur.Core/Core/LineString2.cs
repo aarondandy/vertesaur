@@ -226,11 +226,9 @@ namespace Vertesaur
                     ySum = ySum + ((this[i].Y + this[nextIndex].Y) * m);
                 }
 
-                // ReSharper disable CompareOfFloatsByEqualityOperator
                 if (0 != mSum) {
                     return new Point2(xSum / mSum, ySum / mSum);
                 }
-                // ReSharper restore CompareOfFloatsByEqualityOperator
             }
             return lastIndex == 0 ? this[0] : Point2.Invalid;
         }

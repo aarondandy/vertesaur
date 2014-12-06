@@ -142,7 +142,6 @@ namespace Vertesaur
         /// </summary>
         /// <returns>A centroid.</returns>
         public Point2 GetCentroid() {
-            // ReSharper disable CompareOfFloatsByEqualityOperator
             if (Count > 0) {
                 if (Count == 1) {
                     Contract.Assume(this[0] != null);
@@ -163,7 +162,6 @@ namespace Vertesaur
                     return new Point2(xSum / aSum, ySum / aSum);
             }
             return Point2.Invalid;
-            // ReSharper restore CompareOfFloatsByEqualityOperator
         }
 
         /// <summary>
@@ -192,8 +190,6 @@ namespace Vertesaur
             var crossCount = 0;
             var hasUnconstrainedHoles = false;
             var fillRings = new List<Ring2>();
-            // ReSharper disable LoopCanBeConvertedToQuery
-            // ReSharper disable ForCanBeConvertedToForeach
             foreach (var ring in this) {
                 if (ring.Hole.HasValue && ring.Hole.Value)
                     continue;
@@ -228,8 +224,6 @@ namespace Vertesaur
                     hasUnconstrainedHoles = true;
             }
             return (hasUnconstrainedHoles ? 0 : 1) == (crossCount % 2);
-            // ReSharper restore ForCanBeConvertedToForeach
-            // ReSharper restore LoopCanBeConvertedToQuery
         }
 
         /// <summary>
@@ -282,15 +276,11 @@ namespace Vertesaur
                 return Double.NaN;
 
             var sum = 0.0;
-            // ReSharper disable LoopCanBeConvertedToQuery
-            // ReSharper disable ForCanBeConvertedToForeach
             for (var i = 0; i < Count; i++) {
                 Contract.Assume(this[i] != null);
                 sum += this[i].GetMagnitude();
             }
             return sum;
-            // ReSharper restore ForCanBeConvertedToForeach
-            // ReSharper restore LoopCanBeConvertedToQuery
         }
 
         /// <inheritdoc/>
@@ -312,15 +302,11 @@ namespace Vertesaur
                 return Double.NaN;
 
             var sum = 0.0;
-            // ReSharper disable LoopCanBeConvertedToQuery
-            // ReSharper disable ForCanBeConvertedToForeach
             for (var i = 0; i < Count; i++) {
                 Contract.Assume(this[i] != null);
                 sum += this[i].GetArea();
             }
             return sum;
-            // ReSharper restore ForCanBeConvertedToForeach
-            // ReSharper restore LoopCanBeConvertedToQuery
         }
 
         /// <summary>

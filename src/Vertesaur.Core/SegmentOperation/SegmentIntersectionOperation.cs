@@ -41,7 +41,6 @@ namespace Vertesaur.SegmentOperation
 
         [Pure]
         private static SegmentIntersectionType ClassifyIntersectionType(double v) {
-            // ReSharper disable CompareOfFloatsByEqualityOperator
             if (v == 0)
                 return SegmentIntersectionType.Butt;
             if (v == 1)
@@ -49,7 +48,6 @@ namespace Vertesaur.SegmentOperation
             if (v > 0 && v < 1)
                 return SegmentIntersectionType.Range;
             return SegmentIntersectionType.None;
-            // ReSharper restore CompareOfFloatsByEqualityOperator
         }
 
         /// <summary>
@@ -160,9 +158,7 @@ namespace Vertesaur.SegmentOperation
             IPlanarGeometry IResult.Geometry { get { return null; } }
         }
 
-        // ReSharper disable RedundantDefaultFieldInitializer
         private static readonly NullResult DefaultNoIntersection = new NullResult();
-        // ReSharper restore RedundantDefaultFieldInitializer
 
         /// <summary>
         /// Calculates the intersection between two segments.
@@ -210,7 +206,6 @@ namespace Vertesaur.SegmentOperation
         /// <param name="d">The second point of the second segment.</param>
         /// <returns>The detailed result of the intersection.</returns>
         public static IResult IntersectionDetails(Point2 a, Point2 b, Point2 c, Point2 d) {
-            // ReSharper disable CompareOfFloatsByEqualityOperator
             Contract.Ensures(Contract.Result<IResult>() != null);
 
             var d0 = b - a;
@@ -246,7 +241,6 @@ namespace Vertesaur.SegmentOperation
             else
                 p = a + d0.GetScaled(s); // it must intersect at a point, so find where
             return new PointResult(p, s, t);
-            // ReSharper restore CompareOfFloatsByEqualityOperator
         }
 
         private static IResult IntersectionDetailsParallel(Vector2 d0, Vector2 d1, Vector2 e, Point2 a, Point2 b, Point2 c, Point2 d) {
@@ -266,14 +260,12 @@ namespace Vertesaur.SegmentOperation
                 sMax = s1;
             }
 
-            // ReSharper disable CompareOfFloatsByEqualityOperator
             if (sMax < 0.0 || sMin > 1.0)
                 return DefaultNoIntersection; // no intersection
             if (sMax == 0.0)
                 return new PointResult(a, 0.0, a == c ? 0.0 : 1.0); // the start point
             if (sMin == 1.0)
                 return new PointResult(b, 1.0, b == c ? 0.0 : 1.0); // the end point
-            // ReSharper restore CompareOfFloatsByEqualityOperator
 
             PointResult resultA;
             PointResult resultB;

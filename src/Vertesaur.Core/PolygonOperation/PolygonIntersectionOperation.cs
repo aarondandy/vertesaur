@@ -834,7 +834,6 @@ namespace Vertesaur.PolygonOperation
             return null;
         }
 
-        // ReSharper disable CompareOfFloatsByEqualityOperator
         private static Point2 FindPreviousRingPoint(
             PolygonCrossing currentCrossing,
             PolygonCrossing[] crossingsOnRing,
@@ -873,7 +872,6 @@ namespace Vertesaur.PolygonOperation
                 ? previousCrossing.Point
                 : ring[currentLocation.SegmentIndex];
         }
-        // ReSharper restore CompareOfFloatsByEqualityOperator
 
         /// <summary>
         /// Determines the points that would need to be inserted into the resulting
