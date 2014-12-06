@@ -51,7 +51,7 @@ namespace Vertesaur.PolygonOperation.Test
             return sb.ToString();
         }
 
-        [Theory, PropertyData("TestPolyIntersectionParameters")]
+        [Theory, MemberData("TestPolyIntersectionParameters")]
         public static void polygon_intersection(PolyPairTestData testData) {
             Console.WriteLine(testData.Name);
 
@@ -98,7 +98,7 @@ namespace Vertesaur.PolygonOperation.Test
                 : new Ring2(r.Reverse());
         }
 
-        [Theory, PropertyData("TestPolyIntersectionParameters")]
+        [Theory, MemberData("TestPolyIntersectionParameters")]
         public static void polygon_intersection_reverse_winding(PolyPairTestData testData) {
             Console.WriteLine(testData.Name);
 

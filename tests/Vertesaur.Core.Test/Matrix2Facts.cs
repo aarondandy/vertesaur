@@ -146,7 +146,7 @@ namespace Vertesaur.Test
             }
         }
 
-        [Theory, PropertyData("DeterminantsData")]
+        [Theory, MemberData("DeterminantsData")]
         public static void determinants(double expectedDeterminant, Matrix2 m) {
             var determinant = m.CalculateDeterminant();
 

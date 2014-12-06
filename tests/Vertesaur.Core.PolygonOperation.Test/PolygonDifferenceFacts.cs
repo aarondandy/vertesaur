@@ -50,7 +50,7 @@ namespace Vertesaur.PolygonOperation.Test
             return sb.ToString();
         }
 
-        [Theory, PropertyData("TestPolyDifferenceParameters")]
+        [Theory, MemberData("TestPolyDifferenceParameters")]
         public static void polygon_difference(PolyPairTestData testData) {
             Console.WriteLine(testData.Name);
 

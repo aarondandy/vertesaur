@@ -50,7 +50,7 @@ namespace Vertesaur.PolygonOperation.Test
             return sb.ToString();
         }
 
-        [Theory, PropertyData("TestPolyUnionParameters")]
+        [Theory, MemberData("TestPolyUnionParameters")]
         public static void polygon_union(PolyPairTestData testData) {
             Console.WriteLine(testData.Name);
 

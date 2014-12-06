@@ -50,7 +50,7 @@ namespace Vertesaur.PolygonOperation.Test
             return sb.ToString();
         }
 
-        [Theory, PropertyData("TestPolyXorParameters")]
+        [Theory, MemberData("TestPolyXorParameters")]
         public static void polygon_xor(PolyPairTestData testData) {
             Console.WriteLine(testData.Name);
 

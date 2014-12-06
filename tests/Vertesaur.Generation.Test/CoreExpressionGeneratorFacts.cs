@@ -52,7 +52,7 @@ namespace Vertesaur.Generation.Test
             }
         }
 
-        [Theory, PropertyData("generic_add_from_doubles_data")]
+        [Theory, MemberData("generic_add_from_doubles_data")]
         public static void generic_add_from_doubles(Type valueType, double aValue, double bValue) {
             var method = TestType.GetMethod("GenericAdd", BindingFlags.NonPublic | BindingFlags.Static, null, new[] { typeof(double), typeof(double) }, null);
             var genericMethod = method.MakeGenericMethod(new[] { valueType });
@@ -92,7 +92,7 @@ namespace Vertesaur.Generation.Test
             }
         }
 
-        [Theory, PropertyData("generic_add_from_ints_signed_data")]
+        [Theory, MemberData("generic_add_from_ints_signed_data")]
         public static void generic_add_from_ints_signed(Type valueType, int aValue, int bValue) {
             var method = TestType.GetMethod("GenericAdd", BindingFlags.NonPublic | BindingFlags.Static, null, new[] { typeof(int), typeof(int) }, null);
             var genericMethod = method.MakeGenericMethod(new[] { valueType });
@@ -112,7 +112,7 @@ namespace Vertesaur.Generation.Test
             }
         }
 
-        [Theory, PropertyData("generic_add_from_ints_unsigned_data")]
+        [Theory, MemberData("generic_add_from_ints_unsigned_data")]
         public static void generic_add_from_ints_unsigned(Type valueType, int aValue, int bValue) {
             var method = TestType.GetMethod("GenericAdd", BindingFlags.NonPublic | BindingFlags.Static, null, new[] { typeof(int), typeof(int) }, null);
             var genericMethod = method.MakeGenericMethod(new[] { valueType });
@@ -144,7 +144,7 @@ namespace Vertesaur.Generation.Test
             }
         }
 
-        [Theory, PropertyData("generic_subtract_real_data")]
+        [Theory, MemberData("generic_subtract_real_data")]
         public static void generic_subtract_real(Type valueType, double aValue, double bValue) {
             var method = TestType.GetMethod("GenericSubtract", BindingFlags.NonPublic | BindingFlags.Static, null, new[] { typeof(double), typeof(double) }, null);
             var genericMethod = method.MakeGenericMethod(new[] { valueType });
@@ -185,7 +185,7 @@ namespace Vertesaur.Generation.Test
             }
         }
 
-        [Theory, PropertyData("generic_subtract_signed_data")]
+        [Theory, MemberData("generic_subtract_signed_data")]
         public static void generic_subtract_signed(Type valueType, int aValue, int bValue) {
             var method = TestType.GetMethod("GenericSubtract", BindingFlags.NonPublic | BindingFlags.Static, null, new[] { typeof(int), typeof(int) }, null);
             var genericMethod = method.MakeGenericMethod(new[] { valueType });
@@ -205,7 +205,7 @@ namespace Vertesaur.Generation.Test
             }
         }
 
-        [Theory, PropertyData("generic_subtract_unsigned_data")]
+        [Theory, MemberData("generic_subtract_unsigned_data")]
         public static void generic_subtract_unsigned(Type valueType, int aValue, int bValue) {
             var method = TestType.GetMethod("GenericSubtract", BindingFlags.NonPublic | BindingFlags.Static, null, new[] { typeof(int), typeof(int) }, null);
             var genericMethod = method.MakeGenericMethod(new[] { valueType });
@@ -236,7 +236,7 @@ namespace Vertesaur.Generation.Test
             }
         }
 
-        [Theory, PropertyData("generic_multiply_real_data")]
+        [Theory, MemberData("generic_multiply_real_data")]
         public static void generic_multiply_real(Type valueType, double aValue, double bValue) {
             var method = TestType.GetMethod("GenericMultiply", BindingFlags.NonPublic | BindingFlags.Static, null, new[] { typeof(double), typeof(double) }, null);
             var genericMethod = method.MakeGenericMethod(new[] { valueType });
@@ -265,7 +265,7 @@ namespace Vertesaur.Generation.Test
             }
         }
 
-        [Theory, PropertyData("generic_multiply_signed_data")]
+        [Theory, MemberData("generic_multiply_signed_data")]
         public static void generic_multiply_signed(Type valueType, int aValue, int bValue) {
             var method = TestType.GetMethod("GenericMultiply", BindingFlags.NonPublic | BindingFlags.Static, null, new[] { typeof(int), typeof(int) }, null);
             var genericMethod = method.MakeGenericMethod(new[] { valueType });
@@ -285,7 +285,7 @@ namespace Vertesaur.Generation.Test
             }
         }
 
-        [Theory, PropertyData("generic_multiply_unsigned_data")]
+        [Theory, MemberData("generic_multiply_unsigned_data")]
         public static void generic_multiply_unsigned(Type valueType, int aValue, int bValue) {
             var method = TestType.GetMethod("GenericMultiply", BindingFlags.NonPublic | BindingFlags.Static, null, new[] { typeof(int), typeof(int) }, null);
             var genericMethod = method.MakeGenericMethod(new[] { valueType });
@@ -329,7 +329,7 @@ namespace Vertesaur.Generation.Test
             }
         }
 
-        [Theory, PropertyData("generic_divide_data")]
+        [Theory, MemberData("generic_divide_data")]
         public static void generic_divide(Type valueType, double aValue, double bValue) {
             var method = TestType.GetMethod("GenericMultiply", BindingFlags.NonPublic | BindingFlags.Static, null, new[] { typeof(double), typeof(double) }, null);
             var genericMethod = method.MakeGenericMethod(new[] { valueType });
@@ -373,7 +373,7 @@ namespace Vertesaur.Generation.Test
         }
 
 
-        [Theory, PropertyData("from_double_and_back_again_data")]
+        [Theory, MemberData("from_double_and_back_again_data")]
         public static void from_double_and_back_again(Type valueType, double value) {
             var method = TestType.GetMethod("FromDoubleAndBackAgain", BindingFlags.NonPublic | BindingFlags.Static, null, new[] { typeof(double) }, null);
             var genericMethod = method.MakeGenericMethod(new[] { valueType });
@@ -394,7 +394,7 @@ namespace Vertesaur.Generation.Test
             }
         }
 
-        [Theory, PropertyData("from_double_and_back_again_real_data")]
+        [Theory, MemberData("from_double_and_back_again_real_data")]
         public static void from_double_and_back_again_real(Type valueType, double value) {
             var method = TestType.GetMethod("FromDoubleAndBackAgain", BindingFlags.NonPublic | BindingFlags.Static, null, new[] { typeof(double) }, null);
             var genericMethod = method.MakeGenericMethod(new[] { valueType });
@@ -423,7 +423,7 @@ namespace Vertesaur.Generation.Test
             }
         }
 
-        [Theory, PropertyData("from_int_and_back_again_data")]
+        [Theory, MemberData("from_int_and_back_again_data")]
         public static void from_int_and_back_again(Type valueType, int value) {
             var method = TestType.GetMethod("FromIntAndBackAgain", BindingFlags.NonPublic | BindingFlags.Static, null, new[] { typeof(int) }, null);
             var genericMethod = method.MakeGenericMethod(new[] { valueType });

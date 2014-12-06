@@ -35,7 +35,7 @@ namespace Vertesaur.PolygonOperation.Test
             return d.GetMagnitudeSquared() < 0.000000000000000001;
         }
 
-        [Theory, PropertyData("TestPolyCrossingsParameters")]
+        [Theory, MemberData("TestPolyCrossingsParameters")]
         public static void polygon_intersection_point_crossings(PolyPairTestData testData) {
             if (testData.Name == "Fuzzed: 3")
                 return; // NOTE: we must test this one a different way

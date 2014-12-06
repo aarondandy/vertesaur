@@ -35,7 +35,7 @@ namespace Vertesaur.PolygonOperation.Test
             return d.GetMagnitudeSquared() < 0.000000000000000001;
         }
 
-        [Theory, PropertyData("TestRingCrossingsParameters")]
+        [Theory, MemberData("TestRingCrossingsParameters")]
         public static void ring_point_crossings(RingPairTestData testData) {
             if (testData.Name == "Fuzzed: 3")
                 return; // must test this a different way

@@ -83,8 +83,9 @@ bau
 .DependsOn("create-artifact-folders")
 .Do(xunit => {
     xunit.Exe = buildPackagesDir
-        .EnumerateFiles("xunit.console.clr4.exe", SearchOption.AllDirectories)
-        .Single()
+		.EnumerateDirectories("xunit.runners.*").Single()
+		.EnumerateDirectories("tools").Single()
+        .EnumerateFiles("xunit.console.exe").Single()
         .FullName;
     xunit.Assemblies = BinaryOutputFolder.EnumerateFiles("*.Test.dll").Select(f => f.FullName);
 })
