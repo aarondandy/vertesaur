@@ -345,7 +345,25 @@ namespace Vertesaur
         /// <param name="segment">A segment.</param>
         /// <returns><c>true</c> when another object intersects this object.</returns>
         public bool Intersects(Segment2 segment) {
-            return segment != null && Intersection(segment) != null;
+            if (segment == null)
+                return false;
+
+            var a = segment.A;
+            var b = segment.B;
+            Point2.Order(ref a, ref b);
+
+            var d0 = b - a;
+            var d1 = Direction;
+            var e = P - a;
+            var cross = (d0.X * d1.Y) - (d1.X * d0.Y);
+
+            if (cross == 0.0)
+            {
+                return (e.X * d0.Y) - (e.Y * d0.X) == 0.0;
+            }
+
+            var s = ((e.X * d1.Y) - (e.Y * d1.X)) / cross;
+            return (!(s < 0.0 || s > 1.0));
         }
 
         /// <inheritdoc/>
@@ -358,13 +376,9 @@ namespace Vertesaur
             var b = segment.B;
             Point2.Order(ref a, ref b);
 
-            // TODO: make sure the line used to test for intersection is consistent, (A,B) n S == (B,A) n S
-
-            var line = this;
-
             var d0 = b - a;
-            var d1 = line.Direction;
-            var e = line.P - a;
+            var d1 = Direction;
+            var e = P - a;
             var tNumerator = (e.X * d0.Y) - (e.Y * d0.X);
             var cross = (d0.X * d1.Y) - (d1.X * d0.Y);
 
@@ -392,24 +406,7 @@ namespace Vertesaur
         /// <param name="ray">A ray.</param>
         /// <returns><c>true</c> when another object intersects this object.</returns>
         public bool Intersects(Ray2 ray) {
-            if (ReferenceEquals(null, ray))
-                return false;
-
-            // TODO: make sure the line used to test for intersection is consistent, (A,B) n R == (B,A) n R
-
-            var d0 = Direction;
-            var d1 = ray.Direction;
-            var e = ray.P - P;
-            var tNumerator = (e.X * d0.Y) - (e.Y * d0.X);
-            var cross = (d0.X * d1.Y) - (d1.X * d0.Y);
-            if (cross == 0.0) {
-                // parallel
-                return tNumerator == 0.0;
-            }
-
-            // not parallel
-            var t = tNumerator / cross;
-            return t >= 0.0; // it intersects at a point if on the positive side of the ray
+            return ray.Intersects(this);
         }
 
         /// <inheritdoc/>
@@ -426,10 +423,9 @@ namespace Vertesaur
         /// <param name="other">A line.</param>
         /// <returns><c>true</c> when another object intersects this object.</returns>
         public bool Intersects(Line2 other) {
-            // ReSharper disable CompareOfFloatsByEqualityOperator
-            if (ReferenceEquals(null, other))
+            if (other == null)
                 return false;
-            if (ReferenceEquals(this, other) || P.Equals(other.P) && Direction.Equals(other.Direction))
+            if (other == this || P.Equals(other.P) && Direction.Equals(other.Direction))
                 return true;
 
             Point2 a, c;
@@ -454,21 +450,18 @@ namespace Vertesaur
             {
                 // parallel
                 var e = c - a;
-                var tNumerator = (e.X * d0.Y) - (e.Y * d0.X);
-                return tNumerator == 0.0;
+                return (e.X * d0.Y) - (e.Y * d0.X) == 0.0;
             }
 
             return true; // not parallel
-            // ReSharper restore CompareOfFloatsByEqualityOperator
         }
 
         /// <inheritdoc/>
         public IPlanarGeometry Intersection(Line2 other) {
-            // ReSharper disable CompareOfFloatsByEqualityOperator
-            if (ReferenceEquals(null, other))
+            if (other == null)
                 return null;
-            if (ReferenceEquals(this, other) || P.Equals(other.P) && Direction.Equals(other.Direction))
-                return Clone();
+            if (other == this || P.Equals(other.P) && Direction.Equals(other.Direction))
+                return this; // NOTE: requires line to be immutable
 
             Point2 a, c;
             Vector2 d0, d1;
@@ -496,8 +489,6 @@ namespace Vertesaur
             return tNumerator == 0.0
                 ? new Line2(a, d0) // construct a new line from the a/d0 values to be consistent
                 : null;
-
-            // ReSharper restore CompareOfFloatsByEqualityOperator
         }
 
     }

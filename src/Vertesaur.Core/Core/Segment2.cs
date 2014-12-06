@@ -94,7 +94,6 @@ namespace Vertesaur
         /// <param name="p">A point.</param>
         /// <returns>True when a point intersects a line segment.</returns>
         [Pure] public static bool Intersects(Point2 a, Point2 b, Point2 p) {
-            // ReSharper disable CompareOfFloatsByEqualityOperator
             if (p.Equals(a) || p.Equals(b)) {
                 return true;
             }
@@ -110,7 +109,6 @@ namespace Vertesaur
                     && (d.X * v.Y) - (d.Y * v.X) == 0.0
                 )
             );
-            // ReSharper restore CompareOfFloatsByEqualityOperator
         }
 
         /// <summary>
@@ -413,6 +411,14 @@ namespace Vertesaur
             return Intersects(A, B, point);
         }
 
+        /// <inheritdoc/>
+        public IPlanarGeometry Intersection(Point2 other)
+        {
+            if (Intersects(other))
+                return other;
+            return null;
+        }
+
         /// <summary>
         /// Determines if this segment intersect another <paramref name="segment"/>.
         /// </summary>
@@ -422,6 +428,17 @@ namespace Vertesaur
             return segment != null && Intersects(A, B, segment.A, segment.B);
         }
 
+        /// <summary>
+        /// Calculates the intersection geometry between this segment and another.
+        /// </summary>
+        /// <param name="segment">The segment to find the intersection with.</param>
+        /// <returns>The intersection geometry or <c>null</c> for no intersection.</returns>
+        public IPlanarGeometry Intersection(Segment2 segment)
+        {
+            return segment == null
+                ? null
+                : Intersection(A, B, segment.A, segment.B);
+        }
 
         /// <summary>
         /// Determines if this segment intersect another <paramref name="ray"/>.
@@ -433,33 +450,24 @@ namespace Vertesaur
         }
 
         /// <summary>
+        /// Calculates the intersection geometry between this segment and a ray.
+        /// </summary>
+        /// <param name="ray">The ray to find the intersection with.</param>
+        /// <returns>The intersection geometry or <c>null</c> for no intersection.</returns>
+        public IPlanarGeometry Intersection(Ray2 ray)
+        {
+            if (ray == null)
+                return null;
+            return ray.Intersection(this);
+        }
+
+        /// <summary>
         /// Determines if this segment intersect another <paramref name="line"/>.
         /// </summary>
         /// <param name="line">A line.</param>
         /// <returns><c>true</c> when another object intersects this object.</returns>
         public bool Intersects(Line2 line) {
             return line != null && line.Intersects(this);
-        }
-
-        /// <summary>
-        /// Calculates the intersection geometry between this segment and another.
-        /// </summary>
-        /// <param name="segment">The segment to find the intersection with.</param>
-        /// <returns>The intersection geometry or <c>null</c> for no intersection.</returns>
-        public IPlanarGeometry Intersection(Segment2 segment) {
-            return segment == null
-                ? null
-                : Intersection(A, B, segment.A, segment.B);
-        }
-        /// <summary>
-        /// Calculates the intersection geometry between this segment and a ray.
-        /// </summary>
-        /// <param name="ray">The ray to find the intersection with.</param>
-        /// <returns>The intersection geometry or <c>null</c> for no intersection.</returns>
-        public IPlanarGeometry Intersection(Ray2 ray) {
-            if (ray == null)
-                return null;
-            return ray.Intersection(this);
         }
 
         /// <summary>
@@ -483,13 +491,6 @@ namespace Vertesaur
             if (ReferenceEquals(null, other))
                 return 1;
             return Compare(A, B, other.A, other.B);
-        }
-
-        /// <inheritdoc/>
-        public IPlanarGeometry Intersection(Point2 other) {
-            if (Intersects(other))
-                return other;
-            return null;
         }
     }
 }

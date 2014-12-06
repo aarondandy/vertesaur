@@ -291,7 +291,9 @@ namespace Vertesaur
         /// <inheritdoc/>
         public IPlanarGeometry Intersection(Point2 other)
         {
-            return Intersects(other) ? (IPlanarGeometry)other : null;
+            if (Intersects(other))
+                return other;
+            return null;
         }
 
         /// <summary>
@@ -300,7 +302,33 @@ namespace Vertesaur
         /// <param name="line">A line.</param>
         /// <returns><c>true</c> when another object intersects this object.</returns>
         public bool Intersects(Line2 line) {
-            return Intersection(line) != null; // TODO: optimize
+            if (line == null)
+                return false;
+
+            var lineB = line.P + line.Direction;
+            if (line.P.CompareTo(lineB) > 0)
+            {
+                line = new Line2(lineB, line.P);
+            }
+
+            Point2 a, c;
+            Vector2 d0, d1;
+            a = line.P;
+            c = P;
+            d0 = line.Direction;
+            d1 = Direction;
+
+            var e = c - a;
+            var tNumerator = (e.X * d0.Y) - (e.Y * d0.X);
+            var cross = (d0.X * d1.Y) - (d1.X * d0.Y);
+            if (cross == 0.0)
+            {
+                // parallel
+                return tNumerator == 0.0;
+            }
+
+            // not parallel
+            return (!((tNumerator / cross) < 0.0));
         }
 
         /// <summary>
@@ -471,7 +499,65 @@ namespace Vertesaur
         /// <returns><c>true</c> when another object intersects this object.</returns>
         public bool Intersects(Ray2 ray)
         {
-            return Intersection(ray) != null; // TODO: optimize
+            if (ray == null)
+                return false;
+            if (ray == this || P.Equals(ray.P) && Direction.Equals(ray.Direction))
+                return true; // NOTE: requires ray to be immutable
+
+            Point2 a, c;
+            Vector2 d0, d1;
+            // next order the rays
+            var compareResult = P.CompareTo(ray.P);
+            if (0 < ((compareResult == 0) ? Direction.CompareTo(ray.Direction) : compareResult))
+            {
+                a = ray.P;
+                c = P;
+                d0 = ray.Direction;
+                d1 = Direction;
+            }
+            else
+            {
+                a = P;
+                c = ray.P;
+                d0 = Direction;
+                d1 = ray.Direction;
+            }
+
+            var e = c - a;
+            var tNumerator = (e.X * d0.Y) - (e.Y * d0.X);
+            var cross = (d0.X * d1.Y) - (d1.X * d0.Y);
+            if (cross == 0.0)
+            {
+                // parallel
+                return tNumerator == 0.0 && IntersectsRayParallel(d0, d1, e, a, c);
+            }
+
+            // not parallel
+
+            var t = tNumerator / cross;
+            if (t < 0.0)
+                return false; // not intersecting on other ray
+
+            var s = ((e.X * d1.Y) - (e.Y * d1.X)) / cross;
+            if (s < 0.0)
+                return false; // not intersecting on this ray
+
+            return true;
+        }
+        
+        private bool IntersectsRayParallel(Vector2 d0, Vector2 d1, Vector2 e, Point2 a, Point2 c)
+        {
+            var magnitudeSquared0 = d0.GetMagnitudeSquared();
+            var sa = d0.Dot(e) / magnitudeSquared0;
+            var sb = sa + (d0.Dot(d1) / magnitudeSquared0);
+            var sd = sb - sa;
+
+            if (sd < 0.0)
+            {
+                return sa >= 0.0;
+            }
+
+            return sd > 0.0;
         }
 
         /// <summary>
@@ -480,7 +566,6 @@ namespace Vertesaur
         /// <param name="ray">The ray to find the intersection with.</param>
         /// <returns>The intersection geometry or <c>null</c> for no intersection.</returns>
         public IPlanarGeometry Intersection(Ray2 ray) {
-            // ReSharper disable CompareOfFloatsByEqualityOperator
             if (ray == null)
                 return null;
             if (ray == this || P.Equals(ray.P) && Direction.Equals(ray.Direction))
@@ -528,13 +613,9 @@ namespace Vertesaur
             if (t == 0.0)
                 return c;
             return a + d0.GetScaled(s); // it must intersect at a point, so find where
-
-            // ReSharper restore CompareOfFloatsByEqualityOperator
         }
 
         private IPlanarGeometry IntersectionRayParallel(Vector2 d0, Vector2 d1, Vector2 e, Point2 a, Point2 c) {
-            var ray = this;
-            // ReSharper disable CompareOfFloatsByEqualityOperator
             var magnitudeSquared0 = d0.GetMagnitudeSquared();
             var sa = d0.Dot(e) / magnitudeSquared0;
             var sb = sa + (d0.Dot(d1) / magnitudeSquared0);
@@ -555,7 +636,6 @@ namespace Vertesaur
                     : new Ray2(a, d0);
             }
             return null;
-            // ReSharper restore CompareOfFloatsByEqualityOperator
         }
 
         /// <summary>
