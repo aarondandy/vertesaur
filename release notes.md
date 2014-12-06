@@ -3,18 +3,19 @@ Release Notes
 
 ## 0.13.1
 
-- Improved safety and consistency of linear intersection calculations.
+- Improved safety and consistency of linear intersection calculations
 - Code Contracts fixes
+- Switch to Bau Build
 
 ## 0.13.0
 
-- Improved matrix inverse and determinant calculations.
+- Improved matrix inverse and determinant calculations
 
 ## 0.12.0
 
 - **Breaking**: Changed the license to Apache 2.0
 - Major project reorganization
-- Switched from Rake/Albacore to PVCBuild for builds.=
+- Switched from Rake/Albacore to PVCBuild for builds
 
 ## 0.11.1
 
