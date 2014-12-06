@@ -74,6 +74,7 @@ bau
         .WithIncludeReferencedProjects()
         .WithVerbosity(nugetVerbosity)
         .WithVersion(version + GetVersionSuffix())
+		.WithSymbols()
 ))
 
 .Task("test").DependsOn("xunit")

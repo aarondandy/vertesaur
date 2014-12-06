@@ -1,6 +1,15 @@
 Release Notes
 =============
 
+## 0.13.1
+
+- Improved safety and consistency of linear intersection calculations.
+- Code Contracts fixes
+
+## 0.13.0
+
+- Improved matrix inverse and determinant calculations.
+
 ## 0.12.0
 
 - **Breaking**: Changed the license to Apache 2.0
