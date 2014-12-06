@@ -69,6 +69,7 @@
     <Compile Include="ConcatenatedTransformationFacts.cs" />
     <Compile Include="DynamicGraphFacts.cs" />
     <Compile Include="Line2Facts.cs" />
+    <Compile Include="LinearIntersectionConsistencyFacts.cs" />
     <Compile Include="LineString2Facts.cs" />
     <Compile Include="Matrix2Facts.cs" />
     <Compile Include="Matrix3Facts.cs" />

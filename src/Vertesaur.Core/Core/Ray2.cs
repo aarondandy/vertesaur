@@ -278,7 +278,6 @@ namespace Vertesaur
         /// <param name="point">A point.</param>
         /// <returns>True when intersecting.</returns>
         public bool Intersects(Point2 point) {
-            // ReSharper disable CompareOfFloatsByEqualityOperator
             var v0 = point - P;
             var aDot = Direction.Dot(v0);
             return (
@@ -286,49 +285,13 @@ namespace Vertesaur
                 ? v0.X == 0.0 && v0.Y == 0.0
                 : v0.GetMagnitudeSquared() - ((aDot * aDot) / Direction.GetMagnitudeSquared()) == 0.0
             );
-            // ReSharper restore CompareOfFloatsByEqualityOperator
-        }
-
-        /// <summary>
-        /// Determines if this ray intersect another <paramref name="segment"/>.
-        /// </summary>
-        /// <param name="segment">A segment.</param>
-        /// <returns><c>true</c> when another object intersects this object.</returns>
-        public bool Intersects(Segment2 segment) {
-            if (ReferenceEquals(null, segment))
-                return false;
-
-            // ReSharper disable CompareOfFloatsByEqualityOperator
-            var b = P + Direction; // candidate for variable recycling
-            var c = segment.A;
-            var d = segment.B;
-            var dymcy = d.Y - c.Y;
-            var bxmax = b.X - P.X;
-            var dxmcx = d.X - c.X;
-            var bymay = b.Y - P.Y;
-            var cross = (dymcy * bxmax) - (dxmcx * bymay);
-            if (cross == 0.0) {
-                return Intersects(segment.A) || Intersects(segment.B);
-            }
-
-            var aymcy = P.Y - c.Y;
-            var axmcx = P.X - c.X;
-            if ((((dxmcx * aymcy) - (dymcy * axmcx)) / cross) >= 0.0) {
-                var ub = ((bxmax * aymcy) - (bymay * axmcx)) / cross;
-                return ub >= 0.0 && ub <= 1.0;
-            }
-            return false;
-            // ReSharper restore CompareOfFloatsByEqualityOperator
         }
 
 
-        /// <summary>
-        /// Determines if this ray intersect another <paramref name="ray"/>.
-        /// </summary>
-        /// <param name="ray">A ray.</param>
-        /// <returns><c>true</c> when another object intersects this object.</returns>
-        public bool Intersects(Ray2 ray) {
-            return null != Intersection(ray);
+        /// <inheritdoc/>
+        public IPlanarGeometry Intersection(Point2 other)
+        {
+            return Intersects(other) ? (IPlanarGeometry)other : null;
         }
 
         /// <summary>
@@ -337,7 +300,66 @@ namespace Vertesaur
         /// <param name="line">A line.</param>
         /// <returns><c>true</c> when another object intersects this object.</returns>
         public bool Intersects(Line2 line) {
-            return !ReferenceEquals(null, line) && line.Intersects(this);
+            return Intersection(line) != null; // TODO: optimize
+        }
+
+        /// <summary>
+        /// Calculates the intersection geometry between this ray and a line.
+        /// </summary>
+        /// <param name="line">The line to find the intersection with.</param>
+        /// <returns>The intersection geometry or <c>null</c> for no intersection.</returns>
+        public IPlanarGeometry Intersection(Line2 line)
+        {
+            if (line == null)
+                return null;
+
+            var lineB = line.P + line.Direction;
+            if (line.P.CompareTo(lineB) > 0)
+            {
+                line = new Line2(lineB, line.P);
+            }
+
+            Point2 a, c;
+            Vector2 d0, d1;
+            a = line.P;
+            c = P;
+            d0 = line.Direction;
+            d1 = Direction;
+
+            var e = c - a;
+            var tNumerator = (e.X * d0.Y) - (e.Y * d0.X);
+            var cross = (d0.X * d1.Y) - (d1.X * d0.Y);
+            if (cross == 0.0)
+            {
+                // parallel
+                return tNumerator == 0.0
+                    ? this // NOTE: this relies on Ray2 being immutable
+                    : null;
+            }
+
+            // not parallel
+            var t = tNumerator / cross;
+            if (t < 0.0)
+                return null; // not intersecting on other ray
+            if (t == 0.0)
+                return c; // clips the butt of the ray
+
+            // it must intersect at a point, so find where
+            var s = ((e.X * d1.Y) - (e.Y * d1.X)) / cross;
+            if (s == 0.0)
+                return a;
+
+            return a + d0.GetScaled(s);
+        }
+
+        /// <summary>
+        /// Determines if this ray intersect another <paramref name="segment"/>.
+        /// </summary>
+        /// <param name="segment">A segment.</param>
+        /// <returns><c>true</c> when another object intersects this object.</returns>
+        public bool Intersects(Segment2 segment)
+        {
+            return Intersection(segment) != null; // TODO: optimize
         }
 
         /// <summary>
@@ -346,10 +368,112 @@ namespace Vertesaur
         /// <param name="segment">The segment to find the intersection with.</param>
         /// <returns>The intersection geometry or <c>null</c> for no intersection.</returns>
         public IPlanarGeometry Intersection(Segment2 segment) {
-            return ReferenceEquals(null, segment)
-                ? null
-                : segment.Intersection(this);
+            if (segment == null)
+                return null;
+
+            var a = segment.A;
+            var b = segment.B;
+            Point2.Order(ref a, ref b);
+
+            return IntersectionSegment(a, b);
         }
+
+        /// <summary>
+        /// Performs segment intersection against sorted endpoints of a segment.
+        /// </summary>
+        /// <param name="a">The lesser end point.</param>
+        /// <param name="b">The greater end point.</param>
+        /// <returns>The intersection result.</returns>
+        private IPlanarGeometry IntersectionSegment(Point2 a, Point2 b)
+        {
+            var d0 = b - a;
+            var d1 = Direction;
+            var e = P - a;
+            var tNumerator = (e.X * d0.Y) - (e.Y * d0.X);
+            var cross = (d0.X * d1.Y) - (d1.X * d0.Y);
+            if (cross == 0.0)
+            {
+                // parallel
+                return tNumerator == 0.0
+                    ? this.IntersectionSegmentParallel(d0, d1, e, a, b)
+                    : null;
+            }
+
+            // not parallel
+
+            var t = tNumerator / cross;
+            if (t < 0.0)
+                return null; // not intersecting on the ray
+
+            var s = ((e.X * d1.Y) - (e.Y * d1.X)) / cross;
+            if (s < 0.0 || s > 1.0)
+                return null; // not intersecting on this segment
+
+            // it must intersect at a point, so find where
+            if (0.0 == s)
+                return a;
+            if (0.0 == t)
+                return P;
+            return a + d0.GetScaled(s);
+        }
+
+        /// <summary>
+        /// This method is extracted from IntersectionSegment(Point2,Point2) as it is a rare case.
+        /// </summary>
+        private IPlanarGeometry IntersectionSegmentParallel(Vector2 d0, Vector2 d1, Vector2 e, Point2 segmentA, Point2 segmentB)
+        {
+            var magnitudeSquared0 = d0.GetMagnitudeSquared();
+            var sa = d0.Dot(e) / magnitudeSquared0;
+            var sb = (d0.Dot(d1) / magnitudeSquared0) + sa;
+            var sd = sb - sa;
+
+            if (sd < 0)
+            {
+                if (sa < 0)
+                {
+                    return null; // start point is before the segment
+                }
+                if (sa >= 1.0)
+                {
+                    return new Segment2(segmentA, segmentB); // start point is past the segment but pointing back at it
+                }
+                if (sa == 0)
+                {
+                    return segmentA; // start point is on the start of the segment
+                }
+                return new Segment2(segmentA, P); // start point is somewhere inside the segment
+            }
+
+            if (sd > 0)
+            {
+                if (sa > 1.0)
+                {
+                    return null; // start point is past the segment and pointing away
+                }
+                if (sa <= 0)
+                {
+                    return new Segment2(segmentA, segmentB); // start point is before the segment and going through it
+                }
+                if (sa == 1.0)
+                {
+                    return segmentB; // start point is on the segment end and pointing away
+                }
+                return new Segment2(P, segmentB); // start point is in the segment and going through it to the end
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Determines if this ray intersect another <paramref name="ray"/>.
+        /// </summary>
+        /// <param name="ray">A ray.</param>
+        /// <returns><c>true</c> when another object intersects this object.</returns>
+        public bool Intersects(Ray2 ray)
+        {
+            return Intersection(ray) != null; // TODO: optimize
+        }
+
         /// <summary>
         /// Calculates the intersection geometry between this ray and another.
         /// </summary>
@@ -357,10 +481,10 @@ namespace Vertesaur
         /// <returns>The intersection geometry or <c>null</c> for no intersection.</returns>
         public IPlanarGeometry Intersection(Ray2 ray) {
             // ReSharper disable CompareOfFloatsByEqualityOperator
-            if (ReferenceEquals(null, ray))
+            if (ray == null)
                 return null;
-            if (ReferenceEquals(this, ray) || P.Equals(ray.P) && Direction.Equals(ray.Direction))
-                return Clone();
+            if (ray == this || P.Equals(ray.P) && Direction.Equals(ray.Direction))
+                return ray; // NOTE: requires ray to be immutable
 
             Point2 a, c;
             Vector2 d0, d1;
@@ -385,7 +509,7 @@ namespace Vertesaur
             if (cross == 0.0) {
                 // parallel
                 return tNumerator == 0.0
-                    ? IntersectionParallel(d0, d1, e, a, c)
+                    ? IntersectionRayParallel(d0, d1, e, a, c)
                     : null; // no intersection
             }
 
@@ -408,7 +532,8 @@ namespace Vertesaur
             // ReSharper restore CompareOfFloatsByEqualityOperator
         }
 
-        private IPlanarGeometry IntersectionParallel(Vector2 d0, Vector2 d1, Vector2 e, Point2 a, Point2 c) {
+        private IPlanarGeometry IntersectionRayParallel(Vector2 d0, Vector2 d1, Vector2 e, Point2 a, Point2 c) {
+            var ray = this;
             // ReSharper disable CompareOfFloatsByEqualityOperator
             var magnitudeSquared0 = d0.GetMagnitudeSquared();
             var sa = d0.Dot(e) / magnitudeSquared0;
@@ -431,22 +556,6 @@ namespace Vertesaur
             }
             return null;
             // ReSharper restore CompareOfFloatsByEqualityOperator
-        }
-
-        /// <summary>
-        /// Calculates the intersection geometry between this ray and a line.
-        /// </summary>
-        /// <param name="line">The line to find the intersection with.</param>
-        /// <returns>The intersection geometry or <c>null</c> for no intersection.</returns>
-        public IPlanarGeometry Intersection(Line2 line) {
-            if (ReferenceEquals(null, line))
-                return null;
-            return line.Intersection(this);
-        }
-
-        /// <inheritdoc/>
-        public IPlanarGeometry Intersection(Point2 other) {
-            return Intersects(other) ? (IPlanarGeometry)other : null;
         }
 
         /// <summary>
